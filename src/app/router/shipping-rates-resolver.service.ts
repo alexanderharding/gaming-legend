@@ -13,7 +13,6 @@ export class ShippingRatesResolverService
   constructor(private readonly shippingRatesService: ShippingRateService) {}
 
   resolve(): Observable<ShippingRatesResult> {
-    const deadline = this.shippingRatesService.shippingDeadline;
     return this.shippingRatesService.shippingRates$.pipe(
       map((shippingRates) => ({ shippingRates } as ShippingRatesResult)),
       catchError((error) =>
