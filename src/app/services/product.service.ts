@@ -83,7 +83,6 @@ export class ProductService {
       this.getProduct(type, id),
       this.productBrandService.getBrands(type),
     ]).pipe(
-      delay(1000),
       map(
         ([product, brands]) =>
           ({
@@ -91,8 +90,7 @@ export class ProductService {
             brand: brands.find((b) => product.brandId === b.id).name,
           } as IProduct)
       ),
-      shareReplay(1),
-      catchError(this.errorService.handleError)
+      shareReplay(1)
     );
   }
 }

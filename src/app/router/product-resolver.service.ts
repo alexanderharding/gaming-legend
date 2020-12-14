@@ -20,7 +20,7 @@ export class ProductResolverService implements Resolve<ProductResult> {
     if (isNaN(+id)) {
       return of({
         product: null,
-        error: `This product id is not a number: ${id}`,
+        error: `Retrieval error: This product id is not a number: ${id}.`,
       } as ProductResult);
     }
     return this.productService.getProductWithBrand(type, +id).pipe(

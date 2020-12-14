@@ -129,10 +129,12 @@
     </ng-container>
   </ng-container>
   <ng-template #noProduct>
+    <h1 class="text-danger text-center mb-3">Retrieval Error</h1>
     <ngb-alert
       [dismissible]="false"
       *ngIf="error$ | async as error; else loading"
       type="danger"
+      class="text-center"
     >
       <span>{{ error }}</span>
     </ngb-alert>
