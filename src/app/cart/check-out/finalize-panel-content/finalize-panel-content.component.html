@@ -1,0 +1,345 @@
+<form [formGroup]="checkOutForm" (ngSubmit)="emitSubmission()" novalidate>
+  <fieldset formGroupName="paymentGroup">
+    <legend class="text-primary text-capitalize">Payment</legend>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text bg-info text-white">Card</span>
+      </div>
+      <input
+        type="text"
+        formControlName="cardNumber"
+        class="form-control"
+        autocomplete="cc-number"
+        placeholder="Card number (required)"
+        [ngClass]="{
+          'is-invalid': cardNumberMessage && submitted,
+          'is-valid': !cardNumberMessage
+        }"
+      />
+      <div class="invalid-tooltip">
+        <span>{{ cardNumberMessage }}</span>
+      </div>
+    </div>
+    <div class="form-row mb-2">
+      <div class="col-sm mb-3 mb-sm-0">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text bg-info text-white">Expires</span>
+          </div>
+          <select
+            formControlName="expiringMonth"
+            autocomplete="cc-exp-month"
+            class="custom-select"
+            id="inputGroupSelect01"
+            [ngClass]="{
+              'is-invalid': (monthMessage || paymentMessage) && submitted,
+              'is-valid': !monthMessage && !paymentMessage
+            }"
+          >
+            <option [value]="0" hidden [attr.disabled]="true">- Month -</option>
+            <option
+              *ngFor="let m of monthOptions"
+              [value]="m.value"
+              class="text-capitalize"
+            >
+              {{ m.name }}
+            </option>
+          </select>
+          <div class="invalid-tooltip">
+            <span>
+              {{ monthMessage }}
+            </span>
+            <span *ngIf="!monthMessage">
+              {{ paymentMessage }}
+            </span>
+          </div>
+          <select
+            formControlName="expiringYear"
+            class="custom-select"
+            [ngClass]="{
+              'is-invalid': yearMessage && submitted,
+              'is-valid': !yearMessage
+            }"
+          >
+            <option [value]="0" hidden [attr.disabled]="true">- Year -</option>
+            <option *ngFor="let y of yearOptions" [value]="y">
+              {{ y }}
+            </option>
+          </select>
+          <div *ngIf="!monthMessage" class="invalid-tooltip">
+            <span>{{ yearMessage }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-5">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text bg-info text-white text-capitalize"
+              >CVV</span
+            >
+          </div>
+          <input
+            type="number"
+            formControlName="cvv"
+            class="form-control"
+            placeholder="CVV (required)"
+            [ngClass]="{
+              'is-invalid': cvvMessage && submitted,
+              'is-valid': !cvvMessage
+            }"
+          />
+          <div class="invalid-tooltip">
+            <span>{{ cvvMessage }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <small class="text-primary">
+      <svg
+        width="1.35em"
+        height="1.35em"
+        viewBox="0 0 16 16"
+        class="bi bi-info-circle-fill"
+        fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"
+        />
+      </svg>
+      <span> No payment information will be stored.</span>
+    </small>
+  </fieldset>
+  <hr />
+  <div class="form-row">
+    <div class="col-sm-7">
+      <input
+        type="button"
+        value="{{
+          checkOutForm.get('contactGroup').invalid && submitted ? '! ' : ''
+        }}Add Contact Details"
+        (click)="togglePanel('contact')"
+        class="btn btn-block text-capitalize mb-2"
+        *ngIf="checkOutForm.get('contactGroup').invalid"
+        [ngClass]="{
+          'btn-danger': checkOutForm.get('contactGroup').invalid && submitted,
+          'btn-primary': checkOutForm.get('contactGroup').valid || !submitted
+        }"
+      />
+      <div *ngIf="checkOutForm.get('contactGroup').valid" class="card mb-2">
+        <div class="card-body py-2">
+          <div class="text-capitalize">
+            {{ checkOutForm.get("contactGroup.firstName").value | lowercase }}
+            {{ checkOutForm.get("contactGroup.lastName").value | lowercase }}
+          </div>
+          <div>
+            {{ checkOutForm.get("contactGroup.phone").value }}
+          </div>
+          <div>
+            {{ checkOutForm.get("contactGroup.email").value | lowercase }}
+          </div>
+        </div>
+        <input
+          type="button"
+          value="Edit"
+          (click)="togglePanel('contact')"
+          class="btn btn-sm btn-warning btn-block text-capitalize"
+        />
+      </div>
+      <input
+        type="button"
+        value="{{
+          checkOutForm.get('addressGroup').invalid && submitted ? '! ' : ''
+        }}Add Shipping Address"
+        (click)="togglePanel('shipping')"
+        class="btn btn-block text-capitalize"
+        *ngIf="checkOutForm.get('addressGroup').invalid"
+        [ngClass]="{
+          'btn-danger': checkOutForm.get('addressGroup').invalid && submitted,
+          'btn-primary': checkOutForm.get('addressGroup').valid || !submitted
+        }"
+      />
+      <div *ngIf="checkOutForm.get('addressGroup').valid" class="card">
+        <div class="card-body py-2 text-capitalize">
+          <div>
+            {{ checkOutForm.get("addressGroup.street").value }}
+          </div>
+          <div>
+            {{ checkOutForm.get("addressGroup.city").value | lowercase }},
+            {{ checkOutForm.get("addressGroup.state").value | lowercase }}
+            {{ checkOutForm.get("addressGroup.zip").value }}
+          </div>
+          <div>
+            {{ checkOutForm.get("addressGroup.country").value | lowercase }}
+          </div>
+        </div>
+        <input
+          type="button"
+          value="Edit"
+          (click)="togglePanel('shipping')"
+          class="btn btn-sm btn-warning btn-block text-capitalize"
+        />
+      </div>
+      <hr class="d-sm-none" />
+    </div>
+    <div class="col-sm">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <strong>Subtotal</strong>
+        <span class="ml-2">{{ subtotal$ | async | currency }}</span>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <strong>Tax({{ tax * 100 }}%)</strong>
+        <span class="ml-2">{{ totalTax$ | async | currency }}</span>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <strong>Shipping</strong>
+        <span class="ml-2">{{ shippingPrice$ | async | currency }}</span>
+      </div>
+      <hr class="my-3" />
+      <h5
+        class="d-flex justify-content-between align-items-center text-capitalize font-weight-bold mb-0"
+      >
+        <strong>Total</strong>
+        <span class="ml-2">{{ total$ | async | currency }}</span>
+      </h5>
+    </div>
+  </div>
+  <hr />
+  <div class="custom-control custom-checkbox mb-3">
+    <input
+      type="checkbox"
+      class="custom-control-input"
+      formControlName="signUpCheck"
+      id="signUpCheck"
+      [ngClass]="{
+        'is-invalid':
+          signUpError && checkOutForm.get('signUpCheck').value && submitted
+      }"
+    />
+    <label class="custom-control-label" for="signUpCheck"
+      >Sign up for a <strong>Gaming Legend</strong> account for a faster
+      checkout on your next purchase!</label
+    >
+    <div class="invalid-tooltip">
+      {{ signUpError }}
+    </div>
+  </div>
+  <fieldset
+    *ngIf="this.checkOutForm.get('signUpCheck').value"
+    formGroupName="signUpGroup"
+  >
+    <legend class="text-primary">Sign Up</legend>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text bg-info text-white">Password</span>
+      </div>
+      <input
+        [type]="
+          checkOutForm.get('signUpGroup.showPassword').value
+            ? 'text'
+            : 'password'
+        "
+        formControlName="password"
+        class="form-control"
+        placeholder="Password (required)"
+        [ngClass]="{
+          'is-invalid': passwordMessage && submitted,
+          'is-valid': !passwordMessage
+        }"
+      />
+      <div class="invalid-tooltip">
+        {{ passwordMessage }}
+      </div>
+      <div class="btn-group-toggle input-group-append">
+        <label class="btn-secondary text-capitalize" ngbButtonLabel>
+          <input type="checkbox" ngbButton formControlName="showPassword" />
+          {{
+            this.checkOutForm.get("signUpGroup.showPassword").value
+              ? "hide"
+              : "show"
+          }}
+        </label>
+      </div>
+    </div>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text bg-info text-white">Confirm</span>
+      </div>
+      <input
+        [type]="
+          checkOutForm.get('signUpGroup.showPassword').value
+            ? 'text'
+            : 'password'
+        "
+        formControlName="confirmPassword"
+        class="form-control"
+        placeholder="Confirm (required)"
+        [ngClass]="{
+          'is-invalid': (signUpMessage || confirmPasswordMessage) && submitted,
+          'is-valid': !signUpMessage && !confirmPasswordMessage
+        }"
+      />
+      <div *ngIf="!passwordMessage" class="invalid-tooltip">
+        <span>{{ confirmPasswordMessage }}</span>
+        <span *ngIf="!confirmPasswordMessage">{{ signUpMessage }}</span>
+      </div>
+    </div>
+  </fieldset>
+  <div class="d-none d-sm-flex">
+    <input
+      type="button"
+      value="back"
+      (click)="togglePanel('shipping')"
+      class="btn btn-primary text-capitalize"
+    />
+    <input
+      type="submit"
+      [value]="
+        checkOutForm.invalid && submitted ? '! place order' : 'place order'
+      "
+      class="btn btn-block btn-success text-capitalize ml-2"
+      *ngIf="!isLoading; else loading"
+      [disabled]="checkOutForm.invalid && submitted"
+    />
+    <ng-template #loading>
+      <div class="d-flex w-100 ml-2 justify-content-center">
+        <div class="spinner-border text-info" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+  <div class="d-sm-none">
+    <input
+      type="button"
+      value="back"
+      (click)="togglePanel('shipping')"
+      class="btn btn-block btn-primary text-capitalize mb-2"
+    />
+    <input
+      type="submit"
+      [value]="
+        checkOutForm.invalid && submitted ? '! place order' : 'place order'
+      "
+      class="btn btn-block btn-success text-capitalize"
+      *ngIf="!isLoading; else loading"
+      [disabled]="checkOutForm.invalid && submitted"
+    />
+    <ng-template #loading>
+      <div class="d-flex w-100 ml-2 justify-content-center">
+        <div class="spinner-border text-info" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+  <ngb-alert
+    [dismissible]="true"
+    *ngIf="errorMessage"
+    class="text-center mt-3 mb-0"
+    type="danger"
+  >
+    <span>{{ errorMessage }}</span>
+  </ngb-alert>
+</form>

@@ -1,0 +1,60 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { catchError, delay, retry } from 'rxjs/operators';
+import { IShippingRate } from '../types/shipping-rate';
+import { Observable } from 'rxjs';
+import { ErrorService } from './error.service';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ShippingRateService {
+  private readonly baseUrl: string = 'http://localhost:3000';
+
+  readonly shippingDeadline: number = 23;
+
+  constructor(
+    private readonly http: HttpClient,
+    private readonly errorService: ErrorService
+  ) {}
+
+  shippingRates$ = this.http
+    .get<IShippingRate[]>(`${this.baseUrl}/shipping`)
+    .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
+
+  getShippingRate(id: number): Observable<IShippingRate> {
+    return this.http
+      .get<IShippingRate>(`${this.baseUrl}/shipping/${+id}`)
+      .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
+  }
+
+  getDeliveryDate(totalDays: number): Date {
+    const today = new Date();
+    const sunday = 0;
+    const saturday = 6;
+
+    if (
+      today.getUTCHours() >= this.shippingDeadline &&
+      today.getDay() !== sunday &&
+      today.getDay() !== saturday
+    ) {
+      /* If today.getUTCHours() is geater than or equal to 23 & if it's NOT
+      weekend day we increase the totalDays by 1 */
+      totalDays++;
+    }
+
+    let deliveryDate = today;
+
+    for (let days = 1; days <= totalDays; days++) {
+      deliveryDate = new Date(today.getTime() + days * 24 * 60 * 60 * 1000);
+      if (
+        deliveryDate.getDay() === sunday ||
+        deliveryDate.getDay() === saturday
+      ) {
+        /* If it's a weekend day we increase the totalDays by 1 */
+        totalDays++;
+      }
+    }
+    return deliveryDate;
+  }
+}

@@ -1,0 +1,77 @@
+<main class="container-xl pt-3">
+  <div class="mb-2">
+    <input
+      type="button"
+      value="home"
+      class="btn btn-info text-capitalize d-none d-sm-block"
+      routerLink="/"
+    />
+    <input
+      type="button"
+      value="home"
+      class="btn btn-lg btn-block btn-info text-capitalize d-sm-none"
+      routerLink="/"
+    />
+  </div>
+  <ng-container *ngIf="productTypes && productTypes.length; else noTypes">
+    <div *ngFor="let t of productTypes; index as i">
+      <div class="row mb-3">
+        <div class="col-lg">
+          <hr />
+        </div>
+        <div class="col-lg">
+          <h1 class="font-weight-bold text-center text-capitalize">
+            {{ t.title }}
+          </h1>
+        </div>
+        <div class="col-lg">
+          <hr class="d-none d-sm-block" />
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div
+          class="col-md-6 d-flex justify-content-center align-items-center"
+          [ngClass]="{ 'order-md-12': i % 2 }"
+        >
+          <img
+            src="{{ t.imageUrl }}"
+            alt="Gaming Desktops"
+            class="img-fluid my-3 shadow"
+            [routerLink]="[t.title]"
+            (click)="scrollToTop()"
+          />
+        </div>
+        <div
+          class="col-md-6 d-flex flex-column justify-content-center align-items-center"
+        >
+          <p>
+            {{ t.body }}
+          </p>
+          <button
+            type="button"
+            [routerLink]="[t.title]"
+            (click)="scrollToTop()"
+            class="btn btn-block btn-info"
+          >
+            Learn more
+          </button>
+          <button
+            type="button"
+            (click)="scrollToTop()"
+            class="btn btn-sm btn-block btn-outline-secondary"
+          >
+            Back to top
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #noTypes>
+    <h1 class="text-center text-capitalize text-danger mb-3">
+      {{ pageTitle }}
+    </h1>
+    <ngb-alert [dismissible]="false" type="danger" class="text-center">
+      <span>{{ errorMessage }}</span>
+    </ngb-alert>
+  </ng-template>
+</main>

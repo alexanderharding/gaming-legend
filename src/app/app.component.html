@@ -1,0 +1,10 @@
+<main>
+  <ctacu-navbar [pageTitle]="pageTitle"></ctacu-navbar>
+  <div *ngIf="loading" class="spinner-border text-primary" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div [@slideInAnimation]="o.isActivated ? o.activatedRoute : ''">
+    <router-outlet #o="outlet"></router-outlet>
+  </div>
+  <ctacu-footer [pageTitle]="pageTitle"></ctacu-footer>
+</main>

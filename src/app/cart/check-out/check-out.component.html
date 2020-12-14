@@ -1,0 +1,369 @@
+<main class="container-xl py-3">
+  <div class="mb-3">
+    <input
+      type="button"
+      value="cancel"
+      class="btn btn-danger text-capitalize d-none d-sm-block"
+      routerLink="/cart"
+    />
+    <input
+      type="button"
+      value="cancel"
+      class="btn btn-block btn-danger text-capitalize d-sm-none"
+      routerLink="/cart"
+    />
+  </div>
+  <ng-container *ngIf="shippingRates && items$ | async as items; else error">
+    <div class="row">
+      <div class="col-md order-md-last">
+        <h1 class="text-info text-capitalize font-weight-bold">
+          {{ pageTitle }}
+        </h1>
+        <ul class="list-group shadow-sm mb-3">
+          <li
+            *ngFor="let i of items"
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            <span class="text-capitalize">{{ i.name }}</span>
+            <div class="d-flex align-items-center">
+              <span>{{ i.price | currency }}</span>
+              <span class="badge badge-info badge-pill ml-2">{{
+                i.quantity
+              }}</span>
+            </div>
+          </li>
+        </ul>
+        <div
+          class="d-flex justify-content-between align-items-center mb-3 text-muted text-capitalize font-weight-bold"
+        >
+          <h5>
+            <span>Subtotal</span>
+          </h5>
+          <h5 class="ml-2 d-flex align-items-center">
+            <span>{{ subtotal$ | async | currency }}</span>
+            <span class="badge badge-pill badge-secondary ml-1">{{
+              cartQuantity$ | async
+            }}</span>
+          </h5>
+        </div>
+        <hr class="d-md-none" />
+      </div>
+      <div class="col-md-8">
+        <div class="shadow">
+          <ngb-accordion
+            [destroyOnHide]="false"
+            activeIds="contact"
+            #acc="ngbAccordion"
+          >
+            <ngb-panel
+              type="{{
+                this.checkOutForm.get('contactGroup').invalid && submitted
+                  ? 'danger'
+                  : 'secondary'
+              }}"
+              id="contact"
+              title="contact"
+            >
+              <ng-template ngbPanelHeader let-opened="opened">
+                <div class="py-1">
+                  <button
+                    ngbPanelToggle
+                    class="btn btn-lg btn-link p-0 text-light"
+                  >
+                    {{
+                      this.checkOutForm.get("contactGroup").invalid && submitted
+                        ? "!"
+                        : ""
+                    }}
+                    Contact Details
+                  </button>
+                </div>
+              </ng-template>
+              <ng-template ngbPanelContent>
+                <ctacu-contact-panel-content
+                  [checkOutForm]="checkOutForm"
+                  [submitted]="submitted"
+                  [nameMinLength]="nameMinLength"
+                  [nameMaxLength]="nameMaxLength"
+                  (next)="acc.toggle('shipping')"
+                ></ctacu-contact-panel-content>
+              </ng-template>
+            </ngb-panel>
+            <ngb-panel
+              type="{{
+                this.checkOutForm.get('addressGroup').invalid && submitted
+                  ? 'danger'
+                  : 'secondary'
+              }}"
+              id="shipping"
+              title="shipping"
+            >
+              <ng-template ngbPanelHeader let-opened="opened">
+                <div class="py-1">
+                  <button
+                    ngbPanelToggle
+                    class="btn btn-lg btn-link p-0 text-light"
+                  >
+                    {{
+                      this.checkOutForm.get("addressGroup").invalid && submitted
+                        ? "!"
+                        : ""
+                    }}
+                    Shipping
+                  </button>
+                </div>
+              </ng-template>
+              <ng-template ngbPanelContent>
+                <ctacu-shipping-panel-content
+                  [checkOutForm]="checkOutForm"
+                  [submitted]="submitted"
+                  [shippingRates]="shippingRates"
+                  [streetMinLength]="streetMinLength"
+                  [streetMaxLength]="streetMaxLength"
+                  [cityMinLength]="cityMinLength"
+                  [cityMaxLength]="cityMaxLength"
+                  [states]="states"
+                  (toggleChange)="acc.toggle($event)"
+                  (newSubscription)="pushSubscription($event)"
+                ></ctacu-shipping-panel-content>
+              </ng-template>
+            </ngb-panel>
+            <ngb-panel
+              type="{{
+                (this.checkOutForm.get('paymentGroup').invalid ||
+                  this.checkOutForm.get('signUpGroup').invalid) &&
+                submitted
+                  ? 'danger'
+                  : 'secondary'
+              }}"
+              id="finalize"
+              title="finalize"
+            >
+              <ng-template ngbPanelHeader let-opened="opened">
+                <div class="py-1">
+                  <button
+                    ngbPanelToggle
+                    class="btn btn-lg btn-link p-0 text-light text-capitalize"
+                  >
+                    {{
+                      (this.checkOutForm.get("paymentGroup").invalid ||
+                        this.checkOutForm.get("signUpGroup").invalid) &&
+                      submitted
+                        ? "!"
+                        : ""
+                    }}
+                    Finalize
+                  </button>
+                </div>
+              </ng-template>
+              <ng-template ngbPanelContent>
+                <ctacu-finalize-panel-content
+                  [checkOutForm]="checkOutForm"
+                  [submitted]="submitted"
+                  [errorMessage]="errorMessage"
+                  [signUpError]="signUpError"
+                  [isLoading]="isLoading"
+                  [subtotal$]="subtotal$"
+                  (toggle)="acc.toggle($event)"
+                  (check)="setPasswordValidation($event)"
+                  (onSubmit)="onSubmit($event, items)"
+                  (totalChange)="setTotal($event)"
+                >
+                </ctacu-finalize-panel-content>
+              </ng-template>
+            </ngb-panel>
+          </ngb-accordion>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #error>
+    <h1 class="text-center text-danger mb-3">{{ pageTitle }}</h1>
+    <ngb-alert class="text-center" [dismissible]="false" type="danger">
+      <span class="ml-1">{{ errorMessage }}</span>
+    </ngb-alert>
+  </ng-template>
+</main>
+<!-- <div class="container" [style.min-width.px]="500">
+  <div class="card">
+    <div class="card-body">
+      <div class="d-flex justify-content-around">
+        <div class="d-flex flex-column">
+          <div class="d-flex justify-content-center">
+            <button
+              class="btn btn-outline-danger btn-lg rounded-circle"
+              routerLink="contact-details"
+              routerLinkActive
+              #contactDetails="routerLinkActive"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              [disabled]="!contactDetails.isActive"
+            >
+              1
+            </button>
+          </div>
+          <h5 class="p-2">Contact Details</h5>
+        </div>
+        <div class="d-flex flex-column">
+          <div class="d-flex justify-content-center">
+            <button
+              class="btn btn-outline-warning btn-lg rounded-circle"
+              routerLink="address"
+              routerLinkActive
+              #address="routerLinkActive"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              [disabled]="!address.isActive"
+            >
+              2
+            </button>
+          </div>
+          <h5 class="p-2">Address</h5>
+        </div>
+        <div class="d-flex flex-column">
+          <div class="d-flex justify-content-center">
+            <button
+              class="btn btn-outline-success btn-lg rounded-circle"
+              routerLink="finalize"
+              routerLinkActive
+              #finalize="routerLinkActive"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              [disabled]="!finalize.isActive"
+            >
+              3
+            </button>
+          </div>
+          <h5 class="p-2">Finalize Order</h5>
+        </div>
+      </div>
+      <router-outlet></router-outlet>
+
+      <div class="d-flex justify-content-center" >
+        <form #checkOutForm='ngForm' [style.width.px]="350"
+            (ngSubmit)="onSubmit(checkOutForm)">
+
+          <div class="col">
+            <div class="form-group">
+              <label for="firstname">
+                First Name:
+              </label>
+              <input
+                required
+                name="firstname"
+                #firstName="ngModel"
+                type="text"
+                class="form-control"
+                ngModel>
+                <div *ngIf="checkOutForm.submitted"
+                    [hidden]="firstName.valid || firstName.untouched"
+                    class="alert alert-danger">Enter a Valid First Name</div>
+            </div>
+            <span>{{firstName}}</span>
+            <div class="form-group">
+              <label for="lastname">
+                Last Name:
+              </label>
+              <input
+                required
+                id="lastname"
+                name="lastname"
+                #lastName="ngModel"
+                type="text"
+                class="form-control"
+                ngModel>
+                <div *ngIf="checkOutForm.submitted"
+                    [hidden]="lastName.valid || lastName.untouched"
+                     class="alert alert-danger">Enter a Valid Last Name</div>
+            </div>
+            <div class="form-group">
+              <label for="streetAddress">
+                Street Address:
+              </label>
+              <input maxlength="20"
+                    minlength="5"
+                    id="streetAddress"
+                    name="streetAddress"
+                    #streetAddress="ngModel"
+                    type="text"
+                    class="form-control"
+                    ngModel>
+              <div *ngIf="checkOutForm.submitted"
+                    [hidden]="streetAddress.valid || streetAddress.untouched"
+                    class="alert alert-danger">Enter a Valid Street Address</div>
+            </div>
+            <div class="form-group">
+              <label for="state">State:</label>
+              <select class="form-control"
+                    required
+                    id="state"
+                    name="state"
+                    #state="ngModel"
+                    [style.width.px]="150"
+                    ngModel>
+                <option value=""
+                        disabled
+                        selected
+                        hidden>Select a State</option>
+                <option value="{{s}}"*ngFor="let s of states">{{s}}</option>
+              </select>
+              <div *ngIf="checkOutForm.submitted"
+                    [hidden]="state.valid || state.untouched"
+                     class="alert alert-danger">Enter a Valid Last Name</div>
+            </div>
+            <div class="form-group">
+              <label for="zip">
+                Zip Code:
+              </label>
+              <input
+                required
+                name="zip"
+                #zip="ngModel"
+                type="text"
+                class="form-control"
+                [style.width.px]="150"
+                ngModel>
+                <div *ngIf="checkOutForm.submitted"
+                    [hidden]="zip.valid || zip.untouched"
+                    class="alert alert-danger">Enter a Valid Zip Code</div>
+            </div>
+
+            <div class="form-check form-group">
+              <input required
+                    type="checkbox"
+                    name="agree"
+                    #agree="ngModel"
+                    class="form-check-input"
+                    ngModel>
+              <label for="agree">I agree</label>
+              <div *ngIf="checkOutForm.submitted"
+                    [hidden]="agree.valid || agree.untouched"
+                     class="alert alert-danger">Please check "I agree" before placing your order</div>
+            </div>
+            <button class="btn btn-success" type="submit">Purchase</button>
+            <input
+              type="button"
+              class="btn btn-secondary"
+              value="Cancel"
+              (click)='onCancel()'/>
+          </div>
+          <div *ngIf="error" [hidden]="checkOutForm.valid" class="alert alert-danger">
+            {{ errorMessage }}
+          </div>
+
+
+        </form>
+
+      </div>
+      <div>
+        {{ firstName.className }}
+      </div>
+      <h3>Dirty: {{firstName.dirty}}</h3>
+      <h3>Pristine: {{firstName.pristine}}</h3>
+      <h3>Touched: {{firstName.touched}}</h3>
+      <h3>Untouched: {{firstName.untouched}}</h3>
+      <h3>Valid: {{firstName.valid}}</h3>
+      <h3>Invalid: {{firstName.invalid}}</h3>
+    </div>
+  </div>
+</div> -->

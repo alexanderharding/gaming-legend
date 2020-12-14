@@ -1,0 +1,147 @@
+<main class="container-xl pt-3">
+  <div
+    *ngIf="loading"
+    class="spinner-border text-danger"
+    id="filterSpinner"
+    role="status"
+  >
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div class="d-md-none mb-3">
+    <input
+      type="button"
+      value="back"
+      class="btn btn-info btn-block text-capitalize mb-3"
+      (click)="onBack()"
+    />
+    <input
+      type="button"
+      value="more products"
+      class="btn btn-outline-secondary btn-block text-capitalize"
+      routerLink="/products"
+    />
+  </div>
+  <div class="justify-content-between mb-3 d-none d-md-flex">
+    <input
+      type="button"
+      value="back"
+      class="btn btn-info text-capitalize"
+      (click)="onBack()"
+      queryParamsHandling="preserve"
+    />
+    <input
+      type="button"
+      value="more products"
+      class="btn btn-outline-secondary text-capitalize"
+      routerLink="/products"
+    />
+  </div>
+  <ng-container *ngIf="product$ | async as product; else noProduct">
+    <ng-container *ngIf="items$ | async as items">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="row">
+            <div class="col-12">
+              <div class="d-flex justify-content-center">
+                <img
+                  class="img-fluid mb-3 shadow"
+                  [src]="
+                    product.imageUrls
+                      ? product.imageUrls[imageIndex]
+                      : product.imageUrl
+                  "
+                  [title]="product.name"
+                />
+              </div>
+            </div>
+          </div>
+          <div *ngIf="product.imageUrls" class="row mb-3">
+            <div *ngFor="let url of product.imageUrls" class="col">
+              <img
+                class="img-fluid img-options shadow-sm"
+                [src]="url"
+                [title]="product.name"
+                (click)="updateIndex(product.imageUrls, url)"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <h2>{{ product.brand }}: {{ product.name }}</h2>
+          <p class="text-muted mb-2 text-uppercase small">{{ product.type }}</p>
+          <div>
+            <ngb-rating
+              class="star mb-3"
+              [(rate)]="product.starRating"
+              [readonly]="true"
+              [max]="5"
+            ></ngb-rating>
+          </div>
+          <p>
+            <span class="mr-1">
+              <strong>{{ product.price | currency }}</strong>
+            </span>
+          </p>
+          <p>{{ product.description }}</p>
+          <div class="form-row mb-3">
+            <div class="col-md-6">
+              <input
+                type="button"
+                class="btn btn-block btn-success text-uppercase"
+                (click)="buyNow(product, items)"
+                value="Buy now"
+                [disabled]="loading"
+              />
+            </div>
+            <div class="col-md-6">
+              <input
+                type="button"
+                class="btn btn-block btn-outline-secondary text-uppercase mt-2 mt-md-0"
+                (click)="addToCart(product, items)"
+                value="Add to Cart"
+                [disabled]="loading"
+              />
+            </div>
+          </div>
+          <p>
+            <span class="mr-1">
+              <strong>Code: </strong
+              >{{ product.code | lowercase | convertToSpaces: "-" }}
+            </span>
+          </p>
+          <div *ngIf="product.features">
+            <hr class="my-3" />
+            <h4 class="mb-3">Features</h4>
+
+            <div *ngFor="let f of product.features">
+              <p class="mb-0">
+                <span>
+                  <strong>{{ f.title }}</strong>
+                </span>
+              </p>
+              <p>
+                <span>{{ f.body }}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+  <ng-template #noProduct>
+    <ngb-alert
+      [dismissible]="false"
+      *ngIf="error$ | async as error; else loading"
+      type="danger"
+    >
+      <span>{{ error }}</span>
+    </ngb-alert>
+    <ng-template #loading>
+      <div class="d-flex justify-content-center m-3">
+        <div class="spinner-border text-info" role="status">
+          <span class="sr-only">Loading... </span>
+        </div>
+      </div>
+    </ng-template>
+  </ng-template>
+</main>

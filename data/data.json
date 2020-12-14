@@ -1,0 +1,324 @@
+{
+  "cart": [],
+  "users": [],
+  "orders": [],
+  "shipping": [
+    {
+      "id": 1,
+      "rate": 7,
+      "price": 6.99
+    },
+    {
+      "id": 2,
+      "rate": 3,
+      "price": 14.99
+    },
+    {
+      "id": 3,
+      "rate": 1,
+      "price": 19.99
+    }
+  ],
+  "laptops": [
+    {
+      "id": 1,
+      "name": "Ideapad L340",
+      "brandId": 1,
+      "description": "With the Lenovo Idea Pad L340 gaming Laptop, you know you've made the right decision with one serious laptop. Equipped with the latest Intel Core i5 processor, next-gen NVIDIA GeForce graphics, and jaw-dropping Dolby Audio, you'll experience first-hand real power and seamless play. You'll stay focused on the task at hand, concentrating on beating Your opponents and confident that your sleek, stylish computer will keep up with the competition.",
+      "price": 855.67,
+      "imageUrl": "assets/images/ideapadL340.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Notebook 9 Pro",
+      "brandId": 2,
+      "description": "Bring flexibility to work with the powerful and versatile Samsung Notebook 9 Pro. Easily switch between typing on the keyboard, writing with the intuitive S Pen, and navigating the brilliant touchscreen. And do it all at once with an ultra-fast 8th Generation Intel Core i7 processor and a Radeon 540 graphics card. The Samsung Notebook 9 Pro keeps up with all the ways you work.",
+      "price": 1649.99,
+      "imageUrl": "assets/images/notebook9pro.jpg"
+    },
+    {
+      "id": 3,
+      "name": "Galaxy Book Ion",
+      "brandId": 2,
+      "description": "Bring flexibility to work with the powerful and versatile Samsung Notebook 9 Pro. Easily switch between typing on the keyboard, writing with the intuitive S Pen, and navigating the brilliant touchscreen. And do it all at once with an ultra-fast 8th Generation Intel Core i7 processor and a Radeon 540 graphics card. The Samsung Notebook 9 Pro keeps up with all the ways you work.",
+      "price": 1199.99,
+      "imageUrl": "assets/images/galaxybookion.jpg"
+    },
+    {
+      "id": 4,
+      "name": "Yoga C740",
+      "brandId": 1,
+      "description": "Lenovo Yoga C740 Convertible 2-in-1 Laptop: Combine power and flexibility with this 15.6-inch Lenovo Yoga convertible notebook. An Intel Core i7 processor and 12GB of RAM let you run multiple programs at once, and the 512GB of storage fits large programs and files. This Lenovo Yoga convertible notebook has a 15.6-inch Full HD touchscreen that delivers stunning images and lets you navigate using touch controls.",
+      "price": 1099.99,
+      "imageUrl": "assets/images/yogaC740.jpg"
+    },
+    {
+      "id": 5,
+      "name": "Legion 5",
+      "brandId": 1,
+      "description": "Lenovo Legion 5 15IMH05H Laptop: Game seamlessly with this 15.6-inch Lenovo Legion 5 gaming notebook. The Intel Core i7 processor and 8GB of RAM let you run modern titles smoothly, while the NVIDIA GeForce GTX 1660Ti graphics card produces crisp, clear visuals on the Full HD, anti-glare screen. This Lenovo Legion 5 gaming notebook has 512GB SSD for rapid boot times.",
+      "price": 1099.99,
+      "imageUrl": "assets/images/legion5.jpg"
+    },
+    {
+      "id": 6,
+      "name": "ThinkPad",
+      "brandId": 1,
+      "description": "Stay on top of all the details in your busy life with this refurbished Lenovo laptop computer. Loaded with Windows 10 so it's ready to go right out of the box, this laptop runs on an Intel Core i5 processor to prevent lagging and crashing. Intel HD graphics bring video to life on this Lenovo laptop computer.",
+      "price": 439.99,
+      "imageUrl": "assets/images/thinkpad.jpg"
+    },
+    {
+      "id": 7,
+      "name": "Galaxy Book Flex Alpha",
+      "brandId": 2,
+      "description": "Samsung Galaxy Book Flex a Convertible 2-in-1 Laptop: Stay productive at work with this Samsung Galaxy Book Flex laptop. The Intel UHD integrated graphics render vivid visuals on the 13.3-inch Full HD touch screen, while the 512GB SSD ensures speedy file storage and access. This Samsung Galaxy Book Flex laptop has an Intel Core i7 processor and 12GB of RAM for running multiple programs at once.",
+      "price": 999.99,
+      "imageUrl": "assets/images/galaxybookalpha.jpg"
+    },
+    {
+      "id": 8,
+      "name": "Galaxy Book S",
+      "brandId": 2,
+      "description": "Take home a lightweight that performs like a champion. This nearly weightless, 2.09 lb PC can effortlessly tackle your projects and play your favorite videos throughout the day on an incredible 17 hours* of battery life. You’ll feel the power and won’t miss the hum or the heat from this fan-less system that stays cool and quiet as it keeps up with your day. Just slip the deceivingly powerful, impossibly light Galaxy Book S (Wi-Fi) in your bag, and you’re ready to go.",
+      "price": 949.99,
+      "imageUrl": "assets/images/galaxybookS.jpg"
+    },
+    {
+      "id": 9,
+      "name": "Galaxy Book Flex",
+      "brandId": 2,
+      "description": "Samsung Galaxy Book Flex Convertible 2-in-1 Laptop: Stay productive with this 15.6-inch Samsung Galaxy Book Flex laptop. The Intel Iris Plus integrated graphics deliver detailed images on the Full HD touchscreen, while the 512GB SSD offers ample storage space for files and quick data access. This Samsung Galaxy Book Flex laptop has an Intel Core i7 processor and 12GB of RAM for smooth multitasking.",
+      "price": 1399.99,
+      "imageUrl": "assets/images/galaxybookflex.jpg"
+    },
+    {
+      "id": 10,
+      "name": "G5",
+      "brandId": 3,
+      "description": "Dell G5 15 Gaming Laptop: With Next Generation AMD Ryzen 7 4800H Mobile Processor with Radeon Graphics, you can revel in powerful performance without interrupting your gaming, streaming or videos. AMD Radeon RX 5600M graphics allow you to game at higher settings with crystal-clear detail and smooth gameplay.",
+      "price": 949.99,
+      "imageUrl": "assets/images/g5.jpg"
+    },
+    {
+      "id": 11,
+      "name": "Inspiron 15 7000",
+      "brandId": 3,
+      "description": "Dell Inspiron Convertible 2-in-1 Laptop: Finish work quickly with this 15.6-inch FHD Dell Inspiron two-in-one touch laptop. The Intel Core i5 processor and 8GB of RAM let you run multiple applications simultaneously, while the Windows 10 OS allows for connectivity with multiple devices. This Dell Inspiron two-in-one touch laptop has lithium-ion batteries for extended use on a full charge. Equipped with 512GB Solid State Drive + 32GB Intel Optane for plenty of storage and accelerated boot up times.",
+      "price": 849.99,
+      "imageUrl": "assets/images/inspiron15.jpg"
+    },
+    {
+      "id": 12,
+      "name": "Inspiron 14 7000",
+      "brandId": 3,
+      "description": "Dell Inspiron Convertible 2-in-1 Laptop: Complete work assignments on time with this Dell Inspiron laptop. The AMD Ryzen 5 4500U processor and 8GB of RAM handle multiple applications simultaneously for seamless multitasking, while the 256GB M.2 SSD offers ample storage and ensures quick boot times. This Dell Inspiron laptop boasts AMD Radeon integrated graphics and a 14-inch FHD display for crisp visuals. A unique Sandstorm color for this 2-in-1 provides aneutral and elegant expression that shows off hints of gold glints on reflective surfaces.",
+      "price": 699.99,
+      "imageUrl": "assets/images/inspiron14.jpg"
+    },
+    {
+      "id": 13,
+      "name": "G7",
+      "brandId": 3,
+      "description": "Dominate in style with the Dell G7 17-inch gaming laptop with thin, sleek design, 10th Gen Intel Core processor, NVIDIA discrete graphics (Max-P design), Game Shift technology and 4-zone RGB keyboard.",
+      "price": 1699.99,
+      "imageUrl": "assets/images/g7.jpg"
+    },
+    {
+      "id": 14,
+      "name": "Surface Laptop",
+      "brandId": 4,
+      "description": "Make a powerful statement, and fuel your ideas with new Surface Laptop 3. Sleek and light, with improved speed, performance, typing comfort, and battery life, it travels with ease and makes every day more productive. Now with improved speed and performance to do what you want, Surface Laptop 3 13.5 is two times faster than Surface Laptop 2. And whether you're creating, catching up, or chilling out, Surface Laptop 3 is ready when you are. Listen to the improved Omnisonic Speakers, now louder with a more natural sound, discreetly hidden below the keyboard. Open effortlessly, and feel the rich, warm Alcantara® or cool, new metal.",
+      "price": 999.99,
+      "imageUrl": "assets/images/surfacelaptop.jpg"
+    },
+    {
+      "id": 15,
+      "name": "Surface Book 3",
+      "brandId": 4,
+      "description": "Performance meets versatility. From intensive video and graphics files to high-octane gaming, the most powerful Surface laptop yet combines speed, graphics, and long battery life with the versatility of a laptop, tablet, and portable studio. Tackle your biggest demands with quadcore powered 10th Gen Intel® Core™ processors, blazing NVIDIA® graphics, and high-resolution PixelSense™ Display designed for Surface Pen* and touch.",
+      "price": 2099.99,
+      "imageUrl": "assets/images/surfacebook3.jpg"
+    },
+    {
+      "id": 16,
+      "name": "Surface Laptop 3",
+      "brandId": 4,
+      "description": "Make a powerful statement, and fuel your ideas with new Surface Laptop 3. Sleek and light, with improved speed, performance, typing comfort, and battery life, it travels with ease and makes every day more productive. And whether you're creating, catching up, or chilling out, Surface Laptop 3 is ready when you are with the new custom Ryzen™ 5 Microsoft Surface® edition processor. Now two times faster than Surface Laptop 2, Surface Laptop 3 has more power, Fast Charging, greater multitasking performance, all-day battery¹, and Instant On. Bring your vision to life on the vibrant PixelSense™ display. Listen to the improved Omnisonic Speakers, now louder with a more natural sound, discreetly hidden below the keyboard.",
+      "price": 1399.99,
+      "imageUrl": "assets/images/surfacelaptop3.jpg"
+    },
+    {
+      "id": 17,
+      "name": "Surface Book 2",
+      "brandId": 4,
+      "description": "Get creative with this Microsoft Surface Book 2 laptop. It has an Intel i7 processor for speedy data transfer and 8GB of RAM to smoothly handle multiple applications. The 256GB solid-state drive inside this Microsoft Surface Book 2 laptop stores documents, music and photos, while the 13.5-inch PixelSense display has touch capability for versatile use.",
+      "price": 1999,
+      "imageUrl": "assets/images/surfacebook2.jpg"
+    },
+    {
+      "id": 18,
+      "name": "IdeaPad Flex 5",
+      "brandId": 1,
+      "description": "Lenovo IdeaPad Flex 5 14IIL05 Convertible 2-in-1 Laptop: Complete your assignments with this Lenovo IdeaPad Flex 5 two-in-one laptop. The 14-inch Full HD touchscreen produces high-quality visuals and supports intuitive control, while the 128GB SSD delivers rapid start-ups. This Lenovo IdeaPad Flex 5 two-in-one laptop has an Intel Core i3 processor and 4GB of RAM for smooth multitasking.",
+      "price": 529.99,
+      "imageUrl": "assets/images/ideapadflex5.jpg"
+    },
+    {
+      "id": 19,
+      "name": "IdeaPad 3",
+      "brandId": 1,
+      "description": "With the Lenovo IdeaPad 3 14-inch laptop, you'll enjoy powerful performance for all types of everyday tasks. Whether you're working from your home office, a student who needs a lightweight laptop for school, or just need a great entry-level Windows computer for entertainment, video chats, and other day-to-day uses, this practical notebook is engineered for long-lasting performance. Powered by the new Ryzen™ 5 3500U Mobile Processors with Radeon™ Graphics, you'll get multi-core processing power to help you get more things done faster.",
+      "price": 449.99,
+      "imageUrl": "assets/images/ideapad3.jpg"
+    }
+  ],
+  "laptopsBrands": [
+    {
+      "id": 1,
+      "name": "Lenovo"
+    },
+    {
+      "id": 2,
+      "name": "Samsung"
+    },
+    {
+      "id": 3,
+      "name": "Dell"
+    },
+    {
+      "id": 4,
+      "name": "Microsoft"
+    }
+  ],
+  "desktops": [
+    {
+      "id": 31,
+      "name": "Element",
+      "brandId": 1,
+      "description": "Prepare for battle with this iBUYPOWER Element gaming desktop. Featuring an NVIDIA GeForce GTX 1660 graphics card and a six-core Intel Core i7 processor, this PC smoothly runs resource-intensive titles at high settings. This iBUYPOWER Element gaming desktop starts up and loads games in seconds thanks to its 240GB solid-state drive.",
+      "price": 949.99,
+      "imageUrl": "assets/images/element.jpg",
+      "imageUrls": [
+        "assets/images/element.jpg",
+        "assets/images/element(1).jpg",
+        "assets/images/element(2).jpg"
+      ],
+      "features": [
+        {
+          "title": "Windows 10 operating system",
+          "body": "Windows 10 brings back the Start Menu from Windows 7 and introduces new features, like the Edge Web browser that lets you markup Web pages on your screen."
+        },
+        {
+          "title": "9th Gen Intel® Core™ i7-9700F processor",
+          "body": "Powerful six-core, twelve-way processing performance."
+        },
+        {
+          "title": "16GB system memory for intense multitasking and gaming",
+          "body": "Reams of high-bandwidth DDR4 RAM to smoothly run your graphics-heavy PC games and video-editing applications, as well as numerous programs and browser tabs all at once."
+        },
+        {
+          "title": "2TB hard drive and 240GB solid state drive (SSD) for a blend of storage space and speed",
+          "body": "The hard drive provides ample storage, while the SSD delivers faster start-up times and data access."
+        },
+        {
+          "title": "NVIDIA GeForce GTX 1660 graphics",
+          "body": "Driven by 3GB GDDR5 dedicated video memory to quickly render high-quality images for videos and games."
+        },
+        {
+          "title": "4 USB 3.0 ports maximize the latest high-speed devices",
+          "body": "Also includes 2 USB 2.0 ports to connect more accessories and peripherals. The USB 3.0 ports are backward-compatible with USB 2.0 devices (at 2.0 speeds)."
+        },
+        {
+          "title": "Next-generation wireless connectivity",
+          "body": "Connects to your network or hotspots on all current Wi-Fi standards. Connect to a Wireless-AC router for speed nearly 3x faster than Wireless-N. Gigabit LAN port also plugs into wired networks."
+        }
+      ],
+      "type": "desktops"
+    },
+    {
+      "id": 32,
+      "name": "Snowblind",
+      "brandId": 1,
+      "description": "iBUYPOWER Snowblind Desktop: Step up your gaming performance with this iBUYPOWER Snowblind desktop computer. An Intel Core i9 processor and 16GB of RAM let you play high-end titles, while the NVIDIA RTX 2080 SUPER graphics card delivers crisp, high-resolution graphics. This iBUYPOWER Snowblind desktop computer has a 1TB HDD and a 480GB SSD for ample file storage and fast data access.",
+      "price": 1999.99,
+      "imageUrl": "assets/images/snowblind.jpg",
+      "imageUrls": [
+        "assets/images/snowblind.jpg",
+        "assets/images/snowblind(1).jpg",
+        "assets/images/snowblind(2).jpg"
+      ],
+      "features": [
+        {
+          "title": "Windows 10 operating system",
+          "body": "Windows 10 brings back the Start Menu from Windows 7 and introduces new features, like the Edge Web browser that lets you markup Web pages on your screen."
+        },
+        {
+          "title": "9th Gen Intel® Core™ i9-9900KF processor",
+          "body": "Powerful eight-core, sixteen-way processing performance."
+        },
+        {
+          "title": "16GB system memory for intense multitasking and gaming",
+          "body": "Reams of high-bandwidth DDR4 RAM to smoothly run your graphics-heavy PC games and video-editing applications, as well as numerous programs and browser tabs all at once."
+        },
+        {
+          "title": "1TB hard drive and 480GB solid state drive (SSD) for a blend of storage space and speed",
+          "body": "The hard drive provides ample storage, while the SSD delivers faster start-up times and data access."
+        },
+        {
+          "title": "NVIDIA GeForce RTX 2080 SUPER graphics",
+          "body": "Driven by 8GB dedicated video memory to quickly render high-quality images for videos and games."
+        },
+        {
+          "title": "4 USB 3.0 ports maximize the latest high-speed devices",
+          "body": "Also includes 4 USB 2.0 ports to connect more accessories and peripherals. The USB 3.0 ports are backward-compatible with USB 2.0 devices (at 2.0 speeds)."
+        },
+        {
+          "title": "Next-generation wireless connectivity",
+          "body": "Connects to your network or hotspots on all current Wi-Fi standards. Connect to a Wireless-AC router for speed nearly 3x faster than Wireless-N. Gigabit LAN port also plugs into wired networks."
+        }
+      ],
+      "type": "desktops"
+    }
+  ],
+  "desktopsBrands": [
+    {
+      "id": 1,
+      "name": "iBUYPOWER"
+    }
+  ],
+  "types": [
+    {
+      "title": "desktops",
+      "body": "Desktop PCs are the preferred computers of PC gamers, since they are easily upgradable and have room to pack some serious power. While gaming desktops can easily do all the things standard home computers can do — let you browse the internet, organize and edit photos, access social networks and more — they are far more powerful in also handling blockbuster games, streaming channels and content creation, which are resource-intensive by nature.",
+      "imageUrl": "assets/images/gaming-desktops.jpg"
+    },
+    {
+      "title": "laptops",
+      "body": "If you want to take your gaming on the go, or need a machine that can work for both mobile productivity and games, then a gaming laptop is the ideal option.",
+      "imageUrl": "assets/images/gaming-laptops.jpg"
+    }
+  ],
+  "unused-types": [
+    {
+      "title": "monitors",
+      "body": "A monitor is your personal window into the game worlds you enjoy, so it plays a central role in your gaming experience.",
+      "imageUrl": "assets/images/gaming-monitors.jpg"
+    },
+    {
+      "title": "headsets",
+      "body": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae asperiores, minus tempora vel assumenda pariatur veritatis dignissimos illo at, fugit sunt, qui impedit corporis facere inventore blanditiis eos laborum ratione.",
+      "imageUrl": "assets/images/gaming-headsets.jpg"
+    },
+    {
+      "title": "keyboards",
+      "body": "If you plan on doing a lot of serious gaming, you should demand a bit more from your keyboard than a standard user would.",
+      "imageUrl": "assets/images/gaming-keyboards.jpg"
+    },
+    {
+      "title": "mice",
+      "body": "Your mouse is one of the key ways you interact with your video games, so gaming mice come with a wide range of features that aren’t usually found on standard mice, and you may think of others differently for gaming.",
+      "imageUrl": "assets/images/gaming-mice.jpg"
+    }
+  ]
+}

@@ -1,0 +1,200 @@
+<!-- <ngb-carousel
+  #carousel
+  [interval]="2000"
+  [pauseOnHover]="pauseOnHover"
+  (slide)="onSlide($event)"
+>
+  <ng-template ngbSlide *ngFor="let img of images; index as i">
+    <div class="carousel-caption">
+      <h3>My slide {{ i + 1 }} title</h3>
+    </div>
+    <div class="picsum-img-wrapper">
+      <img [src]="img" class="w-100" alt="My image {{ i + 1 }} description" />
+    </div>
+  </ng-template>
+</ngb-carousel>
+
+<hr />
+
+<div class="form-check">
+  <input
+    type="checkbox"
+    class="form-check-input"
+    id="pauseOnHover"
+    [(ngModel)]="pauseOnHover"
+  />
+  <label class="form-check-label" for="pauseOnHover">Pause on hover</label>
+</div>
+<div class="form-check">
+  <input
+    type="checkbox"
+    class="form-check-input"
+    id="pauseOnFocus"
+    [(ngModel)]="pauseOnFocus"
+  />
+  <label class="form-check-label" for="pauseOnFocus">Pause on focus</label>
+</div>
+<div class="form-check">
+  <input
+    type="checkbox"
+    class="form-check-input"
+    id="unpauseOnArrow"
+    [(ngModel)]="unpauseOnArrow"
+  />
+  <label class="form-check-label" for="unpauseOnArrow"
+    >Unpause when clicking on arrows</label
+  >
+</div>
+<div class="form-check">
+  <input
+    type="checkbox"
+    class="form-check-input"
+    id="pauseOnIndicator"
+    [(ngModel)]="pauseOnIndicator"
+  />
+  <label class="form-check-label" for="pauseOnIndicator"
+    >Pause when clicking on navigation indicator</label
+  >
+</div>
+<button
+  type="button"
+  (click)="togglePaused()"
+  class="btn btn-outline-dark btn-sm"
+>
+  {{ paused ? "Cycle" : "Pause" }}
+</button> -->
+<!-- <header class="py-5 bg-image-full bg-secondary">
+  <img
+    class="img-fluid d-block mx-auto"
+    src="../../assets/images/android-chrome-192x192.png"
+    alt="Welcome"
+  />
+  <div [style.height.px]="200"></div>
+</header>
+<section class="py-5">
+  <div class="container-xl">
+    <h1>Section heading</h1>
+    <p class="lead">
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem, sunt!
+    </p>
+    <p>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati
+      consectetur possimus animi eligendi cumque in explicabo illo amet eveniet
+      cum.
+    </p>
+  </div>
+</section>
+<div class="py-5 bg-image-full bg-secondary">
+  <img
+    class="img-fluid d-block mx-auto"
+    src="../../assets/images/android-chrome-192x192.png"
+    alt="Welcome"
+  />
+  <div [style.height.px]="200"></div>
+</div>
+<section class="py-5">
+  <div class="container-xl">
+    <h1>Section heading</h1>
+    <p class="lead">
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem, sunt!
+    </p>
+    <p>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati
+      consectetur possimus animi eligendi cumque in explicabo illo amet eveniet
+      cum.
+    </p>
+  </div>
+</section> -->
+<!-- <ctacu-footer></ctacu-footer> -->
+
+<!-- <div>
+  <h2>Welcome to LAPTOP LEGEND!</h2>
+  <h4>
+    #1 Laptop retailer in the <u><i>U.S.A.</i></u>
+  </h4>
+  <img
+    src="../../assets/images/home-other.jpg"
+    alt="Home-Background1"
+    [routerLink]="['/products']"
+  />
+  <div id="jumbotron" class="jumbotron" [routerLink]="['/products']">
+    <h1 class="display-4">Welcome to GAMING LEGEND!</h1>
+    <p class="lead">
+      This is a simple hero unit, a simple jumbotron-style component for calling
+      extra attention to featured content or information.
+    </p>
+    <hr class="my-4" />
+    <p>
+      It uses utility classes for typography and spacing to space content out
+      within the larger container.
+    </p>
+    <p class="lead">
+      <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+    </p>
+  </div>
+</div> -->
+<!-- <header class="bg-secondary p-2">
+  <h1 class="text-center text-white text-capitalize">{{ pageTitle }}</h1>
+</header>
+<main>
+  <div id="coverImage" [style.height.px]="500" class="bg-dark"></div>
+</main> -->
+<!-- <img class="img-fluid" src="../../assets/images/welcome-vegeance.jpg" alt="" /> -->
+<main class="container-fluid pt-3">
+  <!-- <div class="jumbotron bg-secondary">
+    <h1 class="display-4 text-light">{{ pageTitle }}</h1>
+    <hr class="my-4 border border-white" />
+    <p class="lead text-light pb-3">
+      A top-of-the-line PC will outpace many gaming consoles when it comes to
+      sheer computing power, but many low- to mid-tier computers also provide
+      great gaming experiences. PC gaming is largely about customization, giving
+      you a vast array of hardware and accessories to choose from. No matter how
+      you want to game, Gaming Legend has the perfect hardware for you.
+    </p>
+    <input
+      type="button"
+      value="view products"
+      class="btn btn-lg btn-block btn-info text-capitalize"
+      routerLink="/products"
+    />
+  </div> -->
+
+  <div id="container" class="mb-3">
+    <img
+      class="img-fluid d-block mx-auto"
+      src="../../assets/images/products-background.jpg"
+      alt="Welcome"
+    />
+    <div id="center" class="d-none d-lg-block">
+      <p class="lead font-weight-bold text-white">
+        A top-of-the-line PC will outpace many gaming consoles when it comes to
+        sheer computing power, but many low- to mid-tier computers also provide
+        great gaming experiences. PC gaming is largely about customization,
+        giving you a vast array of hardware and accessories to choose from. No
+        matter how you want to game, Gaming Legend has the perfect hardware for
+        you.
+      </p>
+      <input
+        class="btn btn-block btn-light text-capitalize"
+        type="button"
+        value="gaming products"
+        routerLink="/products"
+      />
+    </div>
+  </div>
+  <div class="d-lg-none">
+    <p class="font-weight-bold text-center">
+      A top-of-the-line PC will outpace many gaming consoles when it comes to
+      sheer computing power, but many low- to mid-tier computers also provide
+      great gaming experiences. PC gaming is largely about customization, giving
+      you a vast array of hardware and accessories to choose from. No matter how
+      you want to game, Gaming Legend has the perfect hardware for you.
+    </p>
+    <input
+      class="btn btn-lg btn-block btn-info text-capitalize"
+      type="button"
+      value="gaming products"
+      routerLink="/products"
+    />
+  </div>
+</main>
