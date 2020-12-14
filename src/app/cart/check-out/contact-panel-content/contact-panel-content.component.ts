@@ -57,6 +57,7 @@ export class ContactPanelContent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subToControls();
     this.setNameValidationMessages();
+    this.populateTestData();
   }
 
   onNext(): void {
@@ -178,6 +179,18 @@ export class ContactPanelContent implements OnInit, OnDestroy {
         console.error(`${name} did not match any names.`);
         break;
     }
+  }
+
+  private populateTestData(): void {
+    this.checkOutForm.patchValue({
+      contactGroup: {
+        firstName: 'John',
+        lastName: 'Doe',
+        phone: '1234567891',
+        email: 'johndoe@fake.com',
+        confirmEmail: 'johndoe@fake.com',
+      },
+    });
   }
 
   ngOnDestroy(): void {

@@ -35,8 +35,6 @@ export class ShippingPanelContentComponent implements OnInit {
   @Output() toggleChange = new EventEmitter<string>();
   @Output() newSubscription = new EventEmitter<Subscription>();
 
-  // private readonly subscriptions: Subscription[] = [];
-
   private streetValidationMessages;
   streetMessage: string;
 
@@ -78,12 +76,12 @@ export class ShippingPanelContentComponent implements OnInit {
     this.cityMessage = this.cityValidationMessages['required'];
 
     this.subscribeToControls();
-
     if (this.shippingRates) {
       this.checkOutForm.patchValue({
         shippingRate: +this.shippingRates[0].price,
       });
     }
+    this.populateTestData();
   }
 
   togglePanel(panelTitle: string): void {
@@ -171,5 +169,16 @@ export class ShippingPanelContentComponent implements OnInit {
       ({ price }) => price === +selectedPrice
     ).rate;
     this.deliveryDate = this.shippingRateService.getDeliveryDate(totalDays);
+  }
+
+  private populateTestData(): void {
+    this.checkOutForm.patchValue({
+      addressGroup: {
+        street: '1234 S Fake Ln',
+        city: 'Las Vegas',
+        state: 'Nevada',
+        // zip: '12347',
+      },
+    });
   }
 }

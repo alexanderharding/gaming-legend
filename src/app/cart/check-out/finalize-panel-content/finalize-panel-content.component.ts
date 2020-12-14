@@ -91,6 +91,7 @@ export class FinalizePanelContentComponent implements OnInit {
 
   ngOnInit(): void {
     this.subToControls();
+    this.populateTestData();
   }
 
   emitSubmission(): void {
@@ -236,6 +237,21 @@ export class FinalizePanelContentComponent implements OnInit {
         console.error(`${name} did not match any names.`);
         break;
     }
+  }
+
+  private populateTestData(): void {
+    this.checkOutForm.patchValue({
+      paymentGroup: {
+        cardNumber: 4123147523147547,
+        cvv: 123,
+        expiringMonth: 7,
+        expiringYear: 2021,
+      },
+      signUpGroup: {
+        password: 'PasswordTest1234',
+        confirmPassword: 'PasswordTest1234',
+      },
+    });
   }
 
   ngOnDestroy(): void {
