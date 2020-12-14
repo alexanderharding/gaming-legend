@@ -20,7 +20,7 @@ export class ContactPanelContent implements OnInit {
   @Input() nameMinLength: number;
   @Input() nameMaxLength: number;
 
-  @Output() next = new EventEmitter();
+  @Output() toggleChange = new EventEmitter<string>();
   @Output() newSubscription = new EventEmitter<Subscription>();
 
   private firstNameValidationMessages: Object;
@@ -59,8 +59,8 @@ export class ContactPanelContent implements OnInit {
     this.populateTestData();
   }
 
-  onNext(): void {
-    this.next.emit();
+  togglePanel(panelTitle: string): void {
+    this.toggleChange.emit(panelTitle);
   }
 
   private subToControls(): void {

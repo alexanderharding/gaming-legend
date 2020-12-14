@@ -35,7 +35,7 @@ export class FinalizePanelContentComponent implements OnInit {
   @Input() signUpError: number;
 
   @Output() onSubmit = new EventEmitter<FormGroup>();
-  @Output() toggle = new EventEmitter<string>();
+  @Output() toggleChange = new EventEmitter<string>();
   @Output() check = new EventEmitter<boolean>();
   @Output() totalChange = new EventEmitter<number>();
   @Output() newSubscription = new EventEmitter<Subscription>();
@@ -98,7 +98,7 @@ export class FinalizePanelContentComponent implements OnInit {
   }
 
   togglePanel(panelTitle: string): void {
-    this.toggle.emit(panelTitle);
+    this.toggleChange.emit(panelTitle);
   }
 
   private subscribeToControls(): void {

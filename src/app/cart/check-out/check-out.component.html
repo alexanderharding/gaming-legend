@@ -85,7 +85,7 @@
                   [submitted]="submitted"
                   [nameMinLength]="nameMinLength"
                   [nameMaxLength]="nameMaxLength"
-                  (next)="acc.toggle('shipping')"
+                  (toggleChange)="acc.toggle($event)"
                   (newSubscription)="pushSubscription($event)"
                 ></ctacu-contact-panel-content>
               </ng-template>
@@ -165,7 +165,7 @@
                   [signUpError]="signUpError"
                   [isLoading]="isLoading"
                   [subtotal$]="subtotal$"
-                  (toggle)="acc.toggle($event)"
+                  (toggleChange)="acc.toggle($event)"
                   (check)="setPasswordValidation($event)"
                   (onSubmit)="onSubmit($event, items)"
                   (totalChange)="setTotal($event)"
