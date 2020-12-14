@@ -15,6 +15,8 @@ export class FinalizePanelContentComponent implements OnInit {
   readonly monthOptions = this.checkOutService.monthOptions;
   readonly yearOptions = this.checkOutService.getYearOptions();
 
+  // comment
+
   /* Get data from CartService */
   tax = this.cartService.tax;
   totalTax$ = this.cartService.totalTax$;
