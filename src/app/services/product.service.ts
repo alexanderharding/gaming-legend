@@ -28,8 +28,8 @@ export class ProductService {
           (product) =>
             ({
               ...product,
-              code: `${productType.charAt(0).toUpperCase()}DN-${product.id}`,
-              starRating: Math.ceil(Math.random() * 5),
+              code: this.getCode(product, productType),
+              starRating: this.getStarRating(),
               type: productType,
             } as IProduct)
         )
@@ -39,45 +39,7 @@ export class ProductService {
       catchError(this.errorService.handleError)
     );
   }
-  // getProductsWithBrand(type: string): Observable<IProduct[]> {
-  //   return combineLatest([
-  //     this.getProducts(type),
-  //     this.productBrandService.getBrands(type),
-  //   ]).pipe(
-  //     delay(1000),
-  //     map(([products, brands]) =>
-  //       products.map(
-  //         (product) =>
-  //           ({
-  //             ...product,
-  //             brand: brands.find((b) => product.brandId === b.id).name,
-  //           } as IProduct)
-  //       )
-  //     ),
-  //     shareReplay(1)
-  //   );
-  // }
 
-  private getProduct(type: string, id: number): Observable<IProduct> {
-    const productType = type.toLowerCase().trim();
-    return this.http
-      .get<IProduct>(`${this.baseUrl}/${productType}/${+id}`)
-      .pipe(
-        delay(1000),
-        map(
-          (product) =>
-            ({
-              ...product,
-              code: `${productType.charAt(0).toUpperCase()}DN-${product.id}`,
-              starRating: Math.ceil(Math.random() * 5),
-              type: productType,
-            } as IProduct)
-        ),
-        retry(3),
-        shareReplay(1),
-        catchError(this.errorService.handleError)
-      );
-  }
   getProductWithBrand(type: string, id: number): Observable<IProduct> {
     return combineLatest([
       this.getProduct(type, id),
@@ -92,5 +54,34 @@ export class ProductService {
       ),
       shareReplay(1)
     );
+  }
+
+  private getProduct(type: string, id: number): Observable<IProduct> {
+    const productType = type.toLowerCase().trim();
+    return this.http
+      .get<IProduct>(`${this.baseUrl}/${productType}/${+id}`)
+      .pipe(
+        delay(1000),
+        map(
+          (product) =>
+            ({
+              ...product,
+              code: this.getCode(product, productType),
+              starRating: this.getStarRating(),
+              type: productType,
+            } as IProduct)
+        ),
+        retry(3),
+        shareReplay(1),
+        catchError(this.errorService.handleError)
+      );
+  }
+
+  private getStarRating(): number {
+    return Math.ceil(Math.random() * 5);
+  }
+
+  private getCode(product: IProduct, type: string): string {
+    return `${type.charAt(0).toUpperCase()}DN-${product.id}`;
   }
 }
