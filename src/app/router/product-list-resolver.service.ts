@@ -19,16 +19,6 @@ export class ProductListResolverService implements Resolve<ProductListResult> {
 
   resolve(route: ActivatedRouteSnapshot): Observable<ProductListResult> {
     const type = route.paramMap.get('type');
-    // return this.productService.getProductsWithBrand(type).pipe(
-    //   map((products) => ({ products } as ProductListResult)),
-    //   catchError((error) =>
-    //     of({
-    //       products: null,
-    //       error: `Retrieval error:
-    //       ${this.errorMessageService.getErrorMessage(error)}.`,
-    //     } as ProductListResult)
-    //   )
-    // );
 
     return combineLatest([
       this.productService.getProducts(type),
