@@ -38,8 +38,7 @@ export class FinalizePanelContentComponent implements OnInit {
   @Output() toggle = new EventEmitter<string>();
   @Output() check = new EventEmitter<boolean>();
   @Output() totalChange = new EventEmitter<number>();
-
-  private subscriptions: Subscription[] = [];
+  @Output() newSubscription = new EventEmitter<Subscription>();
 
   private readonly cardNumberValidationMessages = {
     required: 'Please enter your card number.',
@@ -90,7 +89,7 @@ export class FinalizePanelContentComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.subToControls();
+    this.subscribeToControls();
     this.populateTestData();
   }
 
@@ -102,15 +101,15 @@ export class FinalizePanelContentComponent implements OnInit {
     this.toggle.emit(panelTitle);
   }
 
-  private subToControls(): void {
+  private subscribeToControls(): void {
     const cardNumberControl = this.checkOutForm.get('paymentGroup.cardNumber');
-    this.subscriptions.push(
+    this.newSubscription.emit(
       cardNumberControl.valueChanges
         .pipe(debounceTime(1000))
         .subscribe(() => this.setMessage(cardNumberControl, 'cardNumber'))
     );
     const paymentGroupControl = this.checkOutForm.get('paymentGroup');
-    this.subscriptions.push(
+    this.newSubscription.emit(
       paymentGroupControl.valueChanges
         .pipe(debounceTime(1000))
         .subscribe(() => this.setMessage(paymentGroupControl, 'payment'))
@@ -118,7 +117,7 @@ export class FinalizePanelContentComponent implements OnInit {
     const expiringMonthControl = this.checkOutForm.get(
       'paymentGroup.expiringMonth'
     );
-    this.subscriptions.push(
+    this.newSubscription.emit(
       expiringMonthControl.valueChanges
         .pipe(debounceTime(1000))
         .subscribe(() => this.setMessage(expiringMonthControl, 'month'))
@@ -126,25 +125,25 @@ export class FinalizePanelContentComponent implements OnInit {
     const expiringYearControl = this.checkOutForm.get(
       'paymentGroup.expiringYear'
     );
-    this.subscriptions.push(
+    this.newSubscription.emit(
       expiringYearControl.valueChanges
         .pipe(debounceTime(1000))
         .subscribe(() => this.setMessage(expiringYearControl, 'year'))
     );
     const cvvControl = this.checkOutForm.get('paymentGroup.cvv');
-    this.subscriptions.push(
+    this.newSubscription.emit(
       cvvControl.valueChanges
         .pipe(debounceTime(1000))
         .subscribe(() => this.setMessage(cvvControl, 'cvv'))
     );
     const signUpControl = this.checkOutForm.get('signUpCheck');
-    this.subscriptions.push(
+    this.newSubscription.emit(
       signUpControl.valueChanges.subscribe((check: boolean) =>
         this.check.emit(check)
       )
     );
     const passwordControl = this.checkOutForm.get('signUpGroup.password');
-    this.subscriptions.push(
+    this.newSubscription.emit(
       passwordControl.valueChanges
         .pipe(debounceTime(1000))
         .subscribe(() => this.setMessage(passwordControl, 'password'))
@@ -152,7 +151,7 @@ export class FinalizePanelContentComponent implements OnInit {
     const confirmPasswordControl = this.checkOutForm.get(
       'signUpGroup.confirmPassword'
     );
-    this.subscriptions.push(
+    this.newSubscription.emit(
       confirmPasswordControl.valueChanges
         .pipe(debounceTime(1000))
         .subscribe(() =>
@@ -160,7 +159,7 @@ export class FinalizePanelContentComponent implements OnInit {
         )
     );
     const signUpGroupControl = this.checkOutForm.get('signUpGroup');
-    this.subscriptions.push(
+    this.newSubscription.emit(
       signUpGroupControl.valueChanges
         .pipe(debounceTime(1000))
         .subscribe(() => this.setMessage(signUpGroupControl, 'signUp'))
@@ -252,9 +251,5 @@ export class FinalizePanelContentComponent implements OnInit {
         confirmPassword: 'PasswordTest1234',
       },
     });
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 }

@@ -14,15 +14,14 @@ import { debounceTime } from 'rxjs/operators';
   selector: 'ctacu-contact-panel-content',
   templateUrl: './contact-panel-content.component.html',
 })
-export class ContactPanelContent implements OnInit, OnDestroy {
+export class ContactPanelContent implements OnInit {
   @Input() checkOutForm: FormGroup;
   @Input() submitted: boolean;
   @Input() nameMinLength: number;
   @Input() nameMaxLength: number;
 
   @Output() next = new EventEmitter();
-
-  private subscriptions: Subscription[] = [];
+  @Output() newSubscription = new EventEmitter<Subscription>();
 
   private firstNameValidationMessages: Object;
   firstNameMessage: string;
@@ -66,25 +65,25 @@ export class ContactPanelContent implements OnInit, OnDestroy {
 
   private subToControls(): void {
     const firstNameControl = this.checkOutForm.get('contactGroup.firstName');
-    this.subscriptions.push(
+    this.newSubscription.emit(
       firstNameControl.valueChanges
         .pipe(debounceTime(1000))
         .subscribe(() => this.setMessage(firstNameControl, 'firstName'))
     );
     const lastNameControl = this.checkOutForm.get('contactGroup.lastName');
-    this.subscriptions.push(
+    this.newSubscription.emit(
       lastNameControl.valueChanges
         .pipe(debounceTime(1000))
         .subscribe(() => this.setMessage(lastNameControl, 'lastName'))
     );
     const phoneControl = this.checkOutForm.get('contactGroup.phone');
-    this.subscriptions.push(
+    this.newSubscription.emit(
       phoneControl.valueChanges
         .pipe(debounceTime(1000))
         .subscribe(() => this.setMessage(phoneControl, 'phone'))
     );
     const emailControl = this.checkOutForm.get('contactGroup.email');
-    this.subscriptions.push(
+    this.newSubscription.emit(
       emailControl.valueChanges
         .pipe(debounceTime(1000))
         .subscribe((value) => this.setMessage(emailControl, 'email'))
@@ -92,13 +91,13 @@ export class ContactPanelContent implements OnInit, OnDestroy {
     const confirmEmailControl = this.checkOutForm.get(
       'contactGroup.confirmEmail'
     );
-    this.subscriptions.push(
+    this.newSubscription.emit(
       confirmEmailControl.valueChanges
         .pipe(debounceTime(1000))
         .subscribe(() => this.setMessage(confirmEmailControl, 'confirmEmail'))
     );
     const contactGroupControl = this.checkOutForm.get('contactGroup');
-    this.subscriptions.push(
+    this.newSubscription.emit(
       contactGroupControl.valueChanges
         .pipe(debounceTime(1000))
         .subscribe(() => this.setMessage(contactGroupControl, 'contact'))
@@ -191,9 +190,5 @@ export class ContactPanelContent implements OnInit, OnDestroy {
         confirmEmail: 'johndoe@fake.com',
       },
     });
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 }

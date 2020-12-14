@@ -86,6 +86,7 @@
                   [nameMinLength]="nameMinLength"
                   [nameMaxLength]="nameMaxLength"
                   (next)="acc.toggle('shipping')"
+                  (newSubscription)="pushSubscription($event)"
                 ></ctacu-contact-panel-content>
               </ng-template>
             </ngb-panel>
@@ -168,6 +169,7 @@
                   (check)="setPasswordValidation($event)"
                   (onSubmit)="onSubmit($event, items)"
                   (totalChange)="setTotal($event)"
+                  (newSubscription)="pushSubscription($event)"
                 >
                 </ctacu-finalize-panel-content>
               </ng-template>
