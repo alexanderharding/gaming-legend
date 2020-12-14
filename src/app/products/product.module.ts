@@ -15,7 +15,6 @@ import { ConvertToSpacesPipe } from '../pipes/convert-to-spaces.pipe';
 import { ProductResolverService } from '../router/product-resolver.service';
 import { ProductListResolverService } from '../router/product-list-resolver.service';
 import { ProductTypesResolverService } from '../router/product-types-resolver.service';
-import { CartItemsResolverService } from '../router/cart-items-resolver.service';
 
 /* Routes */
 const ROUTES: Routes = [
@@ -36,7 +35,6 @@ const ROUTES: Routes = [
     component: ProductDetailsComponent,
     resolve: {
       resolvedData: ProductResolverService,
-      // resolvedItems: CartItemsResolverService,
     },
   },
 ];
