@@ -134,6 +134,8 @@ function cardNumberChecker(
 })
 export class CheckOutComponent implements OnInit, OnDestroy {
   private readonly subscriptions: Subscription[] = [];
+  currentPanelId = 0;
+
   /* Get data from CartService */
   readonly items$ = this.cartService.cartAction$;
   readonly cartQuantity$ = this.cartService.cartQuantity$;
@@ -333,6 +335,14 @@ export class CheckOutComponent implements OnInit, OnDestroy {
 
   pushSubscription(subscription: Subscription): void {
     this.subscriptions.push(subscription);
+  }
+
+  changePanelId(id: number): void {
+    if (this.currentPanelId === +id) {
+      this.currentPanelId = null;
+      return;
+    }
+    this.currentPanelId = +id;
   }
 
   private signUp(form: FormGroup, items: ICartItem[]): void {
