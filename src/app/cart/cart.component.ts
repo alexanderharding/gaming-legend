@@ -132,20 +132,23 @@ export class CartComponent implements OnInit {
     instance.warningMessage = 'This operation can not be undone.';
     instance.type = 'bg-danger';
     instance.closeMessage = 'empty';
-    modalRef.result.then((result) => {
-      this.loading = true;
-      // console.log(items);
-      items.forEach((item) => {
-        this.cartService.removeItem(item).subscribe(
-          (result) => {},
-          (error) => {
-            console.error(error);
-            this.loading = false;
-          }
-        );
-      });
-      this.refreshCart();
-    });
+    modalRef.result.then(
+      (result) => {
+        this.loading = true;
+        // console.log(items);
+        items.forEach((item) => {
+          this.cartService.removeItem(item).subscribe(
+            (result) => {},
+            (error) => {
+              console.error(error);
+              this.loading = false;
+            }
+          );
+        });
+        this.refreshCart();
+      },
+      (reason) => {}
+    );
   }
 
   private refreshCart(): void {
