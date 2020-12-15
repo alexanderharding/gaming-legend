@@ -22,6 +22,7 @@ export class ContactPanelContent implements OnInit {
   @Input() nameMinLength: number;
   @Input() nameMaxLength: number;
   @Input() currentPanelId: number;
+  panelId = 0;
 
   @Output() toggleChange = new EventEmitter<string>();
   @Output() newSubscription = new EventEmitter<Subscription>();
