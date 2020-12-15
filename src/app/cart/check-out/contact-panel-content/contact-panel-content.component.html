@@ -1,118 +1,120 @@
 <form [formGroup]="checkOutForm" novalidate>
-  <fieldset class="mb-3" formGroupName="contactGroup">
-    <legend class="text-primary">Full Name</legend>
-    <div class="input-group mb-3">
-      <div class="input-group-prepend">
-        <span class="input-group-text bg-info text-white">First</span>
+  <div @openAnimation>
+    <fieldset class="mb-3" formGroupName="contactGroup">
+      <legend class="text-primary">Full Name</legend>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text bg-info text-white">First</span>
+        </div>
+        <input
+          type="text"
+          formControlName="firstName"
+          class="form-control"
+          placeholder="First name (required)"
+          [ngClass]="{
+            'is-invalid': firstNameMessage && submitted,
+            'is-valid': !firstNameMessage
+          }"
+        />
+        <div class="invalid-tooltip">
+          <span>{{ firstNameMessage }}</span>
+        </div>
       </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text bg-info text-white">Last</span>
+        </div>
+        <input
+          type="text"
+          formControlName="lastName"
+          class="form-control"
+          placeholder="Last name (required)"
+          [ngClass]="{
+            'is-invalid': lastNameMessage && submitted,
+            'is-valid': !lastNameMessage
+          }"
+        />
+        <div class="invalid-tooltip">
+          <span>{{ lastNameMessage }}</span>
+        </div>
+      </div>
+      <legend class="text-primary">Contact Information</legend>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text bg-info text-white">Phone</span>
+        </div>
+        <input
+          type="tel"
+          formControlName="phone"
+          class="form-control"
+          autocomplete="tel"
+          placeholder="Phone number (required)"
+          [ngClass]="{
+            'is-invalid': phoneMessage && submitted,
+            'is-valid': !phoneMessage
+          }"
+        />
+        <div class="invalid-tooltip">
+          <span>{{ phoneMessage }}</span>
+        </div>
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text bg-info text-white">Email</span>
+        </div>
+        <input
+          class="form-control"
+          id="emailId"
+          type="email"
+          autocomplete="email"
+          placeholder="Email (required)"
+          formControlName="email"
+          [ngClass]="{
+            'is-invalid': emailMessage && submitted,
+            'is-valid': !emailMessage
+          }"
+        />
+        <div class="invalid-tooltip">
+          {{ emailMessage }}
+        </div>
+      </div>
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text bg-info text-white">Confirm</span>
+        </div>
+        <input
+          type="email"
+          class="form-control"
+          placeholder="Confirm Email (required)"
+          formControlName="confirmEmail"
+          [ngClass]="{
+            'is-invalid': (confirmEmailMessage || contactMessage) && submitted,
+            'is-valid': !confirmEmailMessage && !contactMessage
+          }"
+        />
+        <div *ngIf="!emailMessage" class="invalid-tooltip">
+          <span>
+            {{ confirmEmailMessage }}
+          </span>
+          <span *ngIf="!confirmEmailMessage">
+            {{ contactMessage }}
+          </span>
+        </div>
+      </div>
+    </fieldset>
+    <div class="d-none d-sm-flex justify-content-end">
       <input
-        type="text"
-        formControlName="firstName"
-        class="form-control"
-        placeholder="First name (required)"
-        [ngClass]="{
-          'is-invalid': firstNameMessage && submitted,
-          'is-valid': !firstNameMessage
-        }"
+        type="button"
+        value="next"
+        (click)="togglePanel('shipping')"
+        class="btn btn-success text-capitalize"
       />
-      <div class="invalid-tooltip">
-        <span>{{ firstNameMessage }}</span>
-      </div>
     </div>
-    <div class="input-group mb-3">
-      <div class="input-group-prepend">
-        <span class="input-group-text bg-info text-white">Last</span>
-      </div>
-      <input
-        type="text"
-        formControlName="lastName"
-        class="form-control"
-        placeholder="Last name (required)"
-        [ngClass]="{
-          'is-invalid': lastNameMessage && submitted,
-          'is-valid': !lastNameMessage
-        }"
-      />
-      <div class="invalid-tooltip">
-        <span>{{ lastNameMessage }}</span>
-      </div>
-    </div>
-    <legend class="text-primary">Contact Information</legend>
-    <div class="input-group mb-3">
-      <div class="input-group-prepend">
-        <span class="input-group-text bg-info text-white">Phone</span>
-      </div>
-      <input
-        type="tel"
-        formControlName="phone"
-        class="form-control"
-        autocomplete="tel"
-        placeholder="Phone number (required)"
-        [ngClass]="{
-          'is-invalid': phoneMessage && submitted,
-          'is-valid': !phoneMessage
-        }"
-      />
-      <div class="invalid-tooltip">
-        <span>{{ phoneMessage }}</span>
-      </div>
-    </div>
-    <div class="input-group mb-3">
-      <div class="input-group-prepend">
-        <span class="input-group-text bg-info text-white">Email</span>
-      </div>
-      <input
-        class="form-control"
-        id="emailId"
-        type="email"
-        autocomplete="email"
-        placeholder="Email (required)"
-        formControlName="email"
-        [ngClass]="{
-          'is-invalid': emailMessage && submitted,
-          'is-valid': !emailMessage
-        }"
-      />
-      <div class="invalid-tooltip">
-        {{ emailMessage }}
-      </div>
-    </div>
-    <div class="input-group">
-      <div class="input-group-prepend">
-        <span class="input-group-text bg-info text-white">Confirm</span>
-      </div>
-      <input
-        type="email"
-        class="form-control"
-        placeholder="Confirm Email (required)"
-        formControlName="confirmEmail"
-        [ngClass]="{
-          'is-invalid': (confirmEmailMessage || contactMessage) && submitted,
-          'is-valid': !confirmEmailMessage && !contactMessage
-        }"
-      />
-      <div *ngIf="!emailMessage" class="invalid-tooltip">
-        <span>
-          {{ confirmEmailMessage }}
-        </span>
-        <span *ngIf="!confirmEmailMessage">
-          {{ contactMessage }}
-        </span>
-      </div>
-    </div>
-  </fieldset>
-  <div class="d-none d-sm-flex justify-content-end">
     <input
       type="button"
       value="next"
       (click)="togglePanel('shipping')"
-      class="btn btn-success text-capitalize"
+      class="btn btn-block btn-success text-capitalize d-sm-none"
     />
   </div>
-  <input
-    type="button"
-    value="next"
-    (click)="togglePanel('shipping')"
-    class="btn btn-block btn-success text-capitalize d-sm-none"
-  />
 </form>

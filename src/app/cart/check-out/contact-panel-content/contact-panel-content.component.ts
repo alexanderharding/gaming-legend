@@ -9,16 +9,19 @@ import {
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { openAnimation } from 'src/app/app.animation';
 
 @Component({
   selector: 'ctacu-contact-panel-content',
   templateUrl: './contact-panel-content.component.html',
+  animations: [openAnimation],
 })
 export class ContactPanelContent implements OnInit {
   @Input() checkOutForm: FormGroup;
   @Input() submitted: boolean;
   @Input() nameMinLength: number;
   @Input() nameMaxLength: number;
+  @Input() currentPanelId: number;
 
   @Output() toggleChange = new EventEmitter<string>();
   @Output() newSubscription = new EventEmitter<Subscription>();

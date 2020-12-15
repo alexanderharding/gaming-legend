@@ -184,20 +184,33 @@
                   type="button"
                   value="Contact Details"
                   class="btn btn-lg btn-link p-0 text-light"
+                  (click)="changePanelId(0)"
                 />
               </div>
             </div>
           </div>
 
-          <div class="container container-fluid py-3">
+          <div class="container container-fluid">
             <ctacu-contact-panel-content
               [checkOutForm]="checkOutForm"
               [submitted]="submitted"
               [nameMinLength]="nameMinLength"
               [nameMaxLength]="nameMaxLength"
-              (toggleChange)="acc.toggle($event)"
+              [currentPanelId]="currentPanelId"
               (newSubscription)="pushSubscription($event)"
             ></ctacu-contact-panel-content>
+          </div>
+          <div class="card bg-secondary">
+            <div class="card-header" id="headingOne">
+              <div class="py-1">
+                <input
+                  type="button"
+                  value="Contact Details"
+                  class="btn btn-lg btn-link p-0 text-light"
+                  (click)="changePanelId(0)"
+                />
+              </div>
+            </div>
           </div>
         </div> -->
       </div>
