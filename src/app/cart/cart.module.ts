@@ -49,5 +49,6 @@ const ROUTES: Routes = [
     ShippingPanelContentComponent,
     FinalizePanelContentComponent,
   ],
+  providers: [CheckOutGuard],
 })
 export class CartModule {}
