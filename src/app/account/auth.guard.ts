@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, CanLoad, Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { EMPTY, Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 
 @Injectable({
@@ -27,7 +27,11 @@ export class AuthGuard implements CanActivate, CanLoad {
 
   canLoad(): Observable<boolean> {
     return this.authService.currentUser$.pipe(
-      map((user) => (user ? true : false))
+      map((user) => (user ? true : false)),
+      catchError((err) => {
+        console.error(err);
+        return EMPTY;
+      })
     );
   }
 }
