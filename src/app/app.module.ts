@@ -12,7 +12,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { FooterComponent } from './footer/footer.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
-import { AccountComponent } from './account/account.component';
+import { AuthGuard } from './account/auth.guard';
 
 @NgModule({
   imports: [
@@ -29,8 +29,8 @@ import { AccountComponent } from './account/account.component';
     WelcomeComponent,
     NotFoundComponent,
     ConfirmModalComponent,
-    AccountComponent,
   ],
+  providers: [AuthGuard],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

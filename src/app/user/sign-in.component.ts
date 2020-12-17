@@ -12,7 +12,7 @@ import { debounceTime } from 'rxjs/operators';
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss'],
 })
-export class SignInComponent implements OnInit, OnDestroy {
+export class SignInComponent implements OnInit {
   submitted = false;
   signInForm: FormGroup;
   signInMessage: string;
@@ -99,9 +99,5 @@ export class SignInComponent implements OnInit, OnDestroy {
         console.error(`${name} did not match any names.`);
         break;
     }
-  }
-
-  ngOnDestroy(): void {
-    this.authService.signOut();
   }
 }
