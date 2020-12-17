@@ -25,6 +25,7 @@ const ROUTES: Routes = [
     path: 'account',
     loadChildren: () =>
       import('./account/account.module').then((m) => m.AccountModule),
+    canActivate: [AuthGuard],
     // canLoad: [AuthGuard],
   },
   { path: '', redirectTo: 'welcome', pathMatch: 'full' },
