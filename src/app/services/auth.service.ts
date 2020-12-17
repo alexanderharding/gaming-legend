@@ -11,17 +11,22 @@ import { ErrorService } from './error.service';
 })
 export class AuthService {
   private readonly baseUrl: string = 'http://localhost:3000';
-  private currentUserSubject: BehaviorSubject<IUser>;
-  currentUser$: Observable<IUser>;
+  // private currentUserSubject: BehaviorSubject<IUser>;
+  // currentUser$: Observable<IUser>;
+
+  private readonly currentUserSubject = new BehaviorSubject<IUser>(
+    JSON.parse(localStorage.getItem('currentUser'))
+  );
+  readonly currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(
     private readonly http: HttpClient,
     private readonly errorService: ErrorService
   ) {
-    this.currentUserSubject = new BehaviorSubject<IUser>(
-      JSON.parse(localStorage.getItem('currentUser'))
-    );
-    this.currentUser$ = this.currentUserSubject.asObservable();
+    // this.currentUserSubject = new BehaviorSubject<IUser>(
+    //   JSON.parse(localStorage.getItem('currentUser'))
+    // );
+    // this.currentUser$ = this.currentUserSubject.asObservable();
   }
 
   signIn(email: string, password: string): Observable<boolean> {
