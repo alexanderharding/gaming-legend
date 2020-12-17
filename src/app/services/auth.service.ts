@@ -34,6 +34,9 @@ export class AuthService {
         map((users) => {
           const firstUserFound = users[0];
           console.log(`Found user!: ${JSON.stringify(firstUserFound)}`);
+          if (!firstUserFound) {
+            return false;
+          }
           if (
             userEmail === firstUserFound.email.toLowerCase() &&
             password === firstUserFound.password
