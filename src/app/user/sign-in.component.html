@@ -33,7 +33,9 @@
               <span class="input-group-text bg-info text-white">Password</span>
             </div>
             <input
-              type="text"
+              [type]="
+                signInForm.get('showPassword').value ? 'text' : 'password'
+              "
               formControlName="password"
               class="form-control"
               autocomplete="current-password"
@@ -45,6 +47,18 @@
             />
             <div class="invalid-tooltip">
               <span>{{ passwordMessage }}</span>
+            </div>
+            <div class="btn-group-toggle input-group-append">
+              <label class="btn-secondary text-capitalize" ngbButtonLabel>
+                <input
+                  type="checkbox"
+                  ngbButton
+                  formControlName="showPassword"
+                />
+                {{
+                  this.signInForm.get("showPassword").value ? "hide" : "show"
+                }}
+              </label>
             </div>
           </div>
         </fieldset>

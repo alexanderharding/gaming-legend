@@ -37,6 +37,7 @@ export class SignInComponent implements OnInit, OnDestroy {
     this.signInForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
+      showPassword: false,
     });
     const emailControl = this.signInForm.get('email');
     emailControl.valueChanges
@@ -46,6 +47,7 @@ export class SignInComponent implements OnInit, OnDestroy {
     passwordControl.valueChanges
       .pipe(debounceTime(1000))
       .subscribe(() => this.setMessage(passwordControl, 'password'));
+    this.populateTestData();
   }
 
   signIn(form: FormGroup): void {
@@ -66,6 +68,13 @@ export class SignInComponent implements OnInit, OnDestroy {
         (error) => console.error(error)
       );
     }
+  }
+
+  private populateTestData(): void {
+    this.signInForm.patchValue({
+      email: 'test@test.com',
+      password: 'TestPassword1234',
+    });
   }
 
   private setMessage(c: AbstractControl, name: string): void {

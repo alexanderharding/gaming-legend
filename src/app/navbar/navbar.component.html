@@ -82,15 +82,22 @@
             </ng-container>
           </a>
         </li>
-        <li class="nav-item">
-          <a
-            class="nav-link"
-            routerLink="/user"
-            routerLinkActive="active"
-            (click)="isMenuCollapsed = true"
-            >Sign In</a
-          >
-        </li>
+        <ng-container *ngIf="currentUser$ | async as user; else noUser">
+          <li class="nav-item">
+            <a class="nav-link" (click)="signOut()">Sign Out</a>
+          </li>
+        </ng-container>
+        <ng-template #noUser>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              routerLink="/user"
+              routerLinkActive="active"
+              (click)="isMenuCollapsed = true"
+              >Sign In</a
+            >
+          </li>
+        </ng-template>
       </ul>
     </div>
   </nav>
