@@ -1,10 +1,9 @@
 import { NgModule } from '@angular/core';
+
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 
 import { WelcomeComponent } from './welcome/welcome.component';
 import { NotFoundComponent } from './not-found/not-found.component';
-// import { SignInComponent } from './sign-in/sign-in.component';
-// import { SignUpComponent } from './sign-in/sign-up/sign-up.component';
 
 const ROUTES: Routes = [
   { path: 'welcome', component: WelcomeComponent },
@@ -17,14 +16,10 @@ const ROUTES: Routes = [
     path: 'cart',
     loadChildren: () => import('./cart/cart.module').then((m) => m.CartModule),
   },
-  // {
-  //   path: 'sign-in',
-  //   component: SignInComponent,
-  // },
-  // {
-  //   path: 'sign-up',
-  //   component: SignUpComponent
-  // },
+  {
+    path: 'user',
+    loadChildren: () => import('./user/user.module').then((m) => m.UserModule),
+  },
   { path: '', redirectTo: 'welcome', pathMatch: 'full' },
   { path: '**', component: NotFoundComponent },
 ];
