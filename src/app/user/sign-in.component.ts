@@ -18,6 +18,8 @@ export class SignInComponent implements OnInit {
   signInForm: FormGroup;
   signInMessage: string;
 
+  loading = false;
+
   private returnLink = this.route.snapshot.queryParamMap.get('returnLink');
 
   private readonly emailValidationMessages = {
@@ -61,10 +63,12 @@ export class SignInComponent implements OnInit {
       this.submitted = true;
     }
     if (form.valid) {
+      this.loading = true;
       const email = form.get('email').value as string;
       const password = form.get('password').value as string;
       this.authService.signIn(email, password).subscribe(
         (result) => {
+          this.loading = false;
           if (result) {
             if (this.returnLink) {
               this.router.navigate([`/${this.returnLink}`]);
@@ -75,7 +79,10 @@ export class SignInComponent implements OnInit {
           }
           this.signInMessage = 'Invalid email or password.';
         },
-        (error) => console.error(error)
+        (error) => {
+          this.loading = false;
+          console.error(error);
+        }
       );
     }
   }
