@@ -1,15 +1,17 @@
 <div class="container-xl py-3">
-  <div class="row">
-    <div class="col-6">
+  <div class="form-row">
+    <div class="col-3 d-none d-md-block"></div>
+    <div class="col">
       <form
         [formGroup]="signInForm"
         (ngSubmit)="signIn(signInForm)"
         novalidate
         autocomplete="off"
+        class="mb-3"
       >
         <fieldset>
           <legend>Sign In</legend>
-          <div class="input-group mb-3">
+          <div class="input-group mb-3 shadow-sm">
             <div class="input-group-prepend">
               <span class="input-group-text bg-info text-white">Email</span>
             </div>
@@ -20,15 +22,15 @@
               autocomplete="email"
               placeholder="Email (required)"
               [ngClass]="{
-                'is-invalid': emailMessage && submitted,
-                'is-valid': !emailMessage
+                'is-invalid': (emailMessage || signInMessage) && submitted,
+                'is-valid': !emailMessage && !signInMessage
               }"
             />
-            <div class="invalid-tooltip">
+            <div *ngIf="!signInMessage" class="invalid-tooltip">
               <span>{{ emailMessage }}</span>
             </div>
           </div>
-          <div class="input-group mb-3">
+          <div class="input-group mb-3 shadow-sm">
             <div class="input-group-prepend">
               <span class="input-group-text bg-info text-white">Password</span>
             </div>
@@ -41,12 +43,13 @@
               autocomplete="current-password"
               placeholder="Password (required)"
               [ngClass]="{
-                'is-invalid': passwordMessage && submitted,
-                'is-valid': !passwordMessage
+                'is-invalid': (passwordMessage || signInMessage) && submitted,
+                'is-valid': !passwordMessage && !signInMessage
               }"
             />
             <div class="invalid-tooltip">
               <span>{{ passwordMessage }}</span>
+              <span>{{ signInMessage }}</span>
             </div>
             <div class="btn-group-toggle input-group-append">
               <label class="btn-secondary text-capitalize" ngbButtonLabel>
@@ -62,9 +65,10 @@
             </div>
           </div>
         </fieldset>
-        <button type="submit" class="btn btn-success">Sign In</button>
+        <button type="submit" class="btn btn-block btn-success">Sign In</button>
       </form>
+      <p>New here? <a routerLink="../sign-up">Sign Up</a></p>
     </div>
-    <div class="col"></div>
+    <div class="col-3 d-none d-md-block"></div>
   </div>
 </div>

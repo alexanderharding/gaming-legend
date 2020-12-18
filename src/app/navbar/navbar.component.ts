@@ -39,6 +39,6 @@ export class NavbarComponent implements OnInit {
 
   signOut(): void {
     this.isMenuCollapsed = false;
-    // this.authService.signOut();
+    this.authService.signOut();
   }
 }

@@ -7,6 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   templateUrl: './sign-in.component.html',
@@ -16,6 +17,8 @@ export class SignInComponent implements OnInit {
   submitted = false;
   signInForm: FormGroup;
   signInMessage: string;
+
+  private returnLink = this.route.snapshot.queryParamMap.get('returnLink');
 
   private readonly emailValidationMessages = {
     required: 'Please enter your email address.',
@@ -30,7 +33,9 @@ export class SignInComponent implements OnInit {
 
   constructor(
     private readonly authService: AuthService,
-    private readonly fb: FormBuilder
+    private readonly fb: FormBuilder,
+    private readonly router: Router,
+    private readonly route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -61,6 +66,11 @@ export class SignInComponent implements OnInit {
       this.authService.signIn(email, password).subscribe(
         (result) => {
           if (result) {
+            if (this.returnLink) {
+              this.router.navigate([`/${this.returnLink}`]);
+              return;
+            }
+            this.router.navigate(['/account']);
             return;
           }
           this.signInMessage = 'Invalid email or password.';
@@ -78,6 +88,7 @@ export class SignInComponent implements OnInit {
   }
 
   private setMessage(c: AbstractControl, name: string): void {
+    this.signInMessage = '';
     switch (name) {
       case 'email':
         this.emailMessage = '';
