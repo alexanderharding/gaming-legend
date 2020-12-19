@@ -8,7 +8,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { first, tap } from 'rxjs/operators';
 
 import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
@@ -135,6 +135,8 @@ function cardNumberChecker(
 export class CheckOutComponent implements OnInit, OnDestroy {
   private readonly subscriptions: Subscription[] = [];
   currentPanelId = 0;
+
+  readonly currentUser$ = this.authService.currentUser$;
 
   /* Get data from CartService */
   readonly items$ = this.cartService.cartAction$;
@@ -267,6 +269,11 @@ export class CheckOutComponent implements OnInit, OnDestroy {
         { validator: passwordMatcher }
       ),
     });
+    // this.currentUser$.pipe(first()).subscribe(user=> {
+    //   if (user) {
+    //     this.
+    //   }
+    // })
   }
 
   onSubmit(form: FormGroup, items: ICartItem[]): void {
