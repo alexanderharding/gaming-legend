@@ -3,8 +3,7 @@
     <span class="sr-only">Loading...</span>
   </div>
   <div class="form-row">
-    <div class="col-3 d-none d-md-block"></div>
-    <div class="col">
+    <div class="col-md">
       <form
         [formGroup]="signInForm"
         (ngSubmit)="signIn(signInForm)"
@@ -13,7 +12,8 @@
         class="mb-3"
       >
         <fieldset>
-          <legend>Sign In</legend>
+          <!-- <legend>Sign In</legend> -->
+          <h1 class="text-center mb-3">Sign In</h1>
           <div class="input-group mb-3 shadow-sm">
             <div class="input-group-prepend">
               <span class="input-group-text bg-info text-white">Email</span>
@@ -70,8 +70,9 @@
         </fieldset>
         <button type="submit" class="btn btn-block btn-success">Sign In</button>
       </form>
-      <p>New here? <a routerLink="../sign-up">Sign Up</a></p>
     </div>
-    <div class="col-3 d-none d-md-block"></div>
+    <div class="col-md">
+      <ctacu-sign-up></ctacu-sign-up>
+    </div>
   </div>
 </div>
