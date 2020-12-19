@@ -4,6 +4,7 @@ import { Observable, Subscription } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
 import { CartService } from 'src/app/services/cart.service';
 import { CheckOutService } from 'src/app/services/check-out.service';
+import { IUser } from 'src/app/types/user';
 
 @Component({
   selector: 'ctacu-finalize-panel-content',
@@ -19,10 +20,7 @@ export class FinalizePanelContentComponent implements OnInit {
   tax = this.cartService.tax;
   totalTax$ = this.cartService.totalTax$;
   total$ = this.cartService.total$.pipe(
-    tap((total) => {
-      this.totalChange.emit(+total);
-      return total;
-    })
+    tap((total) => this.totalChange.emit(+total))
   );
   @Input() subtotal$: Observable<number>;
   shippingPrice$ = this.cartService.shippingSelectedAction$;
@@ -34,9 +32,11 @@ export class FinalizePanelContentComponent implements OnInit {
   @Input() errorMessage: boolean;
   @Input() signUpError: number;
 
+  @Input() user: IUser;
+
   @Output() onSubmit = new EventEmitter<FormGroup>();
   @Output() toggleChange = new EventEmitter<string>();
-  @Output() check = new EventEmitter<boolean>();
+  @Output() checkChange = new EventEmitter<boolean>();
   @Output() totalChange = new EventEmitter<number>();
   @Output() newSubscription = new EventEmitter<Subscription>();
 
@@ -90,6 +90,9 @@ export class FinalizePanelContentComponent implements OnInit {
 
   ngOnInit(): void {
     this.subscribeToControls();
+    if (this.user) {
+      this.setSignUpCheck();
+    }
     this.populateTestData();
   }
 
@@ -139,7 +142,7 @@ export class FinalizePanelContentComponent implements OnInit {
     const signUpControl = this.checkOutForm.get('signUpCheck');
     this.newSubscription.emit(
       signUpControl.valueChanges.subscribe((check: boolean) =>
-        this.check.emit(check)
+        this.checkChange.emit(check)
       )
     );
     const passwordControl = this.checkOutForm.get('signUpGroup.password');
@@ -236,6 +239,12 @@ export class FinalizePanelContentComponent implements OnInit {
         console.error(`${name} did not match any names.`);
         break;
     }
+  }
+
+  private setSignUpCheck(): void {
+    this.checkOutForm.patchValue({
+      signUpCheck: false,
+    });
   }
 
   private populateTestData(): void {

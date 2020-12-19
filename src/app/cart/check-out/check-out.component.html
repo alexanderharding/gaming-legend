@@ -120,6 +120,7 @@
                   [checkOutForm]="checkOutForm"
                   [submitted]="submitted"
                   [shippingRates]="shippingRates"
+                  [user]="user"
                   [streetMinLength]="streetMinLength"
                   [streetMaxLength]="streetMaxLength"
                   [cityMinLength]="cityMinLength"
@@ -161,13 +162,14 @@
               <ng-template ngbPanelContent>
                 <ctacu-finalize-panel-content
                   [checkOutForm]="checkOutForm"
+                  [user]="user"
                   [submitted]="submitted"
                   [errorMessage]="errorMessage"
                   [signUpError]="signUpError"
                   [isLoading]="isLoading"
                   [subtotal$]="subtotal$"
                   (toggleChange)="acc.toggle($event)"
-                  (check)="setPasswordValidation($event)"
+                  (checkChange)="setPasswordValidation($event)"
                   (onSubmit)="onSubmit($event, items)"
                   (totalChange)="setTotal($event)"
                   (newSubscription)="pushSubscription($event)"

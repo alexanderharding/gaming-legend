@@ -206,7 +206,7 @@
     </div>
   </div>
   <hr />
-  <div class="custom-control custom-checkbox mb-3">
+  <div *ngIf="!user" class="custom-control custom-checkbox mb-3">
     <input
       type="checkbox"
       class="custom-control-input"
@@ -226,7 +226,7 @@
     </div>
   </div>
   <fieldset
-    *ngIf="this.checkOutForm.get('signUpCheck').value"
+    *ngIf="this.checkOutForm.get('signUpCheck').value && !user"
     formGroupName="signUpGroup"
   >
     <legend class="text-primary">Sign Up</legend>

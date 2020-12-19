@@ -12,6 +12,7 @@ import { debounceTime } from 'rxjs/operators';
 import { CartService } from 'src/app/services/cart.service';
 import { ShippingRateService } from 'src/app/services/shipping-rate.service';
 import { IShippingRate } from 'src/app/types/shipping-rate';
+import { IUser } from 'src/app/types/user';
 
 @Component({
   selector: 'ctacu-shipping-panel-content',
@@ -26,6 +27,7 @@ export class ShippingPanelContentComponent implements OnInit {
   @Input() states: string[];
 
   @Input() shippingRates: IShippingRate[];
+  @Input() user: IUser;
 
   @Input() streetMinLength: number;
   @Input() streetMaxLength: number;
@@ -81,7 +83,11 @@ export class ShippingPanelContentComponent implements OnInit {
         shippingRate: +this.shippingRates[0].price,
       });
     }
-    this.populateTestData();
+
+    if (this.user) {
+      this.setUserData(this.user);
+    }
+    // this.populateTestData();
   }
 
   togglePanel(panelTitle: string): void {
@@ -162,6 +168,17 @@ export class ShippingPanelContentComponent implements OnInit {
         console.error(`${name} did not match any names.`);
         break;
     }
+  }
+
+  private setUserData(user: IUser): void {
+    this.checkOutForm.patchValue({
+      addressGroup: {
+        street: user.street,
+        city: user.city,
+        state: user.state,
+        zip: user.zip,
+      },
+    });
   }
 
   private setDeliveryDate(selectedPrice: number): void {
