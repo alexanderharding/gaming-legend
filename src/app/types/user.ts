@@ -3,12 +3,12 @@ export interface IUser {
   id: number;
   firstName: string;
   lastName: string;
-  phone: number;
+  phone: string;
   email: string;
   street: string;
   city: string;
   state: string;
-  zip: number;
+  zip: string;
   country: string;
   password: string;
   isAdmin: boolean;

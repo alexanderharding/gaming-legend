@@ -7,9 +7,10 @@ import {
   Output,
 } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
-import { Subscription } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+import { debounceTime, first } from 'rxjs/operators';
 import { openAnimation } from 'src/app/app.animation';
+import { IUser } from 'src/app/types/user';
 
 @Component({
   selector: 'ctacu-contact-panel-content',
@@ -23,6 +24,7 @@ export class ContactPanelContent implements OnInit {
   @Input() nameMaxLength: number;
   @Input() currentPanelId: number;
   panelId = 0;
+  @Input() currentUser$: Observable<IUser>;
 
   @Output() toggleChange = new EventEmitter<string>();
   @Output() newSubscription = new EventEmitter<Subscription>();
@@ -90,7 +92,7 @@ export class ContactPanelContent implements OnInit {
     this.newSubscription.emit(
       emailControl.valueChanges
         .pipe(debounceTime(1000))
-        .subscribe((value) => this.setMessage(emailControl, 'email'))
+        .subscribe(() => this.setMessage(emailControl, 'email'))
     );
     const confirmEmailControl = this.checkOutForm.get(
       'contactGroup.confirmEmail'
@@ -106,6 +108,11 @@ export class ContactPanelContent implements OnInit {
         .pipe(debounceTime(1000))
         .subscribe(() => this.setMessage(contactGroupControl, 'contact'))
     );
+    // this.currentUser$.pipe(first()).subscribe((user) => {
+    //   if (user) {
+    //     this.setUserData(user);
+    //   }
+    // });
   }
 
   private setNameValidationMessages(): void {
@@ -182,6 +189,17 @@ export class ContactPanelContent implements OnInit {
         console.error(`${name} did not match any names.`);
         break;
     }
+  }
+
+  private setUserData(user: IUser): void {
+    this.checkOutForm.patchValue({
+      contactGroup: {
+        firstName: user.firstName || '',
+        phone: user.phone,
+        email: user.email,
+        confirmEmail: user.email,
+      },
+    });
   }
 
   private populateTestData(): void {
