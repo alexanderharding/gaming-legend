@@ -21,7 +21,7 @@ import { Order, OrderMaker } from 'src/app/types/order';
 import { Payment, PaymentMaker } from 'src/app/types/payment';
 import { IShippingRate } from 'src/app/types/shipping-rate';
 import { ShippingRatesResult } from 'src/app/types/shipping-rates-result';
-import { User, UserMaker } from 'src/app/types/user';
+import { IUser, User, UserMaker } from 'src/app/types/user';
 
 function dateChecker(c: AbstractControl): { [key: string]: boolean } | null {
   const monthControl = c.get('expiringMonth');
@@ -136,7 +136,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   private readonly subscriptions: Subscription[] = [];
   currentPanelId = 0;
 
-  readonly currentUser$ = this.authService.currentUser$;
+  user: IUser;
 
   /* Get data from CartService */
   readonly items$ = this.cartService.cartAction$;
@@ -269,11 +269,11 @@ export class CheckOutComponent implements OnInit, OnDestroy {
         { validator: passwordMatcher }
       ),
     });
-    // this.currentUser$.pipe(first()).subscribe(user=> {
-    //   if (user) {
-    //     this.
-    //   }
-    // })
+    this.authService.currentUser$.pipe(first()).subscribe((user) => {
+      if (user) {
+        this.user = user as IUser;
+      }
+    });
   }
 
   onSubmit(form: FormGroup, items: ICartItem[]): void {

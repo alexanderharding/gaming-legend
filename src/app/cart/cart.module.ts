@@ -16,21 +16,26 @@ import { CheckOutGuard } from './check-out/check-out.guard';
 import { ShippingRatesResolverService } from '../router/shipping-rates-resolver.service';
 import { ShippingPanelContentComponent } from './check-out/shipping-panel-content/shipping-panel-content.component';
 import { FinalizePanelContentComponent } from './check-out/finalize-panel-content/finalize-panel-content.component';
+import { UserResolverService } from '../router/user-resolver.service';
 
 /* Routes */
 const ROUTES: Routes = [
   {
     path: '',
     component: CartComponent,
-    resolve: { resolvedData: ShippingRatesResolverService },
-    // resolve: { resolvedData: CartResolverService },
+    resolve: {
+      resolvedData: ShippingRatesResolverService,
+    },
   },
   {
     path: 'check-out',
     component: CheckOutComponent,
     canActivate: [CheckOutGuard],
     canDeactivate: [CheckOutGuard],
-    resolve: { resolvedData: ShippingRatesResolverService },
+    resolve: {
+      resolvedData: ShippingRatesResolverService,
+      // resolvedUser: UserResolverService,
+    },
   },
   {
     path: 'success',
@@ -49,6 +54,6 @@ const ROUTES: Routes = [
     ShippingPanelContentComponent,
     FinalizePanelContentComponent,
   ],
-  providers: [CheckOutGuard],
+  providers: [CheckOutGuard, ShippingRatesResolverService, UserResolverService],
 })
 export class CartModule {}

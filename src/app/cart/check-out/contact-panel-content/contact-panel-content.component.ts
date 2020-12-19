@@ -24,7 +24,7 @@ export class ContactPanelContent implements OnInit {
   @Input() nameMaxLength: number;
   @Input() currentPanelId: number;
   panelId = 0;
-  @Input() currentUser$: Observable<IUser>;
+  @Input() user: IUser;
 
   @Output() toggleChange = new EventEmitter<string>();
   @Output() newSubscription = new EventEmitter<Subscription>();
@@ -62,7 +62,10 @@ export class ContactPanelContent implements OnInit {
   ngOnInit(): void {
     this.subToControls();
     this.setNameValidationMessages();
-    this.populateTestData();
+    if (this.user) {
+      this.setUserData(this.user);
+    }
+    // this.populateTestData();
   }
 
   togglePanel(panelTitle: string): void {
@@ -108,11 +111,6 @@ export class ContactPanelContent implements OnInit {
         .pipe(debounceTime(1000))
         .subscribe(() => this.setMessage(contactGroupControl, 'contact'))
     );
-    // this.currentUser$.pipe(first()).subscribe((user) => {
-    //   if (user) {
-    //     this.setUserData(user);
-    //   }
-    // });
   }
 
   private setNameValidationMessages(): void {
@@ -153,7 +151,6 @@ export class ContactPanelContent implements OnInit {
         }
         break;
       case 'phone':
-        this.lastNameMessage = '';
         this.phoneMessage = '';
         if (c.errors) {
           this.phoneMessage = Object.keys(c.errors)
@@ -194,7 +191,8 @@ export class ContactPanelContent implements OnInit {
   private setUserData(user: IUser): void {
     this.checkOutForm.patchValue({
       contactGroup: {
-        firstName: user.firstName || '',
+        firstName: user.firstName,
+        lastName: user.lastName,
         phone: user.phone,
         email: user.email,
         confirmEmail: user.email,
