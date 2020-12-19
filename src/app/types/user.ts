@@ -17,12 +17,12 @@ export class User {
   constructor(
     public firstName: string,
     public lastName: string,
-    public phone: number,
+    public phone: string,
     public email: string,
     public street: string,
     public city: string,
     public state: string,
-    public zip: number,
+    public zip: string,
     public country: string,
     public password: string,
     public isAdmin: boolean
