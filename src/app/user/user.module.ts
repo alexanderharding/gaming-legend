@@ -6,6 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 /* Components */
 import { SignInComponent } from './sign-in/sign-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
+import { SignInGuard } from './sign-in/sign-in.guard';
 
 /* Routes */
 const ROUTES: Routes = [
@@ -17,15 +18,18 @@ const ROUTES: Routes = [
   {
     path: 'sign-in',
     component: SignInComponent,
+    canActivate: [SignInGuard],
   },
   {
     path: 'sign-up',
     component: SignUpComponent,
+    canActivate: [SignInGuard],
   },
 ];
 
 @NgModule({
   declarations: [SignInComponent, SignUpComponent],
   imports: [SharedModule, RouterModule.forChild(ROUTES)],
+  providers: [SignInGuard],
 })
 export class UserModule {}
