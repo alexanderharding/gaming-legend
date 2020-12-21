@@ -55,6 +55,34 @@
             activeIds="contact"
             #acc="ngbAccordion"
           >
+            <!-- <ngb-panel
+              type="{{
+                this.checkOutForm.get('contactGroup').invalid && submitted
+                  ? 'danger'
+                  : 'secondary'
+              }}"
+              id="name"
+              title="name"
+            >
+              <ng-template ngbPanelHeader let-opened="opened">
+                <div class="py-1">
+                  <button
+                    ngbPanelToggle
+                    class="btn btn-lg btn-link p-0 text-light"
+                  >
+                    {{
+                      this.checkOutForm.get("contactGroup").invalid && submitted
+                        ? "!"
+                        : ""
+                    }}
+                    Name
+                  </button>
+                </div>
+              </ng-template>
+              <ng-template ngbPanelContent>
+
+              </ng-template>
+            </ngb-panel> -->
             <ngb-panel
               type="{{
                 this.checkOutForm.get('contactGroup').invalid && submitted
