@@ -78,24 +78,26 @@ export class SignUpComponent implements OnInit {
 
   ngOnInit(): void {
     this.signUpForm = this.fb.group({
+      nameGroup: this.fb.group({
+        firstName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(this.nameMinLength),
+            Validators.maxLength(this.nameMaxLength),
+          ],
+        ],
+        lastName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(this.nameMinLength),
+            Validators.maxLength(this.nameMaxLength),
+          ],
+        ],
+      }),
       contactGroup: this.fb.group(
         {
-          firstName: [
-            '',
-            [
-              Validators.required,
-              Validators.minLength(this.nameMinLength),
-              Validators.maxLength(this.nameMaxLength),
-            ],
-          ],
-          lastName: [
-            '',
-            [
-              Validators.required,
-              Validators.minLength(this.nameMinLength),
-              Validators.maxLength(this.nameMaxLength),
-            ],
-          ],
           phone: [
             '',
             [Validators.required, Validators.pattern(this.phonePattern)],

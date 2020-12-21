@@ -3,7 +3,7 @@
     <div class="col">
       <h1 class="mb-3">Sign Up</h1>
       <form [formGroup]="signUpForm">
-        <fieldset class="mb-3" formGroupName="contactGroup">
+        <fieldset class="mb-3" formGroupName="nameGroup">
           <legend class="text-primary">Full Name</legend>
           <div class="input-group mb-3">
             <div class="input-group-prepend">
@@ -41,6 +41,8 @@
               <span>{{ lastNameMessage }}</span>
             </div>
           </div>
+        </fieldset>
+        <fieldset class="mb-3" formGroupName="contactGroup">
           <legend class="text-primary">Contact Information</legend>
           <div class="input-group mb-3">
             <div class="input-group-prepend">
