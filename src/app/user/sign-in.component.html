@@ -68,7 +68,11 @@
         </fieldset>
         <div class="form-row">
           <div class="col-sm mb-2 mb-sm-0">
-            <button type="submit" class="btn btn-block btn-success shadow">
+            <button
+              type="submit"
+              class="btn btn-success btn-block shadow"
+              [disabled]="(this.signInForm.invalid && submitted) || loading"
+            >
               Sign In
             </button>
           </div>
