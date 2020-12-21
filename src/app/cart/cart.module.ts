@@ -16,7 +16,6 @@ import { CheckOutGuard } from './check-out/check-out.guard';
 import { ShippingRatesResolverService } from '../router/shipping-rates-resolver.service';
 import { ShippingPanelContentComponent } from './check-out/shipping-panel-content/shipping-panel-content.component';
 import { FinalizePanelContentComponent } from './check-out/finalize-panel-content/finalize-panel-content.component';
-import { UserResolverService } from '../router/user-resolver.service';
 
 /* Routes */
 const ROUTES: Routes = [
@@ -54,6 +53,6 @@ const ROUTES: Routes = [
     ShippingPanelContentComponent,
     FinalizePanelContentComponent,
   ],
-  providers: [CheckOutGuard, ShippingRatesResolverService, UserResolverService],
+  providers: [CheckOutGuard, ShippingRatesResolverService],
 })
 export class CartModule {}
