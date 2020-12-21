@@ -1,9 +1,9 @@
-<div class="container-xl py-3">
+<div class="container container-fluid py-3">
   <div *ngIf="loading" class="spinner-border text-primary" role="status">
     <span class="sr-only">Loading...</span>
   </div>
-  <div class="row">
-    <div class="col-md">
+  <div class="row justify-content-center">
+    <div class="col-auto">
       <form
         [formGroup]="signInForm"
         (ngSubmit)="signIn(signInForm)"
@@ -12,8 +12,7 @@
         class="mb-3"
       >
         <fieldset>
-          <!-- <legend>Sign In</legend> -->
-          <h1 class="text-center mb-3">Sign In</h1>
+          <h1 class="text-primary mb-3">Sign In</h1>
           <div class="input-group mb-3 shadow-sm">
             <div class="input-group-prepend">
               <span class="input-group-text bg-info text-white">Email</span>
@@ -68,11 +67,21 @@
             </div>
           </div>
         </fieldset>
-        <button type="submit" class="btn btn-block btn-success">Sign In</button>
+        <div class="form-row">
+          <div class="col-sm mb-2 mb-sm-0">
+            <button type="submit" class="btn btn-block btn-success">
+              Sign In
+            </button>
+          </div>
+          <div class="col-sm">
+            <input
+              type="button"
+              value="Sign Up"
+              class="btn btn-block btn-info"
+            />
+          </div>
+        </div>
       </form>
-    </div>
-    <div class="col-md">
-      <ctacu-sign-up></ctacu-sign-up>
     </div>
   </div>
 </div>
