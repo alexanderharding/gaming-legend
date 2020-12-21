@@ -120,14 +120,18 @@
           checkOutForm.get('contactGroup').invalid && submitted ? '! ' : ''
         }}Add Contact Details"
         (click)="togglePanel('contact')"
-        class="btn btn-block text-capitalize mb-2"
+        class="btn btn-sm btn-block text-capitalize mb-2"
         *ngIf="checkOutForm.get('contactGroup').invalid"
         [ngClass]="{
           'btn-danger': checkOutForm.get('contactGroup').invalid && submitted,
           'btn-primary': checkOutForm.get('contactGroup').valid || !submitted
         }"
       />
-      <div *ngIf="checkOutForm.get('contactGroup').valid" class="card mb-2">
+      <div
+        *ngIf="checkOutForm.get('contactGroup').valid"
+        (click)="togglePanel('contact')"
+        class="card mb-2 pointer"
+      >
         <div class="card-body py-2">
           <div class="text-capitalize">
             {{ checkOutForm.get("contactGroup.firstName").value | lowercase }}
@@ -140,12 +144,12 @@
             {{ checkOutForm.get("contactGroup.email").value | lowercase }}
           </div>
         </div>
-        <input
+        <!-- <input
           type="button"
           value="Edit"
           (click)="togglePanel('contact')"
           class="btn btn-sm btn-warning btn-block text-capitalize"
-        />
+        /> -->
       </div>
       <input
         type="button"
@@ -153,14 +157,18 @@
           checkOutForm.get('addressGroup').invalid && submitted ? '! ' : ''
         }}Add Shipping Address"
         (click)="togglePanel('shipping')"
-        class="btn btn-block text-capitalize"
+        class="btn btn-sm btn-block text-capitalize"
         *ngIf="checkOutForm.get('addressGroup').invalid"
         [ngClass]="{
           'btn-danger': checkOutForm.get('addressGroup').invalid && submitted,
           'btn-primary': checkOutForm.get('addressGroup').valid || !submitted
         }"
       />
-      <div *ngIf="checkOutForm.get('addressGroup').valid" class="card">
+      <div
+        *ngIf="checkOutForm.get('addressGroup').valid"
+        (click)="togglePanel('shipping')"
+        class="card pointer"
+      >
         <div class="card-body py-2 text-capitalize">
           <div>
             {{ checkOutForm.get("addressGroup.street").value }}
@@ -174,12 +182,12 @@
             {{ checkOutForm.get("addressGroup.country").value | lowercase }}
           </div>
         </div>
-        <input
+        <!-- <input
           type="button"
           value="Edit"
           (click)="togglePanel('shipping')"
           class="btn btn-sm btn-warning btn-block text-capitalize"
-        />
+        /> -->
       </div>
       <hr class="d-sm-none" />
     </div>
