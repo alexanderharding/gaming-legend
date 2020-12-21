@@ -8,12 +8,15 @@ import {
 } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss'],
 })
-export class SignInComponent implements OnInit {
+export class SignInComponent implements OnInit, OnDestroy {
+  private readonly subscriptions: Subscription[] = [];
+
   submitted = false;
   signInForm: FormGroup;
   signInMessage: string;
@@ -47,13 +50,17 @@ export class SignInComponent implements OnInit {
       showPassword: false,
     });
     const emailControl = this.signInForm.get('email');
-    emailControl.valueChanges
-      .pipe(debounceTime(1000))
-      .subscribe(() => this.setMessage(emailControl, 'email'));
+    this.subscriptions.push(
+      emailControl.valueChanges
+        .pipe(debounceTime(1000))
+        .subscribe(() => this.setMessage(emailControl, 'email'))
+    );
     const passwordControl = this.signInForm.get('password');
-    passwordControl.valueChanges
-      .pipe(debounceTime(1000))
-      .subscribe(() => this.setMessage(passwordControl, 'password'));
+    this.subscriptions.push(
+      passwordControl.valueChanges
+        .pipe(debounceTime(1000))
+        .subscribe(() => this.setMessage(passwordControl, 'password'))
+    );
     this.populateTestData();
   }
 
@@ -117,5 +124,9 @@ export class SignInComponent implements OnInit {
         console.error(`${name} did not match any names.`);
         break;
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
