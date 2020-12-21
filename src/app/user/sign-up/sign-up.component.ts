@@ -51,10 +51,26 @@ export class SignUpComponent implements OnInit {
   };
   confirmEmailMessage = this.confirmEmailValidationMessages['required'];
 
-  private readonly contactValidationMessages = {
+  private readonly contactGroupValidationMessages = {
     match: 'The confirmation does not match your email address.',
   };
-  contactMessage = this.contactValidationMessages['match'];
+  contactGroupMessage = this.contactGroupValidationMessages['match'];
+
+  private readonly passwordValidationMessages = {
+    required: 'Please enter a password.',
+    pattern: 'Please enter a valid password that is at least 8 characters.',
+  };
+  passwordMessage = this.passwordValidationMessages['required'];
+
+  private readonly confirmPasswordValidationMessages = {
+    required: 'Please confirm your password.',
+  };
+  confirmPasswordMessage = this.confirmPasswordValidationMessages['required'];
+
+  private readonly passwordGroupValidationMessages = {
+    match: 'The confirmation does not match the password.',
+  };
+  passwordGroupMessage = this.passwordGroupValidationMessages['match'];
 
   private readonly passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm;
 

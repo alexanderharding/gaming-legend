@@ -92,8 +92,8 @@
               formControlName="confirmEmail"
               [ngClass]="{
                 'is-invalid':
-                  (confirmEmailMessage || contactMessage) && submitted,
-                'is-valid': !confirmEmailMessage && !contactMessage
+                  (confirmEmailMessage || contactGroupMessage) && submitted,
+                'is-valid': !confirmEmailMessage && !contactGroupMessage
               }"
             />
             <div *ngIf="!emailMessage" class="invalid-tooltip">
@@ -101,8 +101,73 @@
                 {{ confirmEmailMessage }}
               </span>
               <span *ngIf="!confirmEmailMessage">
-                {{ contactMessage }}
+                {{ contactGroupMessage }}
               </span>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset formGroupName="passwordGroup">
+          <legend class="text-primary">Password</legend>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text bg-info text-white">Password</span>
+            </div>
+            <input
+              [type]="
+                signUpForm.get('passwordGroup.showPassword').value
+                  ? 'text'
+                  : 'password'
+              "
+              formControlName="password"
+              class="form-control"
+              placeholder="Password (required)"
+              [ngClass]="{
+                'is-invalid': passwordMessage && submitted,
+                'is-valid': !passwordMessage
+              }"
+            />
+            <div class="invalid-tooltip">
+              {{ passwordMessage }}
+            </div>
+            <div class="btn-group-toggle input-group-append">
+              <label class="btn-secondary text-capitalize" ngbButtonLabel>
+                <input
+                  type="checkbox"
+                  ngbButton
+                  formControlName="showPassword"
+                />
+                {{
+                  this.signUpForm.get("passwordGroup.showPassword").value
+                    ? "hide"
+                    : "show"
+                }}
+              </label>
+            </div>
+          </div>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text bg-info text-white">Confirm</span>
+            </div>
+            <input
+              [type]="
+                signUpForm.get('passwordGroup.showPassword').value
+                  ? 'text'
+                  : 'password'
+              "
+              formControlName="confirmPassword"
+              class="form-control"
+              placeholder="Confirm (required)"
+              [ngClass]="{
+                'is-invalid':
+                  (passwordGroupMessage || confirmPasswordMessage) && submitted,
+                'is-valid': !passwordGroupMessage && !confirmPasswordMessage
+              }"
+            />
+            <div *ngIf="!passwordMessage" class="invalid-tooltip">
+              <span>{{ confirmPasswordMessage }}</span>
+              <span *ngIf="!confirmPasswordMessage">{{
+                passwordGroupMessage
+              }}</span>
             </div>
           </div>
         </fieldset>
