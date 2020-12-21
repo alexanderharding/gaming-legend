@@ -13,6 +13,7 @@ import { FooterComponent } from './footer/footer.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
 import { AuthGuard } from './account/auth.guard';
+import { UserGuard } from './user/user.guard';
 
 @NgModule({
   imports: [
@@ -30,7 +31,7 @@ import { AuthGuard } from './account/auth.guard';
     NotFoundComponent,
     ConfirmModalComponent,
   ],
-  providers: [AuthGuard],
+  providers: [AuthGuard, UserGuard],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
