@@ -6,7 +6,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NameFormComponent } from './name-form/name-form.component';
 
 @NgModule({
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   exports: [
     NameFormComponent,
     CommonModule,
@@ -14,5 +14,6 @@ import { NameFormComponent } from './name-form/name-form.component';
     ReactiveFormsModule,
     NgbModule,
   ],
+  declarations: [NameFormComponent],
 })
 export class SharedModule {}
