@@ -123,30 +123,38 @@
             [submitted]="submitted"
             pageTitle="Password"
           ></ctacu-password-form>
-          <div class="d-none d-sm-flex justify-content-between">
+          <form
+            [formGroup]="signUpForm"
+            (ngSubmit)="onSubmit(signUpForm)"
+            novalidate
+          >
+            <div class="d-none d-sm-flex justify-content-between">
+              <input
+                type="button"
+                value="back"
+                (click)="acc.toggle('contact')"
+                class="btn btn-primary text-capitalize"
+              />
+              <input
+                type="submit"
+                value="{{ signUpForm.invalid && submitted ? '! ' : '' }}Sign Up"
+                class="btn btn-block ml-2 btn-success text-capitalize"
+                [disabled]="signUpForm.invalid && submitted"
+              />
+            </div>
             <input
               type="button"
               value="back"
               (click)="acc.toggle('contact')"
-              class="btn btn-primary text-capitalize"
+              class="btn btn-block btn-primary text-capitalize d-sm-none"
             />
             <input
-              type="button"
-              value="Sign Up"
-              class="btn btn-block ml-2 btn-success text-capitalize"
+              type="submit"
+              value="{{ signUpForm.invalid && submitted ? '! ' : '' }}Sign Up"
+              class="btn btn-block btn-success text-capitalize d-sm-none"
+              [disabled]="signUpForm.invalid && submitted"
             />
-          </div>
-          <input
-            type="button"
-            value="back"
-            (click)="acc.toggle('contact')"
-            class="btn btn-block btn-primary text-capitalize d-sm-none"
-          />
-          <input
-            type="button"
-            value="Sign Up"
-            class="btn btn-block btn-success text-capitalize d-sm-none"
-          />
+          </form>
         </ng-template>
       </ngb-panel>
       <!-- <ngb-panel
