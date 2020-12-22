@@ -18,6 +18,8 @@ import { IUser } from 'src/app/types/user';
   styleUrls: ['./name-form.component.scss'],
 })
 export class NameFormComponent implements OnInit, OnDestroy {
+  readonly pageTitle = 'Full Name';
+
   @Input() parentForm: FormGroup;
   @Input() submitted: boolean;
   @Input() user: IUser;

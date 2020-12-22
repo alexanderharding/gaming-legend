@@ -12,6 +12,7 @@ import { IUser } from 'src/app/types/user';
 export class PasswordFormComponent implements OnInit, OnDestroy {
   @Input() parentForm: FormGroup;
   @Input() submitted: boolean;
+  @Input() pageTitle: string;
   @Input() user: IUser;
 
   private readonly passwordValidationMessages = {
