@@ -3,7 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
 import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
+import { AuthService } from 'src/app/services/auth.service';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
+import { User, UserMaker } from 'src/app/types/user';
 
 @Component({
   selector: 'ctacu-sign-up',
@@ -13,6 +15,8 @@ import { FormValidationRuleService } from 'src/app/services/form-validation-rule
 export class SignUpComponent implements OnInit {
   signUpForm: FormGroup;
   submitted = false;
+  isLoading = false;
+  signUpError: string;
 
   private readonly nameMinLength = +this.formValidationRuleService
     .nameMinLength;
@@ -26,7 +30,8 @@ export class SignUpComponent implements OnInit {
   constructor(
     private readonly fb: FormBuilder,
     private readonly config: NgbAccordionConfig,
-    private readonly formValidationRuleService: FormValidationRuleService
+    private readonly formValidationRuleService: FormValidationRuleService,
+    private readonly authService: AuthService
   ) {
     config.closeOthers = true;
   }
@@ -73,5 +78,55 @@ export class SignUpComponent implements OnInit {
         { validator: passwordMatcher }
       ),
     });
+  }
+
+  onSubmit(form: FormGroup): void {
+    if (!this.submitted) {
+      this.submitted = true;
+    }
+    // this.errorMessage = '';
+    this.signUpError = '';
+    if (form.valid) {
+      this.isLoading = true;
+      const email = form.get('contactGroup.email').value as string;
+      this.authService.checkForUser(email).subscribe(
+        (result) => {
+          if (result) {
+            this.isLoading = false;
+            this.signUpError = `${email} is already registered to an account.
+              Please sign in to continue.`;
+          } else {
+            this.signUp(form);
+          }
+        },
+        (error) => {
+          this.isLoading = false;
+          this.signUpError = 'There was an error signing up for an account.';
+        }
+      );
+    }
+  }
+
+  private signUp(form: FormGroup): void {
+    const user = UserMaker.create({
+      firstName: form.get('nameGroup.firstName').value as string,
+      lastName: form.get('nameGroup.lastName').value as string,
+      phone: form.get('contactGroup.phone').value as string,
+      email: form.get('contactGroup.email').value as string,
+      street: '',
+      city: '',
+      state: '',
+      zip: '',
+      country: '',
+      password: form.get('passwordGroup.password').value as string,
+      isAdmin: false,
+    }) as User;
+    this.authService.signUp(user).subscribe(
+      (result) => (this.isLoading = false),
+      (error) => {
+        this.isLoading = false;
+        this.signUpError = 'There was an error signing up for an account.';
+      }
+    );
   }
 }
