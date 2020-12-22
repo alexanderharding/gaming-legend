@@ -1,0 +1,67 @@
+<form [formGroup]="parentForm" novalidate>
+  <fieldset formGroupName="contactGroup">
+    <legend class="text-primary">{{ pageTitle }}</legend>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text bg-info text-white">Phone</span>
+      </div>
+      <input
+        type="tel"
+        formControlName="phone"
+        class="form-control"
+        autocomplete="tel"
+        placeholder="Phone number (required)"
+        [ngClass]="{
+          'is-invalid': phoneMessage && submitted,
+          'is-valid': !phoneMessage
+        }"
+      />
+      <div class="invalid-tooltip">
+        <span>{{ phoneMessage }}</span>
+      </div>
+    </div>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text bg-info text-white">Email</span>
+      </div>
+      <input
+        class="form-control"
+        id="emailId"
+        type="email"
+        autocomplete="email"
+        placeholder="Email (required)"
+        formControlName="email"
+        [ngClass]="{
+          'is-invalid': emailMessage && submitted,
+          'is-valid': !emailMessage
+        }"
+      />
+      <div class="invalid-tooltip">
+        {{ emailMessage }}
+      </div>
+    </div>
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text bg-info text-white">Confirm</span>
+      </div>
+      <input
+        type="email"
+        class="form-control"
+        placeholder="Confirm Email (required)"
+        formControlName="confirmEmail"
+        [ngClass]="{
+          'is-invalid': (confirmEmailMessage || contactMessage) && submitted,
+          'is-valid': !confirmEmailMessage && !contactMessage
+        }"
+      />
+      <div *ngIf="!emailMessage" class="invalid-tooltip">
+        <span>
+          {{ confirmEmailMessage }}
+        </span>
+        <span *ngIf="!confirmEmailMessage">
+          {{ contactMessage }}
+        </span>
+      </div>
+    </div>
+  </fieldset>
+</form>
