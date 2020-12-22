@@ -110,6 +110,61 @@
               />
             </ng-template>
           </ngb-panel>
+          <ngb-panel
+            type="{{
+              this.signUpForm.get('passwordGroup').invalid && submitted
+                ? 'danger'
+                : 'secondary'
+            }}"
+            id="password"
+            title="password"
+          >
+            <ng-template ngbPanelHeader let-opened="opened">
+              <div class="py-1">
+                <button
+                  ngbPanelToggle
+                  class="btn btn-lg btn-link p-0 text-light"
+                >
+                  {{
+                    this.signUpForm.get("passwordGroup").invalid && submitted
+                      ? "!"
+                      : ""
+                  }}
+                  Password
+                </button>
+              </div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <ctacu-password-form
+                [parentForm]="signUpForm"
+                [submitted]="submitted"
+              ></ctacu-password-form>
+              <div class="d-none d-sm-flex justify-content-between">
+                <input
+                  type="button"
+                  value="back"
+                  (click)="acc.toggle('contact')"
+                  class="btn btn-primary text-capitalize"
+                />
+                <input
+                  type="button"
+                  value="Sign Up"
+                  class="btn btn-block ml-2 btn-success text-capitalize"
+                />
+              </div>
+              <input
+                type="button"
+                value="back"
+                (click)="acc.toggle('contact')"
+                class="btn btn-block btn-primary text-capitalize d-sm-none"
+              />
+              <input
+                type="button"
+                value="Sign Up"
+                class="btn btn-block btn-success text-capitalize d-sm-none"
+              />
+            </ng-template>
+          </ngb-panel>
           <!-- <ngb-panel
               type="{{
                 this.signUpForm.get('addressGroup').invalid && submitted
