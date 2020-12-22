@@ -11,69 +11,13 @@ import { passwordMatcher } from 'src/app/functions/password-matcher';
 })
 export class SignUpComponent implements OnInit {
   signUpForm: FormGroup;
-  submitted = false;
+  submitted = true;
 
-  private readonly nameMinLength = 3;
-  private readonly nameMaxLength = 20;
+  // private readonly nameMinLength = 3;
+  // private readonly nameMaxLength = 20;
 
-  private readonly firstNameValidationMessages = {
-    required: 'Please enter your first name.',
-    minlength: `First name must be longer than ${this.nameMinLength - 1}
-    characters.`,
-    maxlength: `First name cannot be longer than ${this.nameMaxLength}
-    characters.`,
-  };
-  firstNameMessage = this.firstNameValidationMessages['required'];
-
-  private readonly lastNameValidationMessages = {
-    required: 'Please enter your last name.',
-    minlength: `Last name must be longer than ${this.nameMinLength - 1}
-    characters.`,
-    maxlength: `Last name cannot be longer than ${this.nameMaxLength}
-    characters.`,
-  };
-  lastNameMessage = this.lastNameValidationMessages['required'];
-
-  private readonly phonePattern = /(\+?( |-|\.)?\d{1,2}( |-|\.)?)?(\(?\d{3}\)?|\d{3})( |-|\.)?(\d{3}( |-|\.)?\d{4})/g;
-  private readonly phoneValidationMessages = {
-    required: 'Please enter your phone number.',
-    pattern: 'Please enter a valid phone number.',
-  };
-  phoneMessage = this.phoneValidationMessages['required'];
-
-  private readonly emailValidationMessages = {
-    required: 'Please enter your email address.',
-    email: 'Please enter a valid email address. ie. fake@1234.com',
-  };
-  emailMessage = this.emailValidationMessages['required'];
-
-  private readonly confirmEmailValidationMessages = {
-    required: 'Please confirm your email address.',
-  };
-  confirmEmailMessage = this.confirmEmailValidationMessages['required'];
-
-  private readonly contactGroupValidationMessages = {
-    match: 'The confirmation does not match your email address.',
-  };
-  contactGroupMessage = this.contactGroupValidationMessages['match'];
-
-  private readonly passwordValidationMessages = {
-    required: 'Please enter a password.',
-    pattern: 'Please enter a valid password that is at least 8 characters.',
-  };
-  passwordMessage = this.passwordValidationMessages['required'];
-
-  private readonly confirmPasswordValidationMessages = {
-    required: 'Please confirm your password.',
-  };
-  confirmPasswordMessage = this.confirmPasswordValidationMessages['required'];
-
-  private readonly passwordGroupValidationMessages = {
-    match: 'The confirmation does not match the password.',
-  };
-  passwordGroupMessage = this.passwordGroupValidationMessages['match'];
-
-  private readonly passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm;
+  private readonly phonePattern = /(\+?( |-|\.)?\d{1,2}( |-|\.)?)?(\(?\d{3}\)?|\d{3})( |-|\.)?(\d{3}( |-|\.)?\d{4})/;
+  private readonly passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -89,16 +33,16 @@ export class SignUpComponent implements OnInit {
           '',
           [
             Validators.required,
-            Validators.minLength(this.nameMinLength),
-            Validators.maxLength(this.nameMaxLength),
+            // Validators.minLength(this.nameMinLength),
+            // Validators.maxLength(this.nameMaxLength),
           ],
         ],
         lastName: [
           '',
           [
             Validators.required,
-            Validators.minLength(this.nameMinLength),
-            Validators.maxLength(this.nameMaxLength),
+            // Validators.minLength(this.nameMinLength),
+            // Validators.maxLength(this.nameMaxLength),
           ],
         ],
       }),

@@ -1,171 +1,154 @@
-<div class="container container-fluid py-3">
-  <div class="row justify-content-center">
-    <div class="col">
-      <h1 class="mb-3">Sign Up</h1>
-      <div class="shadow">
-        <ngb-accordion
-          [destroyOnHide]="false"
-          activeIds="name"
-          #acc="ngbAccordion"
-        >
-          <ngb-panel
-            type="{{
-              this.signUpForm.get('nameGroup').invalid && submitted
-                ? 'danger'
-                : 'secondary'
-            }}"
-            id="name"
-            title="name"
-          >
-            <ng-template ngbPanelHeader let-opened="opened">
-              <div class="py-1">
-                <button
-                  ngbPanelToggle
-                  class="btn btn-lg btn-link p-0 text-light"
-                >
-                  {{
-                    this.signUpForm.get("nameGroup").invalid && submitted
-                      ? "!"
-                      : ""
-                  }}
-                  Name
-                </button>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
-              <ctacu-name-form
-                [parentForm]="signUpForm"
-                [submitted]="submitted"
-              ></ctacu-name-form>
-              <div class="d-none d-sm-flex justify-content-end">
-                <input
-                  type="button"
-                  value="next"
-                  (click)="acc.toggle('contact')"
-                  class="btn btn-success text-capitalize"
-                />
-              </div>
-              <input
-                type="button"
-                value="next"
-                (click)="acc.toggle('contact')"
-                class="btn btn-block btn-success text-capitalize d-sm-none"
-              />
-            </ng-template>
-          </ngb-panel>
-          <ngb-panel
-            type="{{
-              this.signUpForm.get('contactGroup').invalid && submitted
-                ? 'danger'
-                : 'secondary'
-            }}"
-            id="contact"
-            title="contact"
-          >
-            <ng-template ngbPanelHeader let-opened="opened">
-              <div class="py-1">
-                <button
-                  ngbPanelToggle
-                  class="btn btn-lg btn-link p-0 text-light"
-                >
-                  {{
-                    this.signUpForm.get("contactGroup").invalid && submitted
-                      ? "!"
-                      : ""
-                  }}
-                  Contact Details
-                </button>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
-              <ctacu-contact-form
-                [parentForm]="signUpForm"
-                [submitted]="submitted"
-              ></ctacu-contact-form>
-              <div class="d-none d-sm-flex justify-content-between">
-                <input
-                  type="button"
-                  value="back"
-                  (click)="acc.toggle('name')"
-                  class="btn btn-primary text-capitalize"
-                />
-                <input
-                  type="button"
-                  value="next"
-                  (click)="acc.toggle('password')"
-                  class="btn btn-success text-capitalize"
-                />
-              </div>
-              <input
-                type="button"
-                value="back"
-                (click)="acc.toggle('name')"
-                class="btn btn-block btn-primary text-capitalize d-sm-none"
-              />
-              <input
-                type="button"
-                value="next"
-                (click)="acc.toggle('password')"
-                class="btn btn-block btn-success text-capitalize d-sm-none"
-              />
-            </ng-template>
-          </ngb-panel>
-          <ngb-panel
-            type="{{
-              this.signUpForm.get('passwordGroup').invalid && submitted
-                ? 'danger'
-                : 'secondary'
-            }}"
-            id="password"
-            title="password"
-          >
-            <ng-template ngbPanelHeader let-opened="opened">
-              <div class="py-1">
-                <button
-                  ngbPanelToggle
-                  class="btn btn-lg btn-link p-0 text-light"
-                >
-                  {{
-                    this.signUpForm.get("passwordGroup").invalid && submitted
-                      ? "!"
-                      : ""
-                  }}
-                  Password
-                </button>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
-              <ctacu-password-form
-                [parentForm]="signUpForm"
-                [submitted]="submitted"
-              ></ctacu-password-form>
-              <div class="d-none d-sm-flex justify-content-between">
-                <input
-                  type="button"
-                  value="back"
-                  (click)="acc.toggle('contact')"
-                  class="btn btn-primary text-capitalize"
-                />
-                <input
-                  type="button"
-                  value="Sign Up"
-                  class="btn btn-block ml-2 btn-success text-capitalize"
-                />
-              </div>
-              <input
-                type="button"
-                value="back"
-                (click)="acc.toggle('contact')"
-                class="btn btn-block btn-primary text-capitalize d-sm-none"
-              />
-              <input
-                type="button"
-                value="Sign Up"
-                class="btn btn-block btn-success text-capitalize d-sm-none"
-              />
-            </ng-template>
-          </ngb-panel>
-          <!-- <ngb-panel
+<div>
+  <h1 class="text-primary mb-3">Sign Up</h1>
+  <div class="shadow">
+    <ngb-accordion [destroyOnHide]="false" activeIds="name" #acc="ngbAccordion">
+      <ngb-panel
+        type="{{
+          this.signUpForm.get('nameGroup').invalid && submitted
+            ? 'danger'
+            : 'secondary'
+        }}"
+        id="name"
+        title="name"
+      >
+        <ng-template ngbPanelHeader let-opened="opened">
+          <div class="py-1">
+            <button ngbPanelToggle class="btn btn-lg btn-link p-0 text-light">
+              {{
+                this.signUpForm.get("nameGroup").invalid && submitted ? "!" : ""
+              }}
+              Name
+            </button>
+          </div>
+        </ng-template>
+        <ng-template ngbPanelContent>
+          <ctacu-name-form
+            [parentForm]="signUpForm"
+            [submitted]="submitted"
+          ></ctacu-name-form>
+          <div class="d-none d-sm-flex justify-content-end">
+            <input
+              type="button"
+              value="next"
+              (click)="acc.toggle('contact')"
+              class="btn btn-success text-capitalize"
+            />
+          </div>
+          <input
+            type="button"
+            value="next"
+            (click)="acc.toggle('contact')"
+            class="btn btn-block btn-success text-capitalize d-sm-none"
+          />
+        </ng-template>
+      </ngb-panel>
+      <ngb-panel
+        type="{{
+          this.signUpForm.get('contactGroup').invalid && submitted
+            ? 'danger'
+            : 'secondary'
+        }}"
+        id="contact"
+        title="contact"
+      >
+        <ng-template ngbPanelHeader let-opened="opened">
+          <div class="py-1">
+            <button ngbPanelToggle class="btn btn-lg btn-link p-0 text-light">
+              {{
+                this.signUpForm.get("contactGroup").invalid && submitted
+                  ? "!"
+                  : ""
+              }}
+              Contact Details
+            </button>
+          </div>
+        </ng-template>
+        <ng-template ngbPanelContent>
+          <ctacu-contact-form
+            [parentForm]="signUpForm"
+            [submitted]="submitted"
+          ></ctacu-contact-form>
+          <div class="d-none d-sm-flex justify-content-between">
+            <input
+              type="button"
+              value="back"
+              (click)="acc.toggle('name')"
+              class="btn btn-primary text-capitalize"
+            />
+            <input
+              type="button"
+              value="next"
+              (click)="acc.toggle('password')"
+              class="btn btn-success text-capitalize"
+            />
+          </div>
+          <input
+            type="button"
+            value="back"
+            (click)="acc.toggle('name')"
+            class="btn btn-block btn-primary text-capitalize d-sm-none"
+          />
+          <input
+            type="button"
+            value="next"
+            (click)="acc.toggle('password')"
+            class="btn btn-block btn-success text-capitalize d-sm-none"
+          />
+        </ng-template>
+      </ngb-panel>
+      <ngb-panel
+        type="{{
+          this.signUpForm.get('passwordGroup').invalid && submitted
+            ? 'danger'
+            : 'secondary'
+        }}"
+        id="password"
+        title="password"
+      >
+        <ng-template ngbPanelHeader let-opened="opened">
+          <div class="py-1">
+            <button ngbPanelToggle class="btn btn-lg btn-link p-0 text-light">
+              {{
+                this.signUpForm.get("passwordGroup").invalid && submitted
+                  ? "!"
+                  : ""
+              }}
+              Password
+            </button>
+          </div>
+        </ng-template>
+        <ng-template ngbPanelContent>
+          <ctacu-password-form
+            [parentForm]="signUpForm"
+            [submitted]="submitted"
+          ></ctacu-password-form>
+          <div class="d-none d-sm-flex justify-content-between">
+            <input
+              type="button"
+              value="back"
+              (click)="acc.toggle('contact')"
+              class="btn btn-primary text-capitalize"
+            />
+            <input
+              type="button"
+              value="Sign Up"
+              class="btn btn-block ml-2 btn-success text-capitalize"
+            />
+          </div>
+          <input
+            type="button"
+            value="back"
+            (click)="acc.toggle('contact')"
+            class="btn btn-block btn-primary text-capitalize d-sm-none"
+          />
+          <input
+            type="button"
+            value="Sign Up"
+            class="btn btn-block btn-success text-capitalize d-sm-none"
+          />
+        </ng-template>
+      </ngb-panel>
+      <!-- <ngb-panel
               type="{{
                 this.signUpForm.get('addressGroup').invalid && submitted
                   ? 'danger'
@@ -251,8 +234,6 @@
                 </ctacu-finalize-panel-content>
               </ng-template>
             </ngb-panel> -->
-        </ngb-accordion>
-      </div>
-    </div>
+    </ngb-accordion>
   </div>
 </div>

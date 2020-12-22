@@ -1,14 +1,15 @@
-<div class="container container-fluid py-3">
+<div class="container-xl py-3">
   <div *ngIf="loading" class="spinner-border text-primary" role="status">
     <span class="sr-only">Loading...</span>
   </div>
-  <div class="row justify-content-center">
-    <div class="col-auto">
+  <div class="row">
+    <div class="col-lg">
       <form
         [formGroup]="signInForm"
         (ngSubmit)="signIn(signInForm)"
         novalidate
         autocomplete="off"
+        class="mb-3"
       >
         <fieldset>
           <h1 class="text-primary mb-3">Sign In</h1>
@@ -66,26 +67,18 @@
             </div>
           </div>
         </fieldset>
-        <div class="form-row">
-          <div class="col-sm mb-2 mb-sm-0">
-            <button
-              type="submit"
-              class="btn btn-success btn-block shadow"
-              [disabled]="(this.signInForm.invalid && submitted) || loading"
-            >
-              Sign In
-            </button>
-          </div>
-          <div class="col-sm">
-            <input
-              type="button"
-              value="Sign Up"
-              class="btn btn-block btn-info shadow"
-              routerLink="../sign-up"
-            />
-          </div>
-        </div>
+        <button
+          type="submit"
+          class="btn btn-success btn-block shadow"
+          [disabled]="(this.signInForm.invalid && submitted) || loading"
+        >
+          Sign In
+        </button>
       </form>
+      <hr class="my-3 d-lg-none" />
+    </div>
+    <div class="col-lg">
+      <ctacu-sign-up></ctacu-sign-up>
     </div>
   </div>
 </div>
