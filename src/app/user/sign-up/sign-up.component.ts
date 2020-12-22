@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
 import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
 
@@ -10,7 +11,7 @@ import { passwordMatcher } from 'src/app/functions/password-matcher';
 })
 export class SignUpComponent implements OnInit {
   signUpForm: FormGroup;
-  submitted = true;
+  submitted = false;
 
   private readonly nameMinLength = 3;
   private readonly nameMaxLength = 20;
@@ -74,7 +75,12 @@ export class SignUpComponent implements OnInit {
 
   private readonly passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm;
 
-  constructor(private readonly fb: FormBuilder) {}
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly config: NgbAccordionConfig
+  ) {
+    config.closeOthers = true;
+  }
 
   ngOnInit(): void {
     this.signUpForm = this.fb.group({

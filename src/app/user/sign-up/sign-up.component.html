@@ -2,178 +2,202 @@
   <div class="row justify-content-center">
     <div class="col">
       <h1 class="mb-3">Sign Up</h1>
-      <form [formGroup]="signUpForm">
-        <fieldset class="mb-3" formGroupName="nameGroup">
-          <legend class="text-primary">Full Name</legend>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text bg-info text-white">First</span>
-            </div>
-            <input
-              type="text"
-              formControlName="firstName"
-              class="form-control"
-              placeholder="First name (required)"
-              [ngClass]="{
-                'is-invalid': firstNameMessage && submitted,
-                'is-valid': !firstNameMessage
-              }"
-            />
-            <div class="invalid-tooltip">
-              <span>{{ firstNameMessage }}</span>
-            </div>
-          </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text bg-info text-white">Last</span>
-            </div>
-            <input
-              type="text"
-              formControlName="lastName"
-              class="form-control"
-              placeholder="Last name (required)"
-              [ngClass]="{
-                'is-invalid': lastNameMessage && submitted,
-                'is-valid': !lastNameMessage
-              }"
-            />
-            <div class="invalid-tooltip">
-              <span>{{ lastNameMessage }}</span>
-            </div>
-          </div>
-        </fieldset>
-        <fieldset class="mb-3" formGroupName="contactGroup">
-          <legend class="text-primary">Contact Information</legend>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text bg-info text-white">Phone</span>
-            </div>
-            <input
-              type="tel"
-              formControlName="phone"
-              class="form-control"
-              autocomplete="tel"
-              placeholder="Phone number (required)"
-              [ngClass]="{
-                'is-invalid': phoneMessage && submitted,
-                'is-valid': !phoneMessage
-              }"
-            />
-            <div class="invalid-tooltip">
-              <span>{{ phoneMessage }}</span>
-            </div>
-          </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text bg-info text-white">Email</span>
-            </div>
-            <input
-              class="form-control"
-              id="emailId"
-              type="email"
-              autocomplete="email"
-              placeholder="Email (required)"
-              formControlName="email"
-              [ngClass]="{
-                'is-invalid': emailMessage && submitted,
-                'is-valid': !emailMessage
-              }"
-            />
-            <div class="invalid-tooltip">
-              {{ emailMessage }}
-            </div>
-          </div>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text bg-info text-white">Confirm</span>
-            </div>
-            <input
-              type="email"
-              class="form-control"
-              placeholder="Confirm Email (required)"
-              formControlName="confirmEmail"
-              [ngClass]="{
-                'is-invalid':
-                  (confirmEmailMessage || contactGroupMessage) && submitted,
-                'is-valid': !confirmEmailMessage && !contactGroupMessage
-              }"
-            />
-            <div *ngIf="!emailMessage" class="invalid-tooltip">
-              <span>
-                {{ confirmEmailMessage }}
-              </span>
-              <span *ngIf="!confirmEmailMessage">
-                {{ contactGroupMessage }}
-              </span>
-            </div>
-          </div>
-        </fieldset>
-        <fieldset formGroupName="passwordGroup">
-          <legend class="text-primary">Password</legend>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text bg-info text-white">Password</span>
-            </div>
-            <input
-              [type]="
-                signUpForm.get('passwordGroup.showPassword').value
-                  ? 'text'
-                  : 'password'
-              "
-              formControlName="password"
-              class="form-control"
-              placeholder="Password (required)"
-              [ngClass]="{
-                'is-invalid': passwordMessage && submitted,
-                'is-valid': !passwordMessage
-              }"
-            />
-            <div class="invalid-tooltip">
-              {{ passwordMessage }}
-            </div>
-            <div class="btn-group-toggle input-group-append">
-              <label class="btn-secondary text-capitalize" ngbButtonLabel>
+      <div class="shadow">
+        <ngb-accordion
+          [destroyOnHide]="false"
+          activeIds="name"
+          #acc="ngbAccordion"
+        >
+          <ngb-panel
+            type="{{
+              this.signUpForm.get('nameGroup').invalid && submitted
+                ? 'danger'
+                : 'secondary'
+            }}"
+            id="name"
+            title="name"
+          >
+            <ng-template ngbPanelHeader let-opened="opened">
+              <div class="py-1">
+                <button
+                  ngbPanelToggle
+                  class="btn btn-lg btn-link p-0 text-light"
+                >
+                  {{
+                    this.signUpForm.get("nameGroup").invalid && submitted
+                      ? "!"
+                      : ""
+                  }}
+                  Name
+                </button>
+              </div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <ctacu-name-form
+                [parentForm]="signUpForm"
+                [submitted]="submitted"
+              ></ctacu-name-form>
+              <div class="d-none d-sm-flex justify-content-end">
                 <input
-                  type="checkbox"
-                  ngbButton
-                  formControlName="showPassword"
+                  type="button"
+                  value="next"
+                  (click)="acc.toggle('contact')"
+                  class="btn btn-success text-capitalize"
                 />
-                {{
-                  this.signUpForm.get("passwordGroup.showPassword").value
-                    ? "hide"
-                    : "show"
-                }}
-              </label>
-            </div>
-          </div>
-          <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <span class="input-group-text bg-info text-white">Confirm</span>
-            </div>
-            <input
-              [type]="
-                signUpForm.get('passwordGroup.showPassword').value
-                  ? 'text'
-                  : 'password'
-              "
-              formControlName="confirmPassword"
-              class="form-control"
-              placeholder="Confirm (required)"
-              [ngClass]="{
-                'is-invalid':
-                  (passwordGroupMessage || confirmPasswordMessage) && submitted,
-                'is-valid': !passwordGroupMessage && !confirmPasswordMessage
-              }"
-            />
-            <div *ngIf="!passwordMessage" class="invalid-tooltip">
-              <span>{{ confirmPasswordMessage }}</span>
-              <span *ngIf="!confirmPasswordMessage">{{
-                passwordGroupMessage
-              }}</span>
-            </div>
-          </div>
-        </fieldset>
-      </form>
+              </div>
+              <input
+                type="button"
+                value="next"
+                (click)="acc.toggle('contact')"
+                class="btn btn-block btn-success text-capitalize d-sm-none"
+              />
+            </ng-template>
+          </ngb-panel>
+          <ngb-panel
+            type="{{
+              this.signUpForm.get('contactGroup').invalid && submitted
+                ? 'danger'
+                : 'secondary'
+            }}"
+            id="contact"
+            title="contact"
+          >
+            <ng-template ngbPanelHeader let-opened="opened">
+              <div class="py-1">
+                <button
+                  ngbPanelToggle
+                  class="btn btn-lg btn-link p-0 text-light"
+                >
+                  {{
+                    this.signUpForm.get("contactGroup").invalid && submitted
+                      ? "!"
+                      : ""
+                  }}
+                  Contact Details
+                </button>
+              </div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <ctacu-contact-form
+                [parentForm]="signUpForm"
+                [submitted]="submitted"
+              ></ctacu-contact-form>
+              <div class="d-none d-sm-flex justify-content-between">
+                <input
+                  type="button"
+                  value="back"
+                  (click)="acc.toggle('name')"
+                  class="btn btn-primary text-capitalize"
+                />
+                <input
+                  type="button"
+                  value="next"
+                  (click)="acc.toggle('password')"
+                  class="btn btn-success text-capitalize"
+                />
+              </div>
+              <input
+                type="button"
+                value="back"
+                (click)="acc.toggle('name')"
+                class="btn btn-block btn-primary text-capitalize d-sm-none"
+              />
+              <input
+                type="button"
+                value="next"
+                (click)="acc.toggle('password')"
+                class="btn btn-block btn-success text-capitalize d-sm-none"
+              />
+            </ng-template>
+          </ngb-panel>
+          <!-- <ngb-panel
+              type="{{
+                this.signUpForm.get('addressGroup').invalid && submitted
+                  ? 'danger'
+                  : 'secondary'
+              }}"
+              id="shipping"
+              title="shipping"
+            >
+              <ng-template ngbPanelHeader let-opened="opened">
+                <div class="py-1">
+                  <button
+                    ngbPanelToggle
+                    class="btn btn-lg btn-link p-0 text-light"
+                  >
+                    {{
+                      this.checkOutForm.get("addressGroup").invalid && submitted
+                        ? "!"
+                        : ""
+                    }}
+                    Shipping
+                  </button>
+                </div>
+              </ng-template>
+              <ng-template ngbPanelContent>
+                <ctacu-shipping-panel-content
+                  [checkOutForm]="checkOutForm"
+                  [submitted]="submitted"
+                  [shippingRates]="shippingRates"
+                  [user]="user"
+                  [streetMinLength]="streetMinLength"
+                  [streetMaxLength]="streetMaxLength"
+                  [cityMinLength]="cityMinLength"
+                  [cityMaxLength]="cityMaxLength"
+                  [states]="states"
+                  (toggleChange)="acc.toggle($event)"
+                  (newSubscription)="pushSubscription($event)"
+                ></ctacu-shipping-panel-content>
+              </ng-template>
+            </ngb-panel>
+            <ngb-panel
+              type="{{
+                (this.checkOutForm.get('paymentGroup').invalid ||
+                  this.checkOutForm.get('signUpGroup').invalid) &&
+                submitted
+                  ? 'danger'
+                  : 'secondary'
+              }}"
+              id="finalize"
+              title="finalize"
+            >
+              <ng-template ngbPanelHeader let-opened="opened">
+                <div class="py-1">
+                  <button
+                    ngbPanelToggle
+                    class="btn btn-lg btn-link p-0 text-light text-capitalize"
+                  >
+                    {{
+                      (this.checkOutForm.get("paymentGroup").invalid ||
+                        this.checkOutForm.get("signUpGroup").invalid) &&
+                      submitted
+                        ? "!"
+                        : ""
+                    }}
+                    Finalize
+                  </button>
+                </div>
+              </ng-template>
+              <ng-template ngbPanelContent>
+                <ctacu-finalize-panel-content
+                  [checkOutForm]="checkOutForm"
+                  [user]="user"
+                  [submitted]="submitted"
+                  [errorMessage]="errorMessage"
+                  [signUpError]="signUpError"
+                  [isLoading]="isLoading"
+                  [subtotal$]="subtotal$"
+                  (toggleChange)="acc.toggle($event)"
+                  (checkChange)="setPasswordValidation($event)"
+                  (onSubmit)="onSubmit($event, items)"
+                  (totalChange)="setTotal($event)"
+                  (newSubscription)="pushSubscription($event)"
+                >
+                </ctacu-finalize-panel-content>
+              </ng-template>
+            </ngb-panel> -->
+        </ngb-accordion>
+      </div>
     </div>
   </div>
 </div>
