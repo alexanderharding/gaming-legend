@@ -196,22 +196,8 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     // Build check out form
     this.checkOutForm = this.fb.group({
       // nameGroup: this.fb.group({
-      //   firstName: [
-      //     '',
-      //     [
-      //       Validators.required,
-      //       Validators.minLength(this.nameMinLength),
-      //       Validators.maxLength(this.nameMaxLength),
-      //     ],
-      //   ],
-      //   lastName: [
-      //     '',
-      //     [
-      //       Validators.required,
-      //       Validators.minLength(this.nameMinLength),
-      //       Validators.maxLength(this.nameMaxLength),
-      //     ],
-      //   ],
+      //   firstName: '',
+      //   lastName: '',
       // }),
       contactGroup: this.fb.group(
         {

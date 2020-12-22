@@ -6,7 +6,7 @@ import {
   EventEmitter,
   OnDestroy,
 } from '@angular/core';
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { IUser } from 'src/app/types/user';
@@ -48,8 +48,9 @@ export class NameFormComponent implements OnInit, OnDestroy {
   constructor() {}
 
   ngOnInit(): void {
-    this.nameMinLengthChange.emit(this.nameMinLength);
-    this.nameMaxLengthChange.emit(this.nameMaxLength);
+    // this.nameMinLengthChange.emit(this.nameMinLength);
+    // this.nameMaxLengthChange.emit(this.nameMaxLength);
+    this.setNameLengthValidation();
     this.subscribeToControls();
     if (this.user) {
       this.setUserData(this.user);
@@ -93,6 +94,23 @@ export class NameFormComponent implements OnInit, OnDestroy {
         console.error(`${name} did not match any names.`);
         break;
     }
+  }
+
+  private setNameLengthValidation(): void {
+    const firstNameControl = this.parentForm.get('nameGroup.firstName');
+    const lastNameControl = this.parentForm.get('nameGroup.lastName');
+    firstNameControl.setValidators([
+      Validators.required,
+      Validators.minLength(this.nameMinLength),
+      Validators.maxLength(this.nameMaxLength),
+    ]);
+    lastNameControl.setValidators([
+      Validators.required,
+      Validators.minLength(this.nameMinLength),
+      Validators.maxLength(this.nameMaxLength),
+    ]);
+    firstNameControl.updateValueAndValidity();
+    lastNameControl.updateValueAndValidity();
   }
 
   private setUserData(user: IUser): void {
