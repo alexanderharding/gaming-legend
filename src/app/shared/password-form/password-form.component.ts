@@ -15,6 +15,8 @@ export class PasswordFormComponent implements OnInit, OnDestroy {
   @Input() pageTitle: string;
   @Input() user: IUser;
 
+  showPassword = false;
+
   private readonly passwordValidationMessages = {
     required: 'Please enter a password.',
     pattern: 'Please enter a valid password that is at least 8 characters.',
@@ -37,6 +39,10 @@ export class PasswordFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscribeToControls();
+  }
+
+  toggleShowPassword(): void {
+    this.showPassword = !this.showPassword;
   }
 
   private subscribeToControls(): void {

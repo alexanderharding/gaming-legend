@@ -69,7 +69,6 @@ export class SignUpComponent implements OnInit {
             [Validators.required, Validators.pattern(this.passwordPattern)],
           ],
           confirmPassword: ['', [Validators.required]],
-          showPassword: false,
         },
         { validator: passwordMatcher }
       ),
