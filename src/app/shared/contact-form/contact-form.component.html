@@ -50,8 +50,9 @@
         placeholder="Confirm Email (required)"
         formControlName="confirmEmail"
         [ngClass]="{
-          'is-invalid': (confirmEmailMessage || contactMessage) && submitted,
-          'is-valid': !confirmEmailMessage && !contactMessage
+          'is-invalid':
+            (confirmEmailMessage || contactGroupMessage) && submitted,
+          'is-valid': !confirmEmailMessage && !contactGroupMessage
         }"
       />
       <div *ngIf="!emailMessage" class="invalid-tooltip">
@@ -59,7 +60,7 @@
           {{ confirmEmailMessage }}
         </span>
         <span *ngIf="!confirmEmailMessage">
-          {{ contactMessage }}
+          {{ contactGroupMessage }}
         </span>
       </div>
     </div>

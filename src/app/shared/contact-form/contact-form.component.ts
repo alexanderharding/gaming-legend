@@ -42,7 +42,7 @@ export class ContactFormComponent implements OnInit, OnDestroy {
   private readonly contactValidationMessages = {
     match: 'The confirmation does not match your email address.',
   };
-  contactMessage = this.contactValidationMessages['match'];
+  contactGroupMessage = this.contactValidationMessages['match'];
 
   private readonly subscriptions: Subscription[] = [];
 
@@ -111,9 +111,9 @@ export class ContactFormComponent implements OnInit, OnDestroy {
         }
         break;
       case 'contact':
-        this.contactMessage = '';
+        this.contactGroupMessage = '';
         if (c.errors) {
-          this.contactMessage = Object.keys(c.errors)
+          this.contactGroupMessage = Object.keys(c.errors)
             .map((key) => this.contactValidationMessages[key])
             .join(' ');
         }
