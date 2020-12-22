@@ -8,6 +8,7 @@
       <input
         type="text"
         formControlName="firstName"
+        autocomplete="given-name"
         class="form-control"
         placeholder="First name (required)"
         [ngClass]="{
@@ -28,6 +29,7 @@
         formControlName="lastName"
         class="form-control"
         placeholder="Last name (required)"
+        autocomplete="family-name"
         [ngClass]="{
           'is-invalid': lastNameMessage && submitted,
           'is-valid': !lastNameMessage
