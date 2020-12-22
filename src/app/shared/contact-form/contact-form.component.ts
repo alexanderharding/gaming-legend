@@ -80,7 +80,7 @@ export class ContactFormComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       contactGroupControl.valueChanges
         .pipe(debounceTime(1000))
-        .subscribe(() => this.setMessage(contactGroupControl, 'contact'))
+        .subscribe(() => this.setMessage(contactGroupControl, 'contactGroup'))
     );
   }
 
@@ -110,7 +110,7 @@ export class ContactFormComponent implements OnInit, OnDestroy {
             .join(' ');
         }
         break;
-      case 'contact':
+      case 'contactGroup':
         this.contactGroupMessage = '';
         if (c.errors) {
           this.contactGroupMessage = Object.keys(c.errors)
