@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
 import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
+import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
 
 @Component({
   selector: 'ctacu-sign-up',
@@ -11,17 +12,21 @@ import { passwordMatcher } from 'src/app/functions/password-matcher';
 })
 export class SignUpComponent implements OnInit {
   signUpForm: FormGroup;
-  submitted = true;
+  submitted = false;
 
-  // private readonly nameMinLength = 3;
-  // private readonly nameMaxLength = 20;
-
-  private readonly phonePattern = /(\+?( |-|\.)?\d{1,2}( |-|\.)?)?(\(?\d{3}\)?|\d{3})( |-|\.)?(\d{3}( |-|\.)?\d{4})/;
-  private readonly passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+  private readonly nameMinLength = +this.formValidationRuleService
+    .nameMinLength;
+  private readonly nameMaxLength = +this.formValidationRuleService
+    .nameMaxLength;
+  private readonly phonePattern = this.formValidationRuleService
+    .phonePattern as RegExp;
+  private readonly passwordPattern = this.formValidationRuleService
+    .passwordPattern as RegExp;
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly config: NgbAccordionConfig
+    private readonly config: NgbAccordionConfig,
+    private readonly formValidationRuleService: FormValidationRuleService
   ) {
     config.closeOthers = true;
   }
@@ -33,16 +38,16 @@ export class SignUpComponent implements OnInit {
           '',
           [
             Validators.required,
-            // Validators.minLength(this.nameMinLength),
-            // Validators.maxLength(this.nameMaxLength),
+            Validators.minLength(this.nameMinLength),
+            Validators.maxLength(this.nameMaxLength),
           ],
         ],
         lastName: [
           '',
           [
             Validators.required,
-            // Validators.minLength(this.nameMinLength),
-            // Validators.maxLength(this.nameMaxLength),
+            Validators.minLength(this.nameMinLength),
+            Validators.maxLength(this.nameMaxLength),
           ],
         ],
       }),

@@ -9,6 +9,7 @@ import {
 import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
 import { IUser } from 'src/app/types/user';
 
 @Component({
@@ -20,12 +21,10 @@ export class NameFormComponent implements OnInit, OnDestroy {
   @Input() parentForm: FormGroup;
   @Input() submitted: boolean;
   @Input() user: IUser;
-  @Output() nameMinLengthChange = new EventEmitter<number>();
-  @Output() nameMaxLengthChange = new EventEmitter<number>();
 
   private readonly subscriptions: Subscription[] = [];
-  private readonly nameMinLength = 3;
-  private readonly nameMaxLength = 20;
+  private readonly nameMinLength = this.formValidationRuleService.nameMinLength;
+  private readonly nameMaxLength = this.formValidationRuleService.nameMaxLength;
 
   private firstNameValidationMessages = {
     required: 'Please enter your first name.',
@@ -45,12 +44,11 @@ export class NameFormComponent implements OnInit, OnDestroy {
   };
   lastNameMessage = this.lastNameValidationMessages['required'];
 
-  constructor() {}
+  constructor(
+    private readonly formValidationRuleService: FormValidationRuleService
+  ) {}
 
   ngOnInit(): void {
-    // this.nameMinLengthChange.emit(this.nameMinLength);
-    // this.nameMaxLengthChange.emit(this.nameMaxLength);
-    this.setNameLengthValidation();
     this.subscribeToControls();
     if (this.user) {
       this.setUserData(this.user);
@@ -94,23 +92,6 @@ export class NameFormComponent implements OnInit, OnDestroy {
         console.error(`${name} did not match any names.`);
         break;
     }
-  }
-
-  private setNameLengthValidation(): void {
-    const firstNameControl = this.parentForm.get('nameGroup.firstName');
-    const lastNameControl = this.parentForm.get('nameGroup.lastName');
-    firstNameControl.setValidators([
-      Validators.required,
-      Validators.minLength(this.nameMinLength),
-      Validators.maxLength(this.nameMaxLength),
-    ]);
-    lastNameControl.setValidators([
-      Validators.required,
-      Validators.minLength(this.nameMinLength),
-      Validators.maxLength(this.nameMaxLength),
-    ]);
-    firstNameControl.updateValueAndValidity();
-    lastNameControl.updateValueAndValidity();
   }
 
   private setUserData(user: IUser): void {
