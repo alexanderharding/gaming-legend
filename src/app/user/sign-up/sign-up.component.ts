@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
 import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
@@ -18,6 +19,8 @@ export class SignUpComponent implements OnInit {
   isLoading = false;
   signUpError: string;
 
+  @Output() onSignUp = new EventEmitter<Object>();
+
   private readonly nameMinLength = +this.formValidationRuleService
     .nameMinLength;
   private readonly nameMaxLength = +this.formValidationRuleService
@@ -31,7 +34,8 @@ export class SignUpComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly config: NgbAccordionConfig,
     private readonly formValidationRuleService: FormValidationRuleService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly router: Router
   ) {
     config.closeOthers = true;
   }
@@ -121,8 +125,24 @@ export class SignUpComponent implements OnInit {
       password: form.get('passwordGroup.password').value as string,
       isAdmin: false,
     }) as User;
-    this.authService.signUp(user).subscribe(
-      (result) => (this.isLoading = false),
+    this.authService.saveUser(user).subscribe(
+      (result) => {
+        this.onSignUp.emit({ email: result.email, password: result.password });
+        this.authService.signIn(result.email, result.password).subscribe(
+          (result) => {
+            this.isLoading = false;
+            if (result) {
+              this.router.navigate(['/account']);
+              return;
+            }
+            //  this.signInMessage = 'Invalid email or password.';
+          },
+          (error) => {
+            this.isLoading = false;
+            console.error(error);
+          }
+        );
+      },
       (error) => {
         this.isLoading = false;
         this.signUpError = 'There was an error signing up for an account.';

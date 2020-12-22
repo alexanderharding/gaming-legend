@@ -64,7 +64,7 @@ export class SignInComponent implements OnInit, OnDestroy {
     this.populateTestData();
   }
 
-  signIn(form: FormGroup): void {
+  onSubmit(form: FormGroup): void {
     this.signInMessage = '';
     if (!this.submitted) {
       this.submitted = true;
@@ -73,25 +73,29 @@ export class SignInComponent implements OnInit, OnDestroy {
       this.loading = true;
       const email = form.get('email').value as string;
       const password = form.get('password').value as string;
-      this.authService.signIn(email, password).subscribe(
-        (result) => {
-          this.loading = false;
-          if (result) {
-            if (this.returnLink) {
-              this.router.navigate([`/${this.returnLink}`]);
-              return;
-            }
-            this.router.navigate(['/account']);
+      this.signIn(email, password);
+    }
+  }
+
+  signIn(email: string, password: string): void {
+    this.authService.signIn(email, password).subscribe(
+      (result) => {
+        this.loading = false;
+        if (result) {
+          if (this.returnLink) {
+            this.router.navigate([`/${this.returnLink}`]);
             return;
           }
-          this.signInMessage = 'Invalid email or password.';
-        },
-        (error) => {
-          this.loading = false;
-          console.error(error);
+          this.router.navigate(['/account']);
+          return;
         }
-      );
-    }
+        this.signInMessage = 'Invalid email or password.';
+      },
+      (error) => {
+        this.loading = false;
+        console.error(error);
+      }
+    );
   }
 
   private populateTestData(): void {

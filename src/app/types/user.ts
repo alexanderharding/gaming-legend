@@ -25,7 +25,8 @@ export class User {
     public zip: string,
     public country: string,
     public password: string,
-    public isAdmin: boolean
+    public isAdmin: boolean,
+    public id?: number
   ) {}
 }
 

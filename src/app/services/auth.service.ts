@@ -64,12 +64,6 @@ export class AuthService {
     this.currentUserSubject.next(null);
   }
 
-  signUp(user: User): Observable<IUser> {
-    return this.http
-      .post<IUser>(`${this.baseUrl}/users`, user)
-      .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
-  }
-
   checkForUser(email: string): Observable<boolean> {
     return this.http.get<IUser[]>(`${this.baseUrl}/users/?email=${email}`).pipe(
       delay(1000),
@@ -80,5 +74,28 @@ export class AuthService {
       }),
       catchError(this.errorService.handleError)
     );
+  }
+
+  saveUser(user: User): Observable<IUser> {
+    return user.id ? this.updateUser(user as IUser) : this.addUser(user);
+  }
+
+  private addUser(user: User): Observable<IUser> {
+    return this.http
+      .post<IUser>(`${this.baseUrl}/users`, user)
+      .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
+  }
+
+  private updateUser(user: IUser): Observable<IUser> {
+    console.log(`Updating user: ${user.id}`);
+    return this.http
+      .put<IUser>(`${this.baseUrl}/user/${+user.id}`, user)
+      .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
+  }
+
+  signUp(user: User): Observable<IUser> {
+    return this.http
+      .post<IUser>(`${this.baseUrl}/users`, user)
+      .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
   }
 }
