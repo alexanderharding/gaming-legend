@@ -67,7 +67,7 @@ export class ShippingPanelContentComponent implements OnInit {
       maxlength: `The street cannot be longer than ${this.streetMaxLength}
     characters.`,
     };
-    this.streetMessage = this.stateValidationMessages['required'];
+    this.streetMessage = this.streetValidationMessages['required'];
     this.cityValidationMessages = {
       required: 'Please enter your city.',
       minlength: `The city must be longer than ${this.cityMinLength - 1}
