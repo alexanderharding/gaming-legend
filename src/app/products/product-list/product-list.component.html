@@ -1,4 +1,4 @@
-<main class="container-xl pt-3">
+<div class="container-xl pt-3">
   <section class="mb-3">
     <input
       type="button"
@@ -126,8 +126,7 @@
     </form>
     <div
       *ngIf="isFiltering"
-      class="spinner-border text-danger"
-      id="filterSpinner"
+      class="spinner-border loadingSpinner text-danger"
       role="status"
     >
       <span class="sr-only">Loading...</span>
@@ -275,10 +274,10 @@
 
     <ng-template #loading>
       <div class="d-flex justify-content-center m-3">
-        <div class="spinner-border text-info" role="status">
+        <div class="spinner-border text-info" id="contentSpinner" role="status">
           <span class="sr-only">Loading... </span>
         </div>
       </div>
     </ng-template>
   </ng-template>
-</main>
+</div>
