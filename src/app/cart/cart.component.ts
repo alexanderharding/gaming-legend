@@ -151,6 +151,10 @@ export class CartComponent implements OnInit {
     );
   }
 
+  setLoading(value: boolean): void {
+    this.loading = value;
+  }
+
   private refreshCart(): void {
     this.cartService.setCurrentCart().subscribe({
       error: (error) => {

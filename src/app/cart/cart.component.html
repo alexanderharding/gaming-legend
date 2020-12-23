@@ -179,7 +179,9 @@
             quantity$ | async | number
           }}</span>
         </h4>
-        <ctacu-cart-summary></ctacu-cart-summary>
+        <ctacu-cart-summary
+          (onTotalChange)="setLoading($event)"
+        ></ctacu-cart-summary>
         <input
           type="button"
           value="checkout"
