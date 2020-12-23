@@ -1,0 +1,114 @@
+<form [formGroup]="parentForm" novalidate>
+  <fieldset formGroupName="paymentGroup">
+    <legend class="text-primary text-capitalize">Payment</legend>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text bg-info text-white">Card</span>
+      </div>
+      <input
+        type="text"
+        formControlName="cardNumber"
+        class="form-control"
+        autocomplete="cc-number"
+        placeholder="Card number (required)"
+        [ngClass]="{
+          'is-invalid': cardNumberMessage && submitted,
+          'is-valid': !cardNumberMessage
+        }"
+      />
+      <div class="invalid-tooltip">
+        <span>{{ cardNumberMessage }}</span>
+      </div>
+    </div>
+    <div class="form-row mb-2">
+      <div class="col-sm mb-3 mb-sm-0">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text bg-info text-white">Expires</span>
+          </div>
+          <select
+            formControlName="expiringMonth"
+            autocomplete="cc-exp-month"
+            class="custom-select"
+            id="inputGroupSelect01"
+            [ngClass]="{
+              'is-invalid': (monthMessage || paymentMessage) && submitted,
+              'is-valid': !monthMessage && !paymentMessage
+            }"
+          >
+            <option [value]="0" hidden [attr.disabled]="true">- Month -</option>
+            <option
+              *ngFor="let m of monthOptions"
+              [value]="m.value"
+              class="text-capitalize"
+            >
+              {{ m.name }}
+            </option>
+          </select>
+          <div class="invalid-tooltip">
+            <span>
+              {{ monthMessage }}
+            </span>
+            <span *ngIf="!monthMessage">
+              {{ paymentMessage }}
+            </span>
+          </div>
+          <select
+            formControlName="expiringYear"
+            class="custom-select"
+            [ngClass]="{
+              'is-invalid': yearMessage && submitted,
+              'is-valid': !yearMessage
+            }"
+          >
+            <option [value]="0" hidden [attr.disabled]="true">- Year -</option>
+            <option *ngFor="let y of yearOptions" [value]="y">
+              {{ y }}
+            </option>
+          </select>
+          <div *ngIf="!monthMessage" class="invalid-tooltip">
+            <span>{{ yearMessage }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-5">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text bg-info text-white text-capitalize"
+              >CVV</span
+            >
+          </div>
+          <input
+            type="number"
+            formControlName="cvv"
+            class="form-control"
+            placeholder="CVV (required)"
+            [ngClass]="{
+              'is-invalid': cvvMessage && submitted,
+              'is-valid': !cvvMessage
+            }"
+          />
+          <div class="invalid-tooltip">
+            <span>{{ cvvMessage }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <small class="text-primary">
+      <svg
+        width="1.35em"
+        height="1.35em"
+        viewBox="0 0 16 16"
+        class="bi bi-info-circle-fill"
+        fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"
+        />
+      </svg>
+      <span> No payment information will be stored.</span>
+    </small>
+  </fieldset>
+</form>

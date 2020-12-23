@@ -6,6 +6,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NameFormComponent } from './name-form/name-form.component';
 import { ContactFormComponent } from './contact-form/contact-form.component';
 import { PasswordFormComponent } from './password-form/password-form.component';
+import { PaymentFormComponent } from './payment-form/payment-form.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
@@ -13,6 +14,7 @@ import { PasswordFormComponent } from './password-form/password-form.component';
     NameFormComponent,
     ContactFormComponent,
     PasswordFormComponent,
+    PaymentFormComponent,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -22,6 +24,7 @@ import { PasswordFormComponent } from './password-form/password-form.component';
     NameFormComponent,
     ContactFormComponent,
     PasswordFormComponent,
+    PaymentFormComponent,
   ],
 })
 export class SharedModule {}
