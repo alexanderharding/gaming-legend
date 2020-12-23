@@ -138,8 +138,6 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   deliveryDate: Date;
 
   private readonly subscriptions: Subscription[] = [];
-  currentPanelId = 0;
-
   user: IUser;
 
   /* Get data from CartService */
@@ -368,14 +366,6 @@ export class CheckOutComponent implements OnInit, OnDestroy {
 
   pushSubscription(subscription: Subscription): void {
     this.subscriptions.push(subscription);
-  }
-
-  changePanelId(id: number): void {
-    if (this.currentPanelId === +id) {
-      this.currentPanelId = null;
-      return;
-    }
-    this.currentPanelId = +id;
   }
 
   private signUp(form: FormGroup, items: ICartItem[]): void {
