@@ -8,7 +8,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { first, tap } from 'rxjs/operators';
+import { debounceTime, first, tap } from 'rxjs/operators';
 
 import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
@@ -16,6 +16,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { CartService } from 'src/app/services/cart.service';
 import { CheckOutService } from 'src/app/services/check-out.service';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
+import { ShippingRateService } from 'src/app/services/shipping-rate.service';
 import { ICartItem } from 'src/app/types/cart-item';
 import { Customer, CustomerMaker } from 'src/app/types/customer';
 import { Order, OrderMaker } from 'src/app/types/order';
@@ -134,6 +135,8 @@ function cardNumberChecker(
   providers: [NgbAccordionConfig],
 })
 export class CheckOutComponent implements OnInit, OnDestroy {
+  deliveryDate: Date;
+
   private readonly subscriptions: Subscription[] = [];
   currentPanelId = 0;
 
@@ -193,7 +196,8 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     private readonly fb: FormBuilder,
     private readonly route: ActivatedRoute,
     private readonly authService: AuthService,
-    private readonly formValidationRuleService: FormValidationRuleService
+    private readonly formValidationRuleService: FormValidationRuleService,
+    private readonly shippingRateService: ShippingRateService
   ) {
     config.closeOthers = true;
   }
@@ -282,6 +286,15 @@ export class CheckOutComponent implements OnInit, OnDestroy {
         this.user = user as IUser;
       }
     });
+    const shippingRateControl = this.checkOutForm.get('shippingRate');
+    this.subscriptions.push(
+      shippingRateControl.valueChanges
+        .pipe(debounceTime(500))
+        .subscribe((price: number) => {
+          this.setDeliveryDate(+price);
+          this.cartService.setShipping(+price);
+        })
+    );
   }
 
   onSubmit(form: FormGroup, items: ICartItem[]): void {
@@ -438,6 +451,13 @@ export class CheckOutComponent implements OnInit, OnDestroy {
         console.error(error);
       },
     });
+  }
+
+  private setDeliveryDate(selectedPrice: number): void {
+    const totalDays = this.shippingRates.find(
+      ({ price }) => price === +selectedPrice
+    ).rate;
+    this.deliveryDate = this.shippingRateService.getDeliveryDate(totalDays);
   }
 
   ngOnDestroy(): void {
