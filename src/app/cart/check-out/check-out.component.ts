@@ -15,6 +15,7 @@ import { passwordMatcher } from 'src/app/functions/password-matcher';
 import { AuthService } from 'src/app/services/auth.service';
 import { CartService } from 'src/app/services/cart.service';
 import { CheckOutService } from 'src/app/services/check-out.service';
+import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
 import { ICartItem } from 'src/app/types/cart-item';
 import { Customer, CustomerMaker } from 'src/app/types/customer';
 import { Order, OrderMaker } from 'src/app/types/order';
@@ -168,17 +169,21 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   // Main form group
   checkOutForm: FormGroup;
 
-  // Form control validation messages and validation rules
-  readonly nameMinLength = 3;
-  readonly nameMaxLength = 20;
-  readonly streetMinLength = 5;
-  readonly streetMaxLength = 20;
-  readonly cityMinLength = 3;
-  readonly cityMaxLength = 15;
-  private readonly zipPattern = /^[0-9]{5}(?:-[0-9]{4})?$/gm;
-  private readonly cvvPattern = /^[0-9]{3,4}$/;
-  private readonly phonePattern = /(\+?( |-|\.)?\d{1,2}( |-|\.)?)?(\(?\d{3}\)?|\d{3})( |-|\.)?(\d{3}( |-|\.)?\d{4})/g;
-  private readonly passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm;
+  /* Form control validation rules */
+  readonly nameMinLength = +this.formValidationRuleService.nameMinLength;
+  readonly nameMaxLength = +this.formValidationRuleService.nameMaxLength;
+  readonly streetMinLength = +this.formValidationRuleService.streetMinLength;
+  readonly streetMaxLength = +this.formValidationRuleService.streetMaxLength;
+  readonly cityMinLength = +this.formValidationRuleService.cityMinLength;
+  readonly cityMaxLength = +this.formValidationRuleService.cityMaxLength;
+  private readonly zipPattern = this.formValidationRuleService
+    .zipPattern as RegExp;
+  private readonly cvvPattern = this.formValidationRuleService
+    .cvvPattern as RegExp;
+  private readonly phonePattern = this.formValidationRuleService
+    .phonePattern as RegExp;
+  private readonly passwordPattern = this.formValidationRuleService
+    .passwordPattern as RegExp;
 
   constructor(
     private readonly config: NgbAccordionConfig,
@@ -187,7 +192,8 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly fb: FormBuilder,
     private readonly route: ActivatedRoute,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly formValidationRuleService: FormValidationRuleService
   ) {
     config.closeOthers = true;
   }
@@ -195,10 +201,24 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Build check out form
     this.checkOutForm = this.fb.group({
-      // nameGroup: this.fb.group({
-      //   firstName: '',
-      //   lastName: '',
-      // }),
+      nameGroup: this.fb.group({
+        firstName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(this.nameMinLength),
+            Validators.maxLength(this.nameMaxLength),
+          ],
+        ],
+        lastName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(this.nameMinLength),
+            Validators.maxLength(this.nameMaxLength),
+          ],
+        ],
+      }),
       contactGroup: this.fb.group(
         {
           firstName: [

@@ -1,4 +1,4 @@
-<main class="container-xl py-3">
+<div class="container-xl py-3">
   <div class="mb-3">
     <input
       type="button"
@@ -52,19 +52,19 @@
         <div class="shadow">
           <ngb-accordion
             [destroyOnHide]="false"
-            activeIds="contact"
+            activeIds="name"
             #acc="ngbAccordion"
           >
             <ngb-panel
               type="{{
-                this.checkOutForm.get('contactGroup').invalid && submitted
+                this.checkOutForm.get('nameGroup').invalid && submitted
                   ? 'danger'
                   : 'secondary'
               }}"
-              id="contact"
-              title="contact"
+              id="name"
+              title="name"
             >
-              <!-- <ng-template ngbPanelHeader let-opened="opened">
+              <ng-template ngbPanelHeader let-opened="opened">
                 <div class="py-1">
                   <button
                     ngbPanelToggle
@@ -89,18 +89,27 @@
                   <input
                     type="button"
                     value="next"
-                    (click)="acc.toggle('shipping')"
+                    (click)="acc.toggle('contact')"
                     class="btn btn-success text-capitalize"
                   />
                 </div>
                 <input
                   type="button"
                   value="next"
-                  (click)="acc.toggle('shipping')"
+                  (click)="acc.toggle('contact')"
                   class="btn btn-block btn-success text-capitalize d-sm-none"
                 />
-
-              </ng-template> -->
+              </ng-template>
+            </ngb-panel>
+            <ngb-panel
+              type="{{
+                this.checkOutForm.get('contactGroup').invalid && submitted
+                  ? 'danger'
+                  : 'secondary'
+              }}"
+              id="contact"
+              title="contact"
+            >
               <ng-template ngbPanelHeader let-opened="opened">
                 <div class="py-1">
                   <button
@@ -117,7 +126,38 @@
                 </div>
               </ng-template>
               <ng-template ngbPanelContent>
-                <ctacu-contact-panel-content
+                <ctacu-contact-form
+                  [parentForm]="checkOutForm"
+                  [submitted]="submitted"
+                  [user]="user"
+                ></ctacu-contact-form>
+                <div class="d-none d-sm-flex justify-content-between">
+                  <input
+                    type="button"
+                    value="back"
+                    (click)="acc.toggle('name')"
+                    class="btn btn-primary text-capitalize"
+                  />
+                  <input
+                    type="button"
+                    value="next"
+                    (click)="acc.toggle('shipping')"
+                    class="btn btn-success text-capitalize"
+                  />
+                </div>
+                <input
+                  type="button"
+                  value="back"
+                  (click)="acc.toggle('name')"
+                  class="btn btn-block btn-primary text-capitalize d-sm-none"
+                />
+                <input
+                  type="button"
+                  value="next"
+                  (click)="acc.toggle('shipping')"
+                  class="btn btn-block btn-success text-capitalize d-sm-none"
+                />
+                <!-- <ctacu-contact-panel-content
                   [checkOutForm]="checkOutForm"
                   [user]="user"
                   [submitted]="submitted"
@@ -125,7 +165,7 @@
                   [nameMaxLength]="nameMaxLength"
                   (toggleChange)="acc.toggle($event)"
                   (newSubscription)="pushSubscription($event)"
-                ></ctacu-contact-panel-content>
+                ></ctacu-contact-panel-content> -->
               </ng-template>
             </ngb-panel>
             <ngb-panel
@@ -262,7 +302,7 @@
       <span class="ml-1">{{ errorMessage }}</span>
     </ngb-alert>
   </ng-template>
-</main>
+</div>
 <!-- <div class="container" [style.min-width.px]="500">
   <div class="card">
     <div class="card-body">
