@@ -16,7 +16,7 @@ import { IUser } from 'src/app/types/user';
 })
 export class AddressFormComponent implements OnInit, OnDestroy {
   readonly pageTitle = 'Address';
-  readonly states = this.checkOutService.states;
+  readonly states = this.formValidationRuleService.states;
 
   @Input() parentForm: FormGroup;
   @Input() submitted: boolean;
@@ -63,8 +63,7 @@ export class AddressFormComponent implements OnInit, OnDestroy {
   private readonly subscriptions: Subscription[] = [];
 
   constructor(
-    private readonly formValidationRuleService: FormValidationRuleService,
-    private readonly checkOutService: CheckOutService
+    private readonly formValidationRuleService: FormValidationRuleService
   ) {}
 
   ngOnInit(): void {
