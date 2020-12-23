@@ -265,14 +265,14 @@ export class CheckOutComponent implements OnInit, OnDestroy {
         { validators: dateChecker }
       ),
       signUpCheck: true,
-      signUpGroup: this.fb.group(
+      passwordGroup: this.fb.group(
         {
           password: [
             '',
             [Validators.required, Validators.pattern(this.passwordPattern)],
           ],
           confirmPassword: ['', [Validators.required]],
-          showPassword: false,
+          // showPassword: false,
         },
         { validator: passwordMatcher }
       ),
@@ -290,6 +290,12 @@ export class CheckOutComponent implements OnInit, OnDestroy {
           this.setDeliveryDate(+price);
           this.cartService.setShipping(+price);
         })
+    );
+    const signUpCheckControl = this.checkOutForm.get('signUpCheck');
+    this.subscriptions.push(
+      signUpCheckControl.valueChanges.subscribe((check: boolean) =>
+        this.setPasswordValidation(check)
+      )
     );
     if (this.shippingRates) {
       this.checkOutForm.patchValue({
@@ -336,24 +342,24 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   }
 
   setPasswordValidation(value: boolean): void {
-    const signUpControl = this.checkOutForm.get('signUpGroup');
-    const passwordControl = this.checkOutForm.get('signUpGroup.password');
+    const passwordGroupControl = this.checkOutForm.get('passwordGroup');
+    const passwordControl = this.checkOutForm.get('passwordGroup.password');
     const confirmPasswordControl = this.checkOutForm.get(
-      'signUpGroup.confirmPassword'
+      'passwordGroup.confirmPassword'
     );
     if (value) {
-      signUpControl.setValidators(passwordMatcher);
+      passwordGroupControl.setValidators(passwordMatcher);
       passwordControl.setValidators([
         Validators.required,
         Validators.pattern(this.passwordPattern),
       ]);
       confirmPasswordControl.setValidators([Validators.required]);
     } else {
-      signUpControl.clearValidators();
+      passwordGroupControl.clearValidators();
       passwordControl.clearValidators();
       confirmPasswordControl.clearValidators();
     }
-    signUpControl.updateValueAndValidity();
+    passwordGroupControl.updateValueAndValidity();
     passwordControl.updateValueAndValidity();
     confirmPasswordControl.updateValueAndValidity();
   }
@@ -373,7 +379,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
       state: form.get('addressGroup.state').value as string,
       zip: form.get('addressGroup.zip').value as string,
       country: form.get('addressGroup.country').value as string,
-      password: form.get('signUpGroup.password').value as string,
+      password: form.get('passwordGroup.password').value as string,
       isAdmin: false,
     }) as User;
     this.authService.signUp(user).subscribe(

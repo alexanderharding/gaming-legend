@@ -211,7 +211,7 @@
             <ngb-panel
               type="{{
                 (this.checkOutForm.get('paymentGroup').invalid ||
-                  this.checkOutForm.get('signUpGroup').invalid) &&
+                  this.checkOutForm.get('passwordGroup').invalid) &&
                 submitted
                   ? 'danger'
                   : 'secondary'
@@ -227,7 +227,7 @@
                   >
                     {{
                       (this.checkOutForm.get("paymentGroup").invalid ||
-                        this.checkOutForm.get("signUpGroup").invalid) &&
+                        this.checkOutForm.get("passwordGroup").invalid) &&
                       submitted
                         ? "!"
                         : ""
@@ -237,7 +237,213 @@
                 </div>
               </ng-template>
               <ng-template ngbPanelContent>
-                <ctacu-finalize-panel-content
+                <form
+                  [formGroup]="checkOutForm"
+                  (ngSubmit)="onSubmit(checkOutForm, items)"
+                  novalidate
+                >
+                  <ctacu-payment-form
+                    [parentForm]="checkOutForm"
+                    [submitted]="submitted"
+                  ></ctacu-payment-form>
+                  <hr />
+                  <div class="form-row">
+                    <div class="col-sm-7">
+                      <input
+                        type="button"
+                        value="{{
+                          checkOutForm.get('contactGroup').invalid && submitted
+                            ? '! '
+                            : ''
+                        }}Add Contact Details"
+                        (click)="acc.toggle('contact')"
+                        class="btn btn-sm btn-block text-capitalize mb-2"
+                        *ngIf="checkOutForm.get('contactGroup').invalid"
+                        [ngClass]="{
+                          'btn-danger':
+                            checkOutForm.get('contactGroup').invalid &&
+                            submitted,
+                          'btn-primary':
+                            checkOutForm.get('contactGroup').valid || !submitted
+                        }"
+                      />
+                      <div
+                        *ngIf="checkOutForm.get('contactGroup').valid"
+                        (click)="acc.toggle('contact')"
+                        class="card mb-2 pointer"
+                      >
+                        <div class="card-body py-2">
+                          <div class="text-capitalize">
+                            {{
+                              checkOutForm.get("nameGroup.firstName").value
+                                | lowercase
+                            }}
+                            {{
+                              checkOutForm.get("nameGroup.lastName").value
+                                | lowercase
+                            }}
+                          </div>
+                          <div>
+                            {{ checkOutForm.get("contactGroup.phone").value }}
+                          </div>
+                          <div>
+                            {{
+                              checkOutForm.get("contactGroup.email").value
+                                | lowercase
+                            }}
+                          </div>
+                        </div>
+                        <!-- <input
+            type="button"
+            value="Edit"
+            (click)="acc.toggle('contact')"
+            class="btn btn-sm btn-warning btn-block text-capitalize"
+          /> -->
+                      </div>
+                      <input
+                        type="button"
+                        value="{{
+                          checkOutForm.get('addressGroup').invalid && submitted
+                            ? '! '
+                            : ''
+                        }}Add Shipping Address"
+                        (click)="acc.toggle('shipping')"
+                        class="btn btn-sm btn-block text-capitalize"
+                        *ngIf="checkOutForm.get('addressGroup').invalid"
+                        [ngClass]="{
+                          'btn-danger':
+                            checkOutForm.get('addressGroup').invalid &&
+                            submitted,
+                          'btn-primary':
+                            checkOutForm.get('addressGroup').valid || !submitted
+                        }"
+                      />
+                      <div
+                        *ngIf="checkOutForm.get('addressGroup').valid"
+                        (click)="acc.toggle('shipping')"
+                        class="card pointer"
+                      >
+                        <div class="card-body py-2 text-capitalize">
+                          <div>
+                            {{ checkOutForm.get("addressGroup.street").value }}
+                          </div>
+                          <div>
+                            {{
+                              checkOutForm.get("addressGroup.city").value
+                                | lowercase
+                            }},
+                            {{
+                              checkOutForm.get("addressGroup.state").value
+                                | lowercase
+                            }}
+                            {{ checkOutForm.get("addressGroup.zip").value }}
+                          </div>
+                          <div>
+                            {{
+                              checkOutForm.get("addressGroup.country").value
+                                | lowercase
+                            }}
+                          </div>
+                        </div>
+                        <!-- <input
+            type="button"
+            value="Edit"
+            (click)="togglePanel('shipping')"
+            class="btn btn-sm btn-warning btn-block text-capitalize"
+          /> -->
+                      </div>
+                      <hr class="d-sm-none" />
+                    </div>
+                    <div class="col-sm">
+                      <ctacu-cart-summary></ctacu-cart-summary>
+                    </div>
+                  </div>
+                  <hr />
+
+                  <div
+                    *ngIf="!user"
+                    class="custom-control custom-checkbox mb-3"
+                  >
+                    <input
+                      type="checkbox"
+                      class="custom-control-input"
+                      formControlName="signUpCheck"
+                      id="signUpCheck"
+                      [ngClass]="{
+                        'is-invalid':
+                          signUpError &&
+                          checkOutForm.get('signUpCheck').value &&
+                          submitted
+                      }"
+                    />
+                    <label class="custom-control-label" for="signUpCheck"
+                      >Sign up for a <strong>Gaming Legend</strong> account for
+                      a faster checkout on your next purchase!</label
+                    >
+                    <div class="invalid-tooltip">
+                      {{ signUpError }}
+                    </div>
+                  </div>
+                  <ctacu-password-form
+                    *ngIf="this.checkOutForm.get('signUpCheck').value && !user"
+                    [parentForm]="checkOutForm"
+                    [submitted]="submitted"
+                    pageTitle="Sign Up"
+                  ></ctacu-password-form>
+                  <div class="d-none d-sm-flex">
+                    <input
+                      type="button"
+                      value="back"
+                      (click)="acc.toggle('shipping')"
+                      class="btn btn-primary text-capitalize"
+                    />
+                    <input
+                      type="submit"
+                      [value]="
+                        checkOutForm.invalid && submitted
+                          ? '! place order'
+                          : 'place order'
+                      "
+                      class="btn btn-block btn-success text-capitalize ml-2"
+                      *ngIf="!isLoading; else loading"
+                      [disabled]="checkOutForm.invalid && submitted"
+                    />
+                    <ng-template #loading>
+                      <div class="d-flex w-100 ml-2 justify-content-center">
+                        <div class="spinner-border text-info" role="status">
+                          <span class="sr-only">Loading...</span>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </div>
+                  <div class="d-sm-none">
+                    <input
+                      type="button"
+                      value="back"
+                      (click)="acc.toggle('shipping')"
+                      class="btn btn-block btn-primary text-capitalize mb-2"
+                    />
+                    <input
+                      type="submit"
+                      [value]="
+                        checkOutForm.invalid && submitted
+                          ? '! place order'
+                          : 'place order'
+                      "
+                      class="btn btn-block btn-success text-capitalize"
+                      *ngIf="!isLoading; else loading"
+                      [disabled]="checkOutForm.invalid && submitted"
+                    />
+                    <ng-template #loading>
+                      <div class="d-flex w-100 ml-2 justify-content-center">
+                        <div class="spinner-border text-info" role="status">
+                          <span class="sr-only">Loading...</span>
+                        </div>
+                      </div>
+                    </ng-template>
+                  </div>
+                </form>
+                <!-- <ctacu-finalize-panel-content
                   [checkOutForm]="checkOutForm"
                   [user]="user"
                   [submitted]="submitted"
@@ -250,48 +456,11 @@
                   (onSubmit)="onSubmit($event, items)"
                   (newSubscription)="pushSubscription($event)"
                 >
-                </ctacu-finalize-panel-content>
+                </ctacu-finalize-panel-content> -->
               </ng-template>
             </ngb-panel>
           </ngb-accordion>
         </div>
-        <!-- <div id="accordion">
-          <div class="card bg-secondary">
-            <div class="card-header" id="headingOne">
-              <div class="py-1">
-                <input
-                  type="button"
-                  value="Contact Details"
-                  class="btn btn-lg btn-link p-0 text-light"
-                  (click)="changePanelId(0)"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div class="container container-fluid">
-            <ctacu-contact-panel-content
-              [checkOutForm]="checkOutForm"
-              [submitted]="submitted"
-              [nameMinLength]="nameMinLength"
-              [nameMaxLength]="nameMaxLength"
-              [currentPanelId]="currentPanelId"
-              (newSubscription)="pushSubscription($event)"
-            ></ctacu-contact-panel-content>
-          </div>
-          <div class="card bg-secondary">
-            <div class="card-header" id="headingOne">
-              <div class="py-1">
-                <input
-                  type="button"
-                  value="Contact Details"
-                  class="btn btn-lg btn-link p-0 text-light"
-                  (click)="changePanelId(0)"
-                />
-              </div>
-            </div>
-          </div>
-        </div> -->
       </div>
     </div>
   </ng-container>

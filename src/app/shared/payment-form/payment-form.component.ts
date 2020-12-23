@@ -53,6 +53,7 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscribeToControls();
+    this.populateTestData();
   }
 
   private subscribeToControls(): void {
@@ -92,6 +93,16 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
     );
   }
 
+  private populateTestData(): void {
+    this.parentForm.patchValue({
+      paymentGroup: {
+        cardNumber: 4123147523147547,
+        cvv: 123,
+        expiringMonth: 7,
+        expiringYear: 2021,
+      },
+    });
+  }
   private setMessage(c: AbstractControl, name: string): void {
     switch (name) {
       case 'cardNumber':
