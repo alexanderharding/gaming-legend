@@ -62,8 +62,8 @@ export class CartService {
     this.totalTax$,
     this.shippingSelectedAction$,
   ]).pipe(
-    map(
-      ([subtotal, totalTax, shippingRate]) => subtotal + totalTax + shippingRate
+    map(([subtotal, totalTax, shippingRate]) =>
+      (subtotal + totalTax + shippingRate).toFixed(2)
     )
   );
 

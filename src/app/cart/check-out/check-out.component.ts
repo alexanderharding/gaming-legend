@@ -148,8 +148,6 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   /* Get data from CheckOutService */
   readonly states = this.checkOutService.states;
 
-  private total: number;
-
   /* Get data from resolver */
   private readonly resolvedData = this.route.snapshot.data
     .resolvedData as ShippingRatesResult;
@@ -333,10 +331,6 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     }
   }
 
-  setTotal(total: number): void {
-    this.total = total;
-  }
-
   setLoading(value: boolean): void {
     this.isLoading = value;
   }
@@ -392,50 +386,56 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   }
 
   private placeOrder(form: FormGroup, items: ICartItem[]): void {
-    const customer = CustomerMaker.create({
-      firstName: form.get('contactGroup.firstName').value as string,
-      lastName: form.get('contactGroup.lastName').value as string,
-      phone: form.get('contactGroup.phone').value,
-      email: form.get('contactGroup.email').value as string,
-      street: form.get('addressGroup.street').value as string,
-      city: form.get('addressGroup.city').value as string,
-      state: form.get('addressGroup.state').value as string,
-      zip: form.get('addressGroup.zip').value as string,
-      country: form.get('addressGroup.country').value as string,
-    }) as Customer;
-    const payment = PaymentMaker.create({
-      cardNumber: +form.get('paymentGroup.cardNumber').value,
-      cvv: +form.get('paymentGroup.cvv').value,
-      expiringMonth: +form.get('paymentGroup.expiringMonth').value,
-      expiringYear: +form.get('paymentGroup.expiringYear').value,
-      total: +this.total,
-    }) as Payment;
-    const order = OrderMaker.create({
-      customer: customer,
-      items: items,
-      payment: payment,
-    }) as Order;
-    this.checkOutService.placeOrder(order).subscribe(
-      (result) => {
-        this.orderPlaced = true;
-        this.isLoading = false;
-        items.forEach((item) => {
-          this.cartService.removeItem(item).subscribe(
-            (result) => {
-              this.refreshCart();
-              this.router.navigate(['/cart', 'success']);
-            },
-            (error) => {
-              console.error(error);
-              this.isLoading = false;
-            }
-          );
-        });
+    this.cartService.total$.pipe(first()).subscribe(
+      (total) => {
+        const customer = CustomerMaker.create({
+          firstName: form.get('nameGroup.firstName').value as string,
+          lastName: form.get('nameGroup.lastName').value as string,
+          phone: form.get('contactGroup.phone').value,
+          email: form.get('contactGroup.email').value as string,
+          street: form.get('addressGroup.street').value as string,
+          city: form.get('addressGroup.city').value as string,
+          state: form.get('addressGroup.state').value as string,
+          zip: form.get('addressGroup.zip').value as string,
+          country: form.get('addressGroup.country').value as string,
+        }) as Customer;
+        const payment = PaymentMaker.create({
+          cardNumber: +form.get('paymentGroup.cardNumber').value,
+          cvv: +form.get('paymentGroup.cvv').value,
+          expiringMonth: +form.get('paymentGroup.expiringMonth').value,
+          expiringYear: +form.get('paymentGroup.expiringYear').value,
+          total: +total,
+        }) as Payment;
+        const order = OrderMaker.create({
+          customer: customer,
+          items: items,
+          payment: payment,
+        }) as Order;
+        this.checkOutService.placeOrder(order).subscribe(
+          (result) => {
+            console.log('order placed');
+            this.orderPlaced = true;
+            this.isLoading = false;
+            items.forEach((item) => {
+              this.cartService.removeItem(item).subscribe(
+                (result) => {
+                  this.refreshCart();
+                  this.router.navigate(['/cart', 'success']);
+                },
+                (error) => {
+                  console.error(error);
+                  this.isLoading = false;
+                }
+              );
+            });
+          },
+          (error) => {
+            this.isLoading = false;
+            this.errorMessage = 'There was an error saving your order';
+          }
+        );
       },
-      (error) => {
-        this.isLoading = false;
-        this.errorMessage = 'There was an error saving your order';
-      }
+      (error) => console.error(error)
     );
   }
 
