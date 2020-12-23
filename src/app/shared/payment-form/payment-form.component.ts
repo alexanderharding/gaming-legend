@@ -10,6 +10,7 @@ import { FormValidationRuleService } from 'src/app/services/form-validation-rule
   styleUrls: ['./payment-form.component.scss'],
 })
 export class PaymentFormComponent implements OnInit, OnDestroy {
+  readonly pageTitle = 'Payment';
   /* Get data from FormValidationRuleService */
   readonly monthOptions = this.formValidationRuleService.monthOptions;
   readonly yearOptions = this.formValidationRuleService.getYearOptions();
