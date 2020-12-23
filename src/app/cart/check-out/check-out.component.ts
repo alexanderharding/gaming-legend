@@ -295,6 +295,11 @@ export class CheckOutComponent implements OnInit, OnDestroy {
           this.cartService.setShipping(+price);
         })
     );
+    if (this.shippingRates) {
+      this.checkOutForm.patchValue({
+        shippingRate: +this.shippingRates[0].price,
+      });
+    }
   }
 
   onSubmit(form: FormGroup, items: ICartItem[]): void {
