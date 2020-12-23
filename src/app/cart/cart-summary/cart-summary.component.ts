@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CartService } from 'src/app/services/cart.service';
 
 @Component({
@@ -6,7 +6,7 @@ import { CartService } from 'src/app/services/cart.service';
   templateUrl: './cart-summary.component.html',
   styleUrls: ['./cart-summary.component.scss'],
 })
-export class CartSummaryComponent implements OnInit {
+export class CartSummaryComponent {
   readonly tax = +this.cartService.tax;
   readonly items$ = this.cartService.cartAction$;
   readonly quantity$ = this.cartService.cartQuantity$;
@@ -16,6 +16,4 @@ export class CartSummaryComponent implements OnInit {
   readonly shippingPrice$ = this.cartService.shippingSelectedAction$;
 
   constructor(private readonly cartService: CartService) {}
-
-  ngOnInit(): void {}
 }
