@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CartService } from 'src/app/services/cart.service';
 
 @Component({
   selector: 'ctacu-cart-summary',
   templateUrl: './cart-summary.component.html',
   styleUrls: ['./cart-summary.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartSummaryComponent {
   readonly tax = +this.cartService.tax;
