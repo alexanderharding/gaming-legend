@@ -75,10 +75,22 @@
           Sign In
         </button>
       </form>
+      <ngb-alert
+        *ngIf="signInError"
+        type="danger"
+        [dismissible]="true"
+        class="text-center mt-3"
+        (close)="signInError = ''"
+        >{{ signInError }}</ngb-alert
+      >
       <hr class="my-3 d-lg-none" />
     </div>
     <div class="col-lg">
-      <ctacu-sign-up></ctacu-sign-up>
+      <ctacu-sign-up
+        [loading]="loading"
+        (loadingChange)="setLoading($event)"
+        (onSignUp)="userSignIn($event)"
+      ></ctacu-sign-up>
     </div>
   </div>
 </div>

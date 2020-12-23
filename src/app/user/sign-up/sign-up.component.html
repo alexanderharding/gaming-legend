@@ -139,7 +139,7 @@
                 type="submit"
                 value="{{ signUpForm.invalid && submitted ? '! ' : '' }}Sign Up"
                 class="btn btn-block ml-2 btn-success text-capitalize"
-                [disabled]="signUpForm.invalid && submitted"
+                [disabled]="(signUpForm.invalid && submitted) || loading"
               />
             </div>
             <input
@@ -152,7 +152,7 @@
               type="submit"
               value="{{ signUpForm.invalid && submitted ? '! ' : '' }}Sign Up"
               class="btn btn-block btn-success text-capitalize d-sm-none"
-              [disabled]="signUpForm.invalid && submitted"
+              [disabled]="(signUpForm.invalid && submitted) || loading"
             />
           </form>
         </ng-template>
@@ -245,4 +245,12 @@
             </ngb-panel> -->
     </ngb-accordion>
   </div>
+  <ngb-alert
+    *ngIf="signUpError"
+    type="danger"
+    [dismissible]="true"
+    class="mt-3"
+    (close)="signUpError = ''"
+    >{{ signUpError }}</ngb-alert
+  >
 </div>

@@ -9,6 +9,7 @@ import {
 import { debounceTime } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { IUser } from 'src/app/types/user';
 
 @Component({
   templateUrl: './sign-in.component.html',
@@ -20,6 +21,7 @@ export class SignInComponent implements OnInit, OnDestroy {
   submitted = false;
   signInForm: FormGroup;
   signInMessage: string;
+  signInError: string;
 
   loading = false;
 
@@ -66,6 +68,7 @@ export class SignInComponent implements OnInit, OnDestroy {
 
   onSubmit(form: FormGroup): void {
     this.signInMessage = '';
+    this.signInError = '';
     if (!this.submitted) {
       this.submitted = true;
     }
@@ -94,8 +97,17 @@ export class SignInComponent implements OnInit, OnDestroy {
       (error) => {
         this.loading = false;
         console.error(error);
+        this.signInError = 'There was an error signing in.';
       }
     );
+  }
+
+  userSignIn(user: IUser): void {
+    this.signIn(user.email, user.password);
+  }
+
+  setLoading(value: boolean): void {
+    this.loading = value;
   }
 
   private populateTestData(): void {
