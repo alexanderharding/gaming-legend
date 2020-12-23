@@ -180,14 +180,13 @@
           }}</span>
         </h4>
         <ctacu-cart-summary></ctacu-cart-summary>
-        <button
-          routerLink="check-out"
+        <input
           type="button"
+          value="checkout"
+          routerLink="check-out"
           class="btn btn-block btn-success text-capitalize"
           [disabled]="!items.length || loading"
-        >
-          checkout
-        </button>
+        />
         <div *ngIf="!items.length" class="text-center text-danger">
           <svg
             width="1em"
