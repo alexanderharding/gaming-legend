@@ -308,6 +308,39 @@
                       <input
                         type="button"
                         value="{{
+                          checkOutForm.get('nameGroup').invalid && submitted
+                            ? '! '
+                            : ''
+                        }}Add Name"
+                        (click)="acc.toggle('name')"
+                        class="btn btn-sm btn-block text-capitalize mb-2"
+                        *ngIf="checkOutForm.get('nameGroup').invalid"
+                        [ngClass]="{
+                          'btn-danger':
+                            checkOutForm.get('nameGroup').invalid && submitted,
+                          'btn-primary':
+                            checkOutForm.get('nameGroup').valid || !submitted
+                        }"
+                      />
+                      <div
+                        *ngIf="checkOutForm.get('nameGroup').valid"
+                        (click)="acc.toggle('name')"
+                        class="card mb-2 pointer"
+                      >
+                        <div class="card-body py-2 text-capitalize">
+                          {{
+                            checkOutForm.get("nameGroup.firstName").value
+                              | lowercase
+                          }}
+                          {{
+                            checkOutForm.get("nameGroup.lastName").value
+                              | lowercase
+                          }}
+                        </div>
+                      </div>
+                      <input
+                        type="button"
+                        value="{{
                           checkOutForm.get('contactGroup').invalid && submitted
                             ? '! '
                             : ''
@@ -329,16 +362,6 @@
                         class="card mb-2 pointer"
                       >
                         <div class="card-body py-2">
-                          <div class="text-capitalize">
-                            {{
-                              checkOutForm.get("nameGroup.firstName").value
-                                | lowercase
-                            }}
-                            {{
-                              checkOutForm.get("nameGroup.lastName").value
-                                | lowercase
-                            }}
-                          </div>
                           <div>
                             {{ checkOutForm.get("contactGroup.phone").value }}
                           </div>
@@ -349,12 +372,6 @@
                             }}
                           </div>
                         </div>
-                        <!-- <input
-              type="button"
-              value="Edit"
-              (click)="acc.toggle('contact')"
-              class="btn btn-sm btn-warning btn-block text-capitalize"
-            /> -->
                       </div>
                       <input
                         type="button"
@@ -401,12 +418,6 @@
                             }}
                           </div>
                         </div>
-                        <!-- <input
-              type="button"
-              value="Edit"
-              (click)="togglePanel('shipping')"
-              class="btn btn-sm btn-warning btn-block text-capitalize"
-            /> -->
                       </div>
                       <hr class="d-sm-none" />
                     </div>
@@ -441,7 +452,9 @@
                     </div>
                   </div>
                   <ctacu-password-form
-                    *ngIf="this.checkOutForm.get('signUpCheck').value && !user"
+                    [hidden]="
+                      !this.checkOutForm.get('signUpCheck').value || user
+                    "
                     [parentForm]="checkOutForm"
                     [submitted]="submitted"
                     pageTitle="Sign Up"

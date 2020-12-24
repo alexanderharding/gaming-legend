@@ -11,7 +11,7 @@ export class FormValidationRuleService {
   readonly streetMaxLength = 20;
   readonly cityMinLength = 3;
   readonly cityMaxLength = 15;
-  readonly zipPattern = /^[0-9]{5}(?:-[0-9]{4})?$/gm;
+  readonly zipPattern = /^[0-9]{5}(?:-[0-9]{4})?$/;
   readonly cvvPattern = /^[0-9]{3,4}$/;
   readonly phonePattern = /(\+?( |-|\.)?\d{1,2}( |-|\.)?)?(\(?\d{3}\)?|\d{3})( |-|\.)?(\d{3}( |-|\.)?\d{4})/;
   readonly passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
