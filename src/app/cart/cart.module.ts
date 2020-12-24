@@ -7,16 +7,13 @@ import { RouterModule, Routes } from '@angular/router';
 import { CartComponent } from '../cart/cart.component';
 import { CheckOutComponent } from './check-out/check-out.component';
 import { SuccessComponent } from './success/success.component';
-import { ContactPanelContent } from './check-out/contact-panel-content/contact-panel-content.component';
+import { CartSummaryComponent } from './cart-summary/cart-summary.component';
 
 /* Gaurds */
 import { CheckOutGuard } from './check-out/check-out.guard';
 
 /* Resolvers */
 import { ShippingRatesResolverService } from '../router/shipping-rates-resolver.service';
-import { ShippingPanelContentComponent } from './check-out/shipping-panel-content/shipping-panel-content.component';
-import { FinalizePanelContentComponent } from './check-out/finalize-panel-content/finalize-panel-content.component';
-import { CartSummaryComponent } from './cart-summary/cart-summary.component';
 
 /* Routes */
 const ROUTES: Routes = [
@@ -50,9 +47,6 @@ const ROUTES: Routes = [
     CheckOutComponent,
     SuccessComponent,
     CartComponent,
-    ContactPanelContent,
-    ShippingPanelContentComponent,
-    FinalizePanelContentComponent,
     CartSummaryComponent,
   ],
   providers: [CheckOutGuard, ShippingRatesResolverService],
