@@ -31,7 +31,7 @@ export class AddressFormComponent implements OnInit, OnDestroy {
   private readonly cityMaxLength = +this.formValidationRuleService
     .cityMaxLength;
 
-  private streetValidationMessages = {
+  private readonly streetValidationMessages = {
     required: 'Please enter your street address.',
     minlength: `The street must be longer than ${this.streetMinLength - 1}
     characters.`,
@@ -40,7 +40,7 @@ export class AddressFormComponent implements OnInit, OnDestroy {
   };
   streetMessage = this.streetValidationMessages['required'];
 
-  private cityValidationMessages = {
+  private readonly cityValidationMessages = {
     required: 'Please enter your city.',
     minlength: `The city must be longer than ${this.cityMinLength - 1}
     characters.`,

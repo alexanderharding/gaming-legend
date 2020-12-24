@@ -28,7 +28,7 @@ export class NameFormComponent implements OnInit, OnDestroy {
   private readonly nameMinLength = this.formValidationRuleService.nameMinLength;
   private readonly nameMaxLength = this.formValidationRuleService.nameMaxLength;
 
-  private firstNameValidationMessages = {
+  private readonly firstNameValidationMessages = {
     required: 'Please enter your first name.',
     minlength: `First name must be longer than ${this.nameMinLength - 1}
     characters.`,
@@ -37,7 +37,7 @@ export class NameFormComponent implements OnInit, OnDestroy {
   };
   firstNameMessage = this.firstNameValidationMessages['required'];
 
-  private lastNameValidationMessages = {
+  private readonly lastNameValidationMessages = {
     required: 'Please enter your last name.',
     minlength: `Last name must be longer than ${this.nameMinLength - 1}
     characters.`,
