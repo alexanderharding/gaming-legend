@@ -50,198 +50,254 @@
       </div>
       <div class="col-md-8">
         <div class="shadow">
-          <ngb-accordion
-            [destroyOnHide]="false"
-            activeIds="name"
-            #acc="ngbAccordion"
+          <form
+            [formGroup]="checkOutForm"
+            (ngSubmit)="onSubmit(checkOutForm, items)"
+            novalidate
           >
-            <ngb-panel
-              type="{{
-                this.checkOutForm.get('nameGroup').invalid && submitted
-                  ? 'danger'
-                  : 'secondary'
-              }}"
-              id="name"
-              title="name"
+            <ngb-accordion
+              [destroyOnHide]="false"
+              activeIds="name"
+              #acc="ngbAccordion"
             >
-              <ng-template ngbPanelHeader let-opened="opened">
-                <div class="py-1">
-                  <button
-                    ngbPanelToggle
-                    class="btn btn-lg btn-link p-0 text-light"
-                  >
-                    {{
-                      this.checkOutForm.get("nameGroup").invalid && submitted
-                        ? "!"
-                        : ""
-                    }}
-                    Name
-                  </button>
-                </div>
-              </ng-template>
-              <ng-template ngbPanelContent>
-                <ctacu-name-form
-                  [parentForm]="checkOutForm"
-                  [user]="user"
-                  [submitted]="submitted"
-                ></ctacu-name-form>
-                <div class="d-none d-sm-flex justify-content-end">
+              <ngb-panel
+                type="{{
+                  this.checkOutForm.get('nameGroup').invalid && submitted
+                    ? 'danger'
+                    : 'secondary'
+                }}"
+                id="name"
+                title="name"
+              >
+                <ng-template ngbPanelHeader let-opened="opened">
+                  <div class="py-1">
+                    <button
+                      ngbPanelToggle
+                      class="btn btn-lg btn-link p-0 text-light"
+                    >
+                      {{
+                        this.checkOutForm.get("nameGroup").invalid && submitted
+                          ? "!"
+                          : ""
+                      }}
+                      Name
+                    </button>
+                  </div>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <ctacu-name-form
+                    [parentForm]="checkOutForm"
+                    [user]="user"
+                    [submitted]="submitted"
+                  ></ctacu-name-form>
+                  <div class="d-none d-sm-flex justify-content-end">
+                    <input
+                      type="button"
+                      value="next"
+                      (click)="acc.toggle('contact')"
+                      class="btn btn-success text-capitalize"
+                    />
+                  </div>
                   <input
                     type="button"
                     value="next"
                     (click)="acc.toggle('contact')"
-                    class="btn btn-success text-capitalize"
+                    class="btn btn-block btn-success text-capitalize d-sm-none"
                   />
-                </div>
-                <input
-                  type="button"
-                  value="next"
-                  (click)="acc.toggle('contact')"
-                  class="btn btn-block btn-success text-capitalize d-sm-none"
-                />
-              </ng-template>
-            </ngb-panel>
-            <ngb-panel
-              type="{{
-                this.checkOutForm.get('contactGroup').invalid && submitted
-                  ? 'danger'
-                  : 'secondary'
-              }}"
-              id="contact"
-              title="contact"
-            >
-              <ng-template ngbPanelHeader let-opened="opened">
-                <div class="py-1">
-                  <button
-                    ngbPanelToggle
-                    class="btn btn-lg btn-link p-0 text-light"
-                  >
-                    {{
-                      this.checkOutForm.get("contactGroup").invalid && submitted
-                        ? "!"
-                        : ""
-                    }}
-                    Contact Details
-                  </button>
-                </div>
-              </ng-template>
-              <ng-template ngbPanelContent>
-                <ctacu-contact-form
-                  [parentForm]="checkOutForm"
-                  [submitted]="submitted"
-                  [user]="user"
-                ></ctacu-contact-form>
-                <div class="d-none d-sm-flex justify-content-between">
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel
+                type="{{
+                  this.checkOutForm.get('contactGroup').invalid && submitted
+                    ? 'danger'
+                    : 'secondary'
+                }}"
+                id="contact"
+                title="contact"
+              >
+                <ng-template ngbPanelHeader let-opened="opened">
+                  <div class="py-1">
+                    <button
+                      ngbPanelToggle
+                      class="btn btn-lg btn-link p-0 text-light"
+                    >
+                      {{
+                        this.checkOutForm.get("contactGroup").invalid &&
+                        submitted
+                          ? "!"
+                          : ""
+                      }}
+                      Contact Details
+                    </button>
+                  </div>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <ctacu-contact-form
+                    [parentForm]="checkOutForm"
+                    [submitted]="submitted"
+                    [user]="user"
+                  ></ctacu-contact-form>
+                  <div class="d-none d-sm-flex justify-content-between">
+                    <input
+                      type="button"
+                      value="back"
+                      (click)="acc.toggle('name')"
+                      class="btn btn-primary text-capitalize"
+                    />
+                    <input
+                      type="button"
+                      value="next"
+                      (click)="acc.toggle('shipping')"
+                      class="btn btn-success text-capitalize"
+                    />
+                  </div>
                   <input
                     type="button"
                     value="back"
                     (click)="acc.toggle('name')"
-                    class="btn btn-primary text-capitalize"
+                    class="btn btn-block btn-primary text-capitalize d-sm-none"
                   />
                   <input
                     type="button"
                     value="next"
                     (click)="acc.toggle('shipping')"
-                    class="btn btn-success text-capitalize"
+                    class="btn btn-block btn-success text-capitalize d-sm-none"
                   />
-                </div>
-                <input
-                  type="button"
-                  value="back"
-                  (click)="acc.toggle('name')"
-                  class="btn btn-block btn-primary text-capitalize d-sm-none"
-                />
-                <input
-                  type="button"
-                  value="next"
-                  (click)="acc.toggle('shipping')"
-                  class="btn btn-block btn-success text-capitalize d-sm-none"
-                />
-                <!-- <ctacu-contact-panel-content
-                  [checkOutForm]="checkOutForm"
-                  [user]="user"
-                  [submitted]="submitted"
-                  [nameMinLength]="nameMinLength"
-                  [nameMaxLength]="nameMaxLength"
-                  (toggleChange)="acc.toggle($event)"
-                  (newSubscription)="pushSubscription($event)"
-                ></ctacu-contact-panel-content> -->
-              </ng-template>
-            </ngb-panel>
-            <ngb-panel
-              type="{{
-                this.checkOutForm.get('addressGroup').invalid && submitted
-                  ? 'danger'
-                  : 'secondary'
-              }}"
-              id="shipping"
-              title="shipping"
-            >
-              <ng-template ngbPanelHeader let-opened="opened">
-                <div class="py-1">
-                  <button
-                    ngbPanelToggle
-                    class="btn btn-lg btn-link p-0 text-light"
-                  >
-                    {{
-                      this.checkOutForm.get("addressGroup").invalid && submitted
-                        ? "!"
-                        : ""
-                    }}
-                    Shipping
-                  </button>
-                </div>
-              </ng-template>
-              <ng-template ngbPanelContent>
-                <ctacu-shipping-panel-content
-                  [checkOutForm]="checkOutForm"
-                  [submitted]="submitted"
-                  [shippingRates]="shippingRates"
-                  [user]="user"
-                  [streetMinLength]="streetMinLength"
-                  [streetMaxLength]="streetMaxLength"
-                  [cityMinLength]="cityMinLength"
-                  [cityMaxLength]="cityMaxLength"
-                  [states]="states"
-                  (toggleChange)="acc.toggle($event)"
-                  (newSubscription)="pushSubscription($event)"
-                ></ctacu-shipping-panel-content>
-              </ng-template>
-            </ngb-panel>
-            <ngb-panel
-              type="{{
-                (this.checkOutForm.get('paymentGroup').invalid ||
-                  this.checkOutForm.get('passwordGroup').invalid) &&
-                submitted
-                  ? 'danger'
-                  : 'secondary'
-              }}"
-              id="finalize"
-              title="finalize"
-            >
-              <ng-template ngbPanelHeader let-opened="opened">
-                <div class="py-1">
-                  <button
-                    ngbPanelToggle
-                    class="btn btn-lg btn-link p-0 text-light text-capitalize"
-                  >
-                    {{
-                      (this.checkOutForm.get("paymentGroup").invalid ||
-                        this.checkOutForm.get("passwordGroup").invalid) &&
-                      submitted
-                        ? "!"
-                        : ""
-                    }}
-                    Finalize
-                  </button>
-                </div>
-              </ng-template>
-              <ng-template ngbPanelContent>
-                <form
-                  [formGroup]="checkOutForm"
-                  (ngSubmit)="onSubmit(checkOutForm, items)"
-                  novalidate
-                >
+                  <!-- <ctacu-contact-panel-content
+                        [checkOutForm]="checkOutForm"
+                        [user]="user"
+                        [submitted]="submitted"
+                        [nameMinLength]="nameMinLength"
+                        [nameMaxLength]="nameMaxLength"
+                        (toggleChange)="acc.toggle($event)"
+                        (newSubscription)="pushSubscription($event)"
+                      ></ctacu-contact-panel-content> -->
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel
+                type="{{
+                  this.checkOutForm.get('addressGroup').invalid && submitted
+                    ? 'danger'
+                    : 'secondary'
+                }}"
+                id="shipping"
+                title="shipping"
+              >
+                <ng-template ngbPanelHeader let-opened="opened">
+                  <div class="py-1">
+                    <button
+                      ngbPanelToggle
+                      class="btn btn-lg btn-link p-0 text-light"
+                    >
+                      {{
+                        this.checkOutForm.get("addressGroup").invalid &&
+                        submitted
+                          ? "!"
+                          : ""
+                      }}
+                      Shipping
+                    </button>
+                  </div>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <ctacu-address-form
+                    [parentForm]="checkOutForm"
+                    [submitted]="submitted"
+                    [user]="user"
+                  ></ctacu-address-form>
+                  <fieldset>
+                    <legend class="text-primary">
+                      Est. {{ deliveryDate | date }}
+                    </legend>
+                    <div class="form-group">
+                      <select
+                        formControlName="shippingRate"
+                        class="custom-select text-capitalize"
+                      >
+                        <option
+                          *ngFor="let s of shippingRates"
+                          [value]="s.price"
+                          class="text-capitalize"
+                        >
+                          {{ s.rate === 1 ? "next" : s.rate }} Business Day{{
+                            s.price === 19.99 ? "" : "s"
+                          }}:
+                          {{ s.price | currency }}
+                        </option>
+                      </select>
+                    </div>
+                  </fieldset>
+
+                  <div class="d-none d-sm-flex justify-content-between">
+                    <input
+                      type="button"
+                      value="back"
+                      (click)="acc.toggle('contact')"
+                      class="btn btn-primary text-capitalize"
+                    />
+                    <input
+                      type="button"
+                      value="next"
+                      (click)="acc.toggle('finalize')"
+                      class="btn btn-success text-capitalize"
+                    />
+                  </div>
+                  <input
+                    type="button"
+                    value="back"
+                    (click)="acc.toggle('contact')"
+                    class="btn btn-block btn-primary text-capitalize d-sm-none"
+                  />
+                  <input
+                    type="button"
+                    value="next"
+                    (click)="acc.toggle('finalize')"
+                    class="btn btn-block btn-success text-capitalize d-sm-none"
+                  />
+                  <!-- <ctacu-shipping-panel-content
+                        [checkOutForm]="checkOutForm"
+                        [submitted]="submitted"
+                        [shippingRates]="shippingRates"
+                        [user]="user"
+                        [streetMinLength]="streetMinLength"
+                        [streetMaxLength]="streetMaxLength"
+                        [cityMinLength]="cityMinLength"
+                        [cityMaxLength]="cityMaxLength"
+                        [states]="states"
+                        (toggleChange)="acc.toggle($event)"
+                        (newSubscription)="pushSubscription($event)"
+                      ></ctacu-shipping-panel-content> -->
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel
+                type="{{
+                  (this.checkOutForm.get('paymentGroup').invalid ||
+                    this.checkOutForm.get('passwordGroup').invalid) &&
+                  submitted
+                    ? 'danger'
+                    : 'secondary'
+                }}"
+                id="finalize"
+                title="finalize"
+              >
+                <ng-template ngbPanelHeader let-opened="opened">
+                  <div class="py-1">
+                    <button
+                      ngbPanelToggle
+                      class="btn btn-lg btn-link p-0 text-light text-capitalize"
+                    >
+                      {{
+                        (this.checkOutForm.get("paymentGroup").invalid ||
+                          this.checkOutForm.get("passwordGroup").invalid) &&
+                        submitted
+                          ? "!"
+                          : ""
+                      }}
+                      Finalize
+                    </button>
+                  </div>
+                </ng-template>
+                <ng-template ngbPanelContent>
                   <ctacu-payment-form
                     [parentForm]="checkOutForm"
                     [submitted]="submitted"
@@ -294,11 +350,11 @@
                           </div>
                         </div>
                         <!-- <input
-            type="button"
-            value="Edit"
-            (click)="acc.toggle('contact')"
-            class="btn btn-sm btn-warning btn-block text-capitalize"
-          /> -->
+              type="button"
+              value="Edit"
+              (click)="acc.toggle('contact')"
+              class="btn btn-sm btn-warning btn-block text-capitalize"
+            /> -->
                       </div>
                       <input
                         type="button"
@@ -346,11 +402,11 @@
                           </div>
                         </div>
                         <!-- <input
-            type="button"
-            value="Edit"
-            (click)="togglePanel('shipping')"
-            class="btn btn-sm btn-warning btn-block text-capitalize"
-          /> -->
+              type="button"
+              value="Edit"
+              (click)="togglePanel('shipping')"
+              class="btn btn-sm btn-warning btn-block text-capitalize"
+            /> -->
                       </div>
                       <hr class="d-sm-none" />
                     </div>
@@ -442,24 +498,24 @@
                       </div>
                     </ng-template>
                   </div>
-                </form>
-                <!-- <ctacu-finalize-panel-content
-                  [checkOutForm]="checkOutForm"
-                  [user]="user"
-                  [submitted]="submitted"
-                  [errorMessage]="errorMessage"
-                  [signUpError]="signUpError"
-                  [isLoading]="isLoading"
-                  [subtotal$]="subtotal$"
-                  (toggleChange)="acc.toggle($event)"
-                  (checkChange)="setPasswordValidation($event)"
-                  (onSubmit)="onSubmit($event, items)"
-                  (newSubscription)="pushSubscription($event)"
-                >
-                </ctacu-finalize-panel-content> -->
-              </ng-template>
-            </ngb-panel>
-          </ngb-accordion>
+                  <!-- <ctacu-finalize-panel-content
+                        [checkOutForm]="checkOutForm"
+                        [user]="user"
+                        [submitted]="submitted"
+                        [errorMessage]="errorMessage"
+                        [signUpError]="signUpError"
+                        [isLoading]="isLoading"
+                        [subtotal$]="subtotal$"
+                        (toggleChange)="acc.toggle($event)"
+                        (checkChange)="setPasswordValidation($event)"
+                        (onSubmit)="onSubmit($event, items)"
+                        (newSubscription)="pushSubscription($event)"
+                      >
+                      </ctacu-finalize-panel-content> -->
+                </ng-template>
+              </ngb-panel>
+            </ngb-accordion>
+          </form>
         </div>
       </div>
     </div>

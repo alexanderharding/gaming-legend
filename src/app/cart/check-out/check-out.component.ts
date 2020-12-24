@@ -364,9 +364,9 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     confirmPasswordControl.updateValueAndValidity();
   }
 
-  pushSubscription(subscription: Subscription): void {
-    this.subscriptions.push(subscription);
-  }
+  // pushSubscription(subscription: Subscription): void {
+  //   this.subscriptions.push(subscription);
+  // }
 
   private signUp(form: FormGroup, items: ICartItem[]): void {
     const user = UserMaker.create({
