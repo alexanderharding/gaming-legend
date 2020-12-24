@@ -452,9 +452,8 @@
                     </div>
                   </div>
                   <ctacu-password-form
-                    [hidden]="
-                      !this.checkOutForm.get('signUpCheck').value || user
-                    "
+                    *ngIf="!user"
+                    [hidden]="!this.checkOutForm.get('signUpCheck').value"
                     [parentForm]="checkOutForm"
                     [submitted]="submitted"
                     pageTitle="Sign Up"
