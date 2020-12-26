@@ -83,14 +83,12 @@
           </a>
         </li>
         <ng-container *ngIf="currentUser$ | async as user; else noUser">
-          <!-- <li class="nav-item">
-            <a class="nav-link" (click)="signOut()">Sign Out</a>
-          </li> -->
           <li class="nav-item">
             <a
               class="nav-link text-capitalize"
               routerLink="/account"
               routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
               (click)="isMenuCollapsed = true"
               >{{ user.firstName | lowercase }}'s Account</a
             >
