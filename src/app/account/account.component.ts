@@ -8,6 +8,8 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./account.component.scss'],
 })
 export class AccountComponent implements OnInit {
+  readonly user$ = this.authService.currentUser$;
+
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router
