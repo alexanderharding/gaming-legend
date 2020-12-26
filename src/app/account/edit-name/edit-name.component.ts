@@ -14,6 +14,8 @@ export class EditNameComponent implements OnInit {
   submitted = false;
   editNameForm: FormGroup;
   errorMessage = '';
+  invalidPasswordMessage = '';
+  loading = false;
 
   readonly user$ = this.authService.currentUser$;
 
@@ -29,6 +31,7 @@ export class EditNameComponent implements OnInit {
 
   ngOnInit(): void {
     this.editNameForm = this.fb.group({
+      currentPassword: ['', Validators.required],
       nameGroup: this.fb.group({
         firstName: [
           '',
@@ -56,19 +59,34 @@ export class EditNameComponent implements OnInit {
       this.submitted = true;
     }
     if (form.valid) {
-      const newUser = {
-        ...user,
-        firstName: form.get('nameGroup.firstName').value as string,
-        lastName: form.get('nameGroup.lastName').value as string,
-      } as IUser;
-      this.saveUser(newUser);
+      this.loading = true;
+      const currentPasswordControl = form.get('currentPassword');
+      if (currentPasswordControl.value.toString() === user.password) {
+        const updatedUser = {
+          ...user,
+          firstName: form.get('nameGroup.firstName').value as string,
+          lastName: form.get('nameGroup.lastName').value as string,
+        } as IUser;
+        this.saveUser(updatedUser);
+      } else {
+        this.invalidPasswordMessage =
+          'This does not match your current password.';
+        this.loading = false;
+      }
     }
+  }
+
+  setInvalidPasswordMessage(message: string): void {
+    this.invalidPasswordMessage = message;
   }
 
   private saveUser(user: IUser): void {
     this.authService.saveUser(user).subscribe(
       (result) => this.router.navigate(['/account']),
-      (error) => (this.errorMessage = 'There was an error saving your account.')
+      (error) => {
+        this.loading = false;
+        this.errorMessage = 'There was an error saving your name.';
+      }
     );
   }
 }

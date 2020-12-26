@@ -1,22 +1,55 @@
 <div class="container-xl py-3">
+  <div
+    *ngIf="loading"
+    class="spinner-border text-primary"
+    id="filterSpinner"
+    role="status"
+  >
+    <span class="sr-only">Loading...</span>
+  </div>
+  <ngb-alert
+    *ngIf="errorMessage"
+    type="danger"
+    [dismissible]="true"
+    (close)="errorMessage = ''"
+    class="text-center"
+  >
+    {{ errorMessage }}
+  </ngb-alert>
   <ng-container *ngIf="user$ | async as user">
     <form
       [formGroup]="editNameForm"
       (ngSubmit)="onSubmit(editNameForm, user)"
       novalidate
     >
-      <ctacu-name-form
-        [parentForm]="editNameForm"
-        [submitted]="submitted"
-        [user]="user"
-        pageTitle="Edit Full Name"
-      ></ctacu-name-form>
+      <div class="form-row">
+        <div class="col-md">
+          <ctacu-name-form
+            [parentForm]="editNameForm"
+            [submitted]="submitted"
+            [user]="user"
+            pageTitle="Edit Name"
+          ></ctacu-name-form>
+        </div>
+        <div class="col-md">
+          <ctacu-current-password-form
+            [parentForm]="editNameForm"
+            [submitted]="submitted"
+            [invalidPasswordMessage]="invalidPasswordMessage"
+            (onValueChange)="setInvalidPasswordMessage($event)"
+          ></ctacu-current-password-form>
+        </div>
+      </div>
       <div class="d-flex">
         <input
           type="submit"
-          value="Save"
-          class="btn btn-success"
+          value="{{ editNameForm.invalid && submitted ? '! ' : '' }}Save"
+          class="btn"
           [disabled]="editNameForm.invalid && submitted"
+          [ngClass]="{
+            'btn-success': editNameForm.valid || !submitted,
+            'btn-outline-danger': editNameForm.invalid && submitted
+          }"
         />
         <input
           type="button"

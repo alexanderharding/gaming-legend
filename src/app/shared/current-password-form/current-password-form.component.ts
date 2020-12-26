@@ -38,10 +38,7 @@ export class CurrentPasswordFormComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       currentPasswordControl.valueChanges
         .pipe(debounceTime(1000))
-        .subscribe(() => {
-          this.onValueChange.emit('');
-          this.setMessage(currentPasswordControl);
-        })
+        .subscribe(() => this.setMessage(currentPasswordControl))
     );
   }
 
@@ -52,6 +49,7 @@ export class CurrentPasswordFormComponent implements OnInit, OnDestroy {
   private setMessage(c: AbstractControl): void {
     this.currentPasswordMessage = '';
     if (c.errors) {
+      this.onValueChange.emit('');
       this.currentPasswordMessage = Object.keys(c.errors)
         .map((key) => this.currentPasswordValidationMessages[key])
         .join(' ');
