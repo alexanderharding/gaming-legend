@@ -165,7 +165,6 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   orderPlaced = false;
   isLoading = false;
 
-  // Main form group
   checkOutForm: FormGroup;
 
   /* Form control validation rules */
@@ -337,10 +336,6 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     }
   }
 
-  setLoading(value: boolean): void {
-    this.isLoading = value;
-  }
-
   setPasswordValidation(value: boolean): void {
     const passwordGroupControl = this.checkOutForm.get('passwordGroup');
     const passwordControl = this.checkOutForm.get('passwordGroup.password');
@@ -364,10 +359,6 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     confirmPasswordControl.updateValueAndValidity();
   }
 
-  // pushSubscription(subscription: Subscription): void {
-  //   this.subscriptions.push(subscription);
-  // }
-
   private signUp(form: FormGroup, items: ICartItem[]): void {
     const user = UserMaker.create({
       firstName: form.get('contactGroup.firstName').value as string,
@@ -382,7 +373,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
       password: form.get('passwordGroup.password').value as string,
       isAdmin: false,
     }) as User;
-    this.authService.signUp(user).subscribe(
+    this.authService.saveUser(user).subscribe(
       (result) => this.placeOrder(form, items),
       (error) => {
         this.isLoading = false;

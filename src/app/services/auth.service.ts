@@ -92,10 +92,4 @@ export class AuthService {
       .put<IUser>(`${this.baseUrl}/user/${+user.id}`, user)
       .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
   }
-
-  signUp(user: User): Observable<IUser> {
-    return this.http
-      .post<IUser>(`${this.baseUrl}/users`, user)
-      .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
-  }
 }
