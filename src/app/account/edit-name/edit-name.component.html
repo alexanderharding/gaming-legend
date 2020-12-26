@@ -1,23 +1,26 @@
 <div class="container-xl py-3">
-  <form [formGroup]="editNameForm" novalidate>
-    <ctacu-name-form
-      [parentForm]="editNameForm"
-      [submitted]="submitted"
-      pageTitle="Edit Full Name"
-    ></ctacu-name-form>
-    <div class="d-flex">
-      <input
-        type="submit"
-        value="Save"
-        class="btn btn-success"
-        routerLink="/account"
-      />
-      <input
-        type="button"
-        value="Cancel"
-        class="btn btn-danger ml-2"
-        routerLink="/account"
-      />
-    </div>
-  </form>
+  <ng-container *ngIf="user$ | async as user">
+    <form [formGroup]="editNameForm" novalidate>
+      <ctacu-name-form
+        [parentForm]="editNameForm"
+        [submitted]="submitted"
+        [user]="user"
+        pageTitle="Edit Full Name"
+      ></ctacu-name-form>
+      <div class="d-flex">
+        <input
+          type="submit"
+          value="Save"
+          class="btn btn-success"
+          routerLink="/account"
+        />
+        <input
+          type="button"
+          value="Cancel"
+          class="btn btn-danger ml-2"
+          routerLink="/account"
+        />
+      </div>
+    </form>
+  </ng-container>
 </div>
