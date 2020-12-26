@@ -5,5 +5,87 @@
     class="btn btn-info ml-auto mb-3"
     (click)="signOut()"
   />
-  <ng-container *ngIf="user$ | async as user"></ng-container>
+  <ng-container *ngIf="user$ | async as user">
+    <div class="row">
+      <div class="col-md mb-3">
+        <div class="card">
+          <div
+            class="card-header bg-secondary text-light d-flex justify-content-between"
+          >
+            <span>Name</span>
+            <a
+              href="http://"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="card-link text-light"
+              >Edit</a
+            >
+          </div>
+          <div class="card-body text-capitalize">
+            <span
+              >{{ user.firstName | lowercase }}
+              {{ user.lastName | lowercase }}</span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="col-md mb-3">
+        <div class="card">
+          <div
+            class="card-header bg-secondary text-light d-flex justify-content-between"
+          >
+            <span>Contact Details</span>
+            <a
+              href="http://"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="card-link text-light"
+              >Edit</a
+            >
+          </div>
+          <div class="card-body">
+            <div>{{ user.phone }}</div>
+            <div>{{ user.email }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md mb-3 mb-md-0">
+        <div class="card">
+          <div
+            class="card-header bg-secondary text-light d-flex justify-content-between"
+          >
+            <span>Address</span>
+            <a
+              href="http://"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="card-link text-light"
+              >Edit</a
+            >
+          </div>
+          <div class="card-body text-capitalize">
+            <div>{{ user.street | lowercase }}</div>
+            <div>{{ user.city | lowercase }}, {{ user.state }}</div>
+            <div>{{ user.zip | lowercase }}, {{ user.country }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="card">
+          <div class="card-header bg-info text-light">
+            <span>Change Password</span>
+          </div>
+          <div class="card-body">
+            <ctacu-password-form
+              [parentForm]="editPasswordForm"
+              [submitted]="submitted"
+              pageTitle="New Password"
+            ></ctacu-password-form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
 </div>
