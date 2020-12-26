@@ -53,7 +53,7 @@ export class ProductDetailsComponent implements OnInit {
     this.loading = true;
     const index = this.getIndex(product, items);
     const item = this.getUpdatedItem(product, items, index);
-    this.cartService.updateCart(item, index).subscribe(
+    this.cartService.saveItem(item, index).subscribe(
       (result) => {
         this.refreshCart();
         this.router.navigate(['/cart']);
@@ -69,7 +69,7 @@ export class ProductDetailsComponent implements OnInit {
     this.loading = true;
     const index = this.getIndex(product, items);
     const item = this.getUpdatedItem(product, items, index);
-    this.cartService.updateCart(item, index).subscribe(
+    this.cartService.saveItem(item, index).subscribe(
       (result) => {
         this.refreshCart();
         const modalRef = this.modalService.open(ConfirmModalComponent);

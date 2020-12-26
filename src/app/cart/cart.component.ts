@@ -86,7 +86,7 @@ export class CartComponent implements OnInit {
       ...item,
       quantity: item.quantity + amount,
     } as ICartItem;
-    this.cartService.updateCart(updatedItem, 0).subscribe(
+    this.cartService.saveItem(updatedItem, 0).subscribe(
       (result) => {
         this.refreshCart();
       },

@@ -72,7 +72,7 @@ export class CartService {
     this.shippingSelectedSubject.next(+price);
   }
 
-  updateCart(item: ICartItem, index: number): Observable<ICartItem> {
+  saveItem(item: ICartItem, index: number): Observable<ICartItem> {
     return +index < 0 ? this.addToCart(item) : this.updateQty(item);
   }
 
