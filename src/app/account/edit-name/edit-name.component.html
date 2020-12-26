@@ -18,14 +18,14 @@
   </ngb-alert>
   <ng-container *ngIf="user$ | async as user">
     <form
-      [formGroup]="editNameForm"
-      (ngSubmit)="onSubmit(editNameForm, user)"
+      [formGroup]="editForm"
+      (ngSubmit)="onSubmit(editForm, user)"
       novalidate
     >
       <div class="form-row">
         <div class="col-md">
           <ctacu-name-form
-            [parentForm]="editNameForm"
+            [parentForm]="editForm"
             [submitted]="submitted"
             [user]="user"
             pageTitle="Edit Name"
@@ -33,7 +33,7 @@
         </div>
         <div class="col-md">
           <ctacu-current-password-form
-            [parentForm]="editNameForm"
+            [parentForm]="editForm"
             [submitted]="submitted"
             [invalidPasswordMessage]="invalidPasswordMessage"
             (onValueChange)="setInvalidPasswordMessage($event)"
@@ -43,12 +43,12 @@
       <div class="d-flex">
         <input
           type="submit"
-          value="{{ editNameForm.invalid && submitted ? '! ' : '' }}Save"
+          value="{{ editForm.invalid && submitted ? '! ' : '' }}Save"
           class="btn"
-          [disabled]="editNameForm.invalid && submitted"
+          [disabled]="editForm.invalid && submitted"
           [ngClass]="{
-            'btn-success': editNameForm.valid || !submitted,
-            'btn-outline-danger': editNameForm.invalid && submitted
+            'btn-success': editForm.valid || !submitted,
+            'btn-outline-danger': editForm.invalid && submitted
           }"
         />
         <input

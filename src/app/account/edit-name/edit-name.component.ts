@@ -12,7 +12,7 @@ import { IUser } from 'src/app/types/user';
 })
 export class EditNameComponent implements OnInit {
   submitted = false;
-  editNameForm: FormGroup;
+  editForm: FormGroup;
   errorMessage = '';
   invalidPasswordMessage = '';
   loading = false;
@@ -30,7 +30,7 @@ export class EditNameComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.editNameForm = this.fb.group({
+    this.editForm = this.fb.group({
       currentPassword: ['', Validators.required],
       nameGroup: this.fb.group({
         firstName: [
