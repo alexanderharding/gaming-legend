@@ -102,10 +102,6 @@ export class SignInComponent implements OnInit, OnDestroy {
     );
   }
 
-  userSignIn(user: IUser): void {
-    this.signIn(user.email, user.password);
-  }
-
   setLoading(value: boolean): void {
     this.loading = value;
   }

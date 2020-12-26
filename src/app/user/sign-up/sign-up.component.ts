@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
 import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
@@ -35,7 +36,8 @@ export class SignUpComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly config: NgbAccordionConfig,
     private readonly formValidationRuleService: FormValidationRuleService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly router: Router
   ) {
     config.closeOthers = true;
   }
@@ -125,7 +127,7 @@ export class SignUpComponent implements OnInit {
       isAdmin: false,
     }) as User;
     this.authService.saveUser(user).subscribe(
-      (result) => this.onSignUp.emit(result),
+      (result) => this.router.navigate(['/account']),
       (error) => {
         this.loadingChange.emit(false);
         this.signUpError = 'There was an error signing up for an account.';
