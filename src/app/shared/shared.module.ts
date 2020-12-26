@@ -8,6 +8,7 @@ import { ContactFormComponent } from './contact-form/contact-form.component';
 import { PasswordFormComponent } from './password-form/password-form.component';
 import { PaymentFormComponent } from './payment-form/payment-form.component';
 import { AddressFormComponent } from './address-form/address-form.component';
+import { CurrentPasswordFormComponent } from './current-password-form/current-password-form.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
@@ -17,6 +18,7 @@ import { AddressFormComponent } from './address-form/address-form.component';
     PasswordFormComponent,
     PaymentFormComponent,
     AddressFormComponent,
+    CurrentPasswordFormComponent,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -28,6 +30,7 @@ import { AddressFormComponent } from './address-form/address-form.component';
     PasswordFormComponent,
     PaymentFormComponent,
     AddressFormComponent,
+    CurrentPasswordFormComponent,
   ],
 })
 export class SharedModule {}
