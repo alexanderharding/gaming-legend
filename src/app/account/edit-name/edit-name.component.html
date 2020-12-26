@@ -1,0 +1,22 @@
+<div class="container-xl py-3">
+  <form [formGroup]="editNameForm" novalidate>
+    <ctacu-name-form
+      [parentForm]="editNameForm"
+      [submitted]="submitted"
+    ></ctacu-name-form>
+    <div class="d-flex">
+      <input
+        type="submit"
+        value="Save"
+        class="btn btn-success"
+        routerLink="/account"
+      />
+      <input
+        type="button"
+        value="Cancel"
+        class="btn btn-danger ml-2"
+        routerLink="/account"
+      />
+    </div>
+  </form>
+</div>
