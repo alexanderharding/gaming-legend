@@ -13,6 +13,7 @@ import { IUser } from '../types/user';
 })
 export class AccountComponent implements OnInit {
   submitted = false;
+  loading = false;
   readonly user$ = this.authService.currentUser$;
   private readonly passwordPattern = this.formValidationRuleService
     .passwordPattern as RegExp;
@@ -47,10 +48,13 @@ export class AccountComponent implements OnInit {
 
   onSubmit(form: FormGroup, user: IUser): void {
     this.successMessage = '';
+    this.errorMessage = '';
+    this.invalidPasswordMessage = '';
     if (!this.submitted) {
       this.submitted = true;
     }
     if (form.valid) {
+      this.loading = true;
       const currentPasswordControl = form.get('currentPassword');
       if (currentPasswordControl.value.toString() === user.password) {
         const updatedUser = {
@@ -58,6 +62,10 @@ export class AccountComponent implements OnInit {
           password: currentPasswordControl.value as string,
         } as IUser;
         this.saveUser(updatedUser);
+      } else {
+        this.invalidPasswordMessage =
+          'This does not match your current password.';
+        this.loading = false;
       }
     }
   }
@@ -68,18 +76,26 @@ export class AccountComponent implements OnInit {
 
   signOut(): void {
     this.authService.signOut();
-    this.router.navigate(['/']);
+    this.router.navigate(['/user']);
   }
 
   private saveUser(user: IUser): void {
     this.authService.saveUser(user).subscribe(
       (result) => {
         this.successMessage = 'New password saved!';
-        this.editPasswordForm.reset();
-        this.submitted = false;
+        this.resetForm();
       },
-      (error) =>
-        (this.errorMessage = 'There was an error saving your new password.')
+      (error) => {
+        this.errorMessage = 'There was an error saving your new password.';
+        this.loading = false;
+        console.error(error);
+      }
     );
+  }
+
+  private resetForm(): void {
+    this.editPasswordForm.reset();
+    this.submitted = false;
+    this.loading = false;
   }
 }
