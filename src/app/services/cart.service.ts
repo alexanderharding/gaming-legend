@@ -73,7 +73,7 @@ export class CartService {
   }
 
   saveItem(item: ICartItem, index: number): Observable<ICartItem> {
-    return +index < 0 ? this.addToCart(item) : this.updateQty(item);
+    return +index < 0 ? this.addItem(item) : this.updateItem(item);
   }
 
   removeItem(item: ICartItem): Observable<ICartItem> {
@@ -82,13 +82,13 @@ export class CartService {
       .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
   }
 
-  private addToCart(item: ICartItem): Observable<ICartItem> {
+  private addItem(item: ICartItem): Observable<ICartItem> {
     return this.http
       .post<ICartItem>(`${this.baseUrl}/cart`, item)
       .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
   }
 
-  private updateQty(item: ICartItem): Observable<ICartItem> {
+  private updateItem(item: ICartItem): Observable<ICartItem> {
     return this.http
       .put<ICartItem>(`${this.baseUrl}/cart/${+item.id}`, item)
       .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));

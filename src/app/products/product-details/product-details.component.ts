@@ -65,7 +65,7 @@ export class ProductDetailsComponent implements OnInit {
     );
   }
 
-  addToCart(product: IProduct, items: ICartItem[]): void {
+  addItem(product: IProduct, items: ICartItem[]): void {
     this.loading = true;
     const index = this.getIndex(product, items);
     const item = this.getUpdatedItem(product, items, index);
