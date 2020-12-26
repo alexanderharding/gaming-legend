@@ -18,11 +18,12 @@ import { IUser } from 'src/app/types/user';
   styleUrls: ['./name-form.component.scss'],
 })
 export class NameFormComponent implements OnInit, OnDestroy {
-  readonly pageTitle = 'Full Name';
+  readonly defaultPageTitle = 'Full Name';
 
   @Input() parentForm: FormGroup;
   @Input() submitted: boolean;
   @Input() user: IUser;
+  @Input() pageTitle: string;
 
   private readonly subscriptions: Subscription[] = [];
   private readonly nameMinLength = this.formValidationRuleService.nameMinLength;
