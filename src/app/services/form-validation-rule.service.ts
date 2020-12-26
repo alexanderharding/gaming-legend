@@ -15,6 +15,9 @@ export class FormValidationRuleService {
   readonly cvvPattern = /^[0-9]{3,4}$/;
   readonly phonePattern = /(\+?( |-|\.)?\d{1,2}( |-|\.)?)?(\(?\d{3}\)?|\d{3})( |-|\.)?(\d{3}( |-|\.)?\d{4})/;
   readonly passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+
+  readonly invalidPasswordMessage =
+    'This does not match your current password.';
   readonly states = [
     'Alabama',
     'Alaska',

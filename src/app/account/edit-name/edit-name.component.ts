@@ -69,8 +69,7 @@ export class EditNameComponent implements OnInit {
         } as IUser;
         this.saveUser(updatedUser);
       } else {
-        this.invalidPasswordMessage =
-          'This does not match your current password.';
+        this.invalidPasswordMessage = this.formValidationRuleService.invalidPasswordMessage;
         this.loading = false;
       }
     }
