@@ -69,18 +69,36 @@
         </div>
       </div>
       <div class="col-md">
-        <div class="card">
-          <div class="card-header bg-info text-light">
-            <span>Change Password</span>
+        <form
+          [formGroup]="editPasswordForm"
+          (ngSubmit)="onSubmit(editPasswordForm)"
+          novalidate
+        >
+          <div class="card">
+            <div class="card-header bg-info text-light">
+              <span>Change Password</span>
+            </div>
+            <div class="card-body">
+              <ctacu-password-form
+                [parentForm]="editPasswordForm"
+                [submitted]="submitted"
+                pageTitle="New Password"
+              ></ctacu-password-form>
+              <input
+                type="submit"
+                value="{{
+                  editPasswordForm.invalid && submitted ? '! ' : ''
+                }}Save"
+                class="btn btn-block"
+                [disabled]="editPasswordForm.invalid && submitted"
+                [ngClass]="{
+                  'btn-success': editPasswordForm.valid || !submitted,
+                  'btn-danger': editPasswordForm.invalid && submitted
+                }"
+              />
+            </div>
           </div>
-          <div class="card-body">
-            <ctacu-password-form
-              [parentForm]="editPasswordForm"
-              [submitted]="submitted"
-              pageTitle="New Password"
-            ></ctacu-password-form>
-          </div>
-        </div>
+        </form>
       </div>
     </div>
   </ng-container>

@@ -41,6 +41,12 @@ export class AccountComponent implements OnInit {
     });
   }
 
+  onSubmit(form: FormGroup): void {
+    if (!this.submitted) {
+      this.submitted = true;
+    }
+  }
+
   signOut(): void {
     this.authService.signOut();
     this.router.navigate(['/']);
