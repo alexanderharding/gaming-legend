@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { catchError, delay, map, retry } from 'rxjs/operators';
+import { catchError, delay, map, retry, tap } from 'rxjs/operators';
 import { IUser, User } from '../types/user';
 import { ErrorService } from './error.service';
 
@@ -47,7 +47,7 @@ export class AuthService {
             password === firstUserFound.password
           ) {
             localStorage.setItem('currentUser', JSON.stringify(firstUserFound));
-            this.currentUserSubject.next(firstUserFound);
+            this.setCurrentUser(firstUserFound);
             console.log(`Signed in!`);
             return true;
           } else {
@@ -81,15 +81,25 @@ export class AuthService {
   }
 
   private addUser(user: User): Observable<IUser> {
-    return this.http
-      .post<IUser>(`${this.baseUrl}/users`, user)
-      .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
+    return this.http.post<IUser>(`${this.baseUrl}/users`, user).pipe(
+      delay(1000),
+      retry(3),
+      tap((user) => this.setCurrentUser(user)),
+      catchError(this.errorService.handleError)
+    );
   }
 
   private updateUser(user: IUser): Observable<IUser> {
     console.log(`Updating user: ${user.id}`);
-    return this.http
-      .put<IUser>(`${this.baseUrl}/user/${+user.id}`, user)
-      .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
+    return this.http.put<IUser>(`${this.baseUrl}/users/${+user.id}`, user).pipe(
+      delay(1000),
+      retry(3),
+      tap((user) => this.setCurrentUser(user)),
+      catchError(this.errorService.handleError)
+    );
+  }
+
+  private setCurrentUser(user: IUser): void {
+    this.currentUserSubject.next(user);
   }
 }
