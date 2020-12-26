@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { CartService } from 'src/app/services/cart.service';
+import { ShippingRateService } from 'src/app/services/shipping-rate.service';
 
 @Component({
   selector: 'ctacu-cart-summary',
@@ -22,9 +23,13 @@ export class CartSummaryComponent {
   readonly total$ = this.cartService.total$.pipe(
     tap(() => this.onTotalChange.emit(false))
   );
-  readonly shippingPrice$ = this.cartService.shippingSelectedAction$;
+  readonly shippingPrice$ = this.shippingRateService
+    .shippingPriceSelectedAction$;
 
   @Output() onTotalChange = new EventEmitter<boolean>();
 
-  constructor(private readonly cartService: CartService) {}
+  constructor(
+    private readonly cartService: CartService,
+    private readonly shippingRateService: ShippingRateService
+  ) {}
 }

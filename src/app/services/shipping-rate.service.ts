@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, delay, retry } from 'rxjs/operators';
 import { IShippingRate } from '../types/shipping-rate';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ErrorService } from './error.service';
 
 @Injectable({
@@ -12,6 +12,15 @@ export class ShippingRateService {
   private readonly baseUrl: string = 'http://localhost:3000';
 
   readonly shippingDeadline: number = 23;
+
+  private readonly shippingPriceSelectedSubject = new BehaviorSubject<number>(
+    0
+  );
+  readonly shippingPriceSelectedAction$ = this.shippingPriceSelectedSubject.asObservable();
+
+  setShipping(price: number): void {
+    this.shippingPriceSelectedSubject.next(+price);
+  }
 
   constructor(
     private readonly http: HttpClient,

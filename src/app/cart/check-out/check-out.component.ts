@@ -287,7 +287,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
         .pipe(debounceTime(500))
         .subscribe((price: number) => {
           this.setDeliveryDate(+price);
-          this.cartService.setShipping(+price);
+          this.shippingRateService.setShipping(+price);
         })
     );
     const signUpCheckControl = this.checkOutForm.get('signUpCheck');

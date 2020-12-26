@@ -45,7 +45,8 @@ export class CartComponent implements OnInit {
   readonly total$ = this.cartService.total$.pipe(
     tap(() => (this.loading = false))
   );
-  readonly shippingPrice$ = this.cartService.shippingSelectedAction$;
+  readonly shippingPrice$ = this.shippingRateService
+    .shippingPriceSelectedAction$;
 
   loading = false;
 
@@ -59,7 +60,7 @@ export class CartComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.shippingRates) {
-      this.cartService.setShipping(this.shippingRates[0].price);
+      this.shippingRateService.setShipping(this.shippingRates[0].price);
       const length = this.shippingRates.length;
       const earliestRate = this.shippingRates[length - 1].rate;
       const latestRate = this.shippingRates[0].rate;

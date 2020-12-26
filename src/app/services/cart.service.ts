@@ -5,6 +5,7 @@ import { catchError, delay, map, retry, tap } from 'rxjs/operators';
 
 import { ICartItem } from '../types/cart-item';
 import { ErrorService } from './error.service';
+import { ShippingRateService } from './shipping-rate.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +18,8 @@ export class CartService {
 
   constructor(
     private readonly http: HttpClient,
+    private readonly shippingRateService: ShippingRateService,
+
     private readonly errorService: ErrorService
   ) {
     // this.items = this.getItems();
@@ -55,22 +58,16 @@ export class CartService {
 
   totalTax$ = this.subtotal$.pipe(map((subtotal) => subtotal * this.tax));
 
-  private readonly shippingSelectedSubject = new BehaviorSubject<number>(0);
-  readonly shippingSelectedAction$ = this.shippingSelectedSubject.asObservable();
   total$ = combineLatest([
     this.subtotal$,
     this.totalTax$,
-    this.shippingSelectedAction$,
+    this.shippingRateService.shippingPriceSelectedAction$,
   ]).pipe(
     map(
-      ([subtotal, totalTax, shippingRate]) =>
-        +(subtotal + totalTax + shippingRate).toFixed(2)
+      ([subtotal, totalTax, shippingPrice]) =>
+        +(subtotal + totalTax + shippingPrice).toFixed(2)
     )
   );
-
-  setShipping(price: number): void {
-    this.shippingSelectedSubject.next(+price);
-  }
 
   saveItem(item: ICartItem, index: number): Observable<ICartItem> {
     return +index < 0 ? this.addItem(item) : this.updateItem(item);
