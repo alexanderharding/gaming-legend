@@ -22,6 +22,7 @@ export class CurrentPasswordFormComponent implements OnInit, OnDestroy {
 
   @Input() parentForm: FormGroup;
   @Input() submitted: boolean;
+  @Input() invalidPasswordMessage: string;
 
   @Output() onValueChange = new EventEmitter<string>();
 
@@ -33,15 +34,13 @@ export class CurrentPasswordFormComponent implements OnInit, OnDestroy {
   constructor() {}
 
   ngOnInit(): void {
-    const confirmPasswordControl = this.parentForm.get(
-      'passwordGroup.confirmPassword'
-    );
+    const currentPasswordControl = this.parentForm.get('currentPassword');
     this.subscriptions.push(
-      confirmPasswordControl.valueChanges
+      currentPasswordControl.valueChanges
         .pipe(debounceTime(1000))
         .subscribe(() => {
           this.onValueChange.emit('');
-          this.setMessage(confirmPasswordControl);
+          this.setMessage(currentPasswordControl);
         })
     );
   }
@@ -54,7 +53,7 @@ export class CurrentPasswordFormComponent implements OnInit, OnDestroy {
     this.currentPasswordMessage = '';
     if (c.errors) {
       this.currentPasswordMessage = Object.keys(c.errors)
-        .map((key) => this.currentPasswordMessage[key])
+        .map((key) => this.currentPasswordValidationMessages[key])
         .join(' ');
     }
   }

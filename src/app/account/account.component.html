@@ -71,14 +71,37 @@
       <div class="col-md">
         <form
           [formGroup]="editPasswordForm"
-          (ngSubmit)="onSubmit(editPasswordForm)"
+          (ngSubmit)="onSubmit(editPasswordForm, user)"
           novalidate
         >
           <div class="card">
             <div class="card-header bg-info text-light">
               <span>Change Password</span>
             </div>
+            <ngb-alert
+              *ngIf="successMessage"
+              type="success"
+              [dismissible]="true"
+              (close)="successMessage = ''"
+              class="mb-0 mt-3 mx-3"
+            >
+              {{ successMessage }}
+            </ngb-alert>
+            <ngb-alert
+              *ngIf="errorMessage"
+              type="danger"
+              [dismissible]="true"
+              (close)="errorMessage = ''"
+              class="mb-0 mt-3 mx-3"
+            >
+              {{ errorMessage }}
+            </ngb-alert>
             <div class="card-body">
+              <ctacu-current-password-form
+                [parentForm]="editPasswordForm"
+                [submitted]="submitted"
+                (onValueChange)="setInvalidPasswordMessage($event)"
+              ></ctacu-current-password-form>
               <ctacu-password-form
                 [parentForm]="editPasswordForm"
                 [submitted]="submitted"
