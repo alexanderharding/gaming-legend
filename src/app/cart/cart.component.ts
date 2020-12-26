@@ -13,7 +13,7 @@ import { CartService } from '../services/cart.service';
 import { ShippingRateService } from '../services/shipping-rate.service';
 
 import { ICartItem } from '../types/cart-item';
-import { IShippingRate } from '../types/shipping-rate';
+import { IShipping } from '../types/shipping';
 import { ShippingRatesResult } from '../types/shipping-rates-result';
 
 @Component({
@@ -26,7 +26,7 @@ export class CartComponent implements OnInit {
   /* Get data from resolver */
   private readonly resolvedData = this.route.snapshot.data
     .resolvedData as ShippingRatesResult;
-  readonly shippingRates = this.resolvedData.shippingRates as IShippingRate[];
+  readonly shippingRates = this.resolvedData.shippingRates as IShipping[];
   readonly errorMessage = this.resolvedData.error as string;
 
   /* Latest and earliest arrival date */
@@ -62,12 +62,14 @@ export class CartComponent implements OnInit {
     if (this.shippingRates) {
       this.shippingRateService.setShipping(this.shippingRates[0].price);
       const length = this.shippingRates.length;
-      const earliestRate = this.shippingRates[length - 1].rate;
-      const latestRate = this.shippingRates[0].rate;
+      const fastestRate = this.shippingRates[length - 1].rate;
+      const slowestRate = this.shippingRates[0].rate;
       this.earliestArrival = this.shippingRateService.getDeliveryDate(
-        earliestRate
+        +fastestRate
       );
-      this.latestArrival = this.shippingRateService.getDeliveryDate(latestRate);
+      this.latestArrival = this.shippingRateService.getDeliveryDate(
+        +slowestRate
+      );
     } else {
       this.loading = false;
       this.pageTitle = 'Retrieval Error';

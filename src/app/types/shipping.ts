@@ -1,4 +1,4 @@
-export interface IShippingRate {
+export interface IShipping {
   id: number;
   rate: number;
   price: number;

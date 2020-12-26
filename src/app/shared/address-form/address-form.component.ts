@@ -2,11 +2,9 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { CartService } from 'src/app/services/cart.service';
-import { CheckOutService } from 'src/app/services/check-out.service';
+
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
-import { ShippingRateService } from 'src/app/services/shipping-rate.service';
-import { IShippingRate } from 'src/app/types/shipping-rate';
+
 import { IUser } from 'src/app/types/user';
 
 @Component({

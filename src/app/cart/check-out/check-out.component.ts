@@ -21,7 +21,7 @@ import { ICartItem } from 'src/app/types/cart-item';
 import { Customer, CustomerMaker } from 'src/app/types/customer';
 import { Order, OrderMaker } from 'src/app/types/order';
 import { Payment, PaymentMaker } from 'src/app/types/payment';
-import { IShippingRate } from 'src/app/types/shipping-rate';
+import { IShipping } from 'src/app/types/shipping';
 import { ShippingRatesResult } from 'src/app/types/shipping-rates-result';
 import { IUser, User, UserMaker } from 'src/app/types/user';
 
@@ -151,7 +151,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   /* Get data from resolver */
   private readonly resolvedData = this.route.snapshot.data
     .resolvedData as ShippingRatesResult;
-  readonly shippingRates = this.resolvedData.shippingRates as IShippingRate[];
+  readonly shippingRates = this.resolvedData.shippingRates as IShipping[];
   errorMessage = this.resolvedData.error as string;
 
   /* Set pageTitle */

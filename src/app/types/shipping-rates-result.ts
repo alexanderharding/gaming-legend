@@ -1,6 +1,6 @@
-import { IShippingRate } from './shipping-rate';
+import { IShipping } from './shipping';
 
 export class ShippingRatesResult {
-  shippingRates: IShippingRate[];
+  shippingRates: IShipping[];
   error?: string;
 }

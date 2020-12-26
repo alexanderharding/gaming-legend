@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, delay, retry } from 'rxjs/operators';
-import { IShippingRate } from '../types/shipping-rate';
+import { IShipping } from '../types/shipping';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ErrorService } from './error.service';
 
@@ -28,12 +28,12 @@ export class ShippingRateService {
   ) {}
 
   shippingRates$ = this.http
-    .get<IShippingRate[]>(`${this.baseUrl}/shipping`)
+    .get<IShipping[]>(`${this.baseUrl}/shipping`)
     .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
 
-  getShippingRate(id: number): Observable<IShippingRate> {
+  getShippingRate(id: number): Observable<IShipping> {
     return this.http
-      .get<IShippingRate>(`${this.baseUrl}/shipping/${+id}`)
+      .get<IShipping>(`${this.baseUrl}/shipping/${+id}`)
       .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
   }
 
