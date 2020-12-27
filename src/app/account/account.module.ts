@@ -6,6 +6,7 @@ import { SharedModule } from '../shared/shared.module';
 import { AccountComponent } from './account.component';
 import { EditNameComponent } from './edit-name/edit-name.component';
 import { EditContactComponent } from './edit-contact/edit-contact.component';
+import { EditAddressComponent } from './edit-address/edit-address.component';
 
 /* Routes */
 const ROUTES: Routes = [
@@ -21,10 +22,19 @@ const ROUTES: Routes = [
     path: 'edit/contact',
     component: EditContactComponent,
   },
+  {
+    path: 'edit/address',
+    component: EditAddressComponent,
+  },
 ];
 
 @NgModule({
   imports: [SharedModule, RouterModule.forChild(ROUTES)],
-  declarations: [AccountComponent, EditNameComponent, EditContactComponent],
+  declarations: [
+    AccountComponent,
+    EditNameComponent,
+    EditContactComponent,
+    EditAddressComponent,
+  ],
 })
 export class AccountModule {}
