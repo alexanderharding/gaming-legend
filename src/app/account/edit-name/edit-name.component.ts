@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { first, tap } from 'rxjs/operators';
+import { passwordChecker } from 'src/app/functions/password-checker';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
 import { IUser } from 'src/app/types/user';
@@ -13,7 +15,6 @@ export class EditNameComponent implements OnInit {
   submitted = false;
   editForm: FormGroup;
   errorMessage = '';
-  invalidPasswordMessage = '';
   loading = false;
 
   readonly user$ = this.authService.currentUser$;
@@ -29,26 +30,32 @@ export class EditNameComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.editForm = this.fb.group({
-      currentPassword: ['', Validators.required],
-      nameGroup: this.fb.group({
-        firstName: [
-          '',
-          [
-            Validators.required,
-            Validators.minLength(this.nameMinLength),
-            Validators.maxLength(this.nameMaxLength),
+    this.user$.pipe(first()).subscribe({
+      next: (user) =>
+        (this.editForm = this.fb.group({
+          currentPassword: [
+            '',
+            [Validators.required, passwordChecker(user.password)],
           ],
-        ],
-        lastName: [
-          '',
-          [
-            Validators.required,
-            Validators.minLength(this.nameMinLength),
-            Validators.maxLength(this.nameMaxLength),
-          ],
-        ],
-      }),
+          nameGroup: this.fb.group({
+            firstName: [
+              '',
+              [
+                Validators.required,
+                Validators.minLength(this.nameMinLength),
+                Validators.maxLength(this.nameMaxLength),
+              ],
+            ],
+            lastName: [
+              '',
+              [
+                Validators.required,
+                Validators.minLength(this.nameMinLength),
+                Validators.maxLength(this.nameMaxLength),
+              ],
+            ],
+          }),
+        })),
     });
   }
 
@@ -59,23 +66,13 @@ export class EditNameComponent implements OnInit {
     }
     if (form.valid) {
       this.loading = true;
-      const currentPasswordControl = form.get('currentPassword');
-      if (currentPasswordControl.value.toString() === user.password) {
-        const updatedUser = {
-          ...user,
-          firstName: form.get('nameGroup.firstName').value as string,
-          lastName: form.get('nameGroup.lastName').value as string,
-        } as IUser;
-        this.saveUser(updatedUser);
-      } else {
-        this.invalidPasswordMessage = this.formValidationRuleService.invalidPasswordMessage;
-        this.loading = false;
-      }
+      const updatedUser = {
+        ...user,
+        firstName: form.get('nameGroup.firstName').value as string,
+        lastName: form.get('nameGroup.lastName').value as string,
+      } as IUser;
+      this.saveUser(updatedUser);
     }
-  }
-
-  setInvalidPasswordMessage(message: string): void {
-    this.invalidPasswordMessage = message;
   }
 
   private saveUser(user: IUser): void {

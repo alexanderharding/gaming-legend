@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { first } from 'rxjs/operators';
+import { passwordChecker } from '../functions/password-checker';
 import { passwordMatcher } from '../functions/password-matcher';
 import { AuthService } from '../services/auth.service';
 import { FormValidationRuleService } from '../services/form-validation-rule.service';
@@ -19,7 +21,6 @@ export class AccountComponent implements OnInit {
     .passwordPattern as RegExp;
 
   editPasswordForm: FormGroup;
-  invalidPasswordMessage = '';
   errorMessage = '';
   successMessage = '';
 
@@ -31,46 +32,42 @@ export class AccountComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.editPasswordForm = this.fb.group({
-      currentPassword: ['', Validators.required],
-      passwordGroup: this.fb.group(
-        {
-          password: [
+    this.user$.pipe(first()).subscribe({
+      next: (user) =>
+        (this.editPasswordForm = this.fb.group({
+          currentPassword: [
             '',
-            [Validators.required, Validators.pattern(this.passwordPattern)],
+            [Validators.required, passwordChecker(user.password)],
           ],
-          confirmPassword: ['', [Validators.required]],
-        },
-        { validator: passwordMatcher }
-      ),
+          passwordGroup: this.fb.group(
+            {
+              password: [
+                '',
+                [Validators.required, Validators.pattern(this.passwordPattern)],
+              ],
+              confirmPassword: ['', [Validators.required]],
+            },
+            { validator: passwordMatcher }
+          ),
+        })),
     });
   }
 
   onSubmit(form: FormGroup, user: IUser): void {
     this.successMessage = '';
     this.errorMessage = '';
-    this.invalidPasswordMessage = '';
     if (!this.submitted) {
       this.submitted = true;
     }
     if (form.valid) {
       this.loading = true;
       const currentPasswordControl = form.get('currentPassword');
-      if (currentPasswordControl.value.toString() === user.password) {
-        const updatedUser = {
-          ...user,
-          password: currentPasswordControl.value as string,
-        } as IUser;
-        this.saveUser(updatedUser);
-      } else {
-        this.invalidPasswordMessage = this.invalidPasswordMessage = this.formValidationRuleService.invalidPasswordMessage;
-        this.loading = false;
-      }
+      const updatedUser = {
+        ...user,
+        password: currentPasswordControl.value as string,
+      } as IUser;
+      this.saveUser(updatedUser);
     }
-  }
-
-  setInvalidPasswordMessage(message: string): void {
-    this.invalidPasswordMessage = message;
   }
 
   signOut(): void {

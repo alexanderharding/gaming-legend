@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -22,12 +15,10 @@ export class CurrentPasswordFormComponent implements OnInit, OnDestroy {
 
   @Input() parentForm: FormGroup;
   @Input() submitted: boolean;
-  @Input() invalidPasswordMessage: string;
-
-  @Output() onValueChange = new EventEmitter<string>();
 
   private readonly currentPasswordValidationMessages = {
     required: 'Please confirm your current password.',
+    invalid: 'This does not match the password on-file.',
   };
   currentPasswordMessage = this.currentPasswordValidationMessages['required'];
 
@@ -49,7 +40,6 @@ export class CurrentPasswordFormComponent implements OnInit, OnDestroy {
   private setMessage(c: AbstractControl): void {
     this.currentPasswordMessage = '';
     if (c.errors) {
-      this.onValueChange.emit('');
       this.currentPasswordMessage = Object.keys(c.errors)
         .map((key) => this.currentPasswordValidationMessages[key])
         .join(' ');

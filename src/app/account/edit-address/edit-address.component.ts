@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { first } from 'rxjs/operators';
+import { passwordChecker } from 'src/app/functions/password-checker';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
 import { IUser } from 'src/app/types/user';
@@ -13,7 +15,6 @@ export class EditAddressComponent implements OnInit {
   submitted = false;
   editForm: FormGroup;
   errorMessage = '';
-  invalidPasswordMessage = '';
   loading = false;
 
   readonly user$ = this.authService.currentUser$;
@@ -34,29 +35,38 @@ export class EditAddressComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.editForm = this.fb.group({
-      currentPassword: ['', Validators.required],
-      addressGroup: this.fb.group({
-        street: [
-          '',
-          [
-            Validators.required,
-            Validators.minLength(this.streetMinLength),
-            Validators.maxLength(this.streetMaxLength),
+    this.user$.pipe(first()).subscribe({
+      next: (user) =>
+        (this.editForm = this.fb.group({
+          currentPassword: [
+            '',
+            [Validators.required, passwordChecker(user.password)],
           ],
-        ],
-        city: [
-          '',
-          [
-            Validators.required,
-            Validators.minLength(this.cityMinLength),
-            Validators.maxLength(this.cityMaxLength),
-          ],
-        ],
-        state: ['', [Validators.required]],
-        zip: ['', [Validators.required, Validators.pattern(this.zipPattern)]],
-        country: ['United States', [Validators.required]],
-      }),
+          addressGroup: this.fb.group({
+            street: [
+              '',
+              [
+                Validators.required,
+                Validators.minLength(this.streetMinLength),
+                Validators.maxLength(this.streetMaxLength),
+              ],
+            ],
+            city: [
+              '',
+              [
+                Validators.required,
+                Validators.minLength(this.cityMinLength),
+                Validators.maxLength(this.cityMaxLength),
+              ],
+            ],
+            state: ['', [Validators.required]],
+            zip: [
+              '',
+              [Validators.required, Validators.pattern(this.zipPattern)],
+            ],
+            country: ['United States', [Validators.required]],
+          }),
+        })),
     });
   }
 
@@ -66,25 +76,16 @@ export class EditAddressComponent implements OnInit {
       this.submitted = true;
     }
     if (form.valid) {
-      const currentPasswordControl = form.get('currentPassword');
-      if (currentPasswordControl.value.toString() === user.password) {
-        this.loading = true;
-        const updatedUser = {
-          ...user,
-          street: form.get('addressGroup.street').value as string,
-          city: form.get('addressGroup.city').value as string,
-          state: form.get('addressGroup.state').value as string,
-          zip: form.get('addressGroup.zip').value as string,
-        } as IUser;
-        this.saveUser(updatedUser);
-      } else {
-        this.invalidPasswordMessage = this.formValidationRuleService.invalidPasswordMessage;
-      }
+      this.loading = true;
+      const updatedUser = {
+        ...user,
+        street: form.get('addressGroup.street').value as string,
+        city: form.get('addressGroup.city').value as string,
+        state: form.get('addressGroup.state').value as string,
+        zip: form.get('addressGroup.zip').value as string,
+      } as IUser;
+      this.saveUser(updatedUser);
     }
-  }
-
-  setInvalidPasswordMessage(message: string): void {
-    this.invalidPasswordMessage = message;
   }
 
   private saveUser(user: IUser): void {
