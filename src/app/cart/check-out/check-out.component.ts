@@ -316,23 +316,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
       this.isLoading = true;
       const signUpCheck = this.checkOutForm.get('signUpCheck').value as boolean;
       if (signUpCheck) {
-        const email = this.checkOutForm.get('contactGroup.email')
-          .value as string;
-        this.authService.checkForUser(email).subscribe(
-          (result) => {
-            if (result) {
-              this.isLoading = false;
-              this.emailTakenMessage = `${email} is already registered to an
-              account. Please sign in to continue.`;
-            } else {
-              this.signUp(form, items);
-            }
-          },
-          (error) => {
-            this.isLoading = false;
-            this.signUpError = 'There was an error signing up for an account.';
-          }
-        );
+        this.checkForUser(form, items);
       } else {
         this.placeOrder(form, items);
       }
@@ -364,6 +348,25 @@ export class CheckOutComponent implements OnInit, OnDestroy {
 
   setEmailTakenMessage(message: string): void {
     this.emailTakenMessage = message;
+  }
+
+  private checkForUser(form: FormGroup, items: ICartItem[]): void {
+    const email = this.checkOutForm.get('contactGroup.email').value as string;
+    this.authService.checkForUser(email).subscribe(
+      (result) => {
+        if (result) {
+          this.isLoading = false;
+          this.emailTakenMessage = `${email} is already registered to an
+          account. Please sign in to continue.`;
+        } else {
+          this.signUp(form, items);
+        }
+      },
+      (error) => {
+        this.isLoading = false;
+        this.signUpError = 'There was an error signing up for an account.';
+      }
+    );
   }
 
   private signUp(form: FormGroup, items: ICartItem[]): void {
