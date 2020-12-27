@@ -44,7 +44,8 @@
       </ngb-panel>
       <ngb-panel
         type="{{
-          this.signUpForm.get('contactGroup').invalid && submitted
+          (this.signUpForm.get('contactGroup').invalid || emailTakenMessage) &&
+          submitted
             ? 'danger'
             : 'secondary'
         }}"
@@ -55,7 +56,9 @@
           <div class="py-1">
             <button ngbPanelToggle class="btn btn-lg btn-link p-0 text-light">
               {{
-                this.signUpForm.get("contactGroup").invalid && submitted
+                (this.signUpForm.get("contactGroup").invalid ||
+                  emailTakenMessage) &&
+                submitted
                   ? "!"
                   : ""
               }}
@@ -67,6 +70,8 @@
           <ctacu-contact-form
             [parentForm]="signUpForm"
             [submitted]="submitted"
+            [emailTakenMessage]="emailTakenMessage"
+            (onValueChange)="setEmailTakenMessage($event)"
           ></ctacu-contact-form>
           <div class="d-none d-sm-flex justify-content-between">
             <input
@@ -137,9 +142,22 @@
               />
               <input
                 type="submit"
-                value="{{ signUpForm.invalid && submitted ? '! ' : '' }}Sign Up"
-                class="btn btn-block ml-2 btn-success text-capitalize"
-                [disabled]="(signUpForm.invalid && submitted) || loading"
+                value="{{
+                  (signUpForm.invalid || emailTakenMessage) && submitted
+                    ? '! '
+                    : ''
+                }}Sign Up"
+                class="btn btn-block ml-2 text-capitalize"
+                [disabled]="
+                  ((signUpForm.invalid || emailTakenMessage) && submitted) ||
+                  loading
+                "
+                [ngClass]="{
+                  'btn-success':
+                    (signUpForm.valid && !emailTakenMessage) || !submitted,
+                  'btn-outline-danger':
+                    (signUpForm.invalid || emailTakenMessage) && submitted
+                }"
               />
             </div>
             <input
@@ -150,9 +168,22 @@
             />
             <input
               type="submit"
-              value="{{ signUpForm.invalid && submitted ? '! ' : '' }}Sign Up"
-              class="btn btn-block btn-success text-capitalize d-sm-none"
-              [disabled]="(signUpForm.invalid && submitted) || loading"
+              value="{{
+                (signUpForm.invalid || emailTakenMessage) && submitted
+                  ? '! '
+                  : ''
+              }}Sign Up"
+              class="btn btn-block text-capitalize d-sm-none"
+              [disabled]="
+                ((signUpForm.invalid || emailTakenMessage) && submitted) ||
+                loading
+              "
+              [ngClass]="{
+                'btn-success':
+                  (signUpForm.valid && !emailTakenMessage) || !submitted,
+                'btn-outline-danger':
+                  (signUpForm.invalid || emailTakenMessage) && submitted
+              }"
             />
           </form>
         </ng-template>

@@ -473,13 +473,25 @@
                     <input
                       type="submit"
                       [value]="
-                        checkOutForm.invalid && submitted
+                        (checkOutForm.invalid || emailTakenMessage) && submitted
                           ? '! place order'
                           : 'place order'
                       "
                       class="btn btn-block btn-success text-capitalize ml-2"
                       *ngIf="!isLoading; else loading"
-                      [disabled]="checkOutForm.invalid && submitted"
+                      [disabled]="
+                        ((checkOutForm.invalid || emailTakenMessage) &&
+                          submitted) ||
+                        isLoading
+                      "
+                      [ngClass]="{
+                        'btn-success':
+                          (checkOutForm.valid && !emailTakenMessage) ||
+                          !submitted,
+                        'btn-outline-danger':
+                          (checkOutForm.invalid || emailTakenMessage) &&
+                          submitted
+                      }"
                     />
                     <ng-template #loading>
                       <div class="d-flex w-100 ml-2 justify-content-center">

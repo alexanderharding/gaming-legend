@@ -17,6 +17,7 @@ export class SignUpComponent implements OnInit {
   signUpForm: FormGroup;
   submitted = false;
   signUpError: string;
+  emailTakenMessage: string;
 
   @Input() loading: boolean;
 
@@ -91,6 +92,7 @@ export class SignUpComponent implements OnInit {
       this.submitted = true;
     }
     this.signUpError = '';
+    this.emailTakenMessage = '';
     if (form.valid) {
       this.loadingChange.emit(true);
       const email = form.get('contactGroup.email').value as string;
@@ -98,8 +100,8 @@ export class SignUpComponent implements OnInit {
         (result) => {
           if (result) {
             this.loadingChange.emit(false);
-            this.signUpError = `"${email}" is already registered to an account.
-              Please sign in to continue.`;
+            this.emailTakenMessage = `"${email}" is already registered to an
+            account.`;
           } else {
             this.signUp(form);
           }
@@ -110,6 +112,10 @@ export class SignUpComponent implements OnInit {
         }
       );
     }
+  }
+
+  setEmailTakenMessage(message: string): void {
+    this.emailTakenMessage = message;
   }
 
   private signUp(form: FormGroup): void {
