@@ -34,12 +34,13 @@
         placeholder="Email (required)"
         formControlName="email"
         [ngClass]="{
-          'is-invalid': emailMessage && submitted,
-          'is-valid': !emailMessage
+          'is-invalid': (emailMessage || emailTakenMessage) && submitted,
+          'is-valid': !emailMessage && !emailTakenMessage
         }"
       />
       <div class="invalid-tooltip">
-        {{ emailMessage }}
+        <span>{{ emailMessage }}</span>
+        <span *ngIf="!emailMessage">{{ emailTakenMessage }}</span>
       </div>
     </div>
     <div class="input-group">

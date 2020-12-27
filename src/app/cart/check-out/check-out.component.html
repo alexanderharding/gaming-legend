@@ -108,7 +108,9 @@
               </ngb-panel>
               <ngb-panel
                 type="{{
-                  this.checkOutForm.get('contactGroup').invalid && submitted
+                  (this.checkOutForm.get('contactGroup').invalid ||
+                    emailTakenMessage) &&
+                  submitted
                     ? 'danger'
                     : 'secondary'
                 }}"
@@ -122,7 +124,8 @@
                       class="btn btn-lg btn-link p-0 text-light"
                     >
                       {{
-                        this.checkOutForm.get("contactGroup").invalid &&
+                        (this.checkOutForm.get("contactGroup").invalid ||
+                          emailTakenMessage) &&
                         submitted
                           ? "!"
                           : ""
@@ -136,6 +139,8 @@
                     [parentForm]="checkOutForm"
                     [submitted]="submitted"
                     [user]="user"
+                    [emailTakenMessage]="emailTakenMessage"
+                    (onValueChange)="setEmailTakenMessage($event)"
                   ></ctacu-contact-form>
                   <div class="d-none d-sm-flex justify-content-between">
                     <input
@@ -438,7 +443,7 @@
                       id="signUpCheck"
                       [ngClass]="{
                         'is-invalid':
-                          signUpError &&
+                          emailTakenMessage &&
                           checkOutForm.get('signUpCheck').value &&
                           submitted
                       }"
@@ -448,7 +453,7 @@
                       a faster checkout on your next purchase!</label
                     >
                     <div class="invalid-tooltip">
-                      {{ signUpError }}
+                      {{ emailTakenMessage }}
                     </div>
                   </div>
                   <ctacu-password-form

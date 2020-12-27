@@ -23,6 +23,9 @@ export class ContactFormComponent implements OnInit, OnDestroy {
   @Input() submitted: boolean;
   @Input() user: IUser;
   @Input() pageTitle: string;
+  @Input() emailTakenMessage: string;
+
+  @Output() onValueChange = new EventEmitter<string>();
 
   private readonly phoneValidationMessages = {
     required: 'Please enter your phone number.',
@@ -66,9 +69,10 @@ export class ContactFormComponent implements OnInit, OnDestroy {
     );
     const emailControl = this.parentForm.get('contactGroup.email');
     this.subscriptions.push(
-      emailControl.valueChanges
-        .pipe(debounceTime(1000))
-        .subscribe(() => this.setMessage(emailControl, 'email'))
+      emailControl.valueChanges.pipe(debounceTime(1000)).subscribe(() => {
+        this.onValueChange.emit('');
+        this.setMessage(emailControl, 'email');
+      })
     );
     const confirmEmailControl = this.parentForm.get(
       'contactGroup.confirmEmail'

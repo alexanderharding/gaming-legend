@@ -160,6 +160,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     : ('Retrieval Error' as string);
 
   signUpError: string;
+  emailTakenMessage: string;
 
   submitted = false;
   orderPlaced = false;
@@ -292,9 +293,10 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     );
     const signUpCheckControl = this.checkOutForm.get('signUpCheck');
     this.subscriptions.push(
-      signUpCheckControl.valueChanges.subscribe((check: boolean) =>
-        this.setPasswordValidation(check)
-      )
+      signUpCheckControl.valueChanges.subscribe((check: boolean) => {
+        this.emailTakenMessage = '';
+        this.setPasswordValidation(check);
+      })
     );
     if (this.shippingRates) {
       this.checkOutForm.patchValue({
@@ -309,6 +311,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     }
     this.errorMessage = '';
     this.signUpError = '';
+    this.emailTakenMessage = '';
     if (form.valid) {
       this.isLoading = true;
       const signUpCheck = this.checkOutForm.get('signUpCheck').value as boolean;
@@ -319,8 +322,8 @@ export class CheckOutComponent implements OnInit, OnDestroy {
           (result) => {
             if (result) {
               this.isLoading = false;
-              this.signUpError = `${email} is already registered to an account.
-              Please sign in to continue.`;
+              this.emailTakenMessage = `${email} is already registered to an
+              account. Please sign in to continue.`;
             } else {
               this.signUp(form, items);
             }
@@ -357,6 +360,10 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     passwordGroupControl.updateValueAndValidity();
     passwordControl.updateValueAndValidity();
     confirmPasswordControl.updateValueAndValidity();
+  }
+
+  setEmailTakenMessage(message: string): void {
+    this.emailTakenMessage = message;
   }
 
   private signUp(form: FormGroup, items: ICartItem[]): void {
