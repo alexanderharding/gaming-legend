@@ -15,6 +15,11 @@ const ROUTES: Routes = [
     component: AccountComponent,
   },
   {
+    path: 'edit',
+    redirectTo: 'edit/name',
+    pathMatch: 'full',
+  },
+  {
     path: 'edit/name',
     component: EditNameComponent,
   },
