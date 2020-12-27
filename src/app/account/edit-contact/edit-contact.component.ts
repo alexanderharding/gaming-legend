@@ -83,40 +83,6 @@ export class EditContactComponent implements OnInit {
         }
       );
     }
-    // if (this.hasValueChanged(form, user)) {
-    //   if (form.valid) {
-    //     const currentPasswordControl = form.get('currentPassword');
-    //     if (currentPasswordControl.value.toString() === user.password) {
-    //       this.loading = true;
-    //       const email = this.editForm.get('contactGroup.email').value as string;
-    //       this.authService.checkForUser(email).subscribe(
-    //         (result) => {
-    //           if (result) {
-    //             this.loading = false;
-    //             this.emailTakenMessage = `${email} is already registered to an
-    //            account.`;
-    //           } else {
-    //             const updatedUser = {
-    //               ...user,
-    //               phone: form.get('contactGroup.phone').value as string,
-    //               email: form.get('contactGroup.email').value as string,
-    //             } as IUser;
-    //             this.saveUser(updatedUser);
-    //           }
-    //         },
-    //         (error) => {
-    //           this.loading = false;
-    //           this.errorMessage =
-    //             'There was an error saving your contact information.';
-    //         }
-    //       );
-    //     } else {
-    //       this.invalidPasswordMessage = this.formValidationRuleService.invalidPasswordMessage;
-    //     }
-    //   }
-    // } else {
-    //   this.router.navigate(['/account']);
-    // }
   }
 
   setEmailTakenMessage(message: string): void {
