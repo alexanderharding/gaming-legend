@@ -13,11 +13,12 @@ import { IUser } from 'src/app/types/user';
   styleUrls: ['./address-form.component.scss'],
 })
 export class AddressFormComponent implements OnInit, OnDestroy {
-  readonly pageTitle = 'Address';
+  readonly defaultPageTitle = 'Address';
   readonly states = this.formValidationRuleService.states;
 
   @Input() parentForm: FormGroup;
   @Input() submitted: boolean;
+  @Input() pageTitle: string;
   @Input() user: IUser;
 
   private readonly streetMinLength = +this.formValidationRuleService

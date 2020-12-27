@@ -1,6 +1,8 @@
 <form [formGroup]="parentForm" novalidate>
   <fieldset formGroupName="addressGroup">
-    <legend class="text-primary text-capitalize">{{ pageTitle }}</legend>
+    <legend class="text-primary text-capitalize">
+      {{ (pageTitle ? pageTitle : defaultPageTitle) | lowercase }}
+    </legend>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
         <span class="input-group-text bg-info text-white">Street</span>
