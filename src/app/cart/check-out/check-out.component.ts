@@ -277,27 +277,13 @@ export class CheckOutComponent implements OnInit, OnDestroy {
         { validator: passwordMatcher }
       ),
     });
+
     this.authService.currentUser$.pipe(first()).subscribe((user) => {
       if (user) {
         this.user = user as IUser;
       }
     });
-    const shippingRateControl = this.checkOutForm.get('shippingRate');
-    this.subscriptions.push(
-      shippingRateControl.valueChanges
-        .pipe(debounceTime(500))
-        .subscribe((price: number) => {
-          this.setDeliveryDate(+price);
-          this.shippingRateService.setShipping(+price);
-        })
-    );
-    const signUpCheckControl = this.checkOutForm.get('signUpCheck');
-    this.subscriptions.push(
-      signUpCheckControl.valueChanges.subscribe((check: boolean) => {
-        this.emailTakenMessage = '';
-        this.setPasswordValidation(check);
-      })
-    );
+    this.subscribeToControls();
     if (this.shippingRates) {
       this.checkOutForm.patchValue({
         shippingRate: +this.shippingRates[0].price,
@@ -311,7 +297,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     }
     this.errorMessage = '';
     this.signUpError = '';
-    this.emailTakenMessage = '';
+    // this.emailTakenMessage = '';
     if (form.valid) {
       this.isLoading = true;
       const signUpCheck = this.checkOutForm.get('signUpCheck').value as boolean;
@@ -348,6 +334,25 @@ export class CheckOutComponent implements OnInit, OnDestroy {
 
   setEmailTakenMessage(message: string): void {
     this.emailTakenMessage = message;
+  }
+
+  private subscribeToControls(): void {
+    const shippingRateControl = this.checkOutForm.get('shippingRate');
+    this.subscriptions.push(
+      shippingRateControl.valueChanges
+        .pipe(debounceTime(500))
+        .subscribe((price: number) => {
+          this.setDeliveryDate(+price);
+          this.shippingRateService.setShipping(+price);
+        })
+    );
+    const signUpCheckControl = this.checkOutForm.get('signUpCheck');
+    this.subscriptions.push(
+      signUpCheckControl.valueChanges.subscribe((check: boolean) => {
+        this.emailTakenMessage = '';
+        this.setPasswordValidation(check);
+      })
+    );
   }
 
   private checkForUser(form: FormGroup, items: ICartItem[]): void {
