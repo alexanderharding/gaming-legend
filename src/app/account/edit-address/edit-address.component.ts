@@ -93,7 +93,7 @@ export class EditAddressComponent implements OnInit {
       (result) => this.router.navigate(['/account']),
       (error) => {
         this.loading = false;
-        this.errorMessage = 'There was an error saving your name.';
+        this.errorMessage = 'There was an error saving your address.';
       }
     );
   }

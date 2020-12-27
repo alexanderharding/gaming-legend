@@ -56,12 +56,28 @@ export class EditContactComponent implements OnInit {
       const currentPasswordControl = form.get('currentPassword');
       if (currentPasswordControl.value.toString() === user.password) {
         this.loading = true;
-        const updatedUser = {
-          ...user,
-          phone: form.get('contactGroup.phone').value as string,
-          email: form.get('contactGroup.email').value as string,
-        } as IUser;
-        this.saveUser(updatedUser);
+        const email = this.editForm.get('contactGroup.email').value as string;
+        this.authService.checkForUser(email).subscribe(
+          (result) => {
+            if (result) {
+              this.loading = false;
+              this.emailTakenMessage = `${email} is already registered to an
+              account.`;
+            } else {
+              const updatedUser = {
+                ...user,
+                phone: form.get('contactGroup.phone').value as string,
+                email: form.get('contactGroup.email').value as string,
+              } as IUser;
+              this.saveUser(updatedUser);
+            }
+          },
+          (error) => {
+            this.loading = false;
+            this.errorMessage =
+              'There was an error saving your contact information.';
+          }
+        );
       } else {
         this.invalidPasswordMessage = this.formValidationRuleService.invalidPasswordMessage;
       }
@@ -78,7 +94,10 @@ export class EditContactComponent implements OnInit {
 
   private saveUser(user: IUser): void {
     this.authService.saveUser(user).subscribe(
-      (result) => this.router.navigate(['/account']),
+      (result) => {
+        this.loading = false;
+        this.router.navigate(['/account']);
+      },
       (error) => {
         this.loading = false;
         this.errorMessage = 'There was an error saving your name.';
