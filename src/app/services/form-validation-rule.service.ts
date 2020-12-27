@@ -17,7 +17,7 @@ export class FormValidationRuleService {
   readonly passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
 
   readonly invalidPasswordMessage =
-    'This does not match your current password.';
+    'This value does not match your current password.';
   readonly states = [
     'Alabama',
     'Alaska',

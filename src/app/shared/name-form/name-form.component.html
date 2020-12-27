@@ -1,7 +1,7 @@
 <form class="mb-3" [formGroup]="parentForm" novalidate>
   <fieldset formGroupName="nameGroup">
     <legend class="text-primary text-capitalize">
-      {{ pageTitle ? pageTitle : (defaultPageTitle | lowercase) }}
+      {{ (pageTitle ? pageTitle : defaultPageTitle) | lowercase }}
     </legend>
     <div class="input-group mb-3">
       <div class="input-group-prepend">

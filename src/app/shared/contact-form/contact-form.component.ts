@@ -17,10 +17,12 @@ import { IUser } from 'src/app/types/user';
   styleUrls: ['./contact-form.component.scss'],
 })
 export class ContactFormComponent implements OnInit, OnDestroy {
-  pageTitle = 'Contact Information';
+  readonly defaultPageTitle = 'Contact Information';
+
   @Input() parentForm: FormGroup;
   @Input() submitted: boolean;
   @Input() user: IUser;
+  @Input() pageTitle: string;
 
   private readonly phoneValidationMessages = {
     required: 'Please enter your phone number.',
