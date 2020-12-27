@@ -29,6 +29,7 @@
             [submitted]="submitted"
             [user]="user"
             pageTitle="Edit Contact Information"
+            (onValueChange)="setEmailTakenMessage($event)"
           ></ctacu-contact-form>
         </div>
         <div class="col-md">
@@ -43,12 +44,17 @@
       <div class="d-flex">
         <input
           type="submit"
-          value="{{ editForm.invalid && submitted ? '! ' : '' }}Save"
+          value="{{
+            (editForm.invalid || emailTakenMessage) && submitted ? '! ' : ''
+          }}Save"
           class="btn"
-          [disabled]="editForm.invalid && submitted"
+          [disabled]="
+            ((editForm.invalid || emailTakenMessage) && submitted) || loading
+          "
           [ngClass]="{
-            'btn-success': editForm.valid || !submitted,
-            'btn-outline-danger': editForm.invalid && submitted
+            'btn-success': (editForm.valid && !emailTakenMessage) || !submitted,
+            'btn-outline-danger':
+              (editForm.invalid || emailTakenMessage) && submitted
           }"
         />
         <input

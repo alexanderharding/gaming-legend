@@ -14,8 +14,10 @@ import { IUser } from 'src/app/types/user';
 export class EditContactComponent implements OnInit {
   submitted = false;
   editForm: FormGroup;
-  errorMessage = '';
-  invalidPasswordMessage = '';
+  errorMessage: string;
+  invalidPasswordMessage: string;
+  emailTakenMessage: string;
+
   loading = false;
 
   private readonly phonePattern = this.formValidationRuleService
@@ -68,6 +70,10 @@ export class EditContactComponent implements OnInit {
 
   setInvalidPasswordMessage(message: string): void {
     this.invalidPasswordMessage = message;
+  }
+
+  setEmailTakenMessage(message: string): void {
+    this.emailTakenMessage = message;
   }
 
   private saveUser(user: IUser): void {
