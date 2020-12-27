@@ -283,7 +283,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
         this.user = user as IUser;
       }
     });
-    this.subscribeToControls();
+    this.subscribeToValueChanges();
     if (this.shippingRates) {
       this.checkOutForm.patchValue({
         shippingRate: +this.shippingRates[0].price,
@@ -336,7 +336,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     this.emailTakenMessage = message;
   }
 
-  private subscribeToControls(): void {
+  private subscribeToValueChanges(): void {
     const shippingRateControl = this.checkOutForm.get('shippingRate');
     this.subscriptions.push(
       shippingRateControl.valueChanges
