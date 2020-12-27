@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, Form } from '@angular/forms';
 import { Router } from '@angular/router';
+import { tap } from 'rxjs/operators';
 import { emailMatcher } from 'src/app/functions/email-matcher';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
@@ -61,7 +62,7 @@ export class EditContactComponent implements OnInit {
             if (result) {
               this.loading = false;
               this.emailTakenMessage = `${email} is already registered to an
-              account.`;
+               account.`;
             } else {
               const updatedUser = {
                 ...user,
@@ -81,6 +82,40 @@ export class EditContactComponent implements OnInit {
         this.invalidPasswordMessage = this.formValidationRuleService.invalidPasswordMessage;
       }
     }
+    // if (this.hasValueChanged(form, user)) {
+    //   if (form.valid) {
+    //     const currentPasswordControl = form.get('currentPassword');
+    //     if (currentPasswordControl.value.toString() === user.password) {
+    //       this.loading = true;
+    //       const email = this.editForm.get('contactGroup.email').value as string;
+    //       this.authService.checkForUser(email).subscribe(
+    //         (result) => {
+    //           if (result) {
+    //             this.loading = false;
+    //             this.emailTakenMessage = `${email} is already registered to an
+    //            account.`;
+    //           } else {
+    //             const updatedUser = {
+    //               ...user,
+    //               phone: form.get('contactGroup.phone').value as string,
+    //               email: form.get('contactGroup.email').value as string,
+    //             } as IUser;
+    //             this.saveUser(updatedUser);
+    //           }
+    //         },
+    //         (error) => {
+    //           this.loading = false;
+    //           this.errorMessage =
+    //             'There was an error saving your contact information.';
+    //         }
+    //       );
+    //     } else {
+    //       this.invalidPasswordMessage = this.formValidationRuleService.invalidPasswordMessage;
+    //     }
+    //   }
+    // } else {
+    //   this.router.navigate(['/account']);
+    // }
   }
 
   setInvalidPasswordMessage(message: string): void {
@@ -89,6 +124,18 @@ export class EditContactComponent implements OnInit {
 
   setEmailTakenMessage(message: string): void {
     this.emailTakenMessage = message;
+  }
+
+  private hasValueChanged(form: FormGroup, user: IUser): boolean {
+    const phone = form.get('contactGroup.phone').value as string;
+    const email = form.get('contactGroup.email').value as string;
+    if (
+      email.toLowerCase() === user.email.toLowerCase() &&
+      phone.toLowerCase() === user.phone.toLowerCase()
+    ) {
+      return false;
+    }
+    return true;
   }
 
   private saveUser(user: IUser): void {
