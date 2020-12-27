@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -278,12 +278,15 @@ export class CheckOutComponent implements OnInit, OnDestroy {
       ),
     });
 
+    this.subscribeToValueChanges();
     this.authService.currentUser$.pipe(first()).subscribe((user) => {
       if (user) {
         this.user = user as IUser;
+        this.checkOutForm.patchValue({
+          signUpCheck: false,
+        });
       }
     });
-    this.subscribeToValueChanges();
     if (this.shippingRates) {
       this.checkOutForm.patchValue({
         shippingRate: +this.shippingRates[0].price,

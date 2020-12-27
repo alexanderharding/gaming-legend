@@ -168,15 +168,6 @@
                     (click)="acc.toggle('shipping')"
                     class="btn btn-block btn-success text-capitalize d-sm-none"
                   />
-                  <!-- <ctacu-contact-panel-content
-                        [checkOutForm]="checkOutForm"
-                        [user]="user"
-                        [submitted]="submitted"
-                        [nameMinLength]="nameMinLength"
-                        [nameMaxLength]="nameMaxLength"
-                        (toggleChange)="acc.toggle($event)"
-                        (newSubscription)="pushSubscription($event)"
-                      ></ctacu-contact-panel-content> -->
                 </ng-template>
               </ngb-panel>
               <ngb-panel
@@ -259,19 +250,6 @@
                     (click)="acc.toggle('finalize')"
                     class="btn btn-block btn-success text-capitalize d-sm-none"
                   />
-                  <!-- <ctacu-shipping-panel-content
-                        [checkOutForm]="checkOutForm"
-                        [submitted]="submitted"
-                        [shippingRates]="shippingRates"
-                        [user]="user"
-                        [streetMinLength]="streetMinLength"
-                        [streetMaxLength]="streetMaxLength"
-                        [cityMinLength]="cityMinLength"
-                        [cityMaxLength]="cityMaxLength"
-                        [states]="states"
-                        (toggleChange)="acc.toggle($event)"
-                        (newSubscription)="pushSubscription($event)"
-                      ></ctacu-shipping-panel-content> -->
                 </ng-template>
               </ngb-panel>
               <ngb-panel
@@ -433,7 +411,7 @@
                   <hr />
 
                   <div
-                    *ngIf="!user"
+                    [hidden]="user"
                     class="custom-control custom-checkbox mb-3"
                   >
                     <input
@@ -457,8 +435,9 @@
                     </div>
                   </div>
                   <ctacu-password-form
-                    *ngIf="!user"
-                    [hidden]="!this.checkOutForm.get('signUpCheck').value"
+                    [hidden]="
+                      !this.checkOutForm.get('signUpCheck').value || user
+                    "
                     [parentForm]="checkOutForm"
                     [submitted]="submitted"
                     pageTitle="Sign Up"
@@ -527,20 +506,6 @@
                       </div>
                     </ng-template>
                   </div>
-                  <!-- <ctacu-finalize-panel-content
-                        [checkOutForm]="checkOutForm"
-                        [user]="user"
-                        [submitted]="submitted"
-                        [errorMessage]="errorMessage"
-                        [signUpError]="signUpError"
-                        [isLoading]="isLoading"
-                        [subtotal$]="subtotal$"
-                        (toggleChange)="acc.toggle($event)"
-                        (checkChange)="setPasswordValidation($event)"
-                        (onSubmit)="onSubmit($event, items)"
-                        (newSubscription)="pushSubscription($event)"
-                      >
-                      </ctacu-finalize-panel-content> -->
                 </ng-template>
               </ngb-panel>
             </ngb-accordion>
