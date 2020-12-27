@@ -5,6 +5,18 @@ import { IMonthOption } from '../types/month-option';
   providedIn: 'root',
 })
 export class FormValidationRuleService {
+  readonly formValidationRules = {
+    nameMinLength: 3,
+    nameMaxLength: 20,
+    streetMinLength: 5,
+    streetMaxLength: 20,
+    cityMinLength: 3,
+    cityMaxLength: 15,
+    zipPattern: /^[0-9]{5}(?:-[0-9]{4})?$/,
+    cvvPattern: /^[0-9]{3,4}$/,
+    phonePattern: /(\+?( |-|\.)?\d{1,2}( |-|\.)?)?(\(?\d{3}\)?|\d{3})( |-|\.)?(\d{3}( |-|\.)?\d{4})/,
+    passwordPattern: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
+  };
   readonly nameMinLength = 3;
   readonly nameMaxLength = 20;
   readonly streetMinLength = 5;
@@ -16,8 +28,6 @@ export class FormValidationRuleService {
   readonly phonePattern = /(\+?( |-|\.)?\d{1,2}( |-|\.)?)?(\(?\d{3}\)?|\d{3})( |-|\.)?(\d{3}( |-|\.)?\d{4})/;
   readonly passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
 
-  readonly invalidPasswordMessage =
-    'This value does not match your current password.';
   readonly states = [
     'Alabama',
     'Alaska',
