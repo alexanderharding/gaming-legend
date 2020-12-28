@@ -2,6 +2,15 @@ import { IProduct } from './product';
 import { Customer } from './customer';
 import { Payment } from './payment';
 
+export interface IOrder {
+  customer: Customer;
+  items: IProduct[];
+  payment: Payment;
+  date: Date;
+  userId: number;
+  id: number;
+}
+
 export class Order {
   constructor(
     public customer: Customer,
