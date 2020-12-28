@@ -24,7 +24,7 @@ export class PasswordFormComponent implements OnInit, OnDestroy {
   passwordMessage = this.passwordValidationMessages['required'];
 
   private readonly confirmPasswordValidationMessages = {
-    required: 'Please confirm your password.',
+    required: 'Please confirm the password.',
   };
   confirmPasswordMessage = this.confirmPasswordValidationMessages['required'];
 

@@ -40,7 +40,7 @@ export class AddressFormComponent implements OnInit, OnDestroy {
   streetMessage = this.streetValidationMessages['required'];
 
   private readonly cityValidationMessages = {
-    required: 'Please enter your city.',
+    required: 'Please enter a city.',
     minlength: `The city must be longer than ${this.cityMinLength - 1}
     characters.`,
     maxlength: `The city cannot be longer than ${this.cityMaxLength}
@@ -49,12 +49,12 @@ export class AddressFormComponent implements OnInit, OnDestroy {
   cityMessage = this.cityValidationMessages['required'];
 
   private readonly stateValidationMessages = {
-    required: 'Please select your state.',
+    required: 'Please select a state.',
   };
   stateMessage = this.stateValidationMessages['required'];
 
   private readonly zipValidationMessages = {
-    required: 'Please enter your zip code.',
+    required: 'Please enter a zip code.',
     pattern: 'Please enter a valid zip code.',
   };
   zipMessage = this.zipValidationMessages['required'];

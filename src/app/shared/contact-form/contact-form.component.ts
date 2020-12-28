@@ -28,24 +28,24 @@ export class ContactFormComponent implements OnInit, OnDestroy {
   @Output() onValueChange = new EventEmitter<string>();
 
   private readonly phoneValidationMessages = {
-    required: 'Please enter your phone number.',
+    required: 'Please enter a phone number.',
     pattern: 'Please enter a valid phone number.',
   };
   phoneMessage = this.phoneValidationMessages['required'];
 
   private readonly emailValidationMessages = {
-    required: 'Please enter your email address.',
+    required: 'Please enter an email address.',
     email: 'Please enter a valid email address. ie. fake@1234.com',
   };
   emailMessage = this.emailValidationMessages['required'];
 
   private readonly confirmEmailValidationMessages = {
-    required: 'Please confirm your email address.',
+    required: 'Please confirm the email address.',
   };
   confirmEmailMessage = this.confirmEmailValidationMessages['required'];
 
   private readonly contactValidationMessages = {
-    match: 'The confirmation does not match your email address.',
+    match: 'The confirmation does not match the email address.',
   };
   contactGroupMessage = this.contactValidationMessages['match'];
 
