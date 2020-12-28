@@ -80,6 +80,12 @@ export class AccountComponent implements OnInit {
     this.router.navigate(['/user']);
   }
 
+  resetForm(): void {
+    this.editPasswordForm.reset();
+    this.submitted = false;
+    this.loading = false;
+  }
+
   private saveUser(user: IUser): void {
     this.authService.saveUser(user).subscribe(
       (result) => {
@@ -92,11 +98,5 @@ export class AccountComponent implements OnInit {
         console.error(error);
       }
     );
-  }
-
-  private resetForm(): void {
-    this.editPasswordForm.reset();
-    this.submitted = false;
-    this.loading = false;
   }
 }

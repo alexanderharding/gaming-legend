@@ -142,19 +142,31 @@
                       [submitted]="submitted"
                       pageTitle="New Password"
                     ></ctacu-password-form>
-                    <input
-                      type="submit"
-                      value="{{
-                        editPasswordForm.invalid && submitted ? '! ' : ''
-                      }}Save"
-                      class="btn btn-block"
-                      [disabled]="editPasswordForm.invalid && submitted"
-                      [ngClass]="{
-                        'btn-success': editPasswordForm.valid || !submitted,
-                        'btn-outline-danger':
-                          editPasswordForm.invalid && submitted
-                      }"
-                    />
+                    <div class="d-flex">
+                      <input
+                        type="submit"
+                        value="{{
+                          editPasswordForm.invalid && submitted ? '! ' : ''
+                        }}Save"
+                        class="btn"
+                        [disabled]="
+                          (editPasswordForm.invalid && submitted) || loading
+                        "
+                        [ngClass]="{
+                          'btn-success': editPasswordForm.valid || !submitted,
+                          'btn-outline-danger':
+                            editPasswordForm.invalid && submitted
+                        }"
+                      />
+                      <input
+                        *ngIf="editPasswordForm.touched || submitted"
+                        type="button"
+                        value="Cancel"
+                        class="btn btn-danger ml-2"
+                        [disabled]="loading"
+                        (click)="resetForm()"
+                      />
+                    </div>
                   </div>
                 </div>
               </form>
