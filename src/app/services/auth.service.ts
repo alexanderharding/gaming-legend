@@ -46,7 +46,6 @@ export class AuthService {
             userEmail === firstUserFound.email.toLowerCase() &&
             password === firstUserFound.password
           ) {
-            localStorage.setItem('currentUser', JSON.stringify(firstUserFound));
             this.setCurrentUser(firstUserFound);
             console.log(`Signed in!`);
             return true;
@@ -100,6 +99,7 @@ export class AuthService {
   }
 
   private setCurrentUser(user: IUser): void {
+    localStorage.setItem('currentUser', JSON.stringify(user));
     this.currentUserSubject.next(user);
   }
 }
