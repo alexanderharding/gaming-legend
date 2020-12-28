@@ -437,7 +437,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
           order = {
             ...order,
             userId: +this.user.id,
-          };
+          } as Order;
         }
         this.checkOutService.placeOrder(order).subscribe(
           (result) => {
