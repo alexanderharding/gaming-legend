@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
 import { first } from 'rxjs/operators';
 import { passwordChecker } from '../functions/password-checker';
 import { passwordMatcher } from '../functions/password-matcher';
@@ -28,8 +29,12 @@ export class AccountComponent implements OnInit {
     private readonly authService: AuthService,
     private readonly router: Router,
     private readonly fb: FormBuilder,
-    private readonly formValidationRuleService: FormValidationRuleService
-  ) {}
+    private readonly formValidationRuleService: FormValidationRuleService,
+
+    private readonly config: NgbAccordionConfig
+  ) {
+    config.closeOthers = true;
+  }
 
   ngOnInit(): void {
     this.user$.pipe(first()).subscribe({
