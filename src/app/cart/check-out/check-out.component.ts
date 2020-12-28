@@ -427,13 +427,18 @@ export class CheckOutComponent implements OnInit, OnDestroy {
           expiringYear: +form.get('paymentGroup.expiringYear').value,
           total: +total,
         }) as Payment;
-        const order = OrderMaker.create({
+        let order = OrderMaker.create({
           customer: customer,
           items: items,
           payment: payment,
           date: new Date(),
-          userId: this.user ? this.user.id : null,
         }) as Order;
+        if (this.user) {
+          order = {
+            ...order,
+            userId: +this.user.id,
+          };
+        }
         this.checkOutService.placeOrder(order).subscribe(
           (result) => {
             console.log('order placed');

@@ -7,7 +7,7 @@ export interface IOrder {
   items: IProduct[];
   payment: Payment;
   date: Date;
-  userId: number;
+  userId?: number;
   id: number;
 }
 
@@ -17,7 +17,7 @@ export class Order {
     public items: IProduct[],
     public payment: Payment,
     public date: Date,
-    public userId: number,
+    public userId?: number,
     public id?: number
   ) {}
 }
