@@ -22,6 +22,11 @@
           </div>
         </ng-template>
         <ng-template ngbPanelContent>
+          <p>
+            <ngb-progressbar type="primary" [value]="33"
+              ><i>33%</i></ngb-progressbar
+            >
+          </p>
           <ctacu-name-form
             [parentForm]="signUpForm"
             [submitted]="submitted"
@@ -67,6 +72,11 @@
           </div>
         </ng-template>
         <ng-template ngbPanelContent>
+          <p>
+            <ngb-progressbar type="primary" [value]="66"
+              ><i>66%</i></ngb-progressbar
+            >
+          </p>
           <ctacu-contact-form
             [parentForm]="signUpForm"
             [submitted]="submitted"
@@ -123,6 +133,11 @@
           </div>
         </ng-template>
         <ng-template ngbPanelContent>
+          <p>
+            <ngb-progressbar type="success" [value]="100"
+              ><i>100%</i></ngb-progressbar
+            >
+          </p>
           <ctacu-password-form
             [parentForm]="signUpForm"
             [submitted]="submitted"

@@ -1,7 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbAccordionConfig,
+  NgbProgressbarConfig,
+} from '@ng-bootstrap/ng-bootstrap';
 import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
 import { AuthService } from 'src/app/services/auth.service';
@@ -35,12 +38,15 @@ export class SignUpComponent implements OnInit {
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly config: NgbAccordionConfig,
+    private readonly accordionConfig: NgbAccordionConfig,
     private readonly formValidationRuleService: FormValidationRuleService,
     private readonly authService: AuthService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly progressBarConfig: NgbProgressbarConfig
   ) {
-    config.closeOthers = true;
+    accordionConfig.closeOthers = true;
+    progressBarConfig.striped = true;
+    progressBarConfig.animated = true;
   }
 
   ngOnInit(): void {

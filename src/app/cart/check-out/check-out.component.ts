@@ -6,7 +6,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbAccordionConfig,
+  NgbProgressbarConfig,
+} from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { debounceTime, first, tap } from 'rxjs/operators';
 
@@ -185,7 +188,8 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     .passwordPattern as RegExp;
 
   constructor(
-    private readonly config: NgbAccordionConfig,
+    private readonly accordionConfig: NgbAccordionConfig,
+    private readonly progressBarConfig: NgbProgressbarConfig,
     private readonly cartService: CartService,
     private readonly checkOutService: CheckOutService,
     private readonly router: Router,
@@ -195,7 +199,9 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     private readonly formValidationRuleService: FormValidationRuleService,
     private readonly shippingRateService: ShippingRateService
   ) {
-    config.closeOthers = true;
+    accordionConfig.closeOthers = true;
+    progressBarConfig.striped = true;
+    progressBarConfig.animated = true;
   }
 
   ngOnInit(): void {
