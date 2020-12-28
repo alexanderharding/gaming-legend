@@ -53,7 +53,7 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscribeToControls();
-    this.populateTestData();
+    // this.populateTestData();
   }
 
   private subscribeToControls(): void {
@@ -93,7 +93,7 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
     );
   }
 
-  private populateTestData(): void {
+  populateTestData(): void {
     this.parentForm.patchValue({
       paymentGroup: {
         cardNumber: 4123147523147547,
