@@ -7,6 +7,7 @@ import { AccountComponent } from './account.component';
 import { EditNameComponent } from './edit-name/edit-name.component';
 import { EditContactComponent } from './edit-contact/edit-contact.component';
 import { EditAddressComponent } from './edit-address/edit-address.component';
+import { EditPasswordComponent } from './edit-password/edit-password.component';
 
 /* Routes */
 const ROUTES: Routes = [
@@ -40,6 +41,7 @@ const ROUTES: Routes = [
     EditNameComponent,
     EditContactComponent,
     EditAddressComponent,
+    EditPasswordComponent,
   ],
 })
 export class AccountModule {}
