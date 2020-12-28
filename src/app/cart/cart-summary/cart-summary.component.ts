@@ -20,13 +20,9 @@ export class CartSummaryComponent {
   readonly quantity$ = this.cartService.cartQuantity$;
   readonly subtotal$ = this.cartService.subtotal$;
   readonly totalTax$ = this.cartService.totalTax$;
-  readonly total$ = this.cartService.total$.pipe(
-    tap(() => this.onTotalChange.emit(false))
-  );
+  readonly total$ = this.cartService.total$;
   readonly shippingPrice$ = this.shippingRateService
     .shippingPriceSelectedAction$;
-
-  @Output() onTotalChange = new EventEmitter<boolean>();
 
   constructor(
     private readonly cartService: CartService,
