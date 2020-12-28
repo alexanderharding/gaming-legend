@@ -56,14 +56,26 @@
             class="card-header bg-secondary text-light d-flex justify-content-between"
           >
             <span>Address</span>
-            <a [routerLink]="['edit', 'address']" class="card-link text-light"
-              >Edit</a
+            <a
+              [routerLink]="['edit', 'address']"
+              class="card-link text-light"
+              >{{ user.street ? "Edit" : "Add" }}</a
             >
           </div>
           <div class="card-body text-capitalize">
-            <div>{{ user.street | lowercase }}</div>
-            <div>{{ user.city | lowercase }}, {{ user.state }}</div>
-            <div>{{ user.zip | lowercase }}, {{ user.country }}</div>
+            <ng-container *ngIf="user.street; else noStreet">
+              <div>{{ user.street | lowercase }}</div>
+              <div>{{ user.city | lowercase }}, {{ user.state }}</div>
+              <div>{{ user.zip | lowercase }}, {{ user.country }}</div>
+            </ng-container>
+            <ng-template #noStreet>
+              <input
+                type="button"
+                value="Add Address"
+                class="btn btn-info btn-block"
+                [routerLink]="['edit', 'address']"
+              />
+            </ng-template>
           </div>
         </div>
       </div>

@@ -28,7 +28,7 @@
             [parentForm]="editForm"
             [submitted]="submitted"
             [user]="user"
-            pageTitle="Edit Address"
+            pageTitle="{{ user.street ? 'Edit' : 'Add' }} Address"
           ></ctacu-address-form>
         </div>
         <div class="col-md">
