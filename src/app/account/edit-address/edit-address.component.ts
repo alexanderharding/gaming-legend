@@ -64,7 +64,7 @@ export class EditAddressComponent implements OnInit {
               '',
               [Validators.required, Validators.pattern(this.zipPattern)],
             ],
-            country: ['United States', [Validators.required]],
+            country: ['USA', [Validators.required]],
           }),
         })),
     });

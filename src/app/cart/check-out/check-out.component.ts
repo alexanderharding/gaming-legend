@@ -255,7 +255,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
         ],
         state: ['', [Validators.required]],
         zip: ['', [Validators.required, Validators.pattern(this.zipPattern)]],
-        country: ['United States', [Validators.required]],
+        country: ['USA', [Validators.required]],
       }),
       shippingRate: null,
       paymentGroup: this.fb.group(
