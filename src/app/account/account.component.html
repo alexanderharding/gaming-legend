@@ -147,7 +147,13 @@
                 <ng-container *ngIf="orders && orders.length; else noOrders">
                   <div *ngFor="let o of orders">{{ o.id }}</div>
                 </ng-container>
-                <ng-template #noOrders> <div>No Orders!</div> </ng-template>
+                <ng-template #noOrders>
+                  <ngb-alert class="m-0 text-center" [dismissible]="false">
+                    <strong>No orders!</strong> Click
+                    <a routerLink="/products">here</a> to check out our
+                    products.
+                  </ngb-alert>
+                </ng-template>
               </ng-container>
             </ng-template>
           </ngb-panel>
