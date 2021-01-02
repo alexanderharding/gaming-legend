@@ -134,7 +134,7 @@ export class SignUpComponent implements OnInit {
       city: '',
       state: '',
       zip: '',
-      country: '',
+      country: 'USA',
       password: form.get('passwordGroup.password').value as string,
       isAdmin: false,
     }) as User;
