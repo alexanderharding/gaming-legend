@@ -141,7 +141,28 @@
             <ng-template ngbPanelContent>
               <ng-container *ngIf="orders; else error">
                 <ng-container *ngIf="orders.length; else noOrders">
-                  <div *ngFor="let o of orders">{{ o.id }}</div>
+                  <div class="table-responsive">
+                    <table class="table table-hover table-sm pointer">
+                      <thead class="thead-dark text-uppercase">
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Amount Paid</th>
+                          <th scope="col">Date</th>
+                          <th scope="col">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let o of orders">
+                          <th scope="row">{{ o.id }}</th>
+                          <td scope="row">{{ o.payment.total | currency }}</td>
+                          <td scope="row">
+                            {{ o.date | date }}
+                          </td>
+                          <td scope="row" class="text-success">Completed</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </ng-container>
                 <ng-template #noOrders>
                   <ngb-alert class="m-0 text-center" [dismissible]="false">
