@@ -147,24 +147,87 @@
               <ng-container
                 *ngIf="filteredOrders$ | async as orders; else error"
               >
+                <form
+                  class="mb-3"
+                  novalidate
+                  [formGroup]="filterForm"
+                  autocomplete="off"
+                >
+                  <div class="form-row">
+                    <div class="col-sm order-1">
+                      <div class="input-group input-group-sm mt-2 mt-sm-0">
+                        <div class="input-group-prepend">
+                          <span
+                            class="input-group-text bg-info text-white"
+                            id="basic-addon1"
+                            >Search</span
+                          >
+                        </div>
+                        <input
+                          type="text"
+                          id="search"
+                          formControlName="search"
+                          class="form-control"
+                          placeholder="By #"
+                          aria-describedby="basic-addon1"
+                        />
+                        <div
+                          *ngIf="filterForm.get('search').value"
+                          class="input-group-append"
+                        >
+                          <input
+                            type="button"
+                            value="X"
+                            class="btn btn-sm btn-outline-danger"
+                            (click)="clearSearch()"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm order-sm-12">
+                      <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                          <span
+                            class="input-group-text bg-info text-white"
+                            id="basic-addon1"
+                            >Sort</span
+                          >
+                        </div>
+                        <select
+                          class="form-control custom-select"
+                          formControlName="sort"
+                        >
+                          <optgroup label="Date">
+                            <option [value]="0">Newest - Oldest</option>
+                            <option [value]="1">Oldest - Newest</option>
+                          </optgroup>
+                          <optgroup label="Status">
+                            <option [value]="2">Pending</option>
+                            <option [value]="3">Completed</option>
+                          </optgroup>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </form>
                 <ng-container *ngIf="orders.length; else noOrders">
                   <div class="table-responsive">
                     <table class="table table-hover table-sm">
                       <thead class="thead-dark text-uppercase">
                         <tr>
                           <th scope="col">#</th>
-                          <th scope="col">Amount Paid</th>
                           <th scope="col">Date</th>
+                          <th scope="col">Amount Paid</th>
                           <th scope="col">Status</th>
                         </tr>
                       </thead>
                       <tbody class="pointer">
                         <tr *ngFor="let o of orders">
                           <th scope="row">{{ o.id }}</th>
-                          <td scope="row">{{ o.payment.total | currency }}</td>
                           <td scope="row">
                             {{ o.date | date }}
                           </td>
+                          <td scope="row">{{ o.payment.total | currency }}</td>
                           <td scope="row" class="text-danger">Pending</td>
                         </tr>
                       </tbody>

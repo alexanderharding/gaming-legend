@@ -76,6 +76,12 @@ export class AccountComponent implements OnInit, OnDestroy {
     });
   }
 
+  clearSearch(): void {
+    this.filterForm.patchValue({
+      search: '',
+    });
+  }
+
   setLoading(value: boolean): void {
     this.loading = value;
   }
