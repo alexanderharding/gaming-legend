@@ -17,8 +17,8 @@ import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
 import { AuthService } from 'src/app/services/auth.service';
 import { CartService } from 'src/app/services/cart.service';
-import { CheckOutService } from 'src/app/services/check-out.service';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
+import { OrderService } from 'src/app/services/order.service';
 import { ShippingRateService } from 'src/app/services/shipping-rate.service';
 import { ICartItem } from 'src/app/types/cart-item';
 import { Customer, CustomerMaker } from 'src/app/types/customer';
@@ -149,7 +149,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   readonly subtotal$ = this.cartService.subtotal$;
 
   /* Get data from CheckOutService */
-  readonly states = this.checkOutService.states;
+  readonly states = this.formValidationRuleService.states;
 
   /* Get data from resolver */
   private readonly resolvedData = this.route.snapshot.data
@@ -191,7 +191,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     private readonly accordionConfig: NgbAccordionConfig,
     private readonly progressBarConfig: NgbProgressbarConfig,
     private readonly cartService: CartService,
-    private readonly checkOutService: CheckOutService,
+    private readonly orderService: OrderService,
     private readonly router: Router,
     private readonly fb: FormBuilder,
     private readonly route: ActivatedRoute,
@@ -439,7 +439,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
             userId: +this.user.id,
           } as Order;
         }
-        this.checkOutService.placeOrder(order).subscribe(
+        this.orderService.saveOrder(order, -1).subscribe(
           (result) => {
             console.log('order placed');
             this.orderPlaced = true;
