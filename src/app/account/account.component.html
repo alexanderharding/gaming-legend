@@ -131,6 +131,26 @@
               <div [ngbNavOutlet]="nav" class="mt-2"></div>
             </ng-template>
           </ngb-panel>
+          <ngb-panel type="secondary" id="orders" title="orders">
+            <ng-template ngbPanelHeader let-opened="opened">
+              <div class="py-1">
+                <button
+                  ngbPanelToggle
+                  class="btn btn-lg btn-link p-0 text-light"
+                >
+                  Order History
+                </button>
+              </div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <ng-container *ngIf="orders$ | async as orders">
+                <ng-container *ngIf="orders && orders.length; else noOrders">
+                  <div *ngFor="let o of orders">{{ o.id }}</div>
+                </ng-container>
+                <ng-template #noOrders> <div>No Orders!</div> </ng-template>
+              </ng-container>
+            </ng-template>
+          </ngb-panel>
         </ngb-accordion>
       </div>
       <div class="col-lg">
