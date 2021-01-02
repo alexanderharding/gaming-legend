@@ -21,7 +21,11 @@
     </div>
     <div class="form-row">
       <div class="col-lg-7 mb-3">
-        <ngb-accordion activeIds="information" #acc="ngbAccordion">
+        <ngb-accordion
+          [destroyOnHide]="false"
+          activeIds="orders"
+          #acc="ngbAccordion"
+        >
           <ngb-panel type="secondary" id="information" title="information">
             <ng-template ngbPanelHeader let-opened="opened">
               <div class="py-1">
@@ -236,20 +240,28 @@
                 </ng-container>
                 <ng-template #noOrders>
                   <ngb-alert class="m-0 text-center" [dismissible]="false">
-                    <strong>No orders!</strong> Click
-                    <a routerLink="/products">here</a> to check out our
-                    products.
+                    <strong>No orders found...</strong> You can either clear the
+                    search or click <a routerLink="/products">here</a> to check
+                    out our products.
                   </ngb-alert>
                 </ng-template>
               </ng-container>
               <ng-template #error>
                 <ngb-alert
+                  *ngIf="errorMessage; else loading"
                   [dismissible]="false"
                   type="danger"
                   class="text-center m-0"
                 >
                   <span>{{ errorMessage }}</span>
                 </ngb-alert>
+                <ng-template #loading>
+                  <div class="d-flex justify-content-center">
+                    <div class="spinner-border text-info" role="status">
+                      <span class="sr-only">Loading... </span>
+                    </div>
+                  </div>
+                </ng-template>
               </ng-template>
             </ng-template>
           </ngb-panel>
