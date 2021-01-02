@@ -1,12 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 import {
   catchError,
   delay,
+  first,
   retry,
   shareReplay,
   switchMap,
+  take,
 } from 'rxjs/operators';
 import { IOrder } from '../types/order';
 import { AuthService } from './auth.service';
@@ -38,6 +40,7 @@ export class OrderService {
   }
 
   orders$ = this.user$.pipe(
+    first(),
     switchMap((user) =>
       this.http
         .get<IOrder[]>(`${this.baseUrl}/orders?userId=${+user.id}`)
@@ -47,7 +50,11 @@ export class OrderService {
           retry(3),
           catchError(this.errorService.handleError)
         )
-    )
+    ),
+    catchError((err) => {
+      console.error(err);
+      return EMPTY;
+    })
   );
 
   getOrder(id: number): Observable<IOrder[]> {
