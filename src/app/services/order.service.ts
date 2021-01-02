@@ -28,29 +28,9 @@ export class OrderService {
     private readonly errorService: ErrorService
   ) {}
 
-  getOrders(userId: number): Observable<IOrder[]> {
-    return this.http
-      .get<IOrder[]>(`${this.baseUrl}/orders?userId=${+userId}`)
-      .pipe(
-        delay(1000),
-        shareReplay(1),
-        retry(3),
-        catchError(this.errorService.handleError)
-      );
-  }
-
   orders$ = this.user$.pipe(
     first(),
-    switchMap((user) =>
-      this.http
-        .get<IOrder[]>(`${this.baseUrl}/orders?userId=${+user.id}`)
-        .pipe(
-          delay(1000),
-          shareReplay(1),
-          retry(3),
-          catchError(this.errorService.handleError)
-        )
-    ),
+    switchMap((user) => this.getOrders(user.id)),
     catchError((err) => {
       console.error(err);
       return EMPTY;
@@ -82,5 +62,16 @@ export class OrderService {
     return this.http
       .put<IOrder>(`${this.baseUrl}/order/${+order.id}`, order)
       .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
+  }
+
+  private getOrders(id: number): Observable<IOrder[]> {
+    return this.http
+      .get<IOrder[]>(`${this.baseUrl}/orders?userId=${+id}`)
+      .pipe(
+        delay(1000),
+        shareReplay(1),
+        retry(3),
+        catchError(this.errorService.handleError)
+      );
   }
 }
