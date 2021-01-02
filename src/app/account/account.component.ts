@@ -2,7 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, EMPTY, Subscription } from 'rxjs';
+import { catchError, debounceTime, map } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 import { IOrder } from '../types/order';
 import { OrdersResult } from '../types/orders-result';
@@ -13,16 +14,37 @@ import { OrdersResult } from '../types/orders-result';
 })
 export class AccountComponent implements OnInit, OnDestroy {
   /* Get data from resolver */
-  private readonly resolvedData = this.route.snapshot.data
-    .resolvedData as OrdersResult;
-  readonly orders = this.resolvedData.orders as IOrder[];
-  readonly errorMessage = this.resolvedData.error as string;
+  private readonly resolvedData = this.route.data.pipe(
+    map((d) => d.resolvedData as OrdersResult)
+  );
+  readonly orders$ = this.resolvedData.pipe(map((r) => r.orders as IOrder[]));
+  readonly errorMessage = this.route.snapshot.data.error as string;
   submitted = false;
   loading = false;
   readonly user$ = this.authService.currentUser$;
   filterForm: FormGroup;
 
   private readonly subscriptions: Subscription[] = [];
+
+  private readonly searchSubject = new BehaviorSubject<string>('');
+  private readonly searchAction$ = this.searchSubject.asObservable();
+
+  readonly filteredOrders$ = combineLatest([
+    this.orders$,
+    this.searchAction$,
+  ]).pipe(
+    debounceTime(1000),
+    map(
+      ([orders, search]) =>
+        orders.filter((o) =>
+          search ? o.id.toString().indexOf(search) > -1 : true
+        ) as IOrder[]
+    ),
+    catchError((err) => {
+      console.log(err);
+      return EMPTY;
+    })
+  );
 
   constructor(
     private readonly authService: AuthService,
@@ -41,9 +63,13 @@ export class AccountComponent implements OnInit, OnDestroy {
     });
 
     const searchControl = this.filterForm.get('search');
-    this.subscriptions.push(searchControl.valueChanges.subscribe());
+    this.subscriptions.push(
+      searchControl.valueChanges.subscribe((value: string) =>
+        this.searchSubject.next(value)
+      )
+    );
     const sortControl = this.filterForm.get('sort');
-    this.subscriptions.push(sortControl.valueChanges.subscribe());
+    this.subscriptions.push(sortControl.valueChanges.subscribe(() => {}));
 
     this.filterForm.patchValue({
       sort: 0,
