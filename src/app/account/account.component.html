@@ -15,12 +15,8 @@
 
   <ng-container *ngIf="user$ | async as user">
     <div class="form-row">
-      <div class="col-lg-7">
-        <ngb-accordion
-          [destroyOnHide]="false"
-          activeIds="information"
-          #acc="ngbAccordion"
-        >
+      <div class="col-lg-7 mb-3">
+        <ngb-accordion activeIds="information" #acc="ngbAccordion">
           <ngb-panel type="secondary" id="information" title="information">
             <ng-template ngbPanelHeader let-opened="opened">
               <div class="py-1">
