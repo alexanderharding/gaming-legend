@@ -37,4 +37,20 @@ export class OrderService {
         catchError(this.errorService.handleError)
       );
   }
+
+  saveOrder(order: IOrder, index: number): Observable<IOrder> {
+    return +index < 0 ? this.addOrder(order) : this.updateOrder(order);
+  }
+
+  private addOrder(order: IOrder): Observable<IOrder> {
+    return this.http
+      .post<IOrder>(`${this.baseUrl}/order`, order)
+      .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
+  }
+
+  private updateOrder(order: IOrder): Observable<IOrder> {
+    return this.http
+      .put<IOrder>(`${this.baseUrl}/order/${+order.id}`, order)
+      .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
+  }
 }
