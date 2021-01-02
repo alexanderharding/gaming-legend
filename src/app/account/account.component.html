@@ -248,7 +248,7 @@
               </ng-container>
               <ng-template #error>
                 <ngb-alert
-                  *ngIf="errorMessage; else loading"
+                  *ngIf="error$ | async as errorMessage; else loading"
                   [dismissible]="false"
                   type="danger"
                   class="text-center m-0"

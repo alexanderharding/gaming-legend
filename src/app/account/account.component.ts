@@ -18,10 +18,14 @@ export class AccountComponent implements OnInit, OnDestroy {
     map((d) => d.resolvedData as OrdersResult)
   );
   readonly orders$ = this.resolvedData.pipe(map((r) => r.orders as IOrder[]));
-  readonly errorMessage = this.route.snapshot.data.error as string;
+  readonly error$ = this.resolvedData.pipe(map((r) => r.error as string));
+
+  /* Get user from AuthService */
+  readonly user$ = this.authService.currentUser$;
+
   submitted = false;
   loading = false;
-  readonly user$ = this.authService.currentUser$;
+
   filterForm: FormGroup;
 
   private readonly subscriptions: Subscription[] = [];
