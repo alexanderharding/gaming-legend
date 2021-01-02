@@ -40,7 +40,15 @@
                     <div
                       class="d-flex p-3 justify-content-between align-items-start"
                     >
-                      <span>{{ user.firstName }} {{ user.lastName }}</span>
+                      <div class="text-capitalize">
+                        <div>
+                          <strong>First: </strong
+                          >{{ user.firstName | lowercase }}
+                        </div>
+                        <div>
+                          <strong>Last: </strong>{{ user.lastName | lowercase }}
+                        </div>
+                      </div>
                       <input
                         type="button"
                         value="Edit"
@@ -80,14 +88,26 @@
                       class="d-flex p-3 justify-content-between align-items-start text-capitalize"
                     >
                       <div *ngIf="user.street; else noStreet">
-                        <div>{{ user.street | lowercase }}</div>
                         <div>
-                          {{ user.city | lowercase }},
-                          {{ user.state | lowercase }}
+                          <strong>Street: </strong>{{ user.street | lowercase }}
                         </div>
-                        <div>
-                          {{ user.zip }},
-                          {{ user.country | uppercase }}
+                        <div class="row justify-content-start">
+                          <span class="col-sm-auto">
+                            <strong>City: </strong>{{ user.city }}
+                          </span>
+                          <span class="col-sm-auto">
+                            <strong>State: </strong>
+                            {{ user.state | lowercase }}
+                          </span>
+                        </div>
+                        <div class="row justify-content-start">
+                          <span class="col-sm-auto">
+                            <strong>Zip: </strong>{{ user.zip }}
+                          </span>
+                          <span class="col-sm-auto">
+                            <strong>Country: </strong>
+                            {{ user.country | uppercase }}
+                          </span>
                         </div>
                       </div>
                       <ng-template #noStreet>
