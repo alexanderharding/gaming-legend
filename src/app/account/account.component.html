@@ -142,7 +142,7 @@
               <ng-container *ngIf="orders; else error">
                 <ng-container *ngIf="orders.length; else noOrders">
                   <div class="table-responsive">
-                    <table class="table table-hover table-sm pointer">
+                    <table class="table table-hover table-sm">
                       <thead class="thead-dark text-uppercase">
                         <tr>
                           <th scope="col">#</th>
@@ -151,14 +151,14 @@
                           <th scope="col">Status</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody class="pointer">
                         <tr *ngFor="let o of orders">
                           <th scope="row">{{ o.id }}</th>
                           <td scope="row">{{ o.payment.total | currency }}</td>
                           <td scope="row">
                             {{ o.date | date }}
                           </td>
-                          <td scope="row" class="text-success">Completed</td>
+                          <td scope="row" class="text-danger">Pending</td>
                         </tr>
                       </tbody>
                     </table>
