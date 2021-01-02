@@ -30,11 +30,7 @@ export class OrderService {
 
   orders$ = this.user$.pipe(
     first(),
-    switchMap((user) => this.getOrders(user.id)),
-    catchError((err) => {
-      console.error(err);
-      return EMPTY;
-    })
+    switchMap((user) => this.getOrders(user.id))
   );
 
   getOrder(id: number): Observable<IOrder[]> {

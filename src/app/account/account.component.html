@@ -143,8 +143,8 @@
               </div>
             </ng-template>
             <ng-template ngbPanelContent>
-              <ng-container *ngIf="orders$ | async as orders">
-                <ng-container *ngIf="orders && orders.length; else noOrders">
+              <ng-container *ngIf="orders; else error">
+                <ng-container *ngIf="orders.length; else noOrders">
                   <div *ngFor="let o of orders">{{ o.id }}</div>
                 </ng-container>
                 <ng-template #noOrders>
@@ -155,6 +155,15 @@
                   </ngb-alert>
                 </ng-template>
               </ng-container>
+              <ng-template #error>
+                <ngb-alert
+                  [dismissible]="false"
+                  type="danger"
+                  class="text-center m-0"
+                >
+                  <span>{{ errorMessage }}</span>
+                </ngb-alert>
+              </ng-template>
             </ng-template>
           </ngb-panel>
         </ngb-accordion>

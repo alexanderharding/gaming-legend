@@ -1,36 +1,31 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
-import { Observable } from 'rxjs';
-import { first } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
-import { OrderService } from '../services/order.service';
 import { IOrder } from '../types/order';
+import { OrdersResult } from '../types/orders-result';
 
 @Component({
-  selector: 'ctacu-account',
   templateUrl: './account.component.html',
   styleUrls: ['./account.component.scss'],
 })
-export class AccountComponent implements OnInit {
+export class AccountComponent {
+  /* Get data from resolver */
+  private readonly resolvedData = this.route.snapshot.data
+    .resolvedData as OrdersResult;
+  readonly orders = this.resolvedData.orders as IOrder[];
+  readonly errorMessage = this.resolvedData.error as string;
   submitted = false;
   loading = false;
   readonly user$ = this.authService.currentUser$;
-  orders$ = this.orderService.orders$;
 
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router,
-    private readonly orderService: OrderService,
+    private readonly route: ActivatedRoute,
     private readonly config: NgbAccordionConfig
   ) {
     config.closeOthers = true;
-  }
-
-  ngOnInit(): void {
-    // this.user$.pipe(first()).subscribe({
-    //   next: (user) => (this.orders$ = this.orderService.getOrders(+user.id)),
-    // });
   }
 
   setLoading(value: boolean): void {
