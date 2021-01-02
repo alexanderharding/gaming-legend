@@ -6,14 +6,19 @@
   >
     <span class="sr-only">Loading...</span>
   </div>
-  <input
-    type="button"
-    value="Sign Out"
-    class="btn btn-info ml-auto mb-3"
-    (click)="signOut()"
-  />
 
   <ng-container *ngIf="user$ | async as user">
+    <div class="d-flex justify-content-between">
+      <input
+        type="button"
+        value="Sign Out"
+        class="btn btn-info mb-3"
+        (click)="signOut()"
+      />
+      <h2 class="text-primary m-0 ml-2">
+        <span class="d-none d-sm-inline">Account </span>#: {{ user.id }}
+      </h2>
+    </div>
     <div class="form-row">
       <div class="col-lg-7 mb-3">
         <ngb-accordion activeIds="information" #acc="ngbAccordion">
