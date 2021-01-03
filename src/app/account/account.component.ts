@@ -40,9 +40,13 @@ export class AccountComponent implements OnInit, OnDestroy {
     debounceTime(1000),
     map(
       ([orders, search]) =>
-        orders.filter((o) =>
-          search ? o.id.toString().indexOf(search) > -1 : true
-        ) as IOrder[]
+        orders.filter((o) => {
+          const filteredOrders = search
+            ? o.id.toString().indexOf(search) > -1
+            : true;
+          this.setLoading(false);
+          return filteredOrders;
+        }) as IOrder[]
     ),
     catchError((err) => {
       console.log(err);
@@ -68,9 +72,10 @@ export class AccountComponent implements OnInit, OnDestroy {
 
     const searchControl = this.filterForm.get('search');
     this.subscriptions.push(
-      searchControl.valueChanges.subscribe((value: string) =>
-        this.searchSubject.next(value)
-      )
+      searchControl.valueChanges.subscribe((value: string) => {
+        this.setLoading(true);
+        this.searchSubject.next(value);
+      })
     );
     const sortControl = this.filterForm.get('sort');
     this.subscriptions.push(sortControl.valueChanges.subscribe(() => {}));
