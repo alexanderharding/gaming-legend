@@ -232,7 +232,18 @@
                             {{ o.date | date }}
                           </td>
                           <td scope="row">{{ o.payment.total | currency }}</td>
-                          <td scope="row" class="text-danger">Pending</td>
+                          <td
+                            scope="row"
+                            class="text-capitalize"
+                            [ngClass]="{
+                              'text-danger':
+                                o.status.toLowerCase() === 'pending',
+                              'text-success':
+                                o.status.toLowerCase() === 'completed'
+                            }"
+                          >
+                            {{ o.status }}
+                          </td>
                         </tr>
                       </tbody>
                     </table>

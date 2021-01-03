@@ -7,6 +7,7 @@ export interface IOrder {
   items: IProduct[];
   payment: Payment;
   date: Date;
+  status: string;
   userId?: number;
   id: number;
 }
@@ -17,6 +18,7 @@ export class Order {
     public items: IProduct[],
     public payment: Payment,
     public date: Date,
+    public status: string,
     public userId?: number,
     public id?: number
   ) {}
@@ -28,6 +30,7 @@ export class OrderMaker {
       items: event.items,
       payment: event.payment,
       date: event.date,
+      status: event.status,
       userId: event.userId,
     };
   }
