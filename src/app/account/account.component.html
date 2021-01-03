@@ -148,9 +148,7 @@
               </div>
             </ng-template>
             <ng-template ngbPanelContent>
-              <ng-container
-                *ngIf="filteredOrders$ | async as orders; else error"
-              >
+              <ng-container *ngIf="sortedOrders$ | async as orders; else error">
                 <form
                   class="mb-3"
                   novalidate

@@ -33,24 +33,54 @@ export class AccountComponent implements OnInit, OnDestroy {
   private readonly searchSubject = new BehaviorSubject<string>('');
   private readonly searchAction$ = this.searchSubject.asObservable();
 
-  readonly filteredOrders$ = combineLatest([
+  private readonly filteredOrders$ = combineLatest([
     this.orders$,
     this.searchAction$,
   ]).pipe(
     debounceTime(1000),
     map(
       ([orders, search]) =>
-        orders.filter((o) => {
-          const filteredOrders = search
-            ? o.id.toString().indexOf(search) > -1
-            : true;
-          this.setLoading(false);
-          return filteredOrders;
-        }) as IOrder[]
+        orders.filter((o) =>
+          search ? o.id.toString().indexOf(search) > -1 : true
+        ) as IOrder[]
     ),
     catchError((err) => {
       console.log(err);
       return EMPTY;
+    })
+  );
+
+  private readonly sortSubject = new BehaviorSubject<number>(0);
+  private readonly sortAction$ = this.sortSubject.asObservable();
+
+  readonly sortedOrders$ = combineLatest([
+    this.filteredOrders$,
+    this.sortAction$,
+  ]).pipe(
+    debounceTime(500),
+    map(([orders, sort]) => {
+      switch (sort) {
+        case 1:
+          this.setLoading(false);
+          return orders.sort(
+            (a, b) => +new Date(a.date) - +new Date(b.date)
+          ) as IOrder[];
+        case 2:
+          this.setLoading(false);
+          return orders.filter((o) =>
+            sort ? o.status.toLowerCase().indexOf('pending') > -1 : true
+          );
+        case 3:
+          this.setLoading(false);
+          return orders.filter((o) =>
+            sort ? o.status.toLowerCase().indexOf('completed') > -1 : true
+          );
+        default:
+          this.setLoading(false);
+          return orders.sort(
+            (a, b) => +new Date(b.date) - +new Date(a.date)
+          ) as IOrder[];
+      }
     })
   );
 
@@ -78,7 +108,12 @@ export class AccountComponent implements OnInit, OnDestroy {
       })
     );
     const sortControl = this.filterForm.get('sort');
-    this.subscriptions.push(sortControl.valueChanges.subscribe(() => {}));
+    this.subscriptions.push(
+      sortControl.valueChanges.subscribe((value: number) => {
+        this.setLoading(true);
+        this.sortSubject.next(+value);
+      })
+    );
 
     this.filterForm.patchValue({
       sort: 0,
