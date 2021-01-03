@@ -5,6 +5,7 @@ import {
   catchError,
   delay,
   first,
+  map,
   retry,
   shareReplay,
   switchMap,
@@ -63,13 +64,14 @@ export class OrderService {
   }
 
   private getOrders(id: number): Observable<IOrder[]> {
-    return this.http
-      .get<IOrder[]>(`${this.baseUrl}/orders?userId=${+id}`)
-      .pipe(
-        delay(1000),
-        shareReplay(1),
-        retry(3),
-        catchError(this.errorService.handleError)
-      );
+    return this.http.get<IOrder[]>(`${this.baseUrl}/orders?userId=${+id}`).pipe(
+      delay(1000),
+      map((orders) =>
+        orders.sort((a, b) => +new Date(b.date) - +new Date(a.date))
+      ),
+      shareReplay(1),
+      retry(3),
+      catchError(this.errorService.handleError)
+    );
   }
 }
