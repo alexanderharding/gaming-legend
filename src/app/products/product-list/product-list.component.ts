@@ -113,43 +113,43 @@ export class ProductListComponent implements OnInit, OnDestroy {
           sortedProducts = products.sort((a, b) =>
             a.name > b.name ? 1 : -1
           ) as IProduct[];
-          this.endFiltering();
+          this.setFiltering(false);
           return sortedProducts;
         case 2:
           sortedProducts = products.sort((a, b) =>
             a.name < b.name ? 1 : -1
           ) as IProduct[];
-          this.endFiltering();
+          this.setFiltering(false);
           return sortedProducts;
         case 3:
           sortedProducts = products.sort(
             (low, high) => low.price - high.price
           ) as IProduct[];
-          this.endFiltering();
+          this.setFiltering(false);
           return sortedProducts;
         case 4:
           sortedProducts = products.sort(
             (low, high) => high.price - low.price
           ) as IProduct[];
-          this.endFiltering();
+          this.setFiltering(false);
           return sortedProducts;
         case 5:
           sortedProducts = products.sort(
             (low, high) => high.starRating - low.starRating
           ) as IProduct[];
-          this.endFiltering();
+          this.setFiltering(false);
           return sortedProducts;
         case 6:
           sortedProducts = products.sort(
             (low, high) => low.starRating - high.starRating
           ) as IProduct[];
-          this.endFiltering();
+          this.setFiltering(false);
           return sortedProducts;
         default:
           sortedProducts = products.sort(
             (low, high) => low.id - high.id
           ) as IProduct[];
-          this.endFiltering();
+          this.setFiltering(false);
           return sortedProducts;
       }
     }),
@@ -184,12 +184,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
     window.scroll(0, 0);
   }
 
-  private startFiltering(): void {
-    this.isFiltering = true;
-  }
-
-  private endFiltering(): void {
-    this.isFiltering = false;
+  private setFiltering(value: boolean): void {
+    this.isFiltering = value;
   }
 
   private buildForm(): void {
@@ -212,21 +208,21 @@ export class ProductListComponent implements OnInit, OnDestroy {
         .get('search')
         .valueChanges.pipe(debounceTime(1000))
         .subscribe((value: string) => {
-          this.startFiltering();
+          this.setFiltering(true);
           this.productFilteredSubject.next(value.trim().toLowerCase());
         })
     );
 
     this.subscriptions.push(
       this.filterForm.get('brand').valueChanges.subscribe((value: number) => {
-        this.startFiltering();
+        this.setFiltering(true);
         this.brandSelectedSubject.next(+value);
       })
     );
 
     this.subscriptions.push(
       this.filterForm.get('sort').valueChanges.subscribe((value: number) => {
-        this.startFiltering();
+        this.setFiltering(true);
         this.sortSelectedSubject.next(+value);
       })
     );
