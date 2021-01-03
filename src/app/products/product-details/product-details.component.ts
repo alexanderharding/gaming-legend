@@ -23,7 +23,7 @@ export class ProductDetailsComponent implements OnInit {
   loading = false;
 
   readonly items$ = this.cartService.cartAction$.pipe(
-    tap(() => (this.loading = false))
+    tap(() => this.setLoading(false))
   );
 
   private readonly resolvedData$ = this.route.data.pipe(
@@ -50,7 +50,7 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   buyNow(product: IProduct, items: ICartItem[]): void {
-    this.loading = true;
+    this.setLoading(true);
     const index = this.getIndex(product, items);
     const item = this.getUpdatedItem(product, items, index);
     this.cartService.saveItem(item, index).subscribe(
@@ -60,13 +60,13 @@ export class ProductDetailsComponent implements OnInit {
       },
       (error) => {
         console.error(error);
-        this.loading = false;
+        this.setLoading(false);
       }
     );
   }
 
   addItem(product: IProduct, items: ICartItem[]): void {
-    this.loading = true;
+    this.setLoading(true);
     const index = this.getIndex(product, items);
     const item = this.getUpdatedItem(product, items, index);
     this.cartService.saveItem(item, index).subscribe(
@@ -80,15 +80,13 @@ export class ProductDetailsComponent implements OnInit {
         instance.closeMessage = 'go to cart';
         instance.dismissMessage = 'keep shopping';
         modalRef.result.then(
-          (result) => {
-            this.router.navigate(['/cart']);
-          },
+          (result) => this.router.navigate(['/cart']),
           (reason) => {}
         );
       },
       (error) => (error) => {
         console.error(error);
-        this.loading = false;
+        this.setLoading(false);
       }
     );
   }
@@ -128,10 +126,14 @@ export class ProductDetailsComponent implements OnInit {
     } as ICartItem;
   }
 
+  private setLoading(value: boolean): void {
+    this.loading = value;
+  }
+
   private refreshCart(): void {
     this.cartService.setCurrentCart().subscribe({
       error: (error) => {
-        this.loading = false;
+        this.setLoading(false);
         console.error(error);
       },
     });
