@@ -44,7 +44,6 @@ export class AuthService {
         retry(3),
         map((users) => {
           const firstUserFound = users[0];
-          console.log(`Found user!: ${JSON.stringify(firstUserFound)}`);
           if (!firstUserFound) {
             return false;
           }
@@ -53,7 +52,6 @@ export class AuthService {
             password === firstUserFound.password
           ) {
             this.setCurrentUser(firstUserFound);
-            console.log(`Signed in!`);
             return true;
           } else {
             return false;
