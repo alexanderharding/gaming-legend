@@ -13,6 +13,7 @@ import { OrdersResult } from '../types/orders-result';
   styleUrls: ['./account.component.scss'],
 })
 export class AccountComponent implements OnInit, OnDestroy {
+  private isFirstSort = true;
   searchMessage = '';
   private readonly searchValidationMessages = {
     pattern: 'Please only use numbers.',
@@ -63,6 +64,11 @@ export class AccountComponent implements OnInit, OnDestroy {
   ]).pipe(
     debounceTime(500),
     map(([orders, sort]) => {
+      if (this.isFirstSort) {
+        this.isFirstSort = false;
+        this.setLoading(false);
+        return orders as IOrder[];
+      }
       switch (sort) {
         case 1:
           this.setLoading(false);
