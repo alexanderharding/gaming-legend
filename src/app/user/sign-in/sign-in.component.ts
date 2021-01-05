@@ -73,12 +73,7 @@ export class SignInComponent implements OnInit, OnDestroy {
       )
     );
     this.authService.users$.pipe(first()).subscribe(
-      (users) => {
-        this.users = users as IUser[];
-        this.signInForm.patchValue({
-          user: 0,
-        });
-      },
+      (users) => (this.users = users as IUser[]),
       (error) => console.error(error)
     );
   }
