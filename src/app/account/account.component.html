@@ -68,7 +68,7 @@
         </div>
         <ng-container *ngIf="sortedOrders$ | async as orders; else error">
           <form
-            class="mb-3"
+            class="mb-2"
             novalidate
             [formGroup]="filterForm"
             autocomplete="off"
