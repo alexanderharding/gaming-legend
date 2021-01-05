@@ -21,23 +21,28 @@
               <h1 class="text-primary mb-3">Sign In</h1>
             </div>
             <div class="col-auto">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span
-                    class="input-group-text bg-info text-white"
-                    id="basic-addon1"
-                    >User</span
-                  >
-                </div>
+              <ng-container *ngIf="users$ | async as users">
+                <div class="input-group input-group-sm">
+                  <div class="input-group-prepend">
+                    <span
+                      class="input-group-text bg-info text-white"
+                      id="basic-addon1"
+                      >User</span
+                    >
+                  </div>
 
-                <select
-                  class="form-control custom-select"
-                  formControlName="user"
-                >
-                  <option [value]="0">Admin 1</option>
-                  <option [value]="1">User 1</option>
-                </select>
-              </div>
+                  <select
+                    class="form-control custom-select text-capitalize"
+                    formControlName="user"
+                  >
+                    <option *ngFor="let u of users; index as i" [value]="i">
+                      {{ i + 1 }}. {{ u.firstName | lowercase }}
+                      {{ u.lastName | lowercase }}
+                      {{ u.isAdmin ? "(Admin)" : "" }}
+                    </option>
+                  </select>
+                </div>
+              </ng-container>
             </div>
           </div>
 

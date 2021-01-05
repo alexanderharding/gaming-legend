@@ -29,6 +29,12 @@ export class AuthService {
     // this.currentUser$ = this.currentUserSubject.asObservable();
   }
 
+  users$ = this.http.get<IUser[]>(`${this.baseUrl}/users`).pipe(
+    // delay(1000),
+    retry(3),
+    catchError(this.errorService.handleError)
+  );
+
   signIn(email: string, password: string): Observable<boolean> {
     const userEmail = email.trim().toLowerCase();
     return this.http

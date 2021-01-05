@@ -16,6 +16,7 @@ import { IUser } from 'src/app/types/user';
   styleUrls: ['./sign-in.component.scss'],
 })
 export class SignInComponent implements OnInit, OnDestroy {
+  users$ = this.authService.users$;
   private readonly subscriptions: Subscription[] = [];
 
   submitted = false;
@@ -50,7 +51,7 @@ export class SignInComponent implements OnInit, OnDestroy {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
       showPassword: false,
-      user: 0,
+      user: null,
     });
     const emailControl = this.signInForm.get('email');
     this.subscriptions.push(
@@ -64,6 +65,12 @@ export class SignInComponent implements OnInit, OnDestroy {
         .pipe(debounceTime(1000))
         .subscribe(() => this.setMessage(passwordControl, 'password'))
     );
+    // const userControl = this.signInForm.get('user');
+    // this.subscriptions.push(
+    //   userControl.valueChanges.subscribe((email: string) =>
+    //     this.setUserEmail(email)
+    //   )
+    // );
     this.populateTestData();
   }
 
@@ -101,6 +108,13 @@ export class SignInComponent implements OnInit, OnDestroy {
         this.signInError = 'There was an error signing in.';
       }
     );
+  }
+
+  setUserEmail(email?: string): void {
+    console.log('set!');
+    // this.signInForm.patchValue({
+    //   email: email,
+    // });
   }
 
   setLoading(value: boolean): void {
