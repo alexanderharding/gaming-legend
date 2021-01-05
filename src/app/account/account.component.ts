@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
 import { BehaviorSubject, combineLatest, EMPTY, Subscription } from 'rxjs';
 import { catchError, debounceTime, map } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
@@ -101,11 +100,8 @@ export class AccountComponent implements OnInit, OnDestroy {
     private readonly authService: AuthService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
-    private readonly fb: FormBuilder,
-    private readonly config: NgbAccordionConfig
-  ) {
-    config.closeOthers = true;
-  }
+    private readonly fb: FormBuilder
+  ) {}
 
   ngOnInit(): void {
     this.filterForm = this.fb.group({
