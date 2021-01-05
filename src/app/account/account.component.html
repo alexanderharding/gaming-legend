@@ -45,12 +45,12 @@
                     <div
                       class="d-flex p-3 justify-content-between align-items-start"
                     >
-                      <div class="text-capitalize">
-                        <div>
+                      <div class="row justify-content-start text-capitalize">
+                        <div class="col-auto">
                           <strong>First: </strong
                           >{{ user.firstName | lowercase }}
                         </div>
-                        <div>
+                        <div class="col-auto">
                           <strong>Last: </strong>{{ user.lastName | lowercase }}
                         </div>
                       </div>
@@ -69,9 +69,11 @@
                     <div
                       class="d-flex p-3 justify-content-between align-items-start"
                     >
-                      <div>
-                        <div><strong>Phone: </strong>{{ user.phone }}</div>
-                        <div>
+                      <div class="row justify-content-start">
+                        <div class="col-auto">
+                          <strong>Phone: </strong>{{ user.phone }}
+                        </div>
+                        <div class="col-auto">
                           <strong>Email: </strong>{{ user.email | lowercase }}
                         </div>
                       </div>
@@ -97,19 +99,19 @@
                           <strong>Street: </strong>{{ user.street | lowercase }}
                         </div>
                         <div class="row justify-content-start">
-                          <span class="col-sm-auto">
+                          <span class="col-auto">
                             <strong>City: </strong>{{ user.city }}
                           </span>
-                          <span class="col-sm-auto">
+                          <span class="col-auto">
                             <strong>State: </strong>
                             {{ user.state | lowercase }}
                           </span>
                         </div>
                         <div class="row justify-content-start">
-                          <span class="col-sm-auto">
+                          <span class="col-auto">
                             <strong>Zip: </strong>{{ user.zip }}
                           </span>
-                          <span class="col-sm-auto">
+                          <span class="col-auto">
                             <strong>Country: </strong>
                             {{ user.country | uppercase }}
                           </span>
