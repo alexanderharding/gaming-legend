@@ -5,6 +5,7 @@ import {
   NgbAccordionConfig,
   NgbProgressbarConfig,
 } from '@ng-bootstrap/ng-bootstrap';
+import { Observable } from 'rxjs';
 import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
 import { AuthService } from 'src/app/services/auth.service';
@@ -103,7 +104,7 @@ export class SignUpComponent implements OnInit {
     if (form.valid) {
       this.loadingChange.emit(true);
       const email = form.get('contactGroup.email').value as string;
-      this.authService.checkForUser(email).subscribe(
+      this.checkForUser(email).subscribe(
         (result) => {
           if (result) {
             this.loadingChange.emit(false);
@@ -153,11 +154,27 @@ export class SignUpComponent implements OnInit {
       password: `TestPassword${this.getRandomNumber(1, 999)}`,
       isAdmin: value,
     }) as User;
-    this.saveUser(user);
+    this.checkForUser(user.email).subscribe(
+      (result) => {
+        if (result) {
+          this.loadingChange.emit(false);
+          return;
+        }
+        this.saveUser(user);
+      },
+      (error) => {
+        this.loadingChange.emit(false);
+        this.signUpError = 'There was an error signing up for an account.';
+      }
+    );
   }
 
   private getRandomNumber(min: number, max: number): number {
     return +(Math.floor(Math.random() * (max - min)) + min).toFixed();
+  }
+
+  private checkForUser(email: string): Observable<boolean> {
+    return this.authService.checkForUser(email);
   }
 
   private saveUser(user: User): void {
