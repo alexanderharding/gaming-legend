@@ -16,7 +16,31 @@
         class="mb-3"
       >
         <fieldset>
-          <h1 class="text-primary mb-3">Sign In</h1>
+          <div class="row align-items-center">
+            <div class="col">
+              <h1 class="text-primary mb-3">Sign In</h1>
+            </div>
+            <div class="col-auto">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span
+                    class="input-group-text bg-info text-white"
+                    id="basic-addon1"
+                    >User</span
+                  >
+                </div>
+
+                <select
+                  class="form-control custom-select"
+                  formControlName="user"
+                >
+                  <option [value]="0">Admin 1</option>
+                  <option [value]="1">User 1</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           <div class="input-group mb-3 shadow-sm">
             <div class="input-group-prepend">
               <span class="input-group-text bg-info text-white">Email</span>

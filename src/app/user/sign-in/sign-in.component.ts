@@ -50,6 +50,7 @@ export class SignInComponent implements OnInit, OnDestroy {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
       showPassword: false,
+      user: 0,
     });
     const emailControl = this.signInForm.get('email');
     this.subscriptions.push(
