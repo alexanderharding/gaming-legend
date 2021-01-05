@@ -17,6 +17,7 @@ import { IUser, User, UserMaker } from 'src/app/types/user';
   styleUrls: ['./sign-up.component.scss'],
 })
 export class SignUpComponent implements OnInit {
+  private readonly states = this.formValidationRuleService.states;
   signUpForm: FormGroup;
   submitted = false;
   signUpError: string;
@@ -109,7 +110,7 @@ export class SignUpComponent implements OnInit {
             this.emailTakenMessage = `"${email}" is already registered to an
             account.`;
           } else {
-            this.signUp(form);
+            this.saveUser(form);
           }
         },
         (error) => {
@@ -125,21 +126,25 @@ export class SignUpComponent implements OnInit {
   }
 
   saveTestUser(value: boolean): void {
+    this.loadingChange.emit(true);
     const user = UserMaker.create({
       firstName: 'Test',
       lastName: 'Test',
-      phone: '8451478547',
-      email: `testemail${this.getRandomNumber(1000)}@test.com`,
-      street: `${this.getRandomNumber(1000)} Test Street`,
-      city: 'Las Vegas',
-      state: 'Nevada',
-      zip: '88901',
+      phone: `${this.getRandomNumber(1000000000, 9999999999)}`,
+      email: `testemail${this.getRandomNumber(1, 9999)}@test.com`,
+      street: `${this.getRandomNumber(1, 999)} Test Street`,
+      city: 'Test City',
+      state: `${this.states[this.getRandomNumber(0, this.states.length)]}`,
+      zip: `${this.getRandomNumber(10000, 99999)}`,
       country: 'USA',
-      password: `TestPassword${this.getRandomNumber(1000)}`,
+      password: `TestPassword${this.getRandomNumber(1, 999)}`,
       isAdmin: value,
     }) as User;
     this.authService.saveUser(user).subscribe(
-      (result) => this.router.navigate(['/account']),
+      (result) => {
+        this.loadingChange.emit(false);
+        this.router.navigate(['/account']);
+      },
       (error) => {
         this.loadingChange.emit(false);
         this.signUpError = 'There was an error signing up for an account.';
@@ -147,11 +152,11 @@ export class SignUpComponent implements OnInit {
     );
   }
 
-  private getRandomNumber(value: number): number {
-    return +(Math.random() * +value).toFixed();
+  private getRandomNumber(min: number, max: number): number {
+    return +(Math.floor(Math.random() * (max - min)) + min).toFixed();
   }
 
-  private signUp(form: FormGroup): void {
+  private saveUser(form: FormGroup): void {
     const user = UserMaker.create({
       firstName: form.get('nameGroup.firstName').value as string,
       lastName: form.get('nameGroup.lastName').value as string,
