@@ -1,11 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { first } from 'rxjs/operators';
 import { passwordChecker } from 'src/app/functions/password-checker';
-import { AuthService } from 'src/app/services/auth.service';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
-import { IUser } from 'src/app/types/user';
+import { IUser, User } from 'src/app/types/user';
 
 @Component({
   selector: 'ctacu-edit-address',
@@ -18,56 +15,49 @@ export class EditAddressComponent implements OnInit {
   errorMessage = '';
   loading = false;
 
-  readonly user$ = this.authService.currentUser$;
+  @Input() user: IUser;
+
+  @Output() onUserChange = new EventEmitter<User>();
+
   readonly streetMinLength = +this.formValidationRuleService.streetMinLength;
   readonly streetMaxLength = +this.formValidationRuleService.streetMaxLength;
   readonly cityMinLength = +this.formValidationRuleService.cityMinLength;
   readonly cityMaxLength = +this.formValidationRuleService.cityMaxLength;
   private readonly zipPattern = this.formValidationRuleService
     .zipPattern as RegExp;
-  private readonly cvvPattern = this.formValidationRuleService
-    .cvvPattern as RegExp;
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly authService: AuthService,
-    private readonly formValidationRuleService: FormValidationRuleService,
-    private readonly router: Router
+    private readonly formValidationRuleService: FormValidationRuleService
   ) {}
 
   ngOnInit(): void {
-    this.user$.pipe(first()).subscribe({
-      next: (user) =>
-        (this.editForm = this.fb.group({
-          currentPassword: [
-            '',
-            [Validators.required, passwordChecker(user.password)],
+    this.editForm = this.fb.group({
+      currentPassword: [
+        '',
+        [Validators.required, passwordChecker(this.user.password)],
+      ],
+      addressGroup: this.fb.group({
+        street: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(this.streetMinLength),
+            Validators.maxLength(this.streetMaxLength),
           ],
-          addressGroup: this.fb.group({
-            street: [
-              '',
-              [
-                Validators.required,
-                Validators.minLength(this.streetMinLength),
-                Validators.maxLength(this.streetMaxLength),
-              ],
-            ],
-            city: [
-              '',
-              [
-                Validators.required,
-                Validators.minLength(this.cityMinLength),
-                Validators.maxLength(this.cityMaxLength),
-              ],
-            ],
-            state: ['', [Validators.required]],
-            zip: [
-              '',
-              [Validators.required, Validators.pattern(this.zipPattern)],
-            ],
-            country: ['USA', [Validators.required]],
-          }),
-        })),
+        ],
+        city: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(this.cityMinLength),
+            Validators.maxLength(this.cityMaxLength),
+          ],
+        ],
+        state: ['', [Validators.required]],
+        zip: ['', [Validators.required, Validators.pattern(this.zipPattern)]],
+        country: ['USA', [Validators.required]],
+      }),
     });
   }
 
@@ -84,18 +74,8 @@ export class EditAddressComponent implements OnInit {
         city: form.get('addressGroup.city').value as string,
         state: form.get('addressGroup.state').value as string,
         zip: form.get('addressGroup.zip').value as string,
-      } as IUser;
-      this.saveUser(updatedUser);
+      } as User;
+      this.onUserChange.emit(updatedUser);
     }
-  }
-
-  private saveUser(user: IUser): void {
-    this.authService.saveUser(user).subscribe(
-      (result) => this.router.navigate(['/account']),
-      (error) => {
-        this.loading = false;
-        this.errorMessage = 'There was an error saving your address.';
-      }
-    );
   }
 }

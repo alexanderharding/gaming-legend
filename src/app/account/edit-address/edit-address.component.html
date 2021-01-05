@@ -16,39 +16,33 @@
   >
     {{ errorMessage }}
   </ngb-alert>
-  <ng-container *ngIf="user$ | async as user">
-    <form
-      [formGroup]="editForm"
-      (ngSubmit)="onSubmit(editForm, user)"
-      novalidate
-    >
-      <ctacu-address-form
-        [parentForm]="editForm"
-        [submitted]="submitted"
-        [user]="user"
-      ></ctacu-address-form>
-      <ctacu-current-password-form
-        [parentForm]="editForm"
-        [submitted]="submitted"
-      ></ctacu-current-password-form>
-      <div class="d-flex">
-        <input
-          type="submit"
-          value="{{ editForm.invalid && submitted ? '! ' : '' }}Save"
-          class="btn"
-          [disabled]="editForm.invalid && submitted"
-          [ngClass]="{
-            'btn-success': editForm.valid || !submitted,
-            'btn-outline-danger': editForm.invalid && submitted
-          }"
-        />
-        <input
-          type="button"
-          value="Cancel"
-          class="btn btn-danger ml-2"
-          routerLink="/account"
-        />
-      </div>
-    </form>
-  </ng-container>
+  <form [formGroup]="editForm" (ngSubmit)="onSubmit(editForm, user)" novalidate>
+    <ctacu-address-form
+      [parentForm]="editForm"
+      [submitted]="submitted"
+      [user]="user"
+    ></ctacu-address-form>
+    <ctacu-current-password-form
+      [parentForm]="editForm"
+      [submitted]="submitted"
+    ></ctacu-current-password-form>
+    <div class="d-flex">
+      <input
+        type="submit"
+        value="{{ editForm.invalid && submitted ? '! ' : '' }}Save"
+        class="btn"
+        [disabled]="editForm.invalid && submitted"
+        [ngClass]="{
+          'btn-success': editForm.valid || !submitted,
+          'btn-outline-danger': editForm.invalid && submitted
+        }"
+      />
+      <input
+        type="button"
+        value="Cancel"
+        class="btn btn-danger ml-2"
+        routerLink="/account"
+      />
+    </div>
+  </form>
 </div>

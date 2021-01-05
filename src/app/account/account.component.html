@@ -44,7 +44,10 @@
               ><b>{{ user.street ? "" : "! " }}Address</b></a
             >
             <ng-template ngbNavContent>
-              <ctacu-edit-address></ctacu-edit-address>
+              <ctacu-edit-address
+                [user]="user"
+                (onUserChange)="saveUser($event)"
+              ></ctacu-edit-address>
             </ng-template>
           </ng-container>
           <ng-container ngbNavItem>

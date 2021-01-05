@@ -7,6 +7,7 @@ import { catchError, debounceTime, map } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 import { IOrder } from '../types/order';
 import { OrdersResult } from '../types/orders-result';
+import { User } from '../types/user';
 
 @Component({
   templateUrl: './account.component.html',
@@ -15,6 +16,8 @@ import { OrdersResult } from '../types/orders-result';
 export class AccountComponent implements OnInit, OnDestroy {
   private isFirstSort = true;
   searchMessage = '';
+  errorMessage = '';
+
   private readonly searchValidationMessages = {
     pattern: 'Please only use numbers.',
   };
@@ -149,6 +152,16 @@ export class AccountComponent implements OnInit, OnDestroy {
   signOut(): void {
     this.authService.signOut();
     this.router.navigate(['/user']);
+  }
+
+  saveUser(user: User): void {
+    this.authService.saveUser(user).subscribe(
+      (result) => {},
+      (error) => {
+        this.loading = false;
+        this.errorMessage = 'There was an error saving your address.';
+      }
+    );
   }
 
   ngOnDestroy(): void {
