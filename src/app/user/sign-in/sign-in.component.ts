@@ -6,7 +6,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, first } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { IUser } from 'src/app/types/user';
@@ -16,7 +16,8 @@ import { IUser } from 'src/app/types/user';
   styleUrls: ['./sign-in.component.scss'],
 })
 export class SignInComponent implements OnInit, OnDestroy {
-  users$ = this.authService.users$;
+  // users$ = this.authService.users$;
+  users: IUser[];
   private readonly subscriptions: Subscription[] = [];
 
   submitted = false;
@@ -65,13 +66,21 @@ export class SignInComponent implements OnInit, OnDestroy {
         .pipe(debounceTime(1000))
         .subscribe(() => this.setMessage(passwordControl, 'password'))
     );
-    // const userControl = this.signInForm.get('user');
-    // this.subscriptions.push(
-    //   userControl.valueChanges.subscribe((email: string) =>
-    //     this.setUserEmail(email)
-    //   )
-    // );
-    this.populateTestData();
+    const userControl = this.signInForm.get('user');
+    this.subscriptions.push(
+      userControl.valueChanges.subscribe((index: number) =>
+        this.setUserData(+index)
+      )
+    );
+    this.authService.users$.pipe(first()).subscribe(
+      (users) => {
+        this.users = users as IUser[];
+        this.signInForm.patchValue({
+          user: 0,
+        });
+      },
+      (error) => console.error(error)
+    );
   }
 
   onSubmit(form: FormGroup): void {
@@ -110,13 +119,6 @@ export class SignInComponent implements OnInit, OnDestroy {
     );
   }
 
-  setUserEmail(email?: string): void {
-    console.log('set!');
-    // this.signInForm.patchValue({
-    //   email: email,
-    // });
-  }
-
   setLoading(value: boolean): void {
     this.loading = value;
   }
@@ -125,6 +127,14 @@ export class SignInComponent implements OnInit, OnDestroy {
     this.signInForm.patchValue({
       email: 'test@test.com',
       password: 'TestPassword1234',
+    });
+  }
+
+  private setUserData(index: number): void {
+    const user = this.users[index];
+    this.signInForm.patchValue({
+      email: user.email,
+      password: user.password,
     });
   }
 
