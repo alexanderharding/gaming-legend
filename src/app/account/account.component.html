@@ -6,7 +6,6 @@
   >
     <span class="sr-only">Loading...</span>
   </div>
-
   <ng-container *ngIf="user$ | async as user">
     <div class="d-flex justify-content-between">
       <input
@@ -16,7 +15,8 @@
         (click)="signOut()"
       />
       <h2 class="text-primary m-0 ml-2">
-        <span class="d-none d-sm-inline">Account </span>#: {{ user.id }}
+        <span class="d-none d-sm-inline">Customer </span>#:
+        {{ user.id | number }}
       </h2>
     </div>
     <div class="form-row">
@@ -172,7 +172,11 @@
                           class="form-control"
                           placeholder="Search by #"
                           aria-describedby="basic-addon1"
+                          [ngClass]="{ 'is-invalid': searchMessage }"
                         />
+                        <div class="invalid-tooltip">
+                          <span>{{ searchMessage }}</span>
+                        </div>
                         <div
                           *ngIf="filterForm.get('search').value"
                           class="input-group-append"

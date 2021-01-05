@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
 import { BehaviorSubject, combineLatest, EMPTY, Subscription } from 'rxjs';
@@ -13,6 +13,10 @@ import { OrdersResult } from '../types/orders-result';
   styleUrls: ['./account.component.scss'],
 })
 export class AccountComponent implements OnInit, OnDestroy {
+  searchMessage = '';
+  private readonly searchValidationMessages = {
+    pattern: 'Please only use numbers.',
+  };
   /* Get data from resolver */
   private readonly resolvedData = this.route.data.pipe(
     map((d) => d.resolvedData as OrdersResult)
@@ -96,7 +100,7 @@ export class AccountComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.filterForm = this.fb.group({
-      search: '',
+      search: ['', Validators.pattern(/^\d+$/)],
       sort: null,
     });
 
@@ -105,6 +109,12 @@ export class AccountComponent implements OnInit, OnDestroy {
       searchControl.valueChanges.subscribe((value: string) => {
         this.setLoading(true);
         this.searchSubject.next(value);
+        this.searchMessage = '';
+        if (searchControl.errors) {
+          this.searchMessage = Object.keys(searchControl.errors)
+            .map((key) => this.searchValidationMessages[key])
+            .join(' ');
+        }
       })
     );
     const sortControl = this.filterForm.get('sort');
