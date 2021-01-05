@@ -2,7 +2,6 @@
   "cart": [],
   "users": [
     {
-      "id": 1,
       "firstName": "John",
       "lastName": "Doe",
       "phone": "8011231234",
@@ -13,7 +12,8 @@
       "zip": "12345",
       "country": "USA",
       "password": "TestPassword1234",
-      "isAdmin": true
+      "isAdmin": true,
+      "id": 121014
     }
   ],
   "orders": [
