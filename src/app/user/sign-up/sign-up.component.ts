@@ -99,7 +99,7 @@ export class SignUpComponent implements OnInit {
       this.submitted = true;
     }
     this.signUpError = '';
-    this.emailTakenMessage = '';
+    this.setEmailTakenMessage('');
     if (form.valid) {
       this.loadingChange.emit(true);
       const email = form.get('contactGroup.email').value as string;
@@ -107,10 +107,23 @@ export class SignUpComponent implements OnInit {
         (result) => {
           if (result) {
             this.loadingChange.emit(false);
-            this.emailTakenMessage = `"${email}" is already registered to an
-            account.`;
+            this.setEmailTakenMessage(`"${email}" is already registered to an
+            account.`);
           } else {
-            this.saveUser(form);
+            const user = UserMaker.create({
+              firstName: form.get('nameGroup.firstName').value as string,
+              lastName: form.get('nameGroup.lastName').value as string,
+              phone: form.get('contactGroup.phone').value as string,
+              email: form.get('contactGroup.email').value as string,
+              street: '',
+              city: '',
+              state: '',
+              zip: '',
+              country: 'USA',
+              password: form.get('passwordGroup.password').value as string,
+              isAdmin: false,
+            }) as User;
+            this.saveUser(user);
           }
         },
         (error) => {
@@ -140,38 +153,19 @@ export class SignUpComponent implements OnInit {
       password: `TestPassword${this.getRandomNumber(1, 999)}`,
       isAdmin: value,
     }) as User;
-    this.authService.saveUser(user).subscribe(
-      (result) => {
-        this.loadingChange.emit(false);
-        this.router.navigate(['/account']);
-      },
-      (error) => {
-        this.loadingChange.emit(false);
-        this.signUpError = 'There was an error signing up for an account.';
-      }
-    );
+    this.saveUser(user);
   }
 
   private getRandomNumber(min: number, max: number): number {
     return +(Math.floor(Math.random() * (max - min)) + min).toFixed();
   }
 
-  private saveUser(form: FormGroup): void {
-    const user = UserMaker.create({
-      firstName: form.get('nameGroup.firstName').value as string,
-      lastName: form.get('nameGroup.lastName').value as string,
-      phone: form.get('contactGroup.phone').value as string,
-      email: form.get('contactGroup.email').value as string,
-      street: '',
-      city: '',
-      state: '',
-      zip: '',
-      country: 'USA',
-      password: form.get('passwordGroup.password').value as string,
-      isAdmin: false,
-    }) as User;
+  private saveUser(user: User): void {
     this.authService.saveUser(user).subscribe(
-      (result) => this.router.navigate(['/account']),
+      (result) => {
+        this.loadingChange.emit(false);
+        this.router.navigate(['/account']);
+      },
       (error) => {
         this.loadingChange.emit(false);
         this.signUpError = 'There was an error signing up for an account.';
