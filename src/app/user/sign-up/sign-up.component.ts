@@ -124,6 +124,33 @@ export class SignUpComponent implements OnInit {
     this.emailTakenMessage = message;
   }
 
+  saveTestUser(value: boolean): void {
+    const user = UserMaker.create({
+      firstName: 'Test',
+      lastName: 'Test',
+      phone: '8451478547',
+      email: `testemail${this.getRandomNumber(1000)}@test.com`,
+      street: `${this.getRandomNumber(1000)} Test Street`,
+      city: 'Las Vegas',
+      state: 'Nevada',
+      zip: '88901',
+      country: 'USA',
+      password: `TestPassword${this.getRandomNumber(1000)}`,
+      isAdmin: value,
+    }) as User;
+    this.authService.saveUser(user).subscribe(
+      (result) => this.router.navigate(['/account']),
+      (error) => {
+        this.loadingChange.emit(false);
+        this.signUpError = 'There was an error signing up for an account.';
+      }
+    );
+  }
+
+  private getRandomNumber(value: number): number {
+    return +(Math.random() * +value).toFixed();
+  }
+
   private signUp(form: FormGroup): void {
     const user = UserMaker.create({
       firstName: form.get('nameGroup.firstName').value as string,

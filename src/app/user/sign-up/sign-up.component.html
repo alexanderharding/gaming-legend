@@ -1,5 +1,23 @@
 <div>
-  <h1 class="text-primary mb-3">Sign Up</h1>
+  <div class="row align-items-center">
+    <div class="col">
+      <h1 class="text-primary mb-3">Sign Up</h1>
+    </div>
+    <div class="col-auto">
+      <input
+        type="button"
+        value="Create User"
+        class="btn btn-sm btn-link text-dark"
+        (click)="saveTestUser(false)"
+      />
+      <input
+        type="button"
+        value="Create Admin"
+        class="btn btn-sm btn-link text-dark"
+        (click)="saveTestUser(true)"
+      />
+    </div>
+  </div>
   <div class="shadow">
     <ngb-accordion [destroyOnHide]="false" activeIds="name" #acc="ngbAccordion">
       <ngb-panel
