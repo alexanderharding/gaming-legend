@@ -185,18 +185,15 @@
             <span>{{ errorMessage }}</span>
           </ngb-alert>
           <ng-template #loading>
-            <div class="d-flex justify-content-center">
-              <div class="spinner-border text-info" role="status">
-                <span class="sr-only">Loading... </span>
+            <div class="row justify-content-center">
+              <div class="col-auto">
+                <div class="spinner-border text-info" role="status">
+                  <span class="sr-only">Loading... </span>
+                </div>
               </div>
             </div>
           </ng-template>
         </ng-template>
-        <!-- <ctacu-edit-password
-          [loading]="loading"
-          [user]="user"
-          (loadingChange)="setLoading($event)"
-        ></ctacu-edit-password> -->
       </div>
     </div>
   </ng-container>
