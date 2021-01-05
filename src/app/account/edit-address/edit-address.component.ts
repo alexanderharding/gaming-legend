@@ -8,6 +8,7 @@ import { FormValidationRuleService } from 'src/app/services/form-validation-rule
 import { IUser } from 'src/app/types/user';
 
 @Component({
+  selector: 'ctacu-edit-address',
   templateUrl: './edit-address.component.html',
   styleUrls: ['./edit-address.component.scss'],
 })

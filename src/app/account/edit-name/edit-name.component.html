@@ -1,4 +1,4 @@
-<div class="container-xl py-3">
+<div class="py-3">
   <div
     *ngIf="loading"
     class="spinner-border text-primary"
@@ -22,22 +22,15 @@
       (ngSubmit)="onSubmit(editForm, user)"
       novalidate
     >
-      <div class="form-row">
-        <div class="col-md">
-          <ctacu-name-form
-            [parentForm]="editForm"
-            [submitted]="submitted"
-            [user]="user"
-            pageTitle="Edit Name"
-          ></ctacu-name-form>
-        </div>
-        <div class="col-md">
-          <ctacu-current-password-form
-            [parentForm]="editForm"
-            [submitted]="submitted"
-          ></ctacu-current-password-form>
-        </div>
-      </div>
+      <ctacu-name-form
+        [parentForm]="editForm"
+        [submitted]="submitted"
+        [user]="user"
+      ></ctacu-name-form>
+      <ctacu-current-password-form
+        [parentForm]="editForm"
+        [submitted]="submitted"
+      ></ctacu-current-password-form>
       <div class="d-flex">
         <input
           type="submit"

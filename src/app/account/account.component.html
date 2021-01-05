@@ -7,287 +7,193 @@
     <span class="sr-only">Loading...</span>
   </div>
   <ng-container *ngIf="user$ | async as user">
-    <div class="d-flex justify-content-between">
-      <input
-        type="button"
-        value="Sign Out"
-        class="btn btn-info mb-3"
-        (click)="signOut()"
-      />
-      <h2 class="text-primary m-0 ml-2">
-        <span class="d-none d-sm-inline">Customer </span>#:
-        {{ user.id }}
-      </h2>
-    </div>
-    <div class="form-row">
-      <div class="col-lg-7 mb-3">
-        <ngb-accordion
-          [destroyOnHide]="false"
-          activeIds="orders"
-          #acc="ngbAccordion"
-        >
-          <ngb-panel type="secondary" id="information" title="information">
-            <ng-template ngbPanelHeader let-opened="opened">
-              <div class="py-1">
-                <button
-                  ngbPanelToggle
-                  class="btn btn-lg btn-link p-0 text-light"
-                >
-                  Account Information
-                </button>
-              </div>
+    <div class="row">
+      <div class="col-lg mb-3">
+        <div class="row justify-content-between align-items-center">
+          <div class="col-auto">
+            <input
+              type="button"
+              value="Sign Out"
+              class="btn btn-sm btn-outline-secondary"
+              (click)="signOut()"
+            />
+          </div>
+          <div class="col-auto">
+            <h3 class="text-primary mb-0">
+              <span class="d-none d-sm-inline">Customer </span>#:
+              {{ user.id }}
+            </h3>
+          </div>
+        </div>
+        <hr />
+        <nav ngbNav #nav="ngbNav" class="nav-tabs">
+          <ng-container ngbNavItem>
+            <a ngbNavLink><b>Name</b></a>
+            <ng-template ngbNavContent>
+              <ctacu-edit-name></ctacu-edit-name>
             </ng-template>
-            <ng-template ngbPanelContent>
-              <nav ngbNav #nav="ngbNav" class="nav-tabs">
-                <ng-container ngbNavItem>
-                  <a ngbNavLink><b>Name</b></a>
-                  <ng-template ngbNavContent>
-                    <div
-                      class="d-flex p-3 justify-content-between align-items-start"
-                    >
-                      <div class="row justify-content-start text-capitalize">
-                        <div class="col-auto">
-                          <strong>First: </strong
-                          >{{ user.firstName | lowercase }}
-                        </div>
-                        <div class="col-auto">
-                          <strong>Last: </strong>{{ user.lastName | lowercase }}
-                        </div>
-                      </div>
-                      <input
-                        type="button"
-                        value="Edit"
-                        class="btn btn-link text-danger"
-                        routerLink="edit/name"
-                      />
-                    </div>
-                  </ng-template>
-                </ng-container>
-                <ng-container ngbNavItem>
-                  <a ngbNavLink><b>Contact</b></a>
-                  <ng-template ngbNavContent>
-                    <div
-                      class="d-flex p-3 justify-content-between align-items-start"
-                    >
-                      <div class="row justify-content-start">
-                        <div class="col-auto">
-                          <strong>Phone: </strong>{{ user.phone }}
-                        </div>
-                        <div class="col-auto">
-                          <strong>Email: </strong>{{ user.email | lowercase }}
-                        </div>
-                      </div>
-                      <input
-                        type="button"
-                        value="Edit"
-                        class="btn btn-link text-danger"
-                        routerLink="edit/contact"
-                      />
-                    </div>
-                  </ng-template>
-                </ng-container>
-                <ng-container ngbNavItem>
-                  <a ngbNavLink
-                    ><b>{{ user.street ? "" : "! " }}Address</b></a
-                  >
-                  <ng-template ngbNavContent>
-                    <div
-                      class="d-flex p-3 justify-content-between align-items-start text-capitalize"
-                    >
-                      <div *ngIf="user.street; else noStreet">
-                        <div>
-                          <strong>Street: </strong>{{ user.street | lowercase }}
-                        </div>
-                        <div class="row justify-content-start">
-                          <span class="col-auto">
-                            <strong>City: </strong>{{ user.city }}
-                          </span>
-                          <span class="col-auto">
-                            <strong>State: </strong>
-                            {{ user.state | lowercase }}
-                          </span>
-                        </div>
-                        <div class="row justify-content-start">
-                          <span class="col-auto">
-                            <strong>Zip: </strong>{{ user.zip }}
-                          </span>
-                          <span class="col-auto">
-                            <strong>Country: </strong>
-                            {{ user.country | uppercase }}
-                          </span>
-                        </div>
-                      </div>
-                      <ng-template #noStreet>
-                        <span
-                          ><span class="text-danger">!</span> No Address
-                          Found...</span
-                        >
-                      </ng-template>
+          </ng-container>
+          <ng-container ngbNavItem>
+            <a ngbNavLink><b>Contact</b></a>
+            <ng-template ngbNavContent>
+              <ctacu-edit-contact></ctacu-edit-contact>
+            </ng-template>
+          </ng-container>
+          <ng-container ngbNavItem>
+            <a ngbNavLink
+              ><b>{{ user.street ? "" : "! " }}Address</b></a
+            >
+            <ng-template ngbNavContent>
+              <ctacu-edit-address></ctacu-edit-address>
+            </ng-template>
+          </ng-container>
+          <ng-container ngbNavItem>
+            <a ngbNavLink><b>Password</b></a>
+            <ng-template ngbNavContent>
+              <ctacu-edit-password></ctacu-edit-password>
+            </ng-template>
+          </ng-container>
+        </nav>
 
-                      <input
-                        type="button"
-                        value="{{ user.street ? 'Edit' : 'Add' }}"
-                        class="btn btn-link text-danger"
-                        routerLink="edit/address"
-                      />
-                    </div>
-                  </ng-template>
-                </ng-container>
-              </nav>
-
-              <div [ngbNavOutlet]="nav" class="mt-2"></div>
-            </ng-template>
-          </ngb-panel>
-          <ngb-panel type="secondary" id="orders" title="orders">
-            <ng-template ngbPanelHeader let-opened="opened">
-              <div class="py-1">
-                <button
-                  ngbPanelToggle
-                  class="btn btn-lg btn-link p-0 text-light"
-                >
-                  Order History
-                </button>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
-              <ng-container *ngIf="sortedOrders$ | async as orders; else error">
-                <form
-                  class="mb-3"
-                  novalidate
-                  [formGroup]="filterForm"
-                  autocomplete="off"
-                >
-                  <div class="form-row">
-                    <div class="col-sm order-1">
-                      <div class="input-group input-group-sm mt-2 mt-sm-0">
-                        <div class="input-group-prepend">
-                          <span
-                            class="input-group-text bg-info text-white"
-                            id="basic-addon1"
-                            >#</span
-                          >
-                        </div>
-                        <input
-                          type="text"
-                          id="search"
-                          formControlName="search"
-                          class="form-control"
-                          placeholder="Search by #"
-                          aria-describedby="basic-addon1"
-                          [ngClass]="{ 'is-invalid': searchMessage }"
-                        />
-                        <div class="invalid-tooltip">
-                          <span>{{ searchMessage }}</span>
-                        </div>
-                        <div
-                          *ngIf="filterForm.get('search').value"
-                          class="input-group-append"
-                        >
-                          <input
-                            type="button"
-                            value="X"
-                            class="btn btn-sm btn-outline-danger"
-                            (click)="clearSearch()"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-sm order-sm-12">
-                      <div class="input-group input-group-sm">
-                        <div class="input-group-prepend">
-                          <span
-                            class="input-group-text bg-info text-white"
-                            id="basic-addon1"
-                            >Sort</span
-                          >
-                        </div>
-                        <select
-                          class="form-control custom-select"
-                          formControlName="sort"
-                        >
-                          <optgroup label="Date">
-                            <option [value]="0">Newest - Oldest</option>
-                            <option [value]="1">Oldest - Newest</option>
-                          </optgroup>
-                          <optgroup label="Status">
-                            <option [value]="2">Pending</option>
-                            <option [value]="3">Completed</option>
-                          </optgroup>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                </form>
-                <ng-container *ngIf="orders.length; else noOrders">
-                  <div class="table-responsive">
-                    <table class="table table-hover table-sm">
-                      <thead class="thead-dark text-uppercase">
-                        <tr>
-                          <th scope="col">#</th>
-                          <th scope="col">Date</th>
-                          <th scope="col">Amount Paid</th>
-                          <th scope="col">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody class="pointer">
-                        <tr *ngFor="let o of orders">
-                          <th scope="row">{{ o.id }}</th>
-                          <td scope="row">
-                            {{ o.date | date }}
-                          </td>
-                          <td scope="row">{{ o.payment.total | currency }}</td>
-                          <td
-                            scope="row"
-                            class="text-capitalize"
-                            [ngClass]="{
-                              'text-danger':
-                                o.status.toLowerCase() === 'pending',
-                              'text-success':
-                                o.status.toLowerCase() === 'completed'
-                            }"
-                          >
-                            {{ o.status }}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </ng-container>
-                <ng-template #noOrders>
-                  <ngb-alert class="m-0 text-center" [dismissible]="false">
-                    <strong>No orders found...</strong> You can either clear the
-                    search or click <a routerLink="/products">here</a> to check
-                    out our products.
-                  </ngb-alert>
-                </ng-template>
-              </ng-container>
-              <ng-template #error>
-                <ngb-alert
-                  *ngIf="error$ | async as errorMessage; else loading"
-                  [dismissible]="false"
-                  type="danger"
-                  class="text-center m-0"
-                >
-                  <span>{{ errorMessage }}</span>
-                </ngb-alert>
-                <ng-template #loading>
-                  <div class="d-flex justify-content-center">
-                    <div class="spinner-border text-info" role="status">
-                      <span class="sr-only">Loading... </span>
-                    </div>
-                  </div>
-                </ng-template>
-              </ng-template>
-            </ng-template>
-          </ngb-panel>
-        </ngb-accordion>
+        <div [ngbNavOutlet]="nav" class="mt-2"></div>
       </div>
       <div class="col-lg">
-        <ctacu-edit-password
+        <div class="card bg-secondary mb-2">
+          <div class="card-header">
+            <div class="text-light">Orders</div>
+          </div>
+        </div>
+        <ng-container *ngIf="sortedOrders$ | async as orders; else error">
+          <form
+            class="mb-3"
+            novalidate
+            [formGroup]="filterForm"
+            autocomplete="off"
+          >
+            <div class="form-row">
+              <div class="col-sm order-1">
+                <div class="input-group input-group-sm mt-2 mt-sm-0">
+                  <div class="input-group-prepend">
+                    <span
+                      class="input-group-text bg-info text-white"
+                      id="basic-addon1"
+                      >#</span
+                    >
+                  </div>
+                  <input
+                    type="text"
+                    id="search"
+                    formControlName="search"
+                    class="form-control"
+                    placeholder="Search by #"
+                    aria-describedby="basic-addon1"
+                    [ngClass]="{ 'is-invalid': searchMessage }"
+                  />
+                  <div class="invalid-tooltip">
+                    <span>{{ searchMessage }}</span>
+                  </div>
+                  <div
+                    *ngIf="filterForm.get('search').value"
+                    class="input-group-append"
+                  >
+                    <input
+                      type="button"
+                      value="X"
+                      class="btn btn-sm btn-outline-danger"
+                      (click)="clearSearch()"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm order-sm-12">
+                <div class="input-group input-group-sm">
+                  <div class="input-group-prepend">
+                    <span
+                      class="input-group-text bg-info text-white"
+                      id="basic-addon1"
+                      >Sort</span
+                    >
+                  </div>
+                  <select
+                    class="form-control custom-select"
+                    formControlName="sort"
+                  >
+                    <optgroup label="Date">
+                      <option [value]="0">Newest - Oldest</option>
+                      <option [value]="1">Oldest - Newest</option>
+                    </optgroup>
+                    <optgroup label="Status">
+                      <option [value]="2">Pending</option>
+                      <option [value]="3">Completed</option>
+                    </optgroup>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </form>
+          <ng-container *ngIf="orders.length; else noOrders">
+            <div class="table-responsive">
+              <table class="table table-hover table-sm">
+                <thead class="thead-dark text-uppercase">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Amount Paid</th>
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <tbody class="pointer">
+                  <tr *ngFor="let o of orders">
+                    <th scope="row">{{ o.id }}</th>
+                    <td scope="row">
+                      {{ o.date | date }}
+                    </td>
+                    <td scope="row">{{ o.payment.total | currency }}</td>
+                    <td
+                      scope="row"
+                      class="text-capitalize"
+                      [ngClass]="{
+                        'text-danger': o.status.toLowerCase() === 'pending',
+                        'text-success': o.status.toLowerCase() === 'completed'
+                      }"
+                    >
+                      {{ o.status }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ng-container>
+          <ng-template #noOrders>
+            <ngb-alert class="m-0 text-center" [dismissible]="false">
+              <strong>No orders found...</strong> You can either clear the
+              search or click <a routerLink="/products">here</a> to check out
+              our products.
+            </ngb-alert>
+          </ng-template>
+        </ng-container>
+        <ng-template #error>
+          <ngb-alert
+            *ngIf="error$ | async as errorMessage; else loading"
+            [dismissible]="false"
+            type="danger"
+            class="text-center m-0"
+          >
+            <span>{{ errorMessage }}</span>
+          </ngb-alert>
+          <ng-template #loading>
+            <div class="d-flex justify-content-center">
+              <div class="spinner-border text-info" role="status">
+                <span class="sr-only">Loading... </span>
+              </div>
+            </div>
+          </ng-template>
+        </ng-template>
+        <!-- <ctacu-edit-password
           [loading]="loading"
           [user]="user"
           (loadingChange)="setLoading($event)"
-        ></ctacu-edit-password>
+        ></ctacu-edit-password> -->
       </div>
     </div>
   </ng-container>

@@ -9,6 +9,8 @@ import { FormValidationRuleService } from 'src/app/services/form-validation-rule
 import { IUser } from 'src/app/types/user';
 
 @Component({
+  selector: 'ctacu-edit-contact',
+
   templateUrl: './edit-contact.component.html',
   styleUrls: ['./edit-contact.component.scss'],
 })
