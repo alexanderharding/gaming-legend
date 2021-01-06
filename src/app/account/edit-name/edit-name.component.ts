@@ -84,7 +84,6 @@ export class EditNameComponent implements OnInit {
     }
     if (form.valid) {
       this.onLoadingChange.emit(true);
-
       this.saveUser(form);
     }
   }
