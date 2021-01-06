@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { first, tap } from 'rxjs/operators';
@@ -18,10 +18,19 @@ export class EditNameComponent implements OnInit {
   errorMessage = '';
   loading = false;
 
-  readonly user$ = this.authService.currentUser$;
+  // readonly user$ = this.authService.currentUser$;
+
+  @Input() user: IUser;
 
   readonly nameMinLength = +this.formValidationRuleService.nameMinLength;
   readonly nameMaxLength = +this.formValidationRuleService.nameMaxLength;
+
+  // public get hasChanged() : boolean {
+  //   return (
+  //     JSON.stringify(this.editForm.get('nameGroup').value) !==
+  //     JSON.stringify(this.editForm.get('nameGroup').value)
+  //   );
+  // }
 
   constructor(
     private readonly fb: FormBuilder,
@@ -31,32 +40,29 @@ export class EditNameComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.user$.pipe(first()).subscribe({
-      next: (user) =>
-        (this.editForm = this.fb.group({
-          currentPassword: [
-            '',
-            [Validators.required, passwordChecker(user.password)],
+    this.editForm = this.fb.group({
+      currentPassword: [
+        '',
+        [Validators.required, passwordChecker(this.user.password)],
+      ],
+      nameGroup: this.fb.group({
+        firstName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(this.nameMinLength),
+            Validators.maxLength(this.nameMaxLength),
           ],
-          nameGroup: this.fb.group({
-            firstName: [
-              '',
-              [
-                Validators.required,
-                Validators.minLength(this.nameMinLength),
-                Validators.maxLength(this.nameMaxLength),
-              ],
-            ],
-            lastName: [
-              '',
-              [
-                Validators.required,
-                Validators.minLength(this.nameMinLength),
-                Validators.maxLength(this.nameMaxLength),
-              ],
-            ],
-          }),
-        })),
+        ],
+        lastName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(this.nameMinLength),
+            Validators.maxLength(this.nameMaxLength),
+          ],
+        ],
+      }),
     });
   }
 
@@ -74,6 +80,17 @@ export class EditNameComponent implements OnInit {
       } as IUser;
       this.saveUser(updatedUser);
     }
+  }
+
+  resetForm(user: IUser): void {
+    const name = user.name;
+    this.editForm.reset();
+    this.editForm.patchValue({
+      nameGroup: {
+        firstName: name.firstName,
+        lastName: name.lastName,
+      },
+    });
   }
 
   private saveUser(user: IUser): void {

@@ -6,7 +6,7 @@ import { catchError, debounceTime, map } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 import { IOrder } from '../types/order';
 import { OrdersResult } from '../types/orders-result';
-import { User } from '../types/user';
+import { IUser, User } from '../types/user';
 
 @Component({
   templateUrl: './account.component.html',
@@ -152,7 +152,7 @@ export class AccountComponent implements OnInit, OnDestroy {
     this.router.navigate(['/user']);
   }
 
-  saveUser(user: User): void {
+  saveUser(user: IUser): void {
     this.authService.saveUser(user).subscribe(
       (result) => {},
       (error) => {
