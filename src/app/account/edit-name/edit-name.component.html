@@ -21,6 +21,7 @@
       [parentForm]="editForm"
       [submitted]="submitted"
       [user]="user"
+      pageTitle="{{ editForm.dirty ? 'Edit Full Name' : '' }}"
     ></ctacu-name-form>
     <ctacu-current-password-form
       *ngIf="editForm.dirty"

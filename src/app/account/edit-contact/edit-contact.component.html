@@ -27,6 +27,7 @@
         [submitted]="submitted"
         [user]="user"
         [emailTakenMessage]="emailTakenMessage"
+        pageTitle="{{ editForm.dirty ? 'Edit Contact Information' : '' }}"
         (onValueChange)="setEmailTakenMessage($event)"
       ></ctacu-contact-form>
       <ctacu-current-password-form
