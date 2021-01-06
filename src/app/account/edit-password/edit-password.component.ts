@@ -1,10 +1,19 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { passwordChecker } from 'src/app/functions/password-checker';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
+import { NotificationService } from 'src/app/services/notification.service';
 import { IUser } from 'src/app/types/user';
 
 @Component({
@@ -13,6 +22,9 @@ import { IUser } from 'src/app/types/user';
   styleUrls: ['./edit-password.component.scss'],
 })
 export class EditPasswordComponent implements OnInit {
+  @ViewChild('successTpl') private successTpl: TemplateRef<any>;
+  @ViewChild('dangerTpl') private dangerTpl: TemplateRef<any>;
+
   @Input() loading: boolean;
   @Input() user: IUser;
 
@@ -30,7 +42,8 @@ export class EditPasswordComponent implements OnInit {
   constructor(
     private readonly authService: AuthService,
     private readonly fb: FormBuilder,
-    private readonly formValidationRuleService: FormValidationRuleService
+    private readonly formValidationRuleService: FormValidationRuleService,
+    private readonly notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -74,6 +87,20 @@ export class EditPasswordComponent implements OnInit {
     this.submitted = false;
   }
 
+  private showSuccess(): void {
+    this.notificationService.show(this.successTpl, {
+      classname: 'bg-success text-light',
+      delay: 10000,
+    });
+  }
+
+  private showDanger(): void {
+    this.notificationService.show(this.dangerTpl, {
+      classname: 'bg-danger text-light',
+      delay: 15000,
+    });
+  }
+
   private updateCurrentPasswordValidators(form: FormGroup, user: IUser): void {
     const currentPasswordControl = form.get('currentPassword');
     currentPasswordControl.setValidators([
@@ -86,13 +113,13 @@ export class EditPasswordComponent implements OnInit {
   private saveUser(form: FormGroup, user: IUser): void {
     this.authService.saveUser(user).subscribe(
       (result) => {
-        this.successMessage = 'New password saved!';
         this.resetForm(form);
         this.updateCurrentPasswordValidators(form, user);
+        this.showSuccess();
         this.loadingChange.emit(false);
       },
       (error) => {
-        this.errorMessage = 'There was an error saving your new password.';
+        this.showDanger();
         this.loadingChange.emit(false);
         console.error(error);
       }

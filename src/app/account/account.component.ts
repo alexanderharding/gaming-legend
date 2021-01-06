@@ -152,16 +152,6 @@ export class AccountComponent implements OnInit, OnDestroy {
     this.router.navigate(['/user']);
   }
 
-  private saveUser(user: User): void {
-    this.authService.saveUser(user).subscribe(
-      (result) => this.setLoading(false),
-      (error) => {
-        this.setLoading(false);
-        this.errorMessage = 'There was an error saving your account.';
-      }
-    );
-  }
-
   ngOnDestroy(): void {
     this.subscriptions.forEach((s) => s.unsubscribe());
   }
