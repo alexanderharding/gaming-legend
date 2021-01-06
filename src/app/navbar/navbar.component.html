@@ -90,7 +90,7 @@
               routerLinkActive="active"
               [routerLinkActiveOptions]="{ exact: true }"
               (click)="isMenuCollapsed = true"
-              >{{ user.firstName | lowercase }}'s Account</a
+              >{{ user.name.firstName | lowercase }}'s Account</a
             >
           </li>
         </ng-container>

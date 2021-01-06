@@ -11,6 +11,9 @@ import { passwordMatcher } from 'src/app/functions/password-matcher';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
 import { IUser, User, UserMaker } from 'src/app/types/user';
+import { UserAddress, UserAddressMaker } from 'src/app/types/user-address';
+import { UserContact, UserContactMaker } from 'src/app/types/user-contact';
+import { UserName, UserNameMaker } from 'src/app/types/user-name';
 
 @Component({
   selector: 'ctacu-sign-up',
@@ -112,15 +115,21 @@ export class SignUpComponent implements OnInit {
             account.`);
           } else {
             const user = UserMaker.create({
-              firstName: form.get('nameGroup.firstName').value as string,
-              lastName: form.get('nameGroup.lastName').value as string,
-              phone: form.get('contactGroup.phone').value as string,
-              email: form.get('contactGroup.email').value as string,
-              street: '',
-              city: '',
-              state: '',
-              zip: '',
-              country: 'USA',
+              name: UserNameMaker.create({
+                firstName: form.get('nameGroup.firstName').value as string,
+                lastName: form.get('nameGroup.lastName').value as string,
+              } as UserName),
+              contact: UserContactMaker.create({
+                phone: form.get('contactGroup.phone').value as string,
+                email: form.get('contactGroup.email').value as string,
+              } as UserContact),
+              address: UserAddressMaker.create({
+                street: '',
+                city: '',
+                state: '',
+                zip: '',
+                country: 'USA',
+              } as UserAddress),
               password: form.get('passwordGroup.password').value as string,
               isAdmin: false,
             }) as User;
@@ -140,33 +149,33 @@ export class SignUpComponent implements OnInit {
   }
 
   saveTestUser(value: boolean): void {
-    this.loadingChange.emit(true);
-    const user = UserMaker.create({
-      firstName: 'Test',
-      lastName: 'Test',
-      phone: `${this.getRandomNumber(1000000000, 9999999999)}`,
-      email: `testemail${this.getRandomNumber(1, 9999)}@test.com`,
-      street: `${this.getRandomNumber(1, 999)} Test Street`,
-      city: 'Test City',
-      state: `${this.states[this.getRandomNumber(0, this.states.length)]}`,
-      zip: `${this.getRandomNumber(10000, 99999)}`,
-      country: 'USA',
-      password: `TestPassword${this.getRandomNumber(1, 999)}`,
-      isAdmin: value,
-    }) as User;
-    this.checkForUser(user.email).subscribe(
-      (result) => {
-        if (result) {
-          this.loadingChange.emit(false);
-          return;
-        }
-        this.saveUser(user);
-      },
-      (error) => {
-        this.loadingChange.emit(false);
-        this.signUpError = 'There was an error signing up for an account.';
-      }
-    );
+    // this.loadingChange.emit(true);
+    // const user = UserMaker.create({
+    //   firstName: 'Test',
+    //   lastName: 'Test',
+    //   phone: `${this.getRandomNumber(1000000000, 9999999999)}`,
+    //   email: `testemail${this.getRandomNumber(1, 9999)}@test.com`,
+    //   street: `${this.getRandomNumber(1, 999)} Test Street`,
+    //   city: 'Test City',
+    //   state: `${this.states[this.getRandomNumber(0, this.states.length)]}`,
+    //   zip: `${this.getRandomNumber(10000, 99999)}`,
+    //   country: 'USA',
+    //   password: `TestPassword${this.getRandomNumber(1, 999)}`,
+    //   isAdmin: value,
+    // }) as User;
+    // this.checkForUser(user.email).subscribe(
+    //   (result) => {
+    //     if (result) {
+    //       this.loadingChange.emit(false);
+    //       return;
+    //     }
+    //     this.saveUser(user);
+    //   },
+    //   (error) => {
+    //     this.loadingChange.emit(false);
+    //     this.signUpError = 'There was an error signing up for an account.';
+    //   }
+    // );
   }
 
   private getRandomNumber(min: number, max: number): number {

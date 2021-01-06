@@ -1,29 +1,21 @@
+import { UserAddress } from './user-address';
+import { UserContact } from './user-contact';
+import { UserName } from './user-name';
+
 /* Defines the user entity */
 export interface IUser {
-  id: number;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  email: string;
-  street: string;
-  city: string;
-  state: string;
-  zip: string;
-  country: string;
+  name: UserName;
+  contact: UserContact;
+  address: UserAddress;
   password: string;
   isAdmin: boolean;
+  id: number;
 }
 export class User {
   constructor(
-    public firstName: string,
-    public lastName: string,
-    public phone: string,
-    public email: string,
-    public street: string,
-    public city: string,
-    public state: string,
-    public zip: string,
-    public country: string,
+    public name: UserName,
+    public contact: UserContact,
+    public address: UserAddress,
     public password: string,
     public isAdmin: boolean,
     public id?: number
@@ -33,15 +25,9 @@ export class User {
 export class UserMaker {
   static create(event: User) {
     return {
-      firstName: event.firstName,
-      lastName: event.lastName,
-      phone: event.phone,
-      email: event.email,
-      street: event.street,
-      city: event.city,
-      state: event.state,
-      zip: event.zip,
-      country: event.country,
+      name: event.name,
+      contact: event.contact,
+      address: event.address,
       password: event.password,
       isAdmin: event.isAdmin,
     };

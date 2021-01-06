@@ -140,12 +140,13 @@ export class AddressFormComponent implements OnInit, OnDestroy {
   }
 
   private setUserData(user: IUser): void {
+    const address = user.address;
     this.parentForm.patchValue({
       addressGroup: {
-        street: user.street,
-        city: user.city,
-        state: user.state,
-        zip: user.zip,
+        street: address.street,
+        city: address.city,
+        state: address.state,
+        zip: address.zip,
       },
     });
   }

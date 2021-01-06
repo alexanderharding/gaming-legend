@@ -48,7 +48,7 @@ export class AuthService {
             return false;
           }
           if (
-            userEmail === firstUserFound.email.toLowerCase() &&
+            userEmail === firstUserFound.contact.email.toLowerCase() &&
             password === firstUserFound.password
           ) {
             this.setCurrentUser(firstUserFound);

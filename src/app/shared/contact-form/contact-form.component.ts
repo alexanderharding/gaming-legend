@@ -131,11 +131,12 @@ export class ContactFormComponent implements OnInit, OnDestroy {
   }
 
   private setUserData(user: IUser): void {
+    const contact = user.contact;
     this.parentForm.patchValue({
       contactGroup: {
-        phone: user.phone,
-        email: user.email,
-        confirmEmail: user.email,
+        phone: contact.phone,
+        email: contact.email,
+        confirmEmail: contact.email,
       },
     });
   }

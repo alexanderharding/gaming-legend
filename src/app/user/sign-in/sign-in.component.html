@@ -35,8 +35,8 @@
                   formControlName="user"
                 >
                   <option *ngFor="let u of users; index as i" [value]="i">
-                    {{ i + 1 }}. {{ u.firstName | lowercase }}
-                    {{ u.lastName | lowercase }}
+                    {{ i + 1 }}. {{ u.name.firstName | lowercase }}
+                    {{ u.name.lastName | lowercase }}
                     {{ u.isAdmin ? "(Admin)" : "" }}
                   </option>
                 </select>

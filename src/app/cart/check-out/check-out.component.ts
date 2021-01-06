@@ -27,6 +27,9 @@ import { Payment, PaymentMaker } from 'src/app/types/payment';
 import { IShipping } from 'src/app/types/shipping';
 import { ShippingRatesResult } from 'src/app/types/shipping-rates-result';
 import { IUser, User, UserMaker } from 'src/app/types/user';
+import { UserAddressMaker, UserAddress } from 'src/app/types/user-address';
+import { UserContactMaker, UserContact } from 'src/app/types/user-contact';
+import { UserName, UserNameMaker } from 'src/app/types/user-name';
 
 function dateChecker(c: AbstractControl): { [key: string]: boolean } | null {
   const monthControl = c.get('expiringMonth');
@@ -385,15 +388,21 @@ export class CheckOutComponent implements OnInit, OnDestroy {
 
   private signUp(form: FormGroup, items: ICartItem[]): void {
     const user = UserMaker.create({
-      firstName: form.get('contactGroup.firstName').value as string,
-      lastName: form.get('contactGroup.lastName').value as string,
-      phone: form.get('contactGroup.phone').value as string,
-      email: form.get('contactGroup.email').value as string,
-      street: form.get('addressGroup.street').value as string,
-      city: form.get('addressGroup.city').value as string,
-      state: form.get('addressGroup.state').value as string,
-      zip: form.get('addressGroup.zip').value as string,
-      country: form.get('addressGroup.country').value as string,
+      name: UserNameMaker.create({
+        firstName: form.get('nameGroup.firstName').value as string,
+        lastName: form.get('nameGroup.lastName').value as string,
+      } as UserName),
+      contact: UserContactMaker.create({
+        phone: form.get('contactGroup.phone').value as string,
+        email: form.get('contactGroup.email').value as string,
+      } as UserContact),
+      address: UserAddressMaker.create({
+        street: form.get('addressGroup.street').value as string,
+        city: form.get('addressGroup.city').value as string,
+        state: form.get('addressGroup.state').value as string,
+        zip: form.get('addressGroup.zip').value as string,
+        country: form.get('addressGroup.country').value as string,
+      } as UserAddress),
       password: form.get('passwordGroup.password').value as string,
       isAdmin: false,
     }) as User;

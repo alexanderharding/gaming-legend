@@ -128,7 +128,7 @@ export class SignInComponent implements OnInit, OnDestroy {
   private setUserData(index: number): void {
     const user = this.users[index];
     this.signInForm.patchValue({
-      email: user.email,
+      email: user.contact.email,
       password: user.password,
     });
   }

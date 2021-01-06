@@ -91,17 +91,17 @@ export class EditContactComponent implements OnInit {
     this.emailTakenMessage = message;
   }
 
-  private hasValueChanged(form: FormGroup, user: IUser): boolean {
-    const phone = form.get('contactGroup.phone').value as string;
-    const email = form.get('contactGroup.email').value as string;
-    if (
-      email.toLowerCase() === user.email.toLowerCase() &&
-      phone.toLowerCase() === user.phone.toLowerCase()
-    ) {
-      return false;
-    }
-    return true;
-  }
+  // private hasValueChanged(form: FormGroup, user: IUser): boolean {
+  //   const phone = form.get('contactGroup.phone').value as string;
+  //   const email = form.get('contactGroup.email').value as string;
+  //   if (
+  //     email.toLowerCase() === user.email.toLowerCase() &&
+  //     phone.toLowerCase() === user.phone.toLowerCase()
+  //   ) {
+  //     return false;
+  //   }
+  //   return true;
+  // }
 
   private saveUser(user: IUser): void {
     this.authService.saveUser(user).subscribe(
