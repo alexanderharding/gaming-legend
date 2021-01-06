@@ -82,38 +82,29 @@ export class EditAddressComponent implements OnInit {
     });
   }
 
-  onSubmit(form: FormGroup, user: IUser): void {
+  onSubmit(form: FormGroup): void {
     if (!this.submitted) {
       this.submitted = true;
     }
     if (form.valid) {
       this.onLoadingChange.emit(true);
-      const updatedUser = {
-        ...user,
-        address: {
-          ...user.address,
-          street: form.get('addressGroup.street').value as string,
-          city: form.get('addressGroup.city').value as string,
-          state: form.get('addressGroup.state').value as string,
-          zip: form.get('addressGroup.zip').value as string,
-        },
-      } as IUser;
-      this.saveUser(form, updatedUser);
+      this.saveUser(form);
     }
   }
 
   resetForm(form: FormGroup, user: IUser): void {
-    this.submitted = false;
     const address = user.address;
+    const addressControl = form.get('addressGroup');
+
+    this.submitted = false;
     form.reset();
-    form.patchValue({
-      addressGroup: {
-        street: address.street as string,
-        city: address.city as string,
-        state: address.state as string,
-        zip: address.zip as string,
-        country: address.country as string,
-      },
+
+    addressControl.setValue({
+      street: address.street as string,
+      city: address.city as string,
+      state: address.state as string,
+      zip: address.zip as string,
+      country: address.country as string,
     });
   }
 
@@ -131,12 +122,22 @@ export class EditAddressComponent implements OnInit {
     });
   }
 
-  private saveUser(form: FormGroup, user: IUser): void {
-    this.authService.saveUser(user).subscribe(
+  private saveUser(form: FormGroup): void {
+    const updatedUser = {
+      ...this.user,
+      address: {
+        ...this.user.address,
+        street: form.get('addressGroup.street').value as string,
+        city: form.get('addressGroup.city').value as string,
+        state: form.get('addressGroup.state').value as string,
+        zip: form.get('addressGroup.zip').value as string,
+      },
+    } as IUser;
+    this.authService.saveUser(updatedUser).subscribe(
       (result) => {
         this.onLoadingChange.emit(false);
         this.showSuccess();
-        this.resetForm(form, user);
+        this.resetForm(form, result);
       },
       (error) => {
         this.onLoadingChange.emit(false);
