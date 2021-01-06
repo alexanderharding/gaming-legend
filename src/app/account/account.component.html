@@ -30,7 +30,10 @@
           <ng-container ngbNavItem>
             <a ngbNavLink><b>Name</b></a>
             <ng-template ngbNavContent>
-              <ctacu-edit-name [user]="user"></ctacu-edit-name>
+              <ctacu-edit-name
+                [user]="user"
+                (onLoadingChange)="setLoading($event)"
+              ></ctacu-edit-name>
             </ng-template>
           </ng-container>
           <ng-container ngbNavItem>
@@ -44,10 +47,7 @@
               ><b>{{ user.address.street ? "" : "! " }}Address</b></a
             >
             <ng-template ngbNavContent>
-              <ctacu-edit-address
-                [user]="user"
-                (onUserChange)="saveUser($event)"
-              ></ctacu-edit-address>
+              <ctacu-edit-address [user]="user"></ctacu-edit-address>
             </ng-template>
           </ng-container>
           <ng-container ngbNavItem>

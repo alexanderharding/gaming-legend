@@ -152,12 +152,12 @@ export class AccountComponent implements OnInit, OnDestroy {
     this.router.navigate(['/user']);
   }
 
-  saveUser(user: IUser): void {
+  private saveUser(user: User): void {
     this.authService.saveUser(user).subscribe(
-      (result) => {},
+      (result) => this.setLoading(false),
       (error) => {
-        this.loading = false;
-        this.errorMessage = 'There was an error saving your address.';
+        this.setLoading(false);
+        this.errorMessage = 'There was an error saving your account.';
       }
     );
   }
