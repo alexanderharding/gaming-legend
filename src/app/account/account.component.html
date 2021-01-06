@@ -146,7 +146,14 @@
                   </tr>
                 </thead>
                 <tbody class="pointer">
-                  <tr *ngFor="let o of orders">
+                  <tr
+                    *ngFor="
+                      let o of orders
+                        | slice
+                          : (page - 1) * pageSize
+                          : (page - 1) * pageSize + pageSize
+                    "
+                  >
                     <th scope="row">{{ o.id }}</th>
                     <td scope="row">
                       {{ o.date | date }}
@@ -166,6 +173,14 @@
                 </tbody>
               </table>
             </div>
+            <ngb-pagination
+              *ngIf="orders.length > pageSize"
+              [(page)]="page"
+              [pageSize]="pageSize"
+              [collectionSize]="orders.length"
+              size="sm"
+              class="d-flex justify-content-end"
+            ></ngb-pagination>
           </ng-container>
           <ng-template #noOrders>
             <ngb-alert class="m-0 text-center" [dismissible]="false">

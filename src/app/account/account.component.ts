@@ -16,6 +16,8 @@ export class AccountComponent implements OnInit, OnDestroy {
   private isFirstSort = true;
   searchMessage = '';
   errorMessage = '';
+  page = 1;
+  pageSize = 5;
 
   private readonly searchValidationMessages = {
     pattern: 'Please only use numbers.',
