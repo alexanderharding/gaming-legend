@@ -1,9 +1,16 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, combineLatest, EMPTY, Subscription } from 'rxjs';
 import { catchError, debounceTime, map } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
+import { NotificationService } from '../services/notification.service';
 import { IOrder } from '../types/order';
 import { OrdersResult } from '../types/orders-result';
 import { IUser, User } from '../types/user';
@@ -13,6 +20,8 @@ import { IUser, User } from '../types/user';
   styleUrls: ['./account.component.scss'],
 })
 export class AccountComponent implements OnInit, OnDestroy {
+  @ViewChild('successTpl') private successTpl: TemplateRef<any>;
+
   private isFirstSort = true;
   searchMessage = '';
   errorMessage = '';
@@ -102,7 +111,8 @@ export class AccountComponent implements OnInit, OnDestroy {
     private readonly authService: AuthService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
-    private readonly fb: FormBuilder
+    private readonly fb: FormBuilder,
+    private readonly notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -149,7 +159,15 @@ export class AccountComponent implements OnInit, OnDestroy {
 
   signOut(): void {
     this.authService.signOut();
+    this.showSuccess();
     this.router.navigate(['/user']);
+  }
+
+  private showSuccess(): void {
+    this.notificationService.show(this.successTpl, {
+      classname: 'bg-success text-light',
+      delay: 10000,
+    });
   }
 
   ngOnDestroy(): void {
