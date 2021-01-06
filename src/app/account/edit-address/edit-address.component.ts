@@ -26,6 +26,14 @@ export class EditAddressComponent implements OnInit {
   private readonly zipPattern = this.formValidationRuleService
     .zipPattern as RegExp;
 
+  get hasChanged(): boolean {
+    const address = JSON.stringify(
+      this.editForm.get('addressGroup').value
+    ).toLowerCase();
+    const userAddressValue = JSON.stringify(this.user.address).toLowerCase();
+    return address !== userAddressValue;
+  }
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly formValidationRuleService: FormValidationRuleService
