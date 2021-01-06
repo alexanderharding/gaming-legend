@@ -68,15 +68,17 @@ export class AuthService {
   }
 
   checkForUser(email: string): Observable<boolean> {
-    return this.http.get<IUser[]>(`${this.baseUrl}/users/?email=${email}`).pipe(
-      delay(1000),
-      retry(3),
-      map((users) => {
-        const firstUserFound = users[0];
-        return firstUserFound ? true : false;
-      }),
-      catchError(this.errorService.handleError)
-    );
+    return this.http
+      .get<IUser[]>(`${this.baseUrl}/users/?contact.email=${email}`)
+      .pipe(
+        delay(1000),
+        retry(3),
+        map((users) => {
+          const firstUserFound = users[0];
+          return firstUserFound ? true : false;
+        }),
+        catchError(this.errorService.handleError)
+      );
   }
 
   saveUser(user: User): Observable<IUser> {

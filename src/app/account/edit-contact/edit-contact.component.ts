@@ -1,4 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { FormGroup, FormBuilder, Validators, Form } from '@angular/forms';
 import { Router } from '@angular/router';
 import { first, tap } from 'rxjs/operators';
@@ -6,23 +14,25 @@ import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordChecker } from 'src/app/functions/password-checker';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
+import { NotificationService } from 'src/app/services/notification.service';
 import { IUser } from 'src/app/types/user';
 
 @Component({
   selector: 'ctacu-edit-contact',
-
   templateUrl: './edit-contact.component.html',
   styleUrls: ['./edit-contact.component.scss'],
 })
 export class EditContactComponent implements OnInit {
+  @ViewChild('successTpl') private successTpl: TemplateRef<any>;
+  @ViewChild('dangerTpl') private dangerTpl: TemplateRef<any>;
   submitted = false;
   editForm: FormGroup;
-  errorMessage: string;
   emailTakenMessage: string;
 
-  loading = false;
-
   @Input() user: IUser;
+  @Input() loading: boolean;
+
+  @Output() onLoadingChange = new EventEmitter<boolean>();
 
   private readonly phonePattern = this.formValidationRuleService
     .phonePattern as RegExp;
@@ -38,11 +48,22 @@ export class EditContactComponent implements OnInit {
     return contactGroup !== userContactValue;
   }
 
+  // private get hasEmailChanged(): boolean {
+  //   const contactGroup = JSON.stringify(
+  //     this.editForm.get('contactGroup').value
+  //   ).toLowerCase();
+  //   const userContactValue = JSON.stringify({
+  //     ...this.user.contact,
+  //     confirmEmail: this.user.contact.email,
+  //   }).toLowerCase();
+  //   return contactGroup !== userContactValue;
+  // }
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly authService: AuthService,
     private readonly formValidationRuleService: FormValidationRuleService,
-    private readonly router: Router
+    private readonly notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -65,32 +86,33 @@ export class EditContactComponent implements OnInit {
     });
   }
   onSubmit(form: FormGroup, user: IUser): void {
-    this.errorMessage = '';
     if (!this.submitted) {
       this.submitted = true;
     }
     if (form.valid) {
-      this.loading = true;
+      this.onLoadingChange.emit(true);
       const email = this.editForm.get('contactGroup.email').value as string;
       this.authService.checkForUser(email).subscribe(
         (result) => {
           if (result) {
-            this.loading = false;
+            console.log(result);
+            this.onLoadingChange.emit(false);
             this.emailTakenMessage = `${email} is already registered to an
                account.`;
           } else {
             const updatedUser = {
               ...user,
-              phone: form.get('contactGroup.phone').value as string,
-              email: form.get('contactGroup.email').value as string,
+              contact: {
+                phone: form.get('contactGroup.phone').value as string,
+                email: form.get('contactGroup.email').value as string,
+              },
             } as IUser;
             this.saveUser(updatedUser);
           }
         },
         (error) => {
-          this.loading = false;
-          this.errorMessage =
-            'There was an error saving your contact information.';
+          this.onLoadingChange.emit(false);
+          this.showDanger();
         }
       );
     }
@@ -113,15 +135,29 @@ export class EditContactComponent implements OnInit {
     });
   }
 
+  private showSuccess(): void {
+    this.notificationService.show(this.successTpl, {
+      classname: 'bg-success text-light',
+      delay: 10000,
+    });
+  }
+
+  private showDanger(): void {
+    this.notificationService.show(this.dangerTpl, {
+      classname: 'bg-danger text-light',
+      delay: 15000,
+    });
+  }
+
   private saveUser(user: IUser): void {
     this.authService.saveUser(user).subscribe(
       (result) => {
-        this.loading = false;
-        this.router.navigate(['/account']);
+        this.onLoadingChange.emit(false);
+        this.showSuccess();
       },
       (error) => {
-        this.loading = false;
-        this.errorMessage = 'There was an error saving your name.';
+        this.onLoadingChange.emit(false);
+        this.showDanger();
       }
     );
   }

@@ -39,7 +39,11 @@
           <ng-container ngbNavItem>
             <a ngbNavLink><b>Contact</b></a>
             <ng-template ngbNavContent>
-              <ctacu-edit-contact [user]="user"></ctacu-edit-contact>
+              <ctacu-edit-contact
+                [user]="user"
+                [loading]="loading"
+                (onLoadingChange)="setLoading($event)"
+              ></ctacu-edit-contact>
             </ng-template>
           </ng-container>
           <ng-container ngbNavItem>
