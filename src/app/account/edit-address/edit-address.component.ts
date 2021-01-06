@@ -1,7 +1,17 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { passwordChecker } from 'src/app/functions/password-checker';
+import { AuthService } from 'src/app/services/auth.service';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
+import { NotificationService } from 'src/app/services/notification.service';
 import { IUser, User } from 'src/app/types/user';
 
 @Component({
@@ -10,14 +20,15 @@ import { IUser, User } from 'src/app/types/user';
   styleUrls: ['./edit-address.component.scss'],
 })
 export class EditAddressComponent implements OnInit {
+  @ViewChild('successTpl') private successTpl: TemplateRef<any>;
+  @ViewChild('dangerTpl') private dangerTpl: TemplateRef<any>;
   submitted = false;
   editForm: FormGroup;
-  errorMessage = '';
-  loading = false;
 
   @Input() user: IUser;
+  @Input() loading: boolean;
 
-  @Output() onUserChange = new EventEmitter<User>();
+  @Output() onLoadingChange = new EventEmitter<boolean>();
 
   readonly streetMinLength = +this.formValidationRuleService.streetMinLength;
   readonly streetMaxLength = +this.formValidationRuleService.streetMaxLength;
@@ -36,7 +47,9 @@ export class EditAddressComponent implements OnInit {
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly formValidationRuleService: FormValidationRuleService
+    private readonly authService: AuthService,
+    private readonly formValidationRuleService: FormValidationRuleService,
+    private readonly notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -70,20 +83,65 @@ export class EditAddressComponent implements OnInit {
   }
 
   onSubmit(form: FormGroup, user: IUser): void {
-    this.errorMessage = '';
     if (!this.submitted) {
       this.submitted = true;
     }
     if (form.valid) {
-      this.loading = true;
+      this.onLoadingChange.emit(true);
       const updatedUser = {
         ...user,
-        street: form.get('addressGroup.street').value as string,
-        city: form.get('addressGroup.city').value as string,
-        state: form.get('addressGroup.state').value as string,
-        zip: form.get('addressGroup.zip').value as string,
-      } as User;
-      this.onUserChange.emit(updatedUser);
+        address: {
+          ...user.address,
+          street: form.get('addressGroup.street').value as string,
+          city: form.get('addressGroup.city').value as string,
+          state: form.get('addressGroup.state').value as string,
+          zip: form.get('addressGroup.zip').value as string,
+        },
+      } as IUser;
+      this.saveUser(form, updatedUser);
     }
+  }
+
+  resetForm(form: FormGroup, user: IUser): void {
+    this.submitted = false;
+    const address = user.address;
+    form.reset();
+    form.patchValue({
+      addressGroup: {
+        street: address.street as string,
+        city: address.city as string,
+        state: address.state as string,
+        zip: address.zip as string,
+        country: address.country as string,
+      },
+    });
+  }
+
+  private showSuccess(): void {
+    this.notificationService.show(this.successTpl, {
+      classname: 'bg-success text-light',
+      delay: 10000,
+    });
+  }
+
+  private showDanger(): void {
+    this.notificationService.show(this.dangerTpl, {
+      classname: 'bg-danger text-light',
+      delay: 15000,
+    });
+  }
+
+  private saveUser(form: FormGroup, user: IUser): void {
+    this.authService.saveUser(user).subscribe(
+      (result) => {
+        this.onLoadingChange.emit(false);
+        this.showSuccess();
+        this.resetForm(form, user);
+      },
+      (error) => {
+        this.onLoadingChange.emit(false);
+        this.showDanger();
+      }
+    );
   }
 }

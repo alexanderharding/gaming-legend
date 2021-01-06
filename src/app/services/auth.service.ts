@@ -38,7 +38,7 @@ export class AuthService {
   signIn(email: string, password: string): Observable<boolean> {
     const userEmail = email.trim().toLowerCase();
     return this.http
-      .get<IUser[]>(`${this.baseUrl}/users/?email=${userEmail}`)
+      .get<IUser[]>(`${this.baseUrl}/users/?contact.email=${userEmail}`)
       .pipe(
         delay(1000),
         retry(3),

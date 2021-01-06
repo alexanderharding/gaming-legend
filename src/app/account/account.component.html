@@ -52,7 +52,11 @@
               ><b>{{ user.address.street ? "" : "! " }}Address</b></a
             >
             <ng-template ngbNavContent>
-              <ctacu-edit-address [user]="user"></ctacu-edit-address>
+              <ctacu-edit-address
+                [user]="user"
+                [loading]="loading"
+                (onLoadingChange)="setLoading($event)"
+              ></ctacu-edit-address>
             </ng-template>
           </ng-container>
           <ng-container ngbNavItem>
