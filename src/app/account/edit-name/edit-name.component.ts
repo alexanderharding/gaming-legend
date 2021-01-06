@@ -29,6 +29,7 @@ export class EditNameComponent implements OnInit {
   editForm: FormGroup;
 
   @Input() user: IUser;
+  @Input() loading: boolean;
 
   @Output() onLoadingChange = new EventEmitter<boolean>();
 

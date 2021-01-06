@@ -16,7 +16,7 @@
         type="submit"
         value="{{ editForm.invalid && submitted ? '! ' : '' }}Save"
         class="btn btn-sm"
-        [disabled]="editForm.invalid && submitted"
+        [disabled]="(editForm.invalid && submitted) || loading"
         [ngClass]="{
           'btn-success': editForm.valid || !submitted,
           'btn-outline-danger': editForm.invalid && submitted
@@ -27,6 +27,7 @@
         value="Cancel"
         class="btn btn-sm btn-danger ml-2"
         (click)="resetForm(user)"
+        [disabled]="loading"
       />
     </div>
   </form>

@@ -153,6 +153,7 @@ export class EditContactComponent implements OnInit {
       (result) => {
         this.onLoadingChange.emit(false);
         this.showSuccess();
+        this.resetForm(form, user);
       },
       (error) => {
         this.onLoadingChange.emit(false);
