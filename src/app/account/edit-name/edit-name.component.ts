@@ -25,12 +25,13 @@ export class EditNameComponent implements OnInit {
   readonly nameMinLength = +this.formValidationRuleService.nameMinLength;
   readonly nameMaxLength = +this.formValidationRuleService.nameMaxLength;
 
-  // public get hasChanged() : boolean {
-  //   return (
-  //     JSON.stringify(this.editForm.get('nameGroup').value) !==
-  //     JSON.stringify(this.editForm.get('nameGroup').value)
-  //   );
-  // }
+  get hasChanged(): boolean {
+    const formValue = JSON.stringify(
+      this.editForm.get('nameGroup').value
+    ).toLowerCase();
+    const userNameValue = JSON.stringify(this.user.name).toLowerCase();
+    return formValue !== userNameValue;
+  }
 
   constructor(
     private readonly fb: FormBuilder,

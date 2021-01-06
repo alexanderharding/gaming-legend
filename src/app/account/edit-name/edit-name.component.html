@@ -21,14 +21,14 @@
       [parentForm]="editForm"
       [submitted]="submitted"
       [user]="user"
-      pageTitle="{{ editForm.dirty ? 'Edit Full Name' : '' }}"
+      pageTitle="{{ hasChanged ? 'Edit Full Name' : '' }}"
     ></ctacu-name-form>
     <ctacu-current-password-form
-      *ngIf="editForm.dirty"
+      *ngIf="hasChanged"
       [parentForm]="editForm"
       [submitted]="submitted"
     ></ctacu-current-password-form>
-    <div *ngIf="editForm.dirty" class="d-flex">
+    <div *ngIf="hasChanged" class="d-flex">
       <input
         type="submit"
         value="{{ editForm.invalid && submitted ? '! ' : '' }}Save"
