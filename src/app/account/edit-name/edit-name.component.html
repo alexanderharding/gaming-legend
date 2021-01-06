@@ -1,5 +1,5 @@
 <div class="py-3">
-  <form [formGroup]="editForm" (ngSubmit)="onSubmit(editForm, user)" novalidate>
+  <form [formGroup]="editForm" (ngSubmit)="onSubmit(editForm)" novalidate>
     <ctacu-name-form
       [parentForm]="editForm"
       [submitted]="submitted"
@@ -26,7 +26,7 @@
         type="button"
         value="Cancel"
         class="btn btn-sm btn-danger ml-2"
-        (click)="resetForm(user)"
+        (click)="resetForm(editForm, user)"
         [disabled]="loading"
       />
     </div>

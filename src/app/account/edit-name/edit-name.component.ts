@@ -22,11 +22,11 @@ import { IUser, User } from 'src/app/types/user';
   styleUrls: ['./edit-name.component.scss'],
 })
 export class EditNameComponent implements OnInit {
-  @ViewChild('successTpl') private successTpl: TemplateRef<any>;
-  @ViewChild('dangerTpl') private dangerTpl: TemplateRef<any>;
-
   submitted = false;
   editForm: FormGroup;
+
+  @ViewChild('successTpl') private successTpl: TemplateRef<any>;
+  @ViewChild('dangerTpl') private dangerTpl: TemplateRef<any>;
 
   @Input() user: IUser;
   @Input() loading: boolean;
@@ -78,32 +78,25 @@ export class EditNameComponent implements OnInit {
     });
   }
 
-  onSubmit(form: FormGroup, user: IUser): void {
+  onSubmit(form: FormGroup): void {
     if (!this.submitted) {
       this.submitted = true;
     }
     if (form.valid) {
       this.onLoadingChange.emit(true);
-      const updatedUser = {
-        ...user,
-        name: {
-          firstName: form.get('nameGroup.firstName').value as string,
-          lastName: form.get('nameGroup.lastName').value as string,
-        },
-      } as User;
-      this.saveUser(updatedUser);
+
+      this.saveUser(form);
     }
   }
 
-  resetForm(user: User): void {
-    this.submitted = false;
+  resetForm(form: FormGroup, user: IUser): void {
     const name = user.name;
-    this.editForm.reset();
-    this.editForm.patchValue({
-      nameGroup: {
-        firstName: name.firstName,
-        lastName: name.lastName,
-      },
+    const nameControl = form.get('nameGroup');
+    this.submitted = false;
+    form.reset();
+    nameControl.patchValue({
+      firstName: name.firstName,
+      lastName: name.lastName,
     });
   }
 
@@ -120,11 +113,19 @@ export class EditNameComponent implements OnInit {
       delay: 15000,
     });
   }
-  private saveUser(user: User): void {
-    this.authService.saveUser(user).subscribe(
-      (result) => {
+
+  private saveUser(form: FormGroup): void {
+    const updatedUser = {
+      ...this.user,
+      name: {
+        firstName: form.get('nameGroup.firstName').value as string,
+        lastName: form.get('nameGroup.lastName').value as string,
+      },
+    } as User;
+    this.authService.saveUser(updatedUser).subscribe(
+      (user) => {
         this.onLoadingChange.emit(false);
-        this.resetForm(result);
+        this.resetForm(form, user);
         this.showSuccess();
       },
       (error) => {
