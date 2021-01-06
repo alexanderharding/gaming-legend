@@ -16,6 +16,7 @@ import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
 /* Guards */
 import { AuthGuard } from './account/auth.guard';
 import { UserGuard } from './user/user.guard';
+import { NotificationsContainerComponent } from './notifications-container/notifications-container.component';
 
 @NgModule({
   imports: [
@@ -32,6 +33,7 @@ import { UserGuard } from './user/user.guard';
     WelcomeComponent,
     NotFoundComponent,
     ConfirmModalComponent,
+    NotificationsContainerComponent,
   ],
   providers: [AuthGuard, UserGuard],
   bootstrap: [AppComponent],
