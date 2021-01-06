@@ -94,7 +94,7 @@ export class EditNameComponent implements OnInit {
     const nameControl = form.get('nameGroup');
     this.submitted = false;
     form.reset();
-    nameControl.patchValue({
+    nameControl.setValue({
       firstName: name.firstName,
       lastName: name.lastName,
     });

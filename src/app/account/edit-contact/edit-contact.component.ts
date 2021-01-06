@@ -81,31 +81,16 @@ export class EditContactComponent implements OnInit {
     });
   }
 
-  onSubmit(form: FormGroup, user: IUser): void {
+  onSubmit(form: FormGroup): void {
     if (!this.submitted) {
       this.submitted = true;
     }
     if (form.valid) {
       this.onLoadingChange.emit(true);
       if (this.hasEmailChanged) {
-        const email = this.editForm.get('contactGroup.email').value as string;
-        this.authService.checkForUser(email).subscribe(
-          (result) => {
-            if (result) {
-              this.onLoadingChange.emit(false);
-              this.emailTakenMessage = `${email} is already registered to an
-               account.`;
-            } else {
-              this.saveUser(form, user);
-            }
-          },
-          (error) => {
-            this.onLoadingChange.emit(false);
-            this.showDanger();
-          }
-        );
+        this.checkForUser(form);
       } else {
-        this.saveUser(form, user);
+        this.saveUser(form);
       }
     }
   }
@@ -117,13 +102,12 @@ export class EditContactComponent implements OnInit {
   resetForm(form: FormGroup, user: IUser): void {
     this.submitted = false;
     const contact = user.contact;
+    const contactControl = form.get('contactGroup');
     form.reset();
-    form.patchValue({
-      contactGroup: {
-        phone: contact.phone as string,
-        email: contact.email as string,
-        confirmEmail: contact.email as string,
-      },
+    contactControl.setValue({
+      phone: contact.phone as string,
+      email: contact.email as string,
+      confirmEmail: contact.email as string,
     });
   }
 
@@ -141,16 +125,36 @@ export class EditContactComponent implements OnInit {
     });
   }
 
-  private saveUser(form: FormGroup, user: IUser): void {
+  private checkForUser(form: FormGroup): void {
+    const emailControl = this.editForm.get('contactGroup.email');
+    this.authService.checkForUser(emailControl.value).subscribe(
+      (result) => {
+        if (result) {
+          this.onLoadingChange.emit(false);
+          this.emailTakenMessage = `${emailControl.value} is already registered
+          to an account.`;
+        } else {
+          this.saveUser(form);
+        }
+      },
+      (error) => {
+        this.onLoadingChange.emit(false);
+        this.showDanger();
+      }
+    );
+  }
+
+  private saveUser(form: FormGroup): void {
     const updatedUser = {
-      ...user,
+      ...this.user,
       contact: {
+        ...this.user.contact,
         phone: form.get('contactGroup.phone').value as string,
         email: form.get('contactGroup.email').value as string,
       },
     } as IUser;
     this.authService.saveUser(updatedUser).subscribe(
-      (result) => {
+      (user) => {
         this.onLoadingChange.emit(false);
         this.showSuccess();
         this.resetForm(form, user);
