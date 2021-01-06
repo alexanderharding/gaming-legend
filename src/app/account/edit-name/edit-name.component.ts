@@ -1,10 +1,19 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { first, tap } from 'rxjs/operators';
 import { passwordChecker } from 'src/app/functions/password-checker';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
+import { NotificationService } from 'src/app/services/notification.service';
 import { IUser, User } from 'src/app/types/user';
 
 @Component({
@@ -13,9 +22,11 @@ import { IUser, User } from 'src/app/types/user';
   styleUrls: ['./edit-name.component.scss'],
 })
 export class EditNameComponent implements OnInit {
+  @ViewChild('successTpl') private successTpl: TemplateRef<any>;
+  @ViewChild('dangerTpl') private dangerTpl: TemplateRef<any>;
+
   submitted = false;
   editForm: FormGroup;
-  errorMessage = '';
 
   @Input() user: IUser;
 
@@ -35,7 +46,8 @@ export class EditNameComponent implements OnInit {
   constructor(
     private readonly fb: FormBuilder,
     private readonly formValidationRuleService: FormValidationRuleService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -66,7 +78,6 @@ export class EditNameComponent implements OnInit {
   }
 
   onSubmit(form: FormGroup, user: IUser): void {
-    this.errorMessage = '';
     if (!this.submitted) {
       this.submitted = true;
     }
@@ -95,15 +106,29 @@ export class EditNameComponent implements OnInit {
     });
   }
 
+  private showSuccess(): void {
+    this.notificationService.show(this.successTpl, {
+      classname: 'bg-success text-light',
+      delay: 10000,
+    });
+  }
+
+  private showDanger(): void {
+    this.notificationService.show(this.dangerTpl, {
+      classname: 'bg-danger text-light',
+      delay: 15000,
+    });
+  }
   private saveUser(user: User): void {
     this.authService.saveUser(user).subscribe(
       (result) => {
         this.onLoadingChange.emit(false);
         this.resetForm(result);
+        this.showSuccess();
       },
       (error) => {
         this.onLoadingChange.emit(false);
-        this.errorMessage = 'There was an error saving your name.';
+        this.showDanger();
       }
     );
   }

@@ -8,7 +8,10 @@ import { NotificationService } from '../services/notification.service';
   host: { '[class.ngb-toasts]': 'true' },
 })
 export class NotificationsContainerComponent implements OnInit {
-  notifications = this.notificationService.notifications;
+  get notifications(): any {
+    return this.notificationService.notifications;
+  }
+
   constructor(private readonly notificationService: NotificationService) {}
 
   ngOnInit(): void {}

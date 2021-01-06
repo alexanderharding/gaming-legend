@@ -3,7 +3,7 @@
   [class]="n.classname"
   [autohide]="true"
   [delay]="n.delay || 5000"
-  (hidden)="remove(n)"
+  (hide)="remove(n)"
 >
   <ng-template [ngIf]="isTemplate(n)" [ngIfElse]="text">
     <ng-template [ngTemplateOutlet]="n.textOrTpl"></ng-template>
