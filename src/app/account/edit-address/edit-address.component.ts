@@ -20,10 +20,11 @@ import { IUser, User } from 'src/app/types/user';
   styleUrls: ['./edit-address.component.scss'],
 })
 export class EditAddressComponent implements OnInit {
-  @ViewChild('successTpl') private successTpl: TemplateRef<any>;
-  @ViewChild('dangerTpl') private dangerTpl: TemplateRef<any>;
   submitted = false;
   editForm: FormGroup;
+
+  @ViewChild('successTpl') private successTpl: TemplateRef<any>;
+  @ViewChild('dangerTpl') private dangerTpl: TemplateRef<any>;
 
   @Input() user: IUser;
   @Input() loading: boolean;
@@ -38,6 +39,9 @@ export class EditAddressComponent implements OnInit {
     .zipPattern as RegExp;
 
   get hasChanged(): boolean {
+    if (!this.user.address) {
+      return true;
+    }
     const address = JSON.stringify(
       this.editForm.get('addressGroup').value
     ).toLowerCase();

@@ -6,6 +6,7 @@ import { debounceTime } from 'rxjs/operators';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
 
 import { IUser } from 'src/app/types/user';
+import { UserAddress } from 'src/app/types/user-address';
 
 @Component({
   selector: 'ctacu-address-form',
@@ -67,8 +68,8 @@ export class AddressFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscribeToControls();
-    if (this.user) {
-      this.setUserData(this.user);
+    if (this.user.address) {
+      this.setUserAddress(this.user.address);
     }
   }
 
@@ -139,15 +140,13 @@ export class AddressFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  private setUserData(user: IUser): void {
-    const address = user.address;
-    this.parentForm.patchValue({
-      addressGroup: {
-        street: address.street,
-        city: address.city,
-        state: address.state,
-        zip: address.zip,
-      },
+  private setUserAddress(address: UserAddress): void {
+    const addressControl = this.parentForm.get('addressGroup');
+    addressControl.patchValue({
+      street: address.street,
+      city: address.city,
+      state: address.state,
+      zip: address.zip,
     });
   }
 

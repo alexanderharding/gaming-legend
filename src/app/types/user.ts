@@ -6,7 +6,7 @@ import { UserName } from './user-name';
 export interface IUser {
   name: UserName;
   contact: UserContact;
-  address: UserAddress;
+  address?: UserAddress;
   password: string;
   isAdmin: boolean;
   id: number;
@@ -15,9 +15,9 @@ export class User {
   constructor(
     public name: UserName,
     public contact: UserContact,
-    public address: UserAddress,
     public password: string,
     public isAdmin: boolean,
+    public address?: UserAddress,
     public id?: number
   ) {}
 }

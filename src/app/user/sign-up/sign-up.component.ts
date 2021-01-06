@@ -106,41 +106,7 @@ export class SignUpComponent implements OnInit {
     this.setEmailTakenMessage('');
     if (form.valid) {
       this.loadingChange.emit(true);
-      const email = form.get('contactGroup.email').value as string;
-      this.checkForUser(email).subscribe(
-        (result) => {
-          if (result) {
-            this.loadingChange.emit(false);
-            this.setEmailTakenMessage(`"${email}" is already registered to an
-            account.`);
-          } else {
-            const user = UserMaker.create({
-              name: UserNameMaker.create({
-                firstName: form.get('nameGroup.firstName').value as string,
-                lastName: form.get('nameGroup.lastName').value as string,
-              } as UserName),
-              contact: UserContactMaker.create({
-                phone: form.get('contactGroup.phone').value as string,
-                email: form.get('contactGroup.email').value as string,
-              } as UserContact),
-              address: UserAddressMaker.create({
-                street: '',
-                city: '',
-                state: '',
-                zip: '',
-                country: 'USA',
-              } as UserAddress),
-              password: form.get('passwordGroup.password').value as string,
-              isAdmin: false,
-            }) as User;
-            this.saveUser(user);
-          }
-        },
-        (error) => {
-          this.loadingChange.emit(false);
-          this.signUpError = 'There was an error signing up for an account.';
-        }
-      );
+      this.checkForUser(form);
     }
   }
 
@@ -182,11 +148,38 @@ export class SignUpComponent implements OnInit {
     return +(Math.floor(Math.random() * (max - min)) + min).toFixed();
   }
 
-  private checkForUser(email: string): Observable<boolean> {
-    return this.authService.checkForUser(email);
+  private checkForUser(form: FormGroup): void {
+    const emailControl = form.get('contactGroup.email');
+    this.authService.checkForUser(emailControl.value).subscribe(
+      (result) => {
+        if (result) {
+          this.loadingChange.emit(false);
+          this.setEmailTakenMessage(`"${emailControl.value}" is already
+              registered to an account.`);
+        } else {
+          this.saveUser(form);
+        }
+      },
+      (error) => {
+        this.loadingChange.emit(false);
+        this.signUpError = 'There was an error signing up for an account.';
+      }
+    );
   }
 
-  private saveUser(user: User): void {
+  private saveUser(form: FormGroup): void {
+    const user = UserMaker.create({
+      name: UserNameMaker.create({
+        firstName: form.get('nameGroup.firstName').value as string,
+        lastName: form.get('nameGroup.lastName').value as string,
+      } as UserName),
+      contact: UserContactMaker.create({
+        phone: form.get('contactGroup.phone').value as string,
+        email: form.get('contactGroup.email').value as string,
+      } as UserContact),
+      password: form.get('passwordGroup.password').value as string,
+      isAdmin: false,
+    }) as User;
     this.authService.saveUser(user).subscribe(
       (result) => {
         this.loadingChange.emit(false);
