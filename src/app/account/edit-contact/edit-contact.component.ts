@@ -15,7 +15,7 @@ import { passwordChecker } from 'src/app/functions/password-checker';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
 import { NotificationService } from 'src/app/services/notification.service';
-import { IUser } from 'src/app/types/user';
+import { IUser, User } from 'src/app/types/user';
 
 @Component({
   selector: 'ctacu-edit-contact',
@@ -48,16 +48,11 @@ export class EditContactComponent implements OnInit {
     return contactGroup !== userContactValue;
   }
 
-  // private get hasEmailChanged(): boolean {
-  //   const contactGroup = JSON.stringify(
-  //     this.editForm.get('contactGroup').value
-  //   ).toLowerCase();
-  //   const userContactValue = JSON.stringify({
-  //     ...this.user.contact,
-  //     confirmEmail: this.user.contact.email,
-  //   }).toLowerCase();
-  //   return contactGroup !== userContactValue;
-  // }
+  private get hasEmailChanged(): boolean {
+    const emailControl = this.editForm.get('contactGroup.email');
+    const userEmail = this.user.contact.email.toLowerCase();
+    return emailControl.value.toLowerCase() !== userEmail;
+  }
 
   constructor(
     private readonly fb: FormBuilder,
@@ -85,36 +80,33 @@ export class EditContactComponent implements OnInit {
       ),
     });
   }
+
   onSubmit(form: FormGroup, user: IUser): void {
     if (!this.submitted) {
       this.submitted = true;
     }
     if (form.valid) {
       this.onLoadingChange.emit(true);
-      const email = this.editForm.get('contactGroup.email').value as string;
-      this.authService.checkForUser(email).subscribe(
-        (result) => {
-          if (result) {
-            console.log(result);
-            this.onLoadingChange.emit(false);
-            this.emailTakenMessage = `${email} is already registered to an
+      if (this.hasEmailChanged) {
+        const email = this.editForm.get('contactGroup.email').value as string;
+        this.authService.checkForUser(email).subscribe(
+          (result) => {
+            if (result) {
+              this.onLoadingChange.emit(false);
+              this.emailTakenMessage = `${email} is already registered to an
                account.`;
-          } else {
-            const updatedUser = {
-              ...user,
-              contact: {
-                phone: form.get('contactGroup.phone').value as string,
-                email: form.get('contactGroup.email').value as string,
-              },
-            } as IUser;
-            this.saveUser(updatedUser);
+            } else {
+              this.saveUser(form, user);
+            }
+          },
+          (error) => {
+            this.onLoadingChange.emit(false);
+            this.showDanger();
           }
-        },
-        (error) => {
-          this.onLoadingChange.emit(false);
-          this.showDanger();
-        }
-      );
+        );
+      } else {
+        this.saveUser(form, user);
+      }
     }
   }
 
@@ -149,8 +141,15 @@ export class EditContactComponent implements OnInit {
     });
   }
 
-  private saveUser(user: IUser): void {
-    this.authService.saveUser(user).subscribe(
+  private saveUser(form: FormGroup, user: IUser): void {
+    const updatedUser = {
+      ...user,
+      contact: {
+        phone: form.get('contactGroup.phone').value as string,
+        email: form.get('contactGroup.email').value as string,
+      },
+    } as IUser;
+    this.authService.saveUser(updatedUser).subscribe(
       (result) => {
         this.onLoadingChange.emit(false);
         this.showSuccess();
