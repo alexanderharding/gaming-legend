@@ -30,16 +30,17 @@
         (onValueChange)="setEmailTakenMessage($event)"
       ></ctacu-contact-form>
       <ctacu-current-password-form
+        *ngIf="editForm.dirty"
         [parentForm]="editForm"
         [submitted]="submitted"
       ></ctacu-current-password-form>
-      <div class="d-flex">
+      <div *ngIf="editForm.dirty" class="d-flex">
         <input
           type="submit"
           value="{{
             (editForm.invalid || emailTakenMessage) && submitted ? '! ' : ''
           }}Save"
-          class="btn"
+          class="btn btn-sm"
           [disabled]="
             ((editForm.invalid || emailTakenMessage) && submitted) || loading
           "
@@ -52,8 +53,8 @@
         <input
           type="button"
           value="Cancel"
-          class="btn btn-danger ml-2"
-          routerLink="/account"
+          class="btn btn-sm btn-danger ml-2"
+          (click)="resetForm(editForm, user)"
         />
       </div>
     </form>

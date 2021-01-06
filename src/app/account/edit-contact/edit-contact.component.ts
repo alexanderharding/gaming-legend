@@ -103,6 +103,18 @@ export class EditContactComponent implements OnInit {
   //   return true;
   // }
 
+  resetForm(form: FormGroup, user: IUser): void {
+    const contact = user.contact;
+    form.reset();
+    form.patchValue({
+      contactGroup: {
+        phone: contact.phone as string,
+        email: contact.email as string,
+        confirmEmail: contact.email as string,
+      },
+    });
+  }
+
   private saveUser(user: IUser): void {
     this.authService.saveUser(user).subscribe(
       (result) => {
