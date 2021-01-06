@@ -34,24 +34,21 @@ export class EditPasswordComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.authService.currentUser$.pipe(first()).subscribe({
-      next: (user) =>
-        (this.editPasswordForm = this.fb.group({
-          currentPassword: [
+    this.editPasswordForm = this.fb.group({
+      currentPassword: [
+        '',
+        [Validators.required, passwordChecker(this.user.password)],
+      ],
+      passwordGroup: this.fb.group(
+        {
+          password: [
             '',
-            [Validators.required, passwordChecker(user.password)],
+            [Validators.required, Validators.pattern(this.passwordPattern)],
           ],
-          passwordGroup: this.fb.group(
-            {
-              password: [
-                '',
-                [Validators.required, Validators.pattern(this.passwordPattern)],
-              ],
-              confirmPassword: ['', [Validators.required]],
-            },
-            { validator: passwordMatcher }
-          ),
-        })),
+          confirmPassword: ['', [Validators.required]],
+        },
+        { validator: passwordMatcher }
+      ),
     });
   }
 
