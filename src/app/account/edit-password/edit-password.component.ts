@@ -60,25 +60,36 @@ export class EditPasswordComponent implements OnInit {
     }
     if (form.valid) {
       this.loadingChange.emit(true);
-      const currentPasswordControl = form.get('currentPassword');
+      const passwordControl = form.get('passwordGroup.password');
       const updatedUser = {
         ...user,
-        password: currentPasswordControl.value as string,
+        password: passwordControl.value as string,
       } as IUser;
-      this.saveUser(updatedUser);
+      this.saveUser(form, updatedUser);
     }
   }
-  resetForm(): void {
-    this.editPasswordForm.reset();
+
+  resetForm(form: FormGroup): void {
+    form.reset();
     this.submitted = false;
   }
 
-  private saveUser(user: IUser): void {
+  private updateCurrentPasswordValidators(form: FormGroup, user: IUser): void {
+    const currentPasswordControl = form.get('currentPassword');
+    currentPasswordControl.setValidators([
+      Validators.required,
+      passwordChecker(user.password),
+    ]);
+    currentPasswordControl.updateValueAndValidity();
+  }
+
+  private saveUser(form: FormGroup, user: IUser): void {
     this.authService.saveUser(user).subscribe(
       (result) => {
         this.successMessage = 'New password saved!';
+        this.resetForm(form);
+        this.updateCurrentPasswordValidators(form, user);
         this.loadingChange.emit(false);
-        this.resetForm();
       },
       (error) => {
         this.errorMessage = 'There was an error saving your new password.';
