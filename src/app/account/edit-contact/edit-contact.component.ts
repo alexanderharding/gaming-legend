@@ -27,12 +27,16 @@ export class EditContactComponent implements OnInit {
   private readonly phonePattern = this.formValidationRuleService
     .phonePattern as RegExp;
 
-  // get hasChanged(): boolean {
-  //   // const form = this.editForm.get('contactGroup').value.delete['confirmEmail'];
-  //   // const formValue = JSON.stringify(form).toLowerCase();
-  //   const userContactValue = JSON.stringify(this.user.contact).toLowerCase();
-  //   return formValue !== userContactValue;
-  // }
+  get hasChanged(): boolean {
+    const contactGroup = JSON.stringify(
+      this.editForm.get('contactGroup').value
+    ).toLowerCase();
+    const userContactValue = JSON.stringify({
+      ...this.user.contact,
+      confirmEmail: this.user.contact.email,
+    }).toLowerCase();
+    return contactGroup !== userContactValue;
+  }
 
   constructor(
     private readonly fb: FormBuilder,

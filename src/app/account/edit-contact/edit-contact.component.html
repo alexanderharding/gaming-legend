@@ -16,21 +16,22 @@
   >
     {{ errorMessage }}
   </ngb-alert>
+
   <form [formGroup]="editForm" (ngSubmit)="onSubmit(editForm, user)" novalidate>
     <ctacu-contact-form
       [parentForm]="editForm"
       [submitted]="submitted"
       [user]="user"
       [emailTakenMessage]="emailTakenMessage"
-      pageTitle="{{ editForm.dirty ? 'Edit Contact Information' : '' }}"
+      pageTitle="{{ hasChanged ? 'Edit Contact Information' : '' }}"
       (onValueChange)="setEmailTakenMessage($event)"
     ></ctacu-contact-form>
     <ctacu-current-password-form
-      *ngIf="editForm.dirty"
+      *ngIf="hasChanged"
       [parentForm]="editForm"
       [submitted]="submitted"
     ></ctacu-current-password-form>
-    <div *ngIf="editForm.dirty" class="d-flex">
+    <div *ngIf="hasChanged" class="d-flex">
       <input
         type="submit"
         value="{{
