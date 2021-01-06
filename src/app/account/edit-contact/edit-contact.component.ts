@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, Form } from '@angular/forms';
 import { Router } from '@angular/router';
 import { first, tap } from 'rxjs/operators';
@@ -22,9 +22,17 @@ export class EditContactComponent implements OnInit {
 
   loading = false;
 
+  @Input() user: IUser;
+
   private readonly phonePattern = this.formValidationRuleService
     .phonePattern as RegExp;
-  readonly user$ = this.authService.currentUser$;
+
+  // get hasChanged(): boolean {
+  //   // const form = this.editForm.get('contactGroup').value.delete['confirmEmail'];
+  //   // const formValue = JSON.stringify(form).toLowerCase();
+  //   const userContactValue = JSON.stringify(this.user.contact).toLowerCase();
+  //   return formValue !== userContactValue;
+  // }
 
   constructor(
     private readonly fb: FormBuilder,
@@ -34,25 +42,22 @@ export class EditContactComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.user$.pipe(first()).subscribe({
-      next: (user) =>
-        (this.editForm = this.fb.group({
-          currentPassword: [
+    this.editForm = this.fb.group({
+      currentPassword: [
+        '',
+        [Validators.required, passwordChecker(this.user.password)],
+      ],
+      contactGroup: this.fb.group(
+        {
+          phone: [
             '',
-            [Validators.required, passwordChecker(user.password)],
+            [Validators.required, Validators.pattern(this.phonePattern)],
           ],
-          contactGroup: this.fb.group(
-            {
-              phone: [
-                '',
-                [Validators.required, Validators.pattern(this.phonePattern)],
-              ],
-              email: ['', [Validators.required, Validators.email]],
-              confirmEmail: ['', Validators.required],
-            },
-            { validator: emailMatcher }
-          ),
-        })),
+          email: ['', [Validators.required, Validators.email]],
+          confirmEmail: ['', Validators.required],
+        },
+        { validator: emailMatcher }
+      ),
     });
   }
   onSubmit(form: FormGroup, user: IUser): void {
@@ -91,19 +96,8 @@ export class EditContactComponent implements OnInit {
     this.emailTakenMessage = message;
   }
 
-  // private hasValueChanged(form: FormGroup, user: IUser): boolean {
-  //   const phone = form.get('contactGroup.phone').value as string;
-  //   const email = form.get('contactGroup.email').value as string;
-  //   if (
-  //     email.toLowerCase() === user.email.toLowerCase() &&
-  //     phone.toLowerCase() === user.phone.toLowerCase()
-  //   ) {
-  //     return false;
-  //   }
-  //   return true;
-  // }
-
   resetForm(form: FormGroup, user: IUser): void {
+    this.submitted = false;
     const contact = user.contact;
     form.reset();
     form.patchValue({
