@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import {
   AbstractControl,
@@ -10,20 +16,22 @@ import { debounceTime, first } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { IUser } from 'src/app/types/user';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss'],
 })
 export class SignInComponent implements OnInit, OnDestroy {
-  // users$ = this.authService.users$;
+  @ViewChild('successTpl') private successTpl: TemplateRef<any>;
+  @ViewChild('dangerTpl') private dangerTpl: TemplateRef<any>;
+
   users: IUser[];
   private readonly subscriptions: Subscription[] = [];
 
   submitted = false;
   signInForm: FormGroup;
   signInMessage: string;
-  signInError: string;
 
   loading = false;
 
@@ -44,7 +52,8 @@ export class SignInComponent implements OnInit, OnDestroy {
     private readonly authService: AuthService,
     private readonly fb: FormBuilder,
     private readonly router: Router,
-    private readonly route: ActivatedRoute
+    private readonly route: ActivatedRoute,
+    private readonly notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -80,7 +89,6 @@ export class SignInComponent implements OnInit, OnDestroy {
 
   onSubmit(form: FormGroup): void {
     this.signInMessage = '';
-    this.signInError = '';
     if (!this.submitted) {
       this.submitted = true;
     }
@@ -97,6 +105,7 @@ export class SignInComponent implements OnInit, OnDestroy {
       (result) => {
         this.loading = false;
         if (result) {
+          this.showSuccess();
           if (this.returnLink) {
             this.router.navigate([`/${this.returnLink}`]);
             return;
@@ -108,14 +117,27 @@ export class SignInComponent implements OnInit, OnDestroy {
       },
       (error) => {
         this.loading = false;
-        console.error(error);
-        this.signInError = 'There was an error signing in.';
+        this.showDanger();
       }
     );
   }
 
   setLoading(value: boolean): void {
     this.loading = value;
+  }
+
+  private showSuccess(): void {
+    this.notificationService.show(this.successTpl, {
+      classname: 'bg-success text-light',
+      delay: 5000,
+    });
+  }
+
+  private showDanger(): void {
+    this.notificationService.show(this.dangerTpl, {
+      classname: 'bg-danger text-light',
+      delay: 10000,
+    });
   }
 
   private populateTestData(): void {
