@@ -99,11 +99,10 @@ export class NameFormComponent implements OnInit, OnDestroy {
 
   private setUserData(user: IUser): void {
     const name = user.name;
-    this.parentForm.patchValue({
-      nameGroup: {
-        firstName: name.firstName,
-        lastName: name.lastName,
-      },
+    const nameControl = this.parentForm.get('nameGroup');
+    nameControl.setValue({
+      firstName: name.firstName,
+      lastName: name.lastName,
     });
   }
 
