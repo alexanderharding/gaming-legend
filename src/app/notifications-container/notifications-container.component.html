@@ -4,6 +4,7 @@
   [autohide]="true"
   [delay]="n.delay || 5000"
   (hide)="remove(n)"
+  (click)="remove(n)"
 >
   <ng-template [ngIf]="isTemplate(n)" [ngIfElse]="text">
     <ng-template [ngTemplateOutlet]="n.textOrTpl"></ng-template>
