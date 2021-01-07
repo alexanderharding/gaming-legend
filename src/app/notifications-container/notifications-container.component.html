@@ -3,7 +3,7 @@
   [class]="n.className"
   [autohide]="true"
   [delay]="n.delay || 5000"
-  (hide)="remove(n)"
+  (hidden)="remove(n)"
   (click)="remove(n)"
 >
   <ng-template [ngTemplateOutlet]="n.templateRef"></ng-template>
