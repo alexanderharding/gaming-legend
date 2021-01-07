@@ -3,7 +3,7 @@
     <ctacu-contact-form
       [parentForm]="editForm"
       [submitted]="submitted"
-      [user]="user"
+      [userContact]="user.contact"
       [emailTakenMessage]="emailTakenMessage"
       pageTitle="{{ hasChanged ? 'Edit Contact Information' : '' }}"
       (onValueChange)="setEmailTakenMessage($event)"
