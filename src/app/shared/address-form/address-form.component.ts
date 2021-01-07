@@ -5,7 +5,6 @@ import { debounceTime } from 'rxjs/operators';
 
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
 
-import { IUser } from 'src/app/types/user';
 import { UserAddress } from 'src/app/types/user-address';
 
 @Component({
@@ -20,7 +19,7 @@ export class AddressFormComponent implements OnInit, OnDestroy {
   @Input() parentForm: FormGroup;
   @Input() submitted: boolean;
   @Input() pageTitle: string;
-  @Input() user: IUser;
+  @Input() userAddress: UserAddress;
 
   private readonly streetMinLength = +this.formValidationRuleService
     .streetMinLength;
@@ -68,8 +67,8 @@ export class AddressFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscribeToControls();
-    if (this.user.address) {
-      this.setUserAddress(this.user.address);
+    if (this.userAddress) {
+      this.setUserAddress(this.userAddress);
     }
   }
 

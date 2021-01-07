@@ -13,7 +13,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { INotification } from 'src/app/types/notification';
-import { IUser, User } from 'src/app/types/user';
+import { IUser } from 'src/app/types/user';
 
 @Component({
   selector: 'ctacu-edit-address',
