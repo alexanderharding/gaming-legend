@@ -9,10 +9,7 @@ import {
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-<<<<<<< HEAD
-import { IUser } from 'src/app/types/user';
-=======
->>>>>>> d3681987011335de47ee7adcccf667b533c089df
+
 import { UserContact } from 'src/app/types/user-contact';
 
 @Component({
@@ -59,14 +56,6 @@ export class ContactFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscribeToControls();
-<<<<<<< HEAD
-    if (this.user) {
-      this.setUserData(this.user.contact);
-=======
-    if (this.userContact) {
-      this.setUserData(this.userContact);
->>>>>>> d3681987011335de47ee7adcccf667b533c089df
-    }
   }
 
   private subscribeToControls(): void {
