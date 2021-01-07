@@ -1,14 +1,10 @@
 <ngb-toast
   *ngFor="let n of notifications"
-  [class]="n.classname"
+  [class]="n.className"
   [autohide]="true"
   [delay]="n.delay || 5000"
   (hide)="remove(n)"
   (click)="remove(n)"
 >
-  <ng-template [ngIf]="isTemplate(n)" [ngIfElse]="text">
-    <ng-template [ngTemplateOutlet]="n.textOrTpl"></ng-template>
-  </ng-template>
-
-  <ng-template #text>{{ n.textOrTpl }}</ng-template>
+  <ng-template [ngTemplateOutlet]="n.templateRef"></ng-template>
 </ngb-toast>

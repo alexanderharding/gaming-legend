@@ -17,6 +17,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { IUser } from 'src/app/types/user';
 import { NotificationService } from 'src/app/services/notification.service';
+import { INotification } from 'src/app/types/notification';
 
 @Component({
   templateUrl: './sign-in.component.html',
@@ -127,17 +128,21 @@ export class SignInComponent implements OnInit, OnDestroy {
   }
 
   private showSuccess(): void {
-    this.notificationService.show(this.successTpl, {
-      classname: 'bg-success text-light',
-      delay: 5000,
-    });
+    const notification = {
+      templateRef: this.successTpl,
+      className: 'bg-success text-light',
+      delay: 10000,
+    } as INotification;
+    this.notificationService.show(notification);
   }
 
   private showDanger(): void {
-    this.notificationService.show(this.dangerTpl, {
-      classname: 'bg-danger text-light',
-      delay: 10000,
-    });
+    const notification = {
+      templateRef: this.dangerTpl,
+      className: 'bg-danger text-light',
+      delay: 15000,
+    } as INotification;
+    this.notificationService.show(notification);
   }
 
   private populateTestData(): void {

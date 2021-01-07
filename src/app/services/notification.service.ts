@@ -1,18 +1,19 @@
 import { Injectable, TemplateRef } from '@angular/core';
+import { INotification } from '../types/notification';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationService {
-  notifications: any[] = [];
+  notifications: INotification[] = [];
 
   constructor() {}
 
-  show(textOrTpl: string | TemplateRef<any>, options: any = {}): void {
-    this.notifications.push({ textOrTpl, ...options });
+  show(notification: INotification): void {
+    this.notifications.push(notification);
   }
 
-  remove(notification: any): void {
+  remove(notification: INotification): void {
     this.notifications = this.notifications.filter((t) => t !== notification);
   }
 }

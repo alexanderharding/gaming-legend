@@ -14,6 +14,7 @@ import { ICartItem } from 'src/app/types/cart-item';
 import { ConfirmModalComponent } from 'src/app/confirm-modal/confirm-modal.component';
 import { ProductResult } from 'src/app/types/product-result';
 import { NotificationService } from 'src/app/services/notification.service';
+import { INotification } from 'src/app/types/notification';
 
 @Component({
   templateUrl: './product-details.component.html',
@@ -148,18 +149,23 @@ export class ProductDetailsComponent implements OnInit {
 
   private showSuccess(name: string): void {
     this.productName = name;
-    this.notificationService.show(this.successTpl, {
-      classname: 'bg-success text-light',
+    const notification = {
+      templateRef: this.successTpl,
+
+      className: 'bg-success text-light',
       delay: 10000,
-    });
+    } as INotification;
+    this.notificationService.show(notification);
   }
 
   private showDanger(name: string): void {
     this.productName = name;
-    this.notificationService.show(this.dangerTpl, {
-      classname: 'bg-danger text-light',
+    const notification = {
+      templateRef: this.dangerTpl,
+      className: 'bg-danger text-light',
       delay: 15000,
-    });
+    } as INotification;
+    this.notificationService.show(notification);
   }
 
   private refreshCart(): void {

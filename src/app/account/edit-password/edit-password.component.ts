@@ -14,6 +14,7 @@ import { passwordMatcher } from 'src/app/functions/password-matcher';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
 import { NotificationService } from 'src/app/services/notification.service';
+import { INotification } from 'src/app/types/notification';
 import { IUser } from 'src/app/types/user';
 
 @Component({
@@ -79,17 +80,21 @@ export class EditPasswordComponent implements OnInit {
   }
 
   private showSuccess(): void {
-    this.notificationService.show(this.successTpl, {
-      classname: 'bg-success text-light',
+    const notification = {
+      templateRef: this.successTpl,
+      className: 'bg-success text-light',
       delay: 10000,
-    });
+    } as INotification;
+    this.notificationService.show(notification);
   }
 
   private showDanger(): void {
-    this.notificationService.show(this.dangerTpl, {
-      classname: 'bg-danger text-light',
+    const notification = {
+      templateRef: this.dangerTpl,
+      className: 'bg-danger text-light',
       delay: 15000,
-    });
+    } as INotification;
+    this.notificationService.show(notification);
   }
 
   private updateCurrentPasswordValidators(form: FormGroup, user: IUser): void {

@@ -1,5 +1,6 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { NotificationService } from '../services/notification.service';
+import { INotification } from '../types/notification';
 
 @Component({
   selector: 'ctacu-notifications-container',
@@ -8,7 +9,7 @@ import { NotificationService } from '../services/notification.service';
   host: { '[class.ngb-toasts]': 'true' },
 })
 export class NotificationsContainerComponent implements OnInit {
-  get notifications(): any {
+  get notifications(): INotification[] {
     return this.notificationService.notifications;
   }
 

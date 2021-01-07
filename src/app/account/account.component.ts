@@ -11,6 +11,7 @@ import { BehaviorSubject, combineLatest, EMPTY, Subscription } from 'rxjs';
 import { catchError, debounceTime, map } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 import { NotificationService } from '../services/notification.service';
+import { INotification } from '../types/notification';
 import { IOrder } from '../types/order';
 import { OrdersResult } from '../types/orders-result';
 import { IUser, User } from '../types/user';
@@ -164,10 +165,12 @@ export class AccountComponent implements OnInit, OnDestroy {
   }
 
   private showSuccess(): void {
-    this.notificationService.show(this.successTpl, {
-      classname: 'bg-success text-light',
+    const notification = {
+      templateRef: this.successTpl,
+      className: 'bg-success text-light',
       delay: 10000,
-    });
+    } as INotification;
+    this.notificationService.show(notification);
   }
 
   ngOnDestroy(): void {
