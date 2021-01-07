@@ -1,16 +1,9 @@
-import {
-  Component,
-  Input,
-  OnInit,
-  Output,
-  EventEmitter,
-  OnDestroy,
-} from '@angular/core';
-import { AbstractControl, FormGroup, Validators } from '@angular/forms';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
-import { IUser } from 'src/app/types/user';
+import { UserName } from 'src/app/types/user-name';
 
 @Component({
   selector: 'ctacu-name-form',
@@ -20,10 +13,10 @@ import { IUser } from 'src/app/types/user';
 export class NameFormComponent implements OnInit, OnDestroy {
   readonly defaultPageTitle = 'Full Name';
 
+  @Input() pageTitle: string;
   @Input() parentForm: FormGroup;
   @Input() submitted: boolean;
-  @Input() user: IUser;
-  @Input() pageTitle: string;
+  @Input() userName: UserName;
 
   private readonly subscriptions: Subscription[] = [];
   private readonly nameMinLength = this.formValidationRuleService.nameMinLength;
@@ -53,8 +46,8 @@ export class NameFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscribeToControls();
-    if (this.user) {
-      this.setUserData(this.user);
+    if (this.userName) {
+      this.setUserData(this.userName);
     }
   }
 
@@ -97,8 +90,7 @@ export class NameFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  private setUserData(user: IUser): void {
-    const name = user.name;
+  private setUserData(name: UserName): void {
     const nameControl = this.parentForm.get('nameGroup');
     nameControl.setValue({
       firstName: name.firstName,
