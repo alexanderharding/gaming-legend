@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CartService } from '../../services/cart.service';
 import { map, tap } from 'rxjs/operators';
@@ -7,6 +13,7 @@ import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ICartItem } from 'src/app/types/cart-item';
 import { ConfirmModalComponent } from 'src/app/confirm-modal/confirm-modal.component';
 import { ProductResult } from 'src/app/types/product-result';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   templateUrl: './product-details.component.html',
@@ -14,6 +21,8 @@ import { ProductResult } from 'src/app/types/product-result';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductDetailsComponent implements OnInit {
+  @ViewChild('successTpl') private successTpl: TemplateRef<any>;
+  @ViewChild('dangerTpl') private dangerTpl: TemplateRef<any>;
   private readonly productType = this.route.snapshot.paramMap.get('type');
   private readonly returnLink = this.route.snapshot.queryParamMap.get(
     'returnLink'
@@ -21,6 +30,7 @@ export class ProductDetailsComponent implements OnInit {
 
   imageIndex = 0;
   loading = false;
+  productName = '';
 
   readonly items$ = this.cartService.cartAction$.pipe(
     tap(() => this.setLoading(false))
@@ -41,7 +51,8 @@ export class ProductDetailsComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly modalService: NgbModal,
-    private readonly config: NgbModalConfig
+    private readonly config: NgbModalConfig,
+    private readonly notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -56,11 +67,14 @@ export class ProductDetailsComponent implements OnInit {
     this.cartService.saveItem(item, index).subscribe(
       (result) => {
         this.refreshCart();
+        this.showSuccess(result.name);
+        this.setLoading(false);
         this.router.navigate(['/cart']);
       },
       (error) => {
-        console.error(error);
         this.setLoading(false);
+        this.showDanger(product.name);
+        console.error(error);
       }
     );
   }
@@ -72,10 +86,11 @@ export class ProductDetailsComponent implements OnInit {
     this.cartService.saveItem(item, index).subscribe(
       (result) => {
         this.refreshCart();
+        this.showSuccess(result.name);
         const modalRef = this.modalService.open(ConfirmModalComponent);
         const instance = modalRef.componentInstance;
-        instance.title = `${product.name} Added`;
-        instance.message = `"${product.name}" added to the cart!`;
+        instance.title = `${result.name} Added`;
+        instance.message = `"${result.name}" added to the cart!`;
         instance.type = 'bg-success';
         instance.closeMessage = 'go to cart';
         instance.dismissMessage = 'keep shopping';
@@ -84,9 +99,10 @@ export class ProductDetailsComponent implements OnInit {
           (reason) => {}
         );
       },
-      (error) => (error) => {
-        console.error(error);
+      (error) => {
         this.setLoading(false);
+        this.showDanger(product.name);
+        console.error(error);
       }
     );
   }
@@ -128,6 +144,22 @@ export class ProductDetailsComponent implements OnInit {
 
   private setLoading(value: boolean): void {
     this.loading = value;
+  }
+
+  private showSuccess(name: string): void {
+    this.productName = name;
+    this.notificationService.show(this.successTpl, {
+      classname: 'bg-success text-light',
+      delay: 10000,
+    });
+  }
+
+  private showDanger(name: string): void {
+    this.productName = name;
+    this.notificationService.show(this.dangerTpl, {
+      classname: 'bg-danger text-light',
+      delay: 15000,
+    });
   }
 
   private refreshCart(): void {
