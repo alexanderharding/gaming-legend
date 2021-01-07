@@ -9,6 +9,7 @@ import {
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { IUser } from 'src/app/types/user';
 
 import { UserContact } from 'src/app/types/user-contact';
 
@@ -22,7 +23,7 @@ export class ContactFormComponent implements OnInit, OnDestroy {
 
   @Input() parentForm: FormGroup;
   @Input() submitted: boolean;
-  @Input() userContact: UserContact;
+  @Input() user: IUser;
   @Input() pageTitle: string;
   @Input() emailTakenMessage: string;
 
@@ -56,6 +57,9 @@ export class ContactFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscribeToControls();
+    if (this.user) {
+      this.setUserData(this.user.contact);
+    }
   }
 
   private subscribeToControls(): void {

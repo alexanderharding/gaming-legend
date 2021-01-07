@@ -3,10 +3,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
-<<<<<<< HEAD
-import { IUser } from 'src/app/types/user';
-=======
->>>>>>> d3681987011335de47ee7adcccf667b533c089df
+
 import { UserName } from 'src/app/types/user-name';
 
 @Component({
@@ -20,11 +17,8 @@ export class NameFormComponent implements OnInit, OnDestroy {
   @Input() pageTitle: string;
   @Input() parentForm: FormGroup;
   @Input() submitted: boolean;
-<<<<<<< HEAD
-  @Input() user: IUser;
-=======
+
   @Input() userName: UserName;
->>>>>>> d3681987011335de47ee7adcccf667b533c089df
 
   private readonly subscriptions: Subscription[] = [];
   private readonly nameMinLength = this.formValidationRuleService.nameMinLength;
@@ -54,14 +48,14 @@ export class NameFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscribeToControls();
-<<<<<<< HEAD
-    if (this.user) {
-      this.setUserData(this.user.name);
-=======
-    if (this.userName) {
-      this.setUserData(this.userName);
->>>>>>> d3681987011335de47ee7adcccf667b533c089df
-    }
+    // <<<<<<< HEAD
+    //     if (this.user) {
+    //       this.setUserData(this.user.name);
+    // =======
+    //     if (this.userName) {
+    //       this.setUserData(this.userName);
+    // >>>>>>> d3681987011335de47ee7adcccf667b533c089df
+    //     }
   }
 
   private subscribeToControls(): void {

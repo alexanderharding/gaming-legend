@@ -92,7 +92,6 @@
                   </p>
                   <ctacu-name-form
                     [parentForm]="checkOutForm"
-                    [userName]="user.name"
                     [submitted]="submitted"
                   ></ctacu-name-form>
                   <div class="d-none d-sm-flex justify-content-end">
@@ -148,7 +147,7 @@
                   <ctacu-contact-form
                     [parentForm]="checkOutForm"
                     [submitted]="submitted"
-                    [userContact]="user.contact"
+                    [user]="user"
                     [emailTakenMessage]="emailTakenMessage"
                     (onValueChange)="setEmailTakenMessage($event)"
                   ></ctacu-contact-form>
@@ -214,7 +213,7 @@
                   <ctacu-address-form
                     [parentForm]="checkOutForm"
                     [submitted]="submitted"
-                    [userAddress]="user.address"
+                    [user]="user"
                   ></ctacu-address-form>
                   <fieldset>
                     <legend class="text-primary">
