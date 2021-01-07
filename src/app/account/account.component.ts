@@ -23,7 +23,6 @@ import { IUser, User } from '../types/user';
 export class AccountComponent implements OnInit, OnDestroy {
   @ViewChild('successTpl') private successTpl: TemplateRef<any>;
 
-  private isFirstSort = true;
   searchMessage = '';
   errorMessage = '';
   page = 1;
@@ -78,11 +77,6 @@ export class AccountComponent implements OnInit, OnDestroy {
   ]).pipe(
     debounceTime(500),
     map(([orders, sort]) => {
-      if (this.isFirstSort) {
-        this.isFirstSort = false;
-        this.setLoading(false);
-        return orders as IOrder[];
-      }
       switch (sort) {
         case 1:
           this.setLoading(false);
@@ -119,7 +113,7 @@ export class AccountComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.filterForm = this.fb.group({
       search: ['', Validators.pattern(/^\d+$/)],
-      sort: null,
+      sort: 0,
     });
 
     const searchControl = this.filterForm.get('search');
@@ -142,10 +136,6 @@ export class AccountComponent implements OnInit, OnDestroy {
         this.sortSubject.next(+value);
       })
     );
-
-    this.filterForm.patchValue({
-      sort: 0,
-    });
   }
 
   clearSearch(): void {
