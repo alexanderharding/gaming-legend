@@ -68,8 +68,10 @@ export class AddressFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscribeToControls();
-    if (this.user.address) {
-      this.setUserAddress(this.user.address);
+    if (this.user) {
+      if (this.user.address) {
+        this.setUserAddress(this.user.address);
+      }
     }
   }
 
