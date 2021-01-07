@@ -316,7 +316,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
       if (signUpCheck) {
         this.checkForUser(form, items);
       } else {
-        this.placeOrder(form, items);
+        this.saveOrder(form, items);
       }
     }
   }
@@ -407,7 +407,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
       isAdmin: false,
     }) as User;
     this.authService.saveUser(user).subscribe(
-      (result) => this.placeOrder(form, items),
+      (result) => this.saveOrder(form, items),
       (error) => {
         this.isLoading = false;
         this.signUpError = 'There was an error signing up for an account.';
@@ -415,7 +415,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     );
   }
 
-  private placeOrder(form: FormGroup, items: ICartItem[]): void {
+  private saveOrder(form: FormGroup, items: ICartItem[]): void {
     this.cartService.total$.pipe(first()).subscribe(
       (total) => {
         const customer = CustomerMaker.create({
