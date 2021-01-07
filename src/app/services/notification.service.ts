@@ -14,6 +14,6 @@ export class NotificationService {
   }
 
   remove(notification: INotification): void {
-    this.notifications = this.notifications.filter((t) => t !== notification);
+    this.notifications = this.notifications.filter((n) => n !== notification);
   }
 }
