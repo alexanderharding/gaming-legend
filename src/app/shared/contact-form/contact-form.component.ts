@@ -10,6 +10,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { IUser } from 'src/app/types/user';
+import { UserContact } from 'src/app/types/user-contact';
 
 @Component({
   selector: 'ctacu-contact-form',
@@ -56,7 +57,7 @@ export class ContactFormComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscribeToControls();
     if (this.user) {
-      this.setUserData(this.user);
+      this.setUserData(this.user.contact);
     }
   }
 
@@ -130,14 +131,12 @@ export class ContactFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  private setUserData(user: IUser): void {
-    const contact = user.contact;
-    this.parentForm.patchValue({
-      contactGroup: {
-        phone: contact.phone,
-        email: contact.email,
-        confirmEmail: contact.email,
-      },
+  private setUserData(contact: UserContact): void {
+    const contactControl = this.parentForm.get('contactGroup');
+    contactControl.setValue({
+      phone: contact.phone,
+      email: contact.email,
+      confirmEmail: contact.email,
     });
   }
 
