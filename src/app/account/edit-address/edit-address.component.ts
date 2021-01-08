@@ -104,13 +104,20 @@ export class EditAddressComponent implements OnInit {
     this.submitted = false;
     form.reset();
 
-    addressControl.setValue({
-      street: address.street as string,
-      city: address.city as string,
-      state: address.state as string,
-      zip: address.zip as string,
-      country: address.country as string,
-    });
+    if (address) {
+      addressControl.setValue({
+        street: address.street as string,
+        city: address.city as string,
+        state: address.state as string,
+        zip: address.zip as string,
+        country: address.country as string,
+      });
+    } else {
+      addressControl.patchValue({
+        state: '',
+        country: 'USA',
+      });
+    }
   }
 
   private showSuccess(): void {
