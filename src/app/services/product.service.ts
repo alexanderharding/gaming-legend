@@ -29,7 +29,7 @@ export class ProductService {
             ({
               ...product,
               code: this.getCode(product, productType),
-              starRating: this.getStarRating(),
+              starRating: Math.ceil(Math.random() * 5),
               type: productType,
             } as IProduct)
         )
@@ -67,7 +67,7 @@ export class ProductService {
             ({
               ...product,
               code: this.getCode(product, productType),
-              starRating: this.getStarRating(),
+              starRating: Math.ceil(Math.random() * 5),
               type: productType,
             } as IProduct)
         ),
@@ -75,10 +75,6 @@ export class ProductService {
         shareReplay(1),
         catchError(this.errorService.handleError)
       );
-  }
-
-  private getStarRating(): number {
-    return Math.ceil(Math.random() * 5);
   }
 
   private getCode(product: IProduct, type: string): string {
