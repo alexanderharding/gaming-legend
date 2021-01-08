@@ -454,14 +454,13 @@
                       {{ emailTakenMessage }}
                     </div>
                   </div>
-                  <ctacu-password-form
-                    [hidden]="
-                      !this.checkOutForm.get('signUpCheck').value || user
-                    "
-                    [parentForm]="checkOutForm"
-                    [submitted]="submitted"
-                    pageTitle="Sign Up"
-                  ></ctacu-password-form>
+                  <div #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed">
+                    <ctacu-password-form
+                      [parentForm]="checkOutForm"
+                      [submitted]="submitted"
+                      pageTitle="Sign Up"
+                    ></ctacu-password-form>
+                  </div>
                   <div class="d-none d-sm-flex">
                     <input
                       type="button"

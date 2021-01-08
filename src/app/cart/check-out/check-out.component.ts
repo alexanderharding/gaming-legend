@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -8,6 +14,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   NgbAccordionConfig,
+  NgbCollapse,
   NgbProgressbarConfig,
 } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
@@ -141,7 +148,11 @@ function cardNumberChecker(
   providers: [NgbAccordionConfig],
 })
 export class CheckOutComponent implements OnInit, OnDestroy {
+  @ViewChild('collapse') private collapse: NgbCollapse;
+
   deliveryDate: Date;
+
+  isCollapsed = false;
 
   private readonly subscriptions: Subscription[] = [];
   user: IUser;
@@ -363,6 +374,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
       signUpCheckControl.valueChanges.subscribe((check: boolean) => {
         this.emailTakenMessage = '';
         this.setPasswordValidation(check);
+        this.collapse.toggle(check);
       })
     );
   }
