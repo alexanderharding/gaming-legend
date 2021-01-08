@@ -149,7 +149,7 @@
           </form>
           <ng-container *ngIf="orders.length; else noOrders">
             <div class="table-responsive">
-              <table class="table table-hover table-sm">
+              <table class="table table-sm">
                 <thead class="thead-dark text-uppercase">
                   <tr>
                     <th scope="col">#</th>
@@ -158,7 +158,7 @@
                     <th scope="col">Status</th>
                   </tr>
                 </thead>
-                <tbody class="pointer">
+                <tbody>
                   <tr
                     *ngFor="
                       let o of orders
