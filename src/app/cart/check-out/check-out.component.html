@@ -454,7 +454,11 @@
                       {{ emailTakenMessage }}
                     </div>
                   </div>
-                  <div #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed">
+                  <div
+                    *ngIf="!user"
+                    #collapse="ngbCollapse"
+                    [(ngbCollapse)]="isCollapsed"
+                  >
                     <ctacu-password-form
                       [parentForm]="checkOutForm"
                       [submitted]="submitted"

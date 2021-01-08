@@ -51,12 +51,14 @@ export class CartService {
   subtotal$ = this.cartAction$.pipe(
     map((items) =>
       items.reduce((prev, current) => {
-        return prev + +current.price * +current.quantity;
+        return +(prev + +current.price * +current.quantity).toFixed(2);
       }, 0)
     )
   );
 
-  totalTax$ = this.subtotal$.pipe(map((subtotal) => subtotal * this.tax));
+  totalTax$ = this.subtotal$.pipe(
+    map((subtotal) => +(subtotal * this.tax).toFixed(2))
+  );
 
   total$ = combineLatest([
     this.subtotal$,

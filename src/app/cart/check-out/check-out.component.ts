@@ -17,8 +17,8 @@ import {
   NgbCollapse,
   NgbProgressbarConfig,
 } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs';
-import { debounceTime, first, tap } from 'rxjs/operators';
+import { combineLatest, Subscription } from 'rxjs';
+import { debounceTime, first, map, tap } from 'rxjs/operators';
 
 import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
@@ -29,7 +29,7 @@ import { OrderService } from 'src/app/services/order.service';
 import { ShippingRateService } from 'src/app/services/shipping-rate.service';
 import { ICartItem } from 'src/app/types/cart-item';
 import { Customer, CustomerMaker } from 'src/app/types/customer';
-import { Order, OrderMaker } from 'src/app/types/order';
+import { IOrder, Order, OrderMaker } from 'src/app/types/order';
 import { Payment, PaymentMaker } from 'src/app/types/payment';
 import { IShipping } from 'src/app/types/shipping';
 import { ShippingRatesResult } from 'src/app/types/shipping-rates-result';
@@ -320,14 +320,13 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     }
     this.errorMessage = '';
     this.signUpError = '';
-    // this.emailTakenMessage = '';
     if (form.valid) {
       this.isLoading = true;
       const signUpCheck = this.checkOutForm.get('signUpCheck').value as boolean;
       if (signUpCheck) {
         this.checkForUser(form, items);
       } else {
-        this.saveOrder(form, items);
+        this.createOrder(form, items);
       }
     }
   }
@@ -374,7 +373,9 @@ export class CheckOutComponent implements OnInit, OnDestroy {
       signUpCheckControl.valueChanges.subscribe((check: boolean) => {
         this.emailTakenMessage = '';
         this.setPasswordValidation(check);
-        this.collapse.toggle(check);
+        if (this.collapse) {
+          this.collapse.toggle(check);
+        }
       })
     );
   }
@@ -388,7 +389,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
           this.emailTakenMessage = `${email} is already registered to an
           account. Please sign in to continue.`;
         } else {
-          this.signUp(form, items);
+          this.saveUser(form, items);
         }
       },
       (error) => {
@@ -398,7 +399,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     );
   }
 
-  private signUp(form: FormGroup, items: ICartItem[]): void {
+  private saveUser(form: FormGroup, items: ICartItem[]): void {
     const user = UserMaker.create({
       name: UserNameMaker.create({
         firstName: form.get('nameGroup.firstName').value as string,
@@ -419,7 +420,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
       isAdmin: false,
     }) as User;
     this.authService.saveUser(user).subscribe(
-      (result) => this.saveOrder(form, items),
+      (result) => this.createOrder(form, items),
       (error) => {
         this.isLoading = false;
         this.signUpError = 'There was an error signing up for an account.';
@@ -427,13 +428,21 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     );
   }
 
-  private saveOrder(form: FormGroup, items: ICartItem[]): void {
-    this.cartService.total$.pipe(first()).subscribe(
-      (total) => {
+  private createOrder(form: FormGroup, items: ICartItem[]): void {
+    const order$ = combineLatest([
+      this.subtotal$,
+      this.shippingRateService.shippingPriceSelectedAction$,
+      this.cartService.totalTax$,
+      this.cartService.total$,
+    ]).pipe(
+      first(),
+      map(([subtotal, shipping, totalTax, total]) => {
+        console.log('placeOrder');
+
         const customer = CustomerMaker.create({
           firstName: form.get('nameGroup.firstName').value as string,
           lastName: form.get('nameGroup.lastName').value as string,
-          phone: form.get('contactGroup.phone').value,
+          phone: form.get('contactGroup.phone').value as string,
           email: form.get('contactGroup.email').value as string,
           street: form.get('addressGroup.street').value as string,
           city: form.get('addressGroup.city').value as string,
@@ -446,6 +455,9 @@ export class CheckOutComponent implements OnInit, OnDestroy {
           cvv: +form.get('paymentGroup.cvv').value,
           expiringMonth: +form.get('paymentGroup.expiringMonth').value,
           expiringYear: +form.get('paymentGroup.expiringYear').value,
+          subtotal: +subtotal,
+          tax: +totalTax,
+          shipping: +shipping,
           total: +total,
         }) as Payment;
         let order = OrderMaker.create({
@@ -461,32 +473,10 @@ export class CheckOutComponent implements OnInit, OnDestroy {
             userId: +this.user.id,
           } as Order;
         }
-        this.orderService.saveOrder(order, -1).subscribe(
-          (result) => {
-            console.log('order placed');
-            this.orderPlaced = true;
-            this.isLoading = false;
-            items.forEach((item) => {
-              this.cartService.removeItem(item).subscribe(
-                (result) => {
-                  this.refreshCart();
-                  this.router.navigate(['/cart', 'success']);
-                },
-                (error) => {
-                  console.error(error);
-                  this.isLoading = false;
-                }
-              );
-            });
-          },
-          (error) => {
-            this.isLoading = false;
-            this.errorMessage = 'There was an error saving your order';
-          }
-        );
-      },
-      (error) => console.error(error)
+        return order;
+      })
     );
+    order$.subscribe((order) => this.saveOrder(order, items));
   }
 
   private refreshCart(): void {
@@ -503,6 +493,31 @@ export class CheckOutComponent implements OnInit, OnDestroy {
       ({ price }) => price === +selectedPrice
     ).rate;
     this.deliveryDate = this.shippingRateService.getDeliveryDate(totalDays);
+  }
+
+  private saveOrder(order: Order, items: ICartItem[]): void {
+    this.orderService.saveOrder(order, -1).subscribe(
+      (result) => {
+        this.orderPlaced = true;
+        this.isLoading = false;
+        items.forEach((item) => {
+          this.cartService.removeItem(item).subscribe(
+            (result) => {
+              this.refreshCart();
+              this.router.navigate(['/cart', 'success']);
+            },
+            (error) => {
+              console.error(error);
+              this.isLoading = false;
+            }
+          );
+        });
+      },
+      (error) => {
+        this.isLoading = false;
+        this.errorMessage = 'There was an error saving your order';
+      }
+    );
   }
 
   ngOnDestroy(): void {

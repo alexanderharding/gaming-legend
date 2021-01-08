@@ -4,6 +4,9 @@ export class Payment {
     public cvv: number,
     public expiringMonth: number,
     public expiringYear: number,
+    public subtotal: number,
+    public tax: number,
+    public shipping: number,
     public total: number
   ) {}
 }
@@ -15,6 +18,9 @@ export class PaymentMaker {
       cvv: event.cvv,
       expiringMonth: event.expiringMonth,
       expiringYear: event.expiringYear,
+      subtotal: event.subtotal,
+      tax: event.tax,
+      shipping: event.shipping,
       total: event.total,
     };
   }
