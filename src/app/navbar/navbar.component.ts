@@ -4,8 +4,6 @@ import {
   Input,
   OnInit,
 } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 import { CartService } from '../services/cart.service';
 
@@ -13,14 +11,13 @@ import { CartService } from '../services/cart.service';
   selector: 'ctacu-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent implements OnInit {
-  errorMessage: string;
   @Input() readonly pageTitle: string;
 
+  errorMessage: string;
   isMenuCollapsed = true;
-
   cartQuantity$ = this.cartService.cartQuantity$;
   currentUser$ = this.authService.currentUser$;
 
@@ -36,9 +33,4 @@ export class NavbarComponent implements OnInit {
       },
     });
   }
-
-  // signOut(): void {
-  //   this.isMenuCollapsed = false;
-  //   this.authService.signOut();
-  // }
 }
