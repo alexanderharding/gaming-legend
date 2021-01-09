@@ -34,7 +34,6 @@ export class ProductDetailsComponent implements OnInit {
   readonly loadingAction$ = this.loadingSubject.asObservable();
 
   imageIndex = 0;
-  productName = '';
 
   readonly items$ = this.cartService.cartAction$.pipe(
     tap(() => this.setLoading(false))
@@ -71,13 +70,13 @@ export class ProductDetailsComponent implements OnInit {
     this.cartService.saveItem(item, index).subscribe(
       (result) => {
         this.refreshCart();
-        this.showSuccess(result.name);
+        this.showSuccess();
         this.setLoading(false);
         this.router.navigate(['/cart']);
       },
       (error) => {
         this.setLoading(false);
-        this.showDanger(product.name);
+        this.showDanger();
         console.error(error);
       }
     );
@@ -90,7 +89,7 @@ export class ProductDetailsComponent implements OnInit {
     this.cartService.saveItem(item, index).subscribe(
       (result) => {
         this.refreshCart();
-        this.showSuccess(result.name);
+        this.showSuccess();
         const modalRef = this.modalService.open(ConfirmModalComponent);
         const instance = modalRef.componentInstance;
         instance.title = `${result.name} Added`;
@@ -105,7 +104,7 @@ export class ProductDetailsComponent implements OnInit {
       },
       (error) => {
         this.setLoading(false);
-        this.showDanger(product.name);
+        this.showDanger();
         console.error(error);
       }
     );
@@ -150,8 +149,7 @@ export class ProductDetailsComponent implements OnInit {
     this.loadingSubject.next(value);
   }
 
-  private showSuccess(name: string): void {
-    this.productName = name;
+  private showSuccess(): void {
     const notification = {
       templateRef: this.successTpl,
 
@@ -161,8 +159,7 @@ export class ProductDetailsComponent implements OnInit {
     this.notificationService.show(notification);
   }
 
-  private showDanger(name: string): void {
-    this.productName = name;
+  private showDanger(): void {
     const notification = {
       templateRef: this.dangerTpl,
       className: 'bg-danger text-light',
