@@ -1,10 +1,12 @@
-<ngb-toast
-  *ngFor="let n of notifications"
-  [class]="n.className"
-  [autohide]="true"
-  [delay]="n.delay || 5000"
-  (hidden)="remove(n)"
-  (click)="remove(n)"
->
-  <ng-template [ngTemplateOutlet]="n.templateRef"></ng-template>
-</ngb-toast>
+<ng-container *ngIf="notifications$ | async as notifications">
+  <ngb-toast
+    *ngFor="let n of notifications"
+    [class]="n.className"
+    [autohide]="true"
+    [delay]="n.delay || 5000"
+    (hidden)="remove(n)"
+    (click)="remove(n)"
+  >
+    <ng-template [ngTemplateOutlet]="n.templateRef"></ng-template>
+  </ngb-toast>
+</ng-container>
