@@ -1,18 +1,24 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { first, tap } from 'rxjs/operators';
-
-import { listAnimation } from '../app.animation';
+import { BehaviorSubject } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
 
 import { CartService } from '../services/cart.service';
+import { NotificationService } from '../services/notification.service';
 import { ShippingRateService } from '../services/shipping-rate.service';
 
 import { ICartItem } from '../types/cart-item';
+import { INotification } from '../types/notification';
 import { IShipping } from '../types/shipping';
 import { ShippingRatesResult } from '../types/shipping-rates-result';
 
@@ -22,6 +28,9 @@ import { ShippingRatesResult } from '../types/shipping-rates-result';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartComponent implements OnInit {
+  @ViewChild('updateErrTpl') private updateErrTpl: TemplateRef<any>;
+  @ViewChild('removeErrTpl') private removeErrTpl: TemplateRef<any>;
+
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
   readonly loadingAction$ = this.loadingSubject.asObservable();
 
@@ -42,12 +51,15 @@ export class CartComponent implements OnInit {
   readonly items$ = this.cartService.cartAction$;
   readonly quantity$ = this.cartService.cartQuantity$;
 
+  productName = '';
+
   constructor(
     private readonly cartService: CartService,
     private readonly shippingRateService: ShippingRateService,
     private readonly route: ActivatedRoute,
     private readonly modalService: NgbModal,
-    private readonly config: NgbModalConfig
+    private readonly config: NgbModalConfig,
+    private readonly notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -88,6 +100,7 @@ export class CartComponent implements OnInit {
       (error) => {
         this.setLoading(false);
         console.error(error);
+        this.showNotification(this.updateErrTpl);
       }
     );
   }
@@ -110,11 +123,21 @@ export class CartComponent implements OnInit {
           (error) => {
             this.setLoading(false);
             console.error(error);
+            this.showNotification(this.removeErrTpl);
           }
         );
       },
       (error) => {}
     );
+  }
+
+  private showNotification(templateRef: TemplateRef<any>): void {
+    const notification = {
+      templateRef: templateRef,
+      className: 'bg-danger text-light',
+      delay: 15000,
+    } as INotification;
+    this.notificationService.show(notification);
   }
 
   private setLoading(value: boolean): void {
