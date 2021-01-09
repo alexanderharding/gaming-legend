@@ -1,6 +1,6 @@
 <div class="container-xl py-3">
   <div
-    *ngIf="loading"
+    *ngIf="loadingAction$ | async"
     class="spinner-border loadingSpinner text-danger"
     role="status"
   >
@@ -22,7 +22,7 @@
             *ngIf="items && items.length"
             class="btn btn-danger btn-sm"
             (click)="emptyCart(items)"
-            [disabled]="loading"
+            [disabled]="loadingAction$ | async"
           >
             Empty Cart
           </button>
@@ -66,7 +66,7 @@
                           value="-"
                           (click)="updateQty(item, -1)"
                           class="btn btn-sm btn-secondary"
-                          [disabled]="loading"
+                          [disabled]="loadingAction$ | async"
                         />
                       </div>
                       <input
@@ -83,7 +83,7 @@
                           value="+"
                           (click)="updateQty(item, 1)"
                           class="btn btn-sm btn-info"
-                          [disabled]="loading"
+                          [disabled]="loadingAction$ | async"
                         />
                       </div>
                     </div>
@@ -93,7 +93,7 @@
                       value="remove"
                       class="btn btn-sm btn-block btn-outline-danger text-capitalize"
                       (click)="removeItem(item)"
-                      [disabled]="loading"
+                      [disabled]="loadingAction$ | async"
                     />
                   </td>
                   <!-- <td scope="row">
@@ -184,7 +184,7 @@
           value="checkout"
           routerLink="check-out"
           class="btn btn-block btn-success text-capitalize"
-          [disabled]="!items.length || loading"
+          [disabled]="!items.length || (loadingAction$ | async) === true"
         />
         <div *ngIf="!items.length" class="text-center text-danger">
           <svg

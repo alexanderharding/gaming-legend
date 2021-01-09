@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { first, tap } from 'rxjs/operators';
 
 import { listAnimation } from '../app.animation';
@@ -19,8 +19,12 @@ import { ShippingRatesResult } from '../types/shipping-rates-result';
 @Component({
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartComponent implements OnInit {
+  private readonly loadingSubject = new BehaviorSubject<boolean>(false);
+  readonly loadingAction$ = this.loadingSubject.asObservable();
+
   /* Get data from resolver */
   private readonly resolvedData = this.route.snapshot.data
     .resolvedData as ShippingRatesResult;
@@ -35,18 +39,8 @@ export class CartComponent implements OnInit {
   pageTitle = 'Cart';
 
   /* Get data from CartService */
-  readonly tax = +this.cartService.tax;
   readonly items$ = this.cartService.cartAction$;
   readonly quantity$ = this.cartService.cartQuantity$;
-  readonly subtotal$ = this.cartService.subtotal$;
-  readonly totalTax$ = this.cartService.totalTax$;
-  readonly total$ = this.cartService.total$.pipe(
-    tap(() => (this.loading = false))
-  );
-  readonly shippingPrice$ = this.shippingRateService
-    .shippingPriceSelectedAction$;
-
-  loading = false;
 
   constructor(
     private readonly cartService: CartService,
@@ -69,7 +63,7 @@ export class CartComponent implements OnInit {
         +slowestRate
       );
     } else {
-      this.loading = false;
+      this.setLoading(false);
       this.pageTitle = 'Retrieval Error';
     }
     /* Config NgbModal settings */
@@ -82,7 +76,7 @@ export class CartComponent implements OnInit {
       this.removeItem(item);
       return;
     }
-    this.loading = true;
+    this.setLoading(true);
     const updatedItem = {
       ...item,
       quantity: item.quantity + amount,
@@ -92,7 +86,7 @@ export class CartComponent implements OnInit {
         this.refreshCart();
       },
       (error) => {
-        this.loading = false;
+        this.setLoading(false);
         console.error(error);
       }
     );
@@ -108,13 +102,13 @@ export class CartComponent implements OnInit {
     instance.closeMessage = 'remove';
     modalRef.closed.pipe(first()).subscribe(
       (result) => {
-        this.loading = true;
+        this.setLoading(true);
         this.cartService.removeItem(item).subscribe(
           (result) => {
             this.refreshCart();
           },
           (error) => {
-            this.loading = false;
+            this.setLoading(false);
             console.error(error);
           }
         );
@@ -135,11 +129,12 @@ export class CartComponent implements OnInit {
     instance.closeMessage = 'empty';
     modalRef.closed.pipe(first()).subscribe(
       (result) => {
+        this.setLoading(true);
         items.forEach((item) => {
-          this.loading = true;
+          this.setLoading(true);
           this.cartService.removeItem(item).subscribe((error) => {
             console.error(error);
-            this.loading = false;
+            this.setLoading(false);
           });
         });
         this.refreshCart();
@@ -148,11 +143,15 @@ export class CartComponent implements OnInit {
     );
   }
 
+  private setLoading(value: boolean): void {
+    this.loadingSubject.next(value);
+  }
+
   private refreshCart(): void {
     this.cartService.setCurrentCart().subscribe({
-      next: () => (this.loading = false),
+      next: () => this.setLoading(false),
       error: (error) => {
-        this.loading = false;
+        this.setLoading(false);
         console.error(error);
       },
     });
