@@ -15,6 +15,7 @@ import { ConfirmModalComponent } from 'src/app/confirm-modal/confirm-modal.compo
 import { ProductResult } from 'src/app/types/product-result';
 import { NotificationService } from 'src/app/services/notification.service';
 import { INotification } from 'src/app/types/notification';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   templateUrl: './product-details.component.html',
@@ -29,8 +30,10 @@ export class ProductDetailsComponent implements OnInit {
     'returnLink'
   );
 
+  readonly loadingSubject = new BehaviorSubject<boolean>(false);
+  readonly loadingAction$ = this.loadingSubject.asObservable();
+
   imageIndex = 0;
-  loading = false;
   productName = '';
 
   readonly items$ = this.cartService.cartAction$.pipe(
@@ -144,7 +147,7 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   private setLoading(value: boolean): void {
-    this.loading = value;
+    this.loadingSubject.next(value);
   }
 
   private showSuccess(name: string): void {

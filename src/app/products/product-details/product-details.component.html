@@ -1,6 +1,7 @@
 <div class="container-xl pt-3">
+  <div>{{ this.loadingAction$ | async }}</div>
   <div
-    *ngIf="loading"
+    *ngIf="this.loadingAction$ | async"
     class="spinner-border loadingSpinner text-info"
     role="status"
   >
@@ -89,7 +90,7 @@
                 class="btn btn-block btn-success text-uppercase"
                 (click)="buyNow(product, items)"
                 value="Buy now"
-                [disabled]="loading"
+                [disabled]="this.loadingAction$ | async"
               />
             </div>
             <div class="col-md-6">
@@ -98,7 +99,7 @@
                 class="btn btn-block btn-outline-secondary text-uppercase mt-2 mt-md-0"
                 (click)="addItem(product, items)"
                 value="Add to Cart"
-                [disabled]="loading"
+                [disabled]="this.loadingAction$ | async"
               />
             </div>
           </div>
