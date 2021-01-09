@@ -32,7 +32,7 @@ export class CartComponent implements OnInit {
   @ViewChild('removeErrTpl') private removeErrTpl: TemplateRef<any>;
 
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
-  readonly loadingAction$ = this.loadingSubject.asObservable();
+  readonly loading$ = this.loadingSubject.asObservable();
 
   /* Get data from resolver */
   private readonly resolvedData = this.route.snapshot.data

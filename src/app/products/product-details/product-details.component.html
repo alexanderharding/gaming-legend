@@ -1,6 +1,6 @@
 <div class="container-xl pt-3">
   <div
-    *ngIf="this.loadingAction$ | async"
+    *ngIf="this.loading$ | async"
     class="spinner-border loadingSpinner text-info"
     role="status"
   >
@@ -89,7 +89,7 @@
                 class="btn btn-block btn-success text-uppercase"
                 (click)="buyNow(product, items)"
                 value="Buy now"
-                [disabled]="this.loadingAction$ | async"
+                [disabled]="this.loading$ | async"
               />
             </div>
             <div class="col-md-6">
@@ -98,7 +98,7 @@
                 class="btn btn-block btn-outline-secondary text-uppercase mt-2 mt-md-0"
                 (click)="addItem(product, items)"
                 value="Add to Cart"
-                [disabled]="this.loadingAction$ | async"
+                [disabled]="this.loading$ | async"
               />
             </div>
           </div>

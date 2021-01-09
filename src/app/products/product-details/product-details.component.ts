@@ -31,7 +31,7 @@ export class ProductDetailsComponent implements OnInit {
   );
 
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
-  readonly loadingAction$ = this.loadingSubject.asObservable();
+  readonly loading$ = this.loadingSubject.asObservable();
 
   imageIndex = 0;
 
