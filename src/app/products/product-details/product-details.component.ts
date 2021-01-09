@@ -30,7 +30,7 @@ export class ProductDetailsComponent implements OnInit {
     'returnLink'
   );
 
-  readonly loadingSubject = new BehaviorSubject<boolean>(false);
+  private readonly loadingSubject = new BehaviorSubject<boolean>(false);
   readonly loadingAction$ = this.loadingSubject.asObservable();
 
   imageIndex = 0;
