@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { first, tap } from 'rxjs/operators';
 
 import { listAnimation } from '../app.animation';
 
@@ -19,8 +19,6 @@ import { ShippingRatesResult } from '../types/shipping-rates-result';
 @Component({
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
-  animations: [listAnimation],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartComponent implements OnInit {
   /* Get data from resolver */
@@ -108,7 +106,7 @@ export class CartComponent implements OnInit {
     instance.warningMessage = 'This operation can not be undone.';
     instance.type = 'bg-danger';
     instance.closeMessage = 'remove';
-    modalRef.result.then(
+    modalRef.closed.pipe(first()).subscribe(
       (result) => {
         this.loading = true;
         this.cartService.removeItem(item).subscribe(
@@ -121,7 +119,7 @@ export class CartComponent implements OnInit {
           }
         );
       },
-      (reason) => {}
+      (error) => {}
     );
   }
 
@@ -135,22 +133,18 @@ export class CartComponent implements OnInit {
     instance.warningMessage = 'This operation can not be undone.';
     instance.type = 'bg-danger';
     instance.closeMessage = 'empty';
-    modalRef.result.then(
+    modalRef.closed.pipe(first()).subscribe(
       (result) => {
-        this.loading = true;
-        // console.log(items);
         items.forEach((item) => {
-          this.cartService.removeItem(item).subscribe(
-            (result) => {},
-            (error) => {
-              console.error(error);
-              this.loading = false;
-            }
-          );
+          this.loading = true;
+          this.cartService.removeItem(item).subscribe((error) => {
+            console.error(error);
+            this.loading = false;
+          });
         });
         this.refreshCart();
       },
-      (reason) => {}
+      (error) => {}
     );
   }
 
