@@ -17,8 +17,20 @@ import {
   NgbCollapse,
   NgbProgressbarConfig,
 } from '@ng-bootstrap/ng-bootstrap';
-import { combineLatest, EMPTY, forkJoin, Observable, Subscription } from 'rxjs';
-import { catchError, debounceTime, first, map } from 'rxjs/operators';
+import {
+  combineLatest,
+  EMPTY,
+  Subscription,
+  scheduled,
+  asyncScheduler,
+} from 'rxjs';
+import {
+  catchError,
+  concatAll,
+  debounceTime,
+  first,
+  map,
+} from 'rxjs/operators';
 
 import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
@@ -518,21 +530,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
       (result) => {
         this.orderPlaced = true;
         this.showSuccess(this.orderSuccessTpl);
-        // this.clearCart(items);
-        items.forEach((item, index) => {
-          this.cartService.removeItem(item).subscribe(
-            (result) => {
-              if (index == items.length - 1) {
-                this.cartService.clearCart();
-                this.router.navigate(['/cart', 'success']);
-              }
-            },
-            (error) => {
-              console.error(error);
-              this.isLoading = false;
-            }
-          );
-        });
+        this.clearCart(items);
       },
       (error) => {
         this.isLoading = false;
@@ -544,13 +542,15 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   private clearCart(items: ICartItem[]): void {
     const array = [];
     items.forEach((item) => array.push(this.cartService.removeItem(item)));
-    forkJoin([array]).subscribe(
-      (result) => {
-        this.cartService.clearCart();
-        this.router.navigate(['/cart', 'success']);
-      },
-      (error) => console.log(error)
-    );
+    scheduled(array, asyncScheduler)
+      .pipe(concatAll())
+      .subscribe({
+        error: (err) => console.error(err),
+        complete: () => {
+          this.cartService.clearCart();
+          this.router.navigate(['/cart', 'success']);
+        },
+      });
   }
 
   ngOnDestroy(): void {
