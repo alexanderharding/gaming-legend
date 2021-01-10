@@ -11,13 +11,11 @@ import { catchError, map, debounceTime, tap } from 'rxjs/operators';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IProduct } from 'src/app/types/product';
 import { IProductBrand } from 'src/app/types/product-brand';
-import { fadeAnimation } from 'src/app/app.animation';
 import { ProductListResult } from 'src/app/types/products-result';
 
 @Component({
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss'],
-  animations: [fadeAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductListComponent implements OnInit, OnDestroy {
@@ -32,7 +30,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
   readonly sort = +this.queryParamMap.get('sort') || 0;
 
   filterForm: FormGroup;
-  isFiltering = false;
+  // isFiltering = false;
+
+  private readonly isFilteringSubject = new BehaviorSubject<boolean>(false);
+  readonly isFiltering$ = this.isFilteringSubject.asObservable();
 
   readonly productType$ = this.route.paramMap.pipe(map((p) => p.get('type')));
 
@@ -185,7 +186,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   private setFiltering(value: boolean): void {
-    this.isFiltering = value;
+    this.isFilteringSubject.next(value);
   }
 
   private buildForm(): void {

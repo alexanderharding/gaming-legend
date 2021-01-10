@@ -125,7 +125,7 @@
       </div>
     </form>
     <div
-      *ngIf="isFiltering"
+      *ngIf="isFiltering$ | async"
       class="spinner-border loadingSpinner text-danger"
       role="status"
     >
@@ -199,7 +199,11 @@
                   </div>
                 </td>
                 <td scope="row" class="d-none d-sm-table-cell">
-                  {{ p.name }}
+                  <ngb-highlight
+                    [result]="p.name"
+                    [term]="filterForm.get('search').value"
+                    [highlightClass]="['bg-info', 'text-light']"
+                  ></ngb-highlight>
                 </td>
                 <td scope="row" class="d-none d-sm-table-cell">
                   {{ p.brand }}
