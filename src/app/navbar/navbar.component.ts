@@ -15,10 +15,13 @@ import { CartService } from '../services/cart.service';
 })
 export class NavbarComponent implements OnInit {
   @Input() readonly pageTitle: string;
-
   errorMessage: string;
   isMenuCollapsed = true;
+
+  /* Get cartQuantity$ from CartService */
   cartQuantity$ = this.cartService.cartQuantity$;
+
+  /* Get currentUser$ from AuthService */
   currentUser$ = this.authService.currentUser$;
 
   constructor(
@@ -27,7 +30,7 @@ export class NavbarComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.cartService.getCart().subscribe({
+    this.cartService.getCartItems().subscribe({
       error: (error) => {
         this.errorMessage = `Retrieval error: ${error}.`;
       },

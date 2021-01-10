@@ -169,7 +169,7 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   private refreshCart(): void {
-    this.cartService.getCart().subscribe({
+    this.cartService.getCartItems().subscribe({
       error: (error) => {
         this.setLoading(false);
         console.error(error);
