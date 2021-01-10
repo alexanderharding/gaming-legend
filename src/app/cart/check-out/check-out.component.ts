@@ -506,11 +506,8 @@ export class CheckOutComponent implements OnInit, OnDestroy {
 
   private getCartItems(): void {
     this.cartService.getCartItems().subscribe({
-      next: () => (this.isLoading = false),
-      error: (error) => {
-        this.isLoading = false;
-        console.error(error);
-      },
+      error: (error) => console.error(error),
+      complete: () => (this.isLoading = false),
     });
   }
 

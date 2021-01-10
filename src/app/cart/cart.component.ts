@@ -169,11 +169,8 @@ export class CartComponent implements OnInit {
 
   private getCartItems(): void {
     this.cartService.getCartItems().subscribe({
-      next: () => this.setLoading(false),
-      error: (error) => {
-        this.setLoading(false);
-        console.error(error);
-      },
+      error: (error) => console.error(error),
+      complete: () => this.setLoading(false),
     });
   }
 }

@@ -35,9 +35,7 @@ export class ProductDetailsComponent implements OnInit {
 
   imageIndex = 0;
 
-  readonly items$ = this.cartService.cartItems$.pipe(
-    tap(() => this.setLoading(false))
-  );
+  readonly items$ = this.cartService.cartItems$;
 
   private readonly resolvedData$ = this.route.data.pipe(
     map((d) => d.resolvedData as ProductResult)
@@ -69,10 +67,8 @@ export class ProductDetailsComponent implements OnInit {
     const item = this.getUpdatedItem(product, items, index);
     this.cartService.saveItem(item, index).subscribe(
       (result) => {
-        this.getCartItems();
         this.showSuccess();
-        this.setLoading(false);
-        this.router.navigate(['/cart']);
+        this.getCartItems(true);
       },
       (error) => {
         this.setLoading(false);
@@ -168,12 +164,15 @@ export class ProductDetailsComponent implements OnInit {
     this.notificationService.show(notification);
   }
 
-  private getCartItems(): void {
-    this.cartService.getCartItems().subscribe({
-      error: (error) => {
-        this.setLoading(false);
-        console.error(error);
+  private getCartItems(value?: boolean): void {
+    this.cartService.getCartItems().subscribe(
+      (result) => {
+        if (value) {
+          this.router.navigate(['/cart']);
+        }
       },
-    });
+      (error) => console.error(error),
+      () => this.setLoading(false)
+    );
   }
 }
