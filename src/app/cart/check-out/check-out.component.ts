@@ -17,20 +17,8 @@ import {
   NgbCollapse,
   NgbProgressbarConfig,
 } from '@ng-bootstrap/ng-bootstrap';
-import {
-  combineLatest,
-  EMPTY,
-  Subscription,
-  scheduled,
-  asyncScheduler,
-} from 'rxjs';
-import {
-  catchError,
-  concatAll,
-  debounceTime,
-  first,
-  map,
-} from 'rxjs/operators';
+import { combineLatest, EMPTY, Subscription } from 'rxjs';
+import { catchError, debounceTime, first, map } from 'rxjs/operators';
 
 import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
@@ -117,44 +105,6 @@ function cardNumberChecker(
 
   return { cardNumber: true };
 }
-
-// function phoneChecker(c: AbstractControl): { [key: string]: boolean } | null {
-//   const value = c.value?.toString() as string;
-//   const withinRange = /^\w{10,15}$/.test(value);
-
-//   if (c.pristine || !value || !withinRange) {
-//     return null;
-//   }
-
-//   const hasOnlyNoLetters = !/[A-Z]/.test(value) && !/[a-z]/.test(value);
-//   const hasNumbers = /\d/.test(value);
-
-//   if (hasOnlyNoLetters && hasNumbers) {
-//     return null;
-//   }
-//   return { phone: true };
-// }
-// function cvvChecker(c: AbstractControl): { [key: string]: boolean } | null {
-//   const value = c.value?.toString() as string;
-//   const withinRange = /^\w{3,4}$/.test(value);
-
-//   if (c.pristine || !c.value || withinRange) {
-//     return null;
-//   }
-
-//   return { cvv: true };
-// }
-
-// function zipChecker(c: AbstractControl): { [key: string]: boolean } | null {
-//   const value = c.value?.toString() as string;
-//   const valid = /^[0-9]{5}(?:-[0-9]{4})?$/.test(value);
-
-//   if (c.pristine || !c.value || valid) {
-//     return null;
-//   }
-
-//   return { zip: true };
-// }
 
 @Component({
   templateUrl: './check-out.component.html',
