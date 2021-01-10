@@ -1,10 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -18,7 +12,7 @@ import {
   NgbProgressbarConfig,
 } from '@ng-bootstrap/ng-bootstrap';
 import { combineLatest, Subscription } from 'rxjs';
-import { debounceTime, first, map, tap } from 'rxjs/operators';
+import { debounceTime, first, map } from 'rxjs/operators';
 
 import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
@@ -29,7 +23,7 @@ import { OrderService } from 'src/app/services/order.service';
 import { ShippingRateService } from 'src/app/services/shipping-rate.service';
 import { ICartItem } from 'src/app/types/cart-item';
 import { Customer, CustomerMaker } from 'src/app/types/customer';
-import { IOrder, Order, OrderMaker } from 'src/app/types/order';
+import { Order, OrderMaker } from 'src/app/types/order';
 import { Payment, PaymentMaker } from 'src/app/types/payment';
 import { IShipping } from 'src/app/types/shipping';
 import { ShippingRatesResult } from 'src/app/types/shipping-rates-result';
@@ -437,8 +431,6 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     ]).pipe(
       first(),
       map(([subtotal, shipping, totalTax, total]) => {
-        console.log('placeOrder');
-
         const customer = CustomerMaker.create({
           firstName: form.get('nameGroup.firstName').value as string,
           lastName: form.get('nameGroup.lastName').value as string,
@@ -499,7 +491,6 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     this.orderService.saveOrder(order, -1).subscribe(
       (result) => {
         this.orderPlaced = true;
-        this.isLoading = false;
         items.forEach((item) => {
           this.cartService.removeItem(item).subscribe(
             (result) => {
