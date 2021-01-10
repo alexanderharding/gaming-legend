@@ -94,7 +94,7 @@ export class CartComponent implements OnInit {
     } as ICartItem;
     this.cartService.saveItem(updatedItem, 0).subscribe(
       (result) => {
-        this.refreshCart();
+        this.getCartItems();
       },
       (error) => {
         this.setLoading(false);
@@ -117,7 +117,7 @@ export class CartComponent implements OnInit {
         this.setLoading(true);
         this.cartService.removeItem(item).subscribe(
           (result) => {
-            this.refreshCart();
+            this.getCartItems();
           },
           (error) => {
             this.setLoading(false);
@@ -147,7 +147,7 @@ export class CartComponent implements OnInit {
             this.showDanger(this.clearDangerTpl);
             this.setLoading(false);
           },
-          complete: () => this.refreshCart(),
+          complete: () => this.getCartItems(),
         });
       },
       (error) => {}
@@ -167,7 +167,7 @@ export class CartComponent implements OnInit {
     this.loadingSubject.next(value);
   }
 
-  private refreshCart(): void {
+  private getCartItems(): void {
     this.cartService.getCartItems().subscribe({
       next: () => this.setLoading(false),
       error: (error) => {

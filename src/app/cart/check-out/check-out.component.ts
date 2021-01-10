@@ -498,13 +498,13 @@ export class CheckOutComponent implements OnInit, OnDestroy {
         this.showDanger(this.clearCartDangerTpl);
       },
       complete: () => {
-        this.refreshCart();
+        this.getCartItems();
         this.router.navigate(['/cart', 'success']);
       },
     });
   }
 
-  private refreshCart(): void {
+  private getCartItems(): void {
     this.cartService.getCartItems().subscribe({
       next: () => (this.isLoading = false),
       error: (error) => {
