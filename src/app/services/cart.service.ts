@@ -7,14 +7,7 @@ import {
   Observable,
   scheduled,
 } from 'rxjs';
-import {
-  catchError,
-  concatAll,
-  delay,
-  finalize,
-  map,
-  retry,
-} from 'rxjs/operators';
+import { catchError, concatAll, delay, map, retry } from 'rxjs/operators';
 
 import { ICartItem } from '../types/cart-item';
 import { ErrorService } from './error.service';
@@ -94,13 +87,10 @@ export class CartService {
       .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
   }
 
-  clearCart(items: ICartItem[]): Observable<unknown> {
+  removeAllItems(items: ICartItem[]): Observable<unknown> {
     const array = [];
     items.forEach((i) => array.push(this.removeItem(i)));
-    return scheduled(array, asyncScheduler).pipe(
-      concatAll(),
-      finalize(() => this.cartSubject.next([]))
-    );
+    return scheduled(array, asyncScheduler).pipe(concatAll());
   }
 
   private addItem(item: ICartItem): Observable<ICartItem> {

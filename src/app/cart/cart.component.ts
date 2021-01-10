@@ -30,6 +30,7 @@ import { ShippingRatesResult } from '../types/shipping-rates-result';
 export class CartComponent implements OnInit {
   @ViewChild('updateErrTpl') private updateErrTpl: TemplateRef<any>;
   @ViewChild('removeErrTpl') private removeErrTpl: TemplateRef<any>;
+  @ViewChild('clearDangerTpl') private clearDangerTpl: TemplateRef<any>;
 
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
   readonly loading$ = this.loadingSubject.asObservable();
@@ -100,7 +101,7 @@ export class CartComponent implements OnInit {
       (error) => {
         this.setLoading(false);
         console.error(error);
-        this.showNotification(this.updateErrTpl);
+        this.showDanger(this.updateErrTpl);
       }
     );
   }
@@ -123,7 +124,7 @@ export class CartComponent implements OnInit {
           (error) => {
             this.setLoading(false);
             console.error(error);
-            this.showNotification(this.removeErrTpl);
+            this.showDanger(this.removeErrTpl);
           }
         );
       },
@@ -142,16 +143,20 @@ export class CartComponent implements OnInit {
     modalRef.closed.pipe(first()).subscribe(
       (result) => {
         this.setLoading(true);
-        this.cartService.clearCart(items).subscribe({
-          error: (err) => console.error(err),
-          complete: () => this.setLoading(false),
+        this.cartService.removeAllItems(items).subscribe({
+          error: (err) => {
+            console.error(err);
+            this.showDanger(this.clearDangerTpl);
+            this.setLoading(false);
+          },
+          complete: () => this.refreshCart(),
         });
       },
       (error) => {}
     );
   }
 
-  private showNotification(templateRef: TemplateRef<any>): void {
+  private showDanger(templateRef: TemplateRef<any>): void {
     const notification = {
       templateRef: templateRef,
       className: 'bg-danger text-light',

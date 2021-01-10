@@ -166,6 +166,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   @ViewChild('orderSuccessTpl') private orderSuccessTpl: TemplateRef<any>;
   @ViewChild('orderDangerTpl') private orderDangerTpl: TemplateRef<any>;
   @ViewChild('saveUserDangerTpl') private saveUserDangerTpl: TemplateRef<any>;
+  @ViewChild('clearCartDangerTpl') private clearCartDangerTpl: TemplateRef<any>;
 
   deliveryDate: Date;
 
@@ -540,12 +541,25 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   }
 
   private clearCart(items: ICartItem[]): void {
-    this.cartService.clearCart(items).subscribe({
+    this.cartService.removeAllItems(items).subscribe({
       error: (err) => {
         console.error(err);
+        this.showDanger(this.clearCartDangerTpl);
+      },
+      complete: () => {
+        this.refreshCart();
         this.router.navigate(['/cart', 'success']);
       },
-      complete: () => this.router.navigate(['/cart', 'success']),
+    });
+  }
+
+  private refreshCart(): void {
+    this.cartService.setCurrentCart().subscribe({
+      next: () => (this.isLoading = false),
+      error: (error) => {
+        this.isLoading = false;
+        console.error(error);
+      },
     });
   }
 
