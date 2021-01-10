@@ -34,7 +34,7 @@ export class CartService {
   private readonly cartSubject = new BehaviorSubject<ICartItem[]>([]);
   readonly cartAction$ = this.cartSubject.asObservable();
 
-  setCurrentCart(): Observable<boolean> {
+  getCart(): Observable<boolean> {
     return this.http.get<ICartItem[]>(`${this.baseUrl}/cart`).pipe(
       delay(1000),
       retry(3),

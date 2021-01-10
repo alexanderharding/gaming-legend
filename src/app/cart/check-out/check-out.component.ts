@@ -554,7 +554,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   }
 
   private refreshCart(): void {
-    this.cartService.setCurrentCart().subscribe({
+    this.cartService.getCart().subscribe({
       next: () => (this.isLoading = false),
       error: (error) => {
         this.isLoading = false;

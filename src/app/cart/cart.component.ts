@@ -168,7 +168,7 @@ export class CartComponent implements OnInit {
   }
 
   private refreshCart(): void {
-    this.cartService.setCurrentCart().subscribe({
+    this.cartService.getCart().subscribe({
       next: () => this.setLoading(false),
       error: (error) => {
         this.setLoading(false);
