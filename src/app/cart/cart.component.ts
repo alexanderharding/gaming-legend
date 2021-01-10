@@ -52,8 +52,6 @@ export class CartComponent implements OnInit {
   readonly items$ = this.cartService.cartAction$;
   readonly quantity$ = this.cartService.cartQuantity$;
 
-  productName = '';
-
   constructor(
     private readonly cartService: CartService,
     private readonly shippingRateService: ShippingRateService,
@@ -132,7 +130,7 @@ export class CartComponent implements OnInit {
     );
   }
 
-  clearCart(items: ICartItem[]): void {
+  removeAllItems(items: ICartItem[]): void {
     const modalRef = this.modalService.open(ConfirmModalComponent);
     const instance = modalRef.componentInstance;
     instance.title = 'Empty Cart';

@@ -531,7 +531,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
       (result) => {
         this.orderPlaced = true;
         this.showSuccess(this.orderSuccessTpl);
-        this.clearCart(items);
+        this.removeAllItems(items);
       },
       (error) => {
         this.isLoading = false;
@@ -540,7 +540,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     );
   }
 
-  private clearCart(items: ICartItem[]): void {
+  private removeAllItems(items: ICartItem[]): void {
     this.cartService.removeAllItems(items).subscribe({
       error: (err) => {
         console.error(err);
