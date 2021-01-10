@@ -17,7 +17,7 @@ import {
   NgbCollapse,
   NgbProgressbarConfig,
 } from '@ng-bootstrap/ng-bootstrap';
-import { combineLatest, EMPTY, Subscription } from 'rxjs';
+import { combineLatest, EMPTY, forkJoin, Observable, Subscription } from 'rxjs';
 import { catchError, debounceTime, first, map } from 'rxjs/operators';
 
 import { emailMatcher } from 'src/app/functions/email-matcher';
@@ -518,6 +518,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
       (result) => {
         this.orderPlaced = true;
         this.showSuccess(this.orderSuccessTpl);
+        // this.clearCart(items);
         items.forEach((item, index) => {
           this.cartService.removeItem(item).subscribe(
             (result) => {
@@ -537,6 +538,18 @@ export class CheckOutComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         this.showDanger(this.orderDangerTpl);
       }
+    );
+  }
+
+  private clearCart(items: ICartItem[]): void {
+    const array = [];
+    items.forEach((item) => array.push(this.cartService.removeItem(item)));
+    forkJoin([array]).subscribe(
+      (result) => {
+        this.cartService.clearCart();
+        this.router.navigate(['/cart', 'success']);
+      },
+      (error) => console.log(error)
     );
   }
 
