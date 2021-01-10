@@ -97,11 +97,13 @@
                       ><i>25%</i></ngb-progressbar
                     >
                   </p>
-                  <ctacu-name-form
-                    [parentForm]="checkOutForm"
-                    [user]="user"
-                    [submitted]="submitted"
-                  ></ctacu-name-form>
+                  <div class="mb-3">
+                    <ctacu-name-form
+                      [parentForm]="checkOutForm"
+                      [user]="user"
+                      [submitted]="submitted"
+                    ></ctacu-name-form>
+                  </div>
                   <div class="d-none d-sm-flex justify-content-end">
                     <input
                       type="button"
@@ -152,13 +154,15 @@
                       ><i>50%</i></ngb-progressbar
                     >
                   </p>
-                  <ctacu-contact-form
-                    [parentForm]="checkOutForm"
-                    [submitted]="submitted"
-                    [user]="user"
-                    [emailTakenMessage]="emailTakenMessage"
-                    (onValueChange)="setEmailTakenMessage($event)"
-                  ></ctacu-contact-form>
+                  <div class="mb-3">
+                    <ctacu-contact-form
+                      [parentForm]="checkOutForm"
+                      [submitted]="submitted"
+                      [user]="user"
+                      [emailTakenMessage]="emailTakenMessage"
+                      (onValueChange)="setEmailTakenMessage($event)"
+                    ></ctacu-contact-form>
+                  </div>
                   <div class="d-none d-sm-flex justify-content-between">
                     <input
                       type="button"
@@ -218,11 +222,13 @@
                       ><i>75%</i></ngb-progressbar
                     >
                   </p>
-                  <ctacu-address-form
-                    [parentForm]="checkOutForm"
-                    [submitted]="submitted"
-                    [user]="user"
-                  ></ctacu-address-form>
+                  <div class="mb-3">
+                    <ctacu-address-form
+                      [parentForm]="checkOutForm"
+                      [submitted]="submitted"
+                      [user]="user"
+                    ></ctacu-address-form>
+                  </div>
                   <fieldset>
                     <legend class="text-primary">
                       Est. {{ deliveryDate | date }}
@@ -466,11 +472,13 @@
                     #collapse="ngbCollapse"
                     [(ngbCollapse)]="isCollapsed"
                   >
-                    <ctacu-password-form
-                      [parentForm]="checkOutForm"
-                      [submitted]="submitted"
-                      pageTitle="Sign Up"
-                    ></ctacu-password-form>
+                    <div class="mb-3">
+                      <ctacu-password-form
+                        [parentForm]="checkOutForm"
+                        [submitted]="submitted"
+                        pageTitle="Sign Up"
+                      ></ctacu-password-form>
+                    </div>
                   </div>
                   <div class="d-none d-sm-flex">
                     <input

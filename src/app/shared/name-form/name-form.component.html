@@ -1,4 +1,4 @@
-<form class="mb-3" [formGroup]="parentForm" novalidate>
+<form [formGroup]="parentForm" novalidate>
   <fieldset formGroupName="nameGroup">
     <legend class="text-primary text-capitalize">
       {{ (pageTitle ? pageTitle : defaultPageTitle) | lowercase }}
