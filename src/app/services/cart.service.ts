@@ -1,7 +1,20 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
-import { catchError, delay, map, retry, tap } from 'rxjs/operators';
+import {
+  asyncScheduler,
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  scheduled,
+} from 'rxjs';
+import {
+  catchError,
+  concatAll,
+  delay,
+  finalize,
+  map,
+  retry,
+} from 'rxjs/operators';
 
 import { ICartItem } from '../types/cart-item';
 import { ErrorService } from './error.service';
@@ -81,8 +94,13 @@ export class CartService {
       .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
   }
 
-  clearCart(): void {
-    this.cartSubject.next([]);
+  clearCart(items: ICartItem[]): Observable<unknown> {
+    const array = [];
+    items.forEach((i) => array.push(this.removeItem(i)));
+    return scheduled(array, asyncScheduler).pipe(
+      concatAll(),
+      finalize(() => this.cartSubject.next([]))
+    );
   }
 
   private addItem(item: ICartItem): Observable<ICartItem> {

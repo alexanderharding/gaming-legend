@@ -540,17 +540,13 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   }
 
   private clearCart(items: ICartItem[]): void {
-    const array = [];
-    items.forEach((item) => array.push(this.cartService.removeItem(item)));
-    scheduled(array, asyncScheduler)
-      .pipe(concatAll())
-      .subscribe({
-        error: (err) => console.error(err),
-        complete: () => {
-          this.cartService.clearCart();
-          this.router.navigate(['/cart', 'success']);
-        },
-      });
+    this.cartService.clearCart(items).subscribe({
+      error: (err) => {
+        console.error(err);
+        this.router.navigate(['/cart', 'success']);
+      },
+      complete: () => this.router.navigate(['/cart', 'success']),
+    });
   }
 
   ngOnDestroy(): void {
