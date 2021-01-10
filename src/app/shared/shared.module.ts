@@ -9,6 +9,7 @@ import { PasswordFormComponent } from './password-form/password-form.component';
 import { PaymentFormComponent } from './payment-form/payment-form.component';
 import { AddressFormComponent } from './address-form/address-form.component';
 import { CurrentPasswordFormComponent } from './current-password-form/current-password-form.component';
+import { ConvertToSpacesPipe } from '../pipes/convert-to-spaces.pipe';
 
 @NgModule({
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
@@ -19,6 +20,7 @@ import { CurrentPasswordFormComponent } from './current-password-form/current-pa
     PaymentFormComponent,
     AddressFormComponent,
     CurrentPasswordFormComponent,
+    ConvertToSpacesPipe,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -31,6 +33,8 @@ import { CurrentPasswordFormComponent } from './current-password-form/current-pa
     PaymentFormComponent,
     AddressFormComponent,
     CurrentPasswordFormComponent,
+    ConvertToSpacesPipe,
   ],
+  providers: [ConvertToSpacesPipe],
 })
 export class SharedModule {}

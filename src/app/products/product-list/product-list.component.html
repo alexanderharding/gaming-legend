@@ -50,7 +50,7 @@
               id="search"
               formControlName="search"
               class="form-control"
-              placeholder="By Name or Brand"
+              placeholder="By Name, Brand or Code"
               aria-describedby="basic-addon1"
             />
           </div>
@@ -206,10 +206,18 @@
                   ></ngb-highlight>
                 </td>
                 <td scope="row" class="d-none d-sm-table-cell">
-                  {{ p.brand }}
+                  <ngb-highlight
+                    [result]="p.brand"
+                    [term]="filterForm.get('search').value"
+                    [highlightClass]="['bg-info', 'text-light']"
+                  ></ngb-highlight>
                 </td>
                 <td scope="row" class="d-none d-sm-table-cell">
-                  {{ p.code | lowercase | convertToSpaces: "-" }}
+                  <ngb-highlight
+                    [result]="p.code | lowercase | convertToSpaces: '-'"
+                    [term]="filterForm.get('search').value"
+                    [highlightClass]="['bg-info', 'text-light']"
+                  ></ngb-highlight>
                 </td>
                 <td scope="row" class="d-none d-sm-table-cell">
                   <ngb-rating

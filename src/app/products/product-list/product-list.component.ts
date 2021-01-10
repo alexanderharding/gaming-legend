@@ -5,6 +5,7 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { ConvertToSpacesPipe } from '../../pipes/convert-to-spaces.pipe';
 
 import { EMPTY, combineLatest, BehaviorSubject, Subscription } from 'rxjs';
 import { catchError, map, debounceTime, tap } from 'rxjs/operators';
@@ -84,7 +85,11 @@ export class ProductListComponent implements OnInit, OnDestroy {
         products.filter((product) =>
           searchFilter
             ? product.name.toLowerCase().indexOf(searchFilter) > -1 ||
-              product.brand.toLowerCase().indexOf(searchFilter) > -1
+              product.brand.toLowerCase().indexOf(searchFilter) > -1 ||
+              this.convertToSpacesPipe
+                .transform(product.code, '-')
+                .toLowerCase()
+                .indexOf(searchFilter) > -1
             : true
         ) as IProduct[]
     ),
@@ -162,7 +167,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly formBuilder: FormBuilder
+    private readonly formBuilder: FormBuilder,
+    private readonly convertToSpacesPipe: ConvertToSpacesPipe
   ) {}
 
   ngOnInit(): void {
