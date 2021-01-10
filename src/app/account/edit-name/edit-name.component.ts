@@ -102,7 +102,7 @@ export class EditNameComponent implements OnInit {
 
   private showSuccess(): void {
     const notification = {
-      templateRef: this.successTpl,
+      textOrTpl: this.successTpl,
       className: 'bg-success text-light',
       delay: 10000,
     } as INotification;
@@ -111,7 +111,7 @@ export class EditNameComponent implements OnInit {
 
   private showDanger(): void {
     const notification = {
-      templateRef: this.dangerTpl,
+      textOrTpl: this.dangerTpl,
       className: 'bg-danger text-light',
       delay: 15000,
     } as INotification;

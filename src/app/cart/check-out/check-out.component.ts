@@ -350,7 +350,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
 
   private showSuccess(templateRef: TemplateRef<any>): void {
     const notification = {
-      templateRef: templateRef,
+      textOrTpl: templateRef,
       className: 'bg-success text-light',
       delay: 15000,
     } as INotification;
@@ -359,7 +359,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
 
   private showDanger(templateRef: TemplateRef<any>): void {
     const notification = {
-      templateRef: templateRef,
+      textOrTpl: templateRef,
       className: 'bg-danger text-light',
       delay: 15000,
     } as INotification;

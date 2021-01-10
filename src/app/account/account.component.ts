@@ -156,7 +156,7 @@ export class AccountComponent implements OnInit, OnDestroy {
 
   private showSuccess(): void {
     const notification = {
-      templateRef: this.successTpl,
+      textOrTpl: this.successTpl,
       className: 'bg-success text-light',
       delay: 10000,
     } as INotification;

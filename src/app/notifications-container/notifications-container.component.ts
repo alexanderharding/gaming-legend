@@ -5,6 +5,7 @@ import {
   TemplateRef,
 } from '@angular/core';
 import { NotificationService } from '../services/notification.service';
+import { INotification } from '../types/notification';
 
 @Component({
   selector: 'ctacu-notifications-container',
@@ -14,9 +15,13 @@ import { NotificationService } from '../services/notification.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NotificationsContainerComponent {
-  notifications$ = this.notificationService.notifications$;
+  readonly notifications$ = this.notificationService.notifications$;
 
   constructor(private readonly notificationService: NotificationService) {}
+
+  isTemplate(notification: INotification): boolean {
+    return notification.textOrTpl instanceof TemplateRef;
+  }
 
   remove(notification): void {
     this.notificationService.remove(notification);

@@ -156,7 +156,7 @@ export class CartComponent implements OnInit {
 
   private showDanger(templateRef: TemplateRef<any>): void {
     const notification = {
-      templateRef: templateRef,
+      textOrTpl: templateRef,
       className: 'bg-danger text-light',
       delay: 15000,
     } as INotification;

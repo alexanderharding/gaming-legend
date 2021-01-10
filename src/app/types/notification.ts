@@ -1,7 +1,7 @@
 import { TemplateRef } from '@angular/core';
 
 export interface INotification {
-  templateRef: TemplateRef<any>;
+  textOrTpl: string | TemplateRef<any>;
   className: string;
   delay?: number;
 }
