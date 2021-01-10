@@ -162,19 +162,6 @@ function cardNumberChecker(
   providers: [NgbAccordionConfig],
 })
 export class CheckOutComponent implements OnInit, OnDestroy {
-  @ViewChild('collapse') private collapse: NgbCollapse;
-  @ViewChild('orderSuccessTpl') private orderSuccessTpl: TemplateRef<any>;
-  @ViewChild('orderDangerTpl') private orderDangerTpl: TemplateRef<any>;
-  @ViewChild('saveUserDangerTpl') private saveUserDangerTpl: TemplateRef<any>;
-  @ViewChild('clearCartDangerTpl') private clearCartDangerTpl: TemplateRef<any>;
-
-  deliveryDate: Date;
-
-  isCollapsed = false;
-
-  private readonly subscriptions: Subscription[] = [];
-  user: IUser;
-
   /* Get data from CartService */
   readonly items$ = this.cartService.cartItems$;
   readonly cartQuantity$ = this.cartService.cartQuantity$;
@@ -194,15 +181,29 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     ? ('Check Out' as string)
     : ('Retrieval Error' as string);
 
-  emailTakenMessage: string;
+  /* NgbCollapse for showing and hiding the signUpCheck and passwordGroup in
+  the view */
+  @ViewChild('collapse') private collapse: NgbCollapse;
+  isCollapsed = false;
 
+  /* Notification templateRef's */
+  @ViewChild('orderSuccessTpl') private orderSuccessTpl: TemplateRef<any>;
+  @ViewChild('orderDangerTpl') private orderDangerTpl: TemplateRef<any>;
+  @ViewChild('saveUserDangerTpl') private saveUserDangerTpl: TemplateRef<any>;
+  @ViewChild('clearCartDangerTpl') private clearCartDangerTpl: TemplateRef<any>;
+
+  private readonly subscriptions: Subscription[] = [];
+  deliveryDate: Date;
+  user: IUser;
+  emailTakenMessage: string;
   submitted = false;
   orderPlaced = false;
   isLoading = false;
 
+  /* Main form group */
   checkOutForm: FormGroup;
 
-  /* Form control validation rules */
+  /* Get form control validation rules from FormValidationService*/
   readonly nameMinLength = +this.formValidationRuleService.nameMinLength;
   readonly nameMaxLength = +this.formValidationRuleService.nameMaxLength;
   readonly streetMinLength = +this.formValidationRuleService.streetMinLength;
