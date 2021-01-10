@@ -31,22 +31,22 @@ export class CartService {
     // this.items = this.getItems();
   }
 
-  private readonly cartSubject = new BehaviorSubject<ICartItem[]>([]);
-  readonly cartAction$ = this.cartSubject.asObservable();
+  private readonly cartItemsSubject = new BehaviorSubject<ICartItem[]>([]);
+  readonly cartItems$ = this.cartItemsSubject.asObservable();
 
   getCart(): Observable<boolean> {
     return this.http.get<ICartItem[]>(`${this.baseUrl}/cart`).pipe(
       delay(1000),
       retry(3),
       map((items) => {
-        this.cartSubject.next(items);
+        this.cartItemsSubject.next(items);
         return true;
       }),
       catchError(this.errorService.handleError)
     );
   }
 
-  cartQuantity$ = this.cartAction$.pipe(
+  cartQuantity$ = this.cartItems$.pipe(
     map((items) =>
       items.reduce((prev, current) => {
         return +prev + +current.quantity;
@@ -54,7 +54,7 @@ export class CartService {
     )
   );
 
-  subtotal$ = this.cartAction$.pipe(
+  subtotal$ = this.cartItems$.pipe(
     map((items) =>
       items.reduce((prev, current) => {
         return +(prev + +current.price * +current.quantity).toFixed(2);

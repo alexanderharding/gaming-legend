@@ -35,7 +35,7 @@ export class ProductDetailsComponent implements OnInit {
 
   imageIndex = 0;
 
-  readonly items$ = this.cartService.cartAction$.pipe(
+  readonly items$ = this.cartService.cartItems$.pipe(
     tap(() => this.setLoading(false))
   );
 

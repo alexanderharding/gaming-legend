@@ -49,7 +49,7 @@ export class CartComponent implements OnInit {
   pageTitle = 'Cart';
 
   /* Get data from CartService */
-  readonly items$ = this.cartService.cartAction$;
+  readonly items$ = this.cartService.cartItems$;
   readonly quantity$ = this.cartService.cartQuantity$;
 
   constructor(

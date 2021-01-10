@@ -16,7 +16,7 @@ import { ShippingRateService } from 'src/app/services/shipping-rate.service';
 })
 export class CartSummaryComponent {
   readonly tax = +this.cartService.tax;
-  readonly items$ = this.cartService.cartAction$;
+  readonly items$ = this.cartService.cartItems$;
   readonly quantity$ = this.cartService.cartQuantity$;
   readonly subtotal$ = this.cartService.subtotal$;
   readonly totalTax$ = this.cartService.totalTax$;

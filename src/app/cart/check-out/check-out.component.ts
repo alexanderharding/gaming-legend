@@ -176,7 +176,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   user: IUser;
 
   /* Get data from CartService */
-  readonly items$ = this.cartService.cartAction$;
+  readonly items$ = this.cartService.cartItems$;
   readonly cartQuantity$ = this.cartService.cartQuantity$;
   readonly subtotal$ = this.cartService.subtotal$;
 

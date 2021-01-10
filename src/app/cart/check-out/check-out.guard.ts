@@ -25,16 +25,8 @@ export class CheckOutGuard
     private readonly router: Router
   ) {}
 
-  // canActivate(): boolean {
-  //   const items = this.cartService.items;
-  //   if (!items.length) {
-  //     this.router.navigate(['/cart']);
-  //     return false;
-  //   }
-  //   return true;
-  // }
   canActivate(): Observable<boolean> {
-    return this.cartService.cartAction$.pipe(
+    return this.cartService.cartItems$.pipe(
       map((items) => {
         if (!items.length) {
           this.router.navigate(['/cart']);
