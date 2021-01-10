@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -11,18 +17,20 @@ import {
   NgbCollapse,
   NgbProgressbarConfig,
 } from '@ng-bootstrap/ng-bootstrap';
-import { combineLatest, Subscription } from 'rxjs';
-import { debounceTime, first, map } from 'rxjs/operators';
+import { combineLatest, EMPTY, Subscription } from 'rxjs';
+import { catchError, debounceTime, first, map } from 'rxjs/operators';
 
 import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
 import { AuthService } from 'src/app/services/auth.service';
 import { CartService } from 'src/app/services/cart.service';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
+import { NotificationService } from 'src/app/services/notification.service';
 import { OrderService } from 'src/app/services/order.service';
 import { ShippingRateService } from 'src/app/services/shipping-rate.service';
 import { ICartItem } from 'src/app/types/cart-item';
 import { Customer, CustomerMaker } from 'src/app/types/customer';
+import { INotification } from 'src/app/types/notification';
 import { Order, OrderMaker } from 'src/app/types/order';
 import { Payment, PaymentMaker } from 'src/app/types/payment';
 import { IShipping } from 'src/app/types/shipping';
@@ -143,6 +151,9 @@ function cardNumberChecker(
 })
 export class CheckOutComponent implements OnInit, OnDestroy {
   @ViewChild('collapse') private collapse: NgbCollapse;
+  @ViewChild('orderSuccessTpl') private orderSuccessTpl: TemplateRef<any>;
+  @ViewChild('orderDangerTpl') private orderDangerTpl: TemplateRef<any>;
+  @ViewChild('saveUserDangerTpl') private saveUserDangerTpl: TemplateRef<any>;
 
   deliveryDate: Date;
 
@@ -170,7 +181,6 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     ? ('Check Out' as string)
     : ('Retrieval Error' as string);
 
-  signUpError: string;
   emailTakenMessage: string;
 
   submitted = false;
@@ -205,7 +215,8 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly authService: AuthService,
     private readonly formValidationRuleService: FormValidationRuleService,
-    private readonly shippingRateService: ShippingRateService
+    private readonly shippingRateService: ShippingRateService,
+    private readonly notificationService: NotificationService
   ) {
     accordionConfig.closeOthers = true;
     progressBarConfig.striped = true;
@@ -313,7 +324,6 @@ export class CheckOutComponent implements OnInit, OnDestroy {
       this.submitted = true;
     }
     this.errorMessage = '';
-    this.signUpError = '';
     if (form.valid) {
       this.isLoading = true;
       const signUpCheck = this.checkOutForm.get('signUpCheck').value as boolean;
@@ -374,6 +384,24 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     );
   }
 
+  private showSuccess(templateRef: TemplateRef<any>): void {
+    const notification = {
+      templateRef: templateRef,
+      className: 'bg-success text-light',
+      delay: 15000,
+    } as INotification;
+    this.notificationService.show(notification);
+  }
+
+  private showDanger(templateRef: TemplateRef<any>): void {
+    const notification = {
+      templateRef: templateRef,
+      className: 'bg-danger text-light',
+      delay: 15000,
+    } as INotification;
+    this.notificationService.show(notification);
+  }
+
   private checkForUser(form: FormGroup, items: ICartItem[]): void {
     const email = this.checkOutForm.get('contactGroup.email').value as string;
     this.authService.checkForUser(email).subscribe(
@@ -388,7 +416,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
       },
       (error) => {
         this.isLoading = false;
-        this.signUpError = 'There was an error signing up for an account.';
+        this.showDanger(this.saveUserDangerTpl);
       }
     );
   }
@@ -417,7 +445,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
       (result) => this.createOrder(form, items),
       (error) => {
         this.isLoading = false;
-        this.signUpError = 'There was an error signing up for an account.';
+        this.showDanger(this.saveUserDangerTpl);
       }
     );
   }
@@ -466,18 +494,16 @@ export class CheckOutComponent implements OnInit, OnDestroy {
           } as Order;
         }
         return order;
+      }),
+      catchError(() => {
+        this.showDanger(this.orderDangerTpl);
+        return EMPTY;
       })
     );
-    order$.subscribe((order) => this.saveOrder(order, items));
-  }
-
-  private refreshCart(): void {
-    this.cartService.setCurrentCart().subscribe({
-      error: (error) => {
-        this.isLoading = false;
-        console.error(error);
-      },
-    });
+    order$.subscribe(
+      (order) => this.saveOrder(order, items),
+      (error) => this.showDanger(this.orderDangerTpl)
+    );
   }
 
   private setDeliveryDate(selectedPrice: number): void {
@@ -491,11 +517,14 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     this.orderService.saveOrder(order, -1).subscribe(
       (result) => {
         this.orderPlaced = true;
-        items.forEach((item) => {
+        this.showSuccess(this.orderSuccessTpl);
+        items.forEach((item, index) => {
           this.cartService.removeItem(item).subscribe(
             (result) => {
-              this.refreshCart();
-              this.router.navigate(['/cart', 'success']);
+              if (index == items.length - 1) {
+                this.cartService.clearCart();
+                this.router.navigate(['/cart', 'success']);
+              }
             },
             (error) => {
               console.error(error);
@@ -506,7 +535,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
       },
       (error) => {
         this.isLoading = false;
-        this.errorMessage = 'There was an error saving your order';
+        this.showDanger(this.orderDangerTpl);
       }
     );
   }

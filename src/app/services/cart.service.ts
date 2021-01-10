@@ -81,6 +81,10 @@ export class CartService {
       .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
   }
 
+  clearCart(): void {
+    this.cartSubject.next([]);
+  }
+
   private addItem(item: ICartItem): Observable<ICartItem> {
     return this.http
       .post<ICartItem>(`${this.baseUrl}/cart`, item)
