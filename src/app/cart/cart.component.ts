@@ -131,6 +131,26 @@ export class CartComponent implements OnInit {
     );
   }
 
+  clearCart(items: ICartItem[]): void {
+    const modalRef = this.modalService.open(ConfirmModalComponent);
+    const instance = modalRef.componentInstance;
+    instance.title = 'Empty Cart';
+    instance.message = `Are you sure you want to empty the cart?`;
+    instance.warningMessage = 'This operation can not be undone.';
+    instance.type = 'bg-danger';
+    instance.closeMessage = 'empty';
+    modalRef.closed.pipe(first()).subscribe(
+      (result) => {
+        this.setLoading(true);
+        this.cartService.clearCart(items).subscribe({
+          error: (err) => console.error(err),
+          complete: () => this.setLoading(false),
+        });
+      },
+      (error) => {}
+    );
+  }
+
   private showNotification(templateRef: TemplateRef<any>): void {
     const notification = {
       templateRef: templateRef,

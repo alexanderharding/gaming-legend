@@ -9,13 +9,26 @@
   <ng-container *ngIf="shippingRates && items$ | async as items; else error">
     <div class="row">
       <div class="col-md-8">
-        <input
-          type="button"
-          value="Keep Shopping"
-          class="btn btn-sm btn-info text-capitalize mb-3"
-          routerLink="/products"
-          queryParamsHandling="preserve"
-        />
+        <div class="row justify-content-between mb-3">
+          <div class="col-auto">
+            <input
+              type="button"
+              value="Keep Shopping"
+              class="btn btn-sm btn-info text-capitalize"
+              routerLink="/products"
+              queryParamsHandling="preserve"
+            />
+          </div>
+          <div *ngIf="items && items.length" class="col-auto">
+            <input
+              type="button"
+              value="Empty Cart"
+              class="btn btn-sm btn-danger text-capitalize"
+              (click)="clearCart(items)"
+              [disabled]="loading$ | async"
+            />
+          </div>
+        </div>
         <ng-container *ngIf="items.length; else noItems">
           <div class="table-responsive mb-3">
             <table class="table">
