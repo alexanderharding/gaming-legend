@@ -90,6 +90,12 @@ title {
   z-index: 10;
 }
 
+.table-hover > tbody > tr:hover,
 .pointer:hover {
   cursor: pointer;
+}
+
+.table-hover > tbody > tr:hover {
+  background-color: white;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
