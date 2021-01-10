@@ -7,7 +7,7 @@ import {
   Observable,
   scheduled,
 } from 'rxjs';
-import { catchError, concatAll, delay, map, retry } from 'rxjs/operators';
+import { catchError, concatAll, delay, map, retry, tap } from 'rxjs/operators';
 
 import { ICartItem } from '../types/cart-item';
 import { ErrorService } from './error.service';
@@ -34,14 +34,11 @@ export class CartService {
   private readonly cartItemsSubject = new BehaviorSubject<ICartItem[]>([]);
   readonly cartItems$ = this.cartItemsSubject.asObservable();
 
-  getCart(): Observable<boolean> {
+  getCart(): Observable<ICartItem[]> {
     return this.http.get<ICartItem[]>(`${this.baseUrl}/cart`).pipe(
       delay(1000),
       retry(3),
-      map((items) => {
-        this.cartItemsSubject.next(items);
-        return true;
-      }),
+      tap((items) => this.cartItemsSubject.next(items)),
       catchError(this.errorService.handleError)
     );
   }
