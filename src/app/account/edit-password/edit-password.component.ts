@@ -2,13 +2,19 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { first } from 'rxjs/operators';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { passwordChecker } from 'src/app/functions/password-checker';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
 import { AuthService } from 'src/app/services/auth.service';
@@ -22,7 +28,7 @@ import { IUser } from 'src/app/types/user';
   templateUrl: './edit-password.component.html',
   styleUrls: ['./edit-password.component.scss'],
 })
-export class EditPasswordComponent implements OnInit {
+export class EditPasswordComponent implements OnInit, OnDestroy {
   @ViewChild('successTpl') private successTpl: TemplateRef<any>;
   @ViewChild('dangerTpl') private dangerTpl: TemplateRef<any>;
 
@@ -33,6 +39,9 @@ export class EditPasswordComponent implements OnInit {
 
   submitted = false;
   editPasswordForm: FormGroup;
+  private subscription: Subscription;
+
+  hasValue = false;
 
   private readonly passwordPattern = this.formValidationRuleService
     .passwordPattern as RegExp;
@@ -61,6 +70,10 @@ export class EditPasswordComponent implements OnInit {
         { validator: passwordMatcher }
       ),
     });
+    const passwordGroupControl = this.editPasswordForm.get('passwordGroup');
+    this.subscription = passwordGroupControl.valueChanges.subscribe(() =>
+      this.setHasValueChanged(passwordGroupControl)
+    );
   }
 
   onSubmit(form: FormGroup): void {
@@ -69,7 +82,6 @@ export class EditPasswordComponent implements OnInit {
     }
     if (form.valid) {
       this.loadingChange.emit(true);
-
       this.saveUser(form);
     }
   }
@@ -77,6 +89,13 @@ export class EditPasswordComponent implements OnInit {
   resetForm(form: FormGroup): void {
     form.reset();
     this.submitted = false;
+  }
+
+  private setHasValueChanged(c: AbstractControl): void {
+    const passwordControl = c.get('password');
+    const confirmPasswordControl = c.get('confirmPassword');
+    this.hasValue =
+      passwordControl.value || confirmPasswordControl.value ? true : false;
   }
 
   private showSuccess(): void {
@@ -117,13 +136,15 @@ export class EditPasswordComponent implements OnInit {
         this.resetForm(form);
         this.updateCurrentPasswordValidators(form, user);
         this.showSuccess();
-        this.loadingChange.emit(false);
       },
       (error) => {
         this.showDanger();
-        this.loadingChange.emit(false);
         console.error(error);
-      }
+      },
+      () => this.loadingChange.emit(false)
     );
+  }
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }
