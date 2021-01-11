@@ -99,7 +99,6 @@ export class EditNameComponent implements OnInit, OnDestroy {
     const name = user.name;
     const nameControl = form.get('nameGroup');
     this.submitted = false;
-    form.reset();
     nameControl.setValue({
       firstName: name.firstName,
       lastName: name.lastName,
