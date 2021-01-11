@@ -14,12 +14,12 @@
         class="form-control"
         placeholder="First name (required)"
         [ngClass]="{
-          'is-invalid': firstNameMessage && submitted,
-          'is-valid': !firstNameMessage
+          'is-invalid': (firstNameMessage$ | async) && submitted,
+          'is-valid': !(firstNameMessage$ | async)
         }"
       />
       <div class="invalid-tooltip">
-        <span>{{ firstNameMessage }}</span>
+        <span>{{ firstNameMessage$ | async }}</span>
       </div>
     </div>
     <div class="input-group">
@@ -33,12 +33,12 @@
         placeholder="Last name (required)"
         autocomplete="family-name"
         [ngClass]="{
-          'is-invalid': lastNameMessage && submitted,
-          'is-valid': !lastNameMessage
+          'is-invalid': (lastNameMessage$ | async) && submitted,
+          'is-valid': !(lastNameMessage$ | async)
         }"
       />
       <div class="invalid-tooltip">
-        <span>{{ lastNameMessage }}</span>
+        <span>{{ lastNameMessage$ | async }}</span>
       </div>
     </div>
   </fieldset>

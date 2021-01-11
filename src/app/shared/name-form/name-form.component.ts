@@ -1,6 +1,12 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  OnDestroy,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
 import { IUser } from 'src/app/types/user';
@@ -11,6 +17,7 @@ import { UserName } from 'src/app/types/user-name';
   selector: 'ctacu-name-form',
   templateUrl: './name-form.component.html',
   styleUrls: ['./name-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NameFormComponent implements OnInit, OnDestroy {
   readonly defaultPageTitle = 'Full Name';
@@ -22,6 +29,7 @@ export class NameFormComponent implements OnInit, OnDestroy {
   @Input() user: IUser;
 
   private readonly subscriptions: Subscription[] = [];
+
   private readonly nameMinLength = this.formValidationRuleService.nameMinLength;
   private readonly nameMaxLength = this.formValidationRuleService.nameMaxLength;
 
@@ -32,7 +40,10 @@ export class NameFormComponent implements OnInit, OnDestroy {
     maxlength: `First name cannot be longer than ${this.nameMaxLength}
     characters.`,
   };
-  firstNameMessage = this.firstNameValidationMessages['required'];
+  private readonly firstNameMessageSubject = new BehaviorSubject<string>(
+    this.firstNameValidationMessages['required']
+  );
+  readonly firstNameMessage$ = this.firstNameMessageSubject.asObservable();
 
   private readonly lastNameValidationMessages = {
     required: 'Please enter a last name.',
@@ -41,7 +52,10 @@ export class NameFormComponent implements OnInit, OnDestroy {
     maxlength: `Last name cannot be longer than ${this.nameMaxLength}
     characters.`,
   };
-  lastNameMessage = this.lastNameValidationMessages['required'];
+  private readonly lastNameMessageSubject = new BehaviorSubject<string>(
+    this.lastNameValidationMessages['required']
+  );
+  readonly lastNameMessage$ = this.lastNameMessageSubject.asObservable();
 
   constructor(
     private readonly formValidationRuleService: FormValidationRuleService
@@ -72,19 +86,21 @@ export class NameFormComponent implements OnInit, OnDestroy {
   private setMessage(c: AbstractControl, name: string): void {
     switch (name) {
       case 'firstName':
-        this.firstNameMessage = '';
+        this.firstNameMessageSubject.next('');
         if (c.errors) {
-          this.firstNameMessage = Object.keys(c.errors)
+          const message = Object.keys(c.errors)
             .map((key) => this.firstNameValidationMessages[key])
             .join(' ');
+          this.firstNameMessageSubject.next(message);
         }
         break;
       case 'lastName':
-        this.lastNameMessage = '';
+        this.lastNameMessageSubject.next('');
         if (c.errors) {
-          this.lastNameMessage = Object.keys(c.errors)
+          const message = Object.keys(c.errors)
             .map((key) => this.lastNameValidationMessages[key])
             .join(' ');
+          this.lastNameMessageSubject.next(message);
         }
         break;
       default:
