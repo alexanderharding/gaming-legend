@@ -145,16 +145,16 @@ export class EditContactComponent implements OnInit, OnDestroy {
     this.authService.checkForUser(emailControl.value).subscribe(
       (result) => {
         if (result) {
-          this.onLoadingChange.emit(false);
           this.emailTakenMessage = `${emailControl.value} is already registered
           to an account.`;
+          this.onLoadingChange.emit(false);
         } else {
           this.saveUser(form);
         }
       },
       (error) => {
-        this.onLoadingChange.emit(false);
         this.showDanger();
+        this.onLoadingChange.emit(false);
       }
     );
   }
@@ -170,14 +170,12 @@ export class EditContactComponent implements OnInit, OnDestroy {
     } as User;
     this.authService.saveUser(updatedUser).subscribe(
       (user) => {
-        this.onLoadingChange.emit(false);
         this.showSuccess();
+        this.user = user as User;
         this.resetForm(form, user);
       },
-      (error) => {
-        this.onLoadingChange.emit(false);
-        this.showDanger();
-      }
+      (error) => this.showDanger(),
+      () => this.onLoadingChange.emit(false)
     );
   }
 

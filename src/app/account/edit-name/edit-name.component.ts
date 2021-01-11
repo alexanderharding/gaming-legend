@@ -138,14 +138,12 @@ export class EditNameComponent implements OnInit, OnDestroy {
     } as User;
     this.authService.saveUser(updatedUser).subscribe(
       (user) => {
-        this.onLoadingChange.emit(false);
-        this.resetForm(form, user);
         this.showSuccess();
+        this.user = user as IUser;
+        this.resetForm(form, user);
       },
-      (error) => {
-        this.onLoadingChange.emit(false);
-        this.showDanger();
-      }
+      (error) => this.showDanger(),
+      () => this.onLoadingChange.emit(false)
     );
   }
 
