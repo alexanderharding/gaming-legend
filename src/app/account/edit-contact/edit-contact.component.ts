@@ -2,52 +2,49 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, Form } from '@angular/forms';
-import { Router } from '@angular/router';
-import { first, tap } from 'rxjs/operators';
+import {
+  FormGroup,
+  FormBuilder,
+  Validators,
+  AbstractControl,
+} from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordChecker } from 'src/app/functions/password-checker';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { INotification } from 'src/app/types/notification';
-import { IUser, User } from 'src/app/types/user';
+import { User } from 'src/app/types/user';
 
 @Component({
   selector: 'ctacu-edit-contact',
   templateUrl: './edit-contact.component.html',
   styleUrls: ['./edit-contact.component.scss'],
 })
-export class EditContactComponent implements OnInit {
+export class EditContactComponent implements OnInit, OnDestroy {
   @ViewChild('successTpl') private successTpl: TemplateRef<any>;
   @ViewChild('dangerTpl') private dangerTpl: TemplateRef<any>;
   submitted = false;
   editForm: FormGroup;
   emailTakenMessage: string;
+  hasValueChanged = false;
 
-  @Input() user: IUser;
+  private subscription: Subscription;
+
+  @Input() user: User;
   @Input() loading: boolean;
 
   @Output() onLoadingChange = new EventEmitter<boolean>();
 
   private readonly phonePattern = this.formValidationRuleService
     .phonePattern as RegExp;
-
-  get hasChanged(): boolean {
-    const contactGroup = JSON.stringify(
-      this.editForm.get('contactGroup').value
-    ).toLowerCase();
-    const userContactValue = JSON.stringify({
-      ...this.user.contact,
-      confirmEmail: this.user.contact.email,
-    }).toLowerCase();
-    return contactGroup !== userContactValue;
-  }
 
   private get hasEmailChanged(): boolean {
     const emailControl = this.editForm.get('contactGroup.email');
@@ -80,6 +77,10 @@ export class EditContactComponent implements OnInit {
         { validator: emailMatcher }
       ),
     });
+    const contactControl = this.editForm.get('contactGroup');
+    this.subscription = contactControl.valueChanges.subscribe(() =>
+      this.setHasValueChanged(contactControl)
+    );
   }
 
   onSubmit(form: FormGroup): void {
@@ -100,7 +101,7 @@ export class EditContactComponent implements OnInit {
     this.emailTakenMessage = message;
   }
 
-  resetForm(form: FormGroup, user: IUser): void {
+  resetForm(form: FormGroup, user: User): void {
     this.submitted = false;
     const contact = user.contact;
     const contactControl = form.get('contactGroup');
@@ -110,6 +111,15 @@ export class EditContactComponent implements OnInit {
       email: contact.email as string,
       confirmEmail: contact.email as string,
     });
+  }
+
+  private setHasValueChanged(c: AbstractControl): void {
+    const controlValue = JSON.stringify(c.value).toLowerCase();
+    const userNameValue = JSON.stringify({
+      ...this.user.contact,
+      confirmEmail: this.user.contact.email,
+    }).toLowerCase();
+    this.hasValueChanged = controlValue === userNameValue ? false : true;
   }
 
   private showSuccess(): void {
@@ -157,7 +167,7 @@ export class EditContactComponent implements OnInit {
         phone: form.get('contactGroup.phone').value as string,
         email: form.get('contactGroup.email').value as string,
       },
-    } as IUser;
+    } as User;
     this.authService.saveUser(updatedUser).subscribe(
       (user) => {
         this.onLoadingChange.emit(false);
@@ -169,5 +179,9 @@ export class EditContactComponent implements OnInit {
         this.showDanger();
       }
     );
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

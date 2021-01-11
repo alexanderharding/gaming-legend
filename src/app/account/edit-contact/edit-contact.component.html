@@ -5,40 +5,42 @@
       [submitted]="submitted"
       [user]="user"
       [emailTakenMessage]="emailTakenMessage"
-      pageTitle="{{ hasChanged ? 'Edit Contact Information' : '' }}"
+      pageTitle="{{ hasValueChanged ? 'Edit Contact Information' : '' }}"
       (onValueChange)="setEmailTakenMessage($event)"
     ></ctacu-contact-form>
-
-    <div *ngIf="hasChanged" class="pt-3">
-      <div class="mb-3">
-        <ctacu-current-password-form
-          [parentForm]="editForm"
-          [submitted]="submitted"
-        ></ctacu-current-password-form>
-      </div>
-      <div class="d-flex">
-        <input
-          type="submit"
-          value="{{
-            (editForm.invalid || emailTakenMessage) && submitted ? '! ' : ''
-          }}Save"
-          class="btn btn-sm"
-          [disabled]="
-            ((editForm.invalid || emailTakenMessage) && submitted) || loading
-          "
-          [ngClass]="{
-            'btn-success': (editForm.valid && !emailTakenMessage) || !submitted,
-            'btn-outline-danger':
-              (editForm.invalid || emailTakenMessage) && submitted
-          }"
-        />
-        <input
-          type="button"
-          value="Cancel"
-          class="btn btn-sm btn-danger ml-2"
-          (click)="resetForm(editForm, user)"
-          [disabled]="loading"
-        />
+    <div #collapse="ngbCollapse" [(ngbCollapse)]="!hasValueChanged">
+      <div class="pt-3">
+        <div class="mb-3">
+          <ctacu-current-password-form
+            [parentForm]="editForm"
+            [submitted]="submitted"
+          ></ctacu-current-password-form>
+        </div>
+        <div class="d-flex">
+          <input
+            type="submit"
+            value="{{
+              (editForm.invalid || emailTakenMessage) && submitted ? '! ' : ''
+            }}Save"
+            class="btn btn-sm"
+            [disabled]="
+              ((editForm.invalid || emailTakenMessage) && submitted) || loading
+            "
+            [ngClass]="{
+              'btn-success':
+                (editForm.valid && !emailTakenMessage) || !submitted,
+              'btn-outline-danger':
+                (editForm.invalid || emailTakenMessage) && submitted
+            }"
+          />
+          <input
+            type="button"
+            value="Cancel"
+            class="btn btn-sm btn-danger ml-2"
+            (click)="resetForm(editForm, user)"
+            [disabled]="loading"
+          />
+        </div>
       </div>
     </div>
   </form>
