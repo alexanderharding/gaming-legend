@@ -14,12 +14,12 @@
         autocomplete="tel"
         placeholder="Phone number (required)"
         [ngClass]="{
-          'is-invalid': phoneMessage && submitted,
-          'is-valid': !phoneMessage
+          'is-invalid': (phoneMessage$ | async) && submitted,
+          'is-valid': !(phoneMessage$ | async)
         }"
       />
       <div class="invalid-tooltip">
-        <span>{{ phoneMessage }}</span>
+        <span>{{ phoneMessage$ | async }}</span>
       </div>
     </div>
     <div class="input-group mb-3">
@@ -34,13 +34,14 @@
         placeholder="Email (required)"
         formControlName="email"
         [ngClass]="{
-          'is-invalid': (emailMessage || emailTakenMessage) && submitted,
-          'is-valid': !emailMessage && !emailTakenMessage
+          'is-invalid':
+            ((emailMessage$ | async) || emailTakenMessage) && submitted,
+          'is-valid': !(emailMessage$ | async) && !emailTakenMessage
         }"
       />
       <div class="invalid-tooltip">
-        <span>{{ emailMessage }}</span>
-        <span *ngIf="!emailMessage">{{ emailTakenMessage }}</span>
+        <span>{{ emailMessage$ | async }}</span>
+        <span *ngIf="!(emailMessage$ | async)">{{ emailTakenMessage }}</span>
       </div>
     </div>
     <div class="input-group">
@@ -55,16 +56,19 @@
         formControlName="confirmEmail"
         [ngClass]="{
           'is-invalid':
-            (confirmEmailMessage || contactGroupMessage) && submitted,
-          'is-valid': !confirmEmailMessage && !contactGroupMessage
+            ((confirmEmailMessage$ | async) ||
+              (contactGroupMessage$ | async)) &&
+            submitted,
+          'is-valid':
+            !(confirmEmailMessage$ | async) && !(contactGroupMessage$ | async)
         }"
       />
-      <div *ngIf="!emailMessage" class="invalid-tooltip">
+      <div *ngIf="!(emailMessage$ | async)" class="invalid-tooltip">
         <span>
-          {{ confirmEmailMessage }}
+          {{ confirmEmailMessage$ | async }}
         </span>
-        <span *ngIf="!confirmEmailMessage">
-          {{ contactGroupMessage }}
+        <span *ngIf="!(confirmEmailMessage$ | async)">
+          {{ contactGroupMessage$ | async }}
         </span>
       </div>
     </div>
