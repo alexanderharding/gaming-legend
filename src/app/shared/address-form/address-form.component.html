@@ -14,12 +14,12 @@
         autocomplete="street-address"
         placeholder="Street address (required)"
         [ngClass]="{
-          'is-invalid': streetMessage && submitted,
-          'is-valid': !streetMessage
+          'is-invalid': (streetMessage$ | async) && submitted,
+          'is-valid': !(streetMessage$ | async)
         }"
       />
       <div class="invalid-tooltip">
-        <span>{{ streetMessage }}</span>
+        <span>{{ streetMessage$ | async }}</span>
       </div>
     </div>
     <div class="form-row mb-3">
@@ -34,12 +34,12 @@
             class="form-control"
             placeholder="City (required)"
             [ngClass]="{
-              'is-invalid': cityMessage && submitted,
-              'is-valid': !cityMessage
+              'is-invalid': (cityMessage$ | async) && submitted,
+              'is-valid': !(cityMessage$ | async)
             }"
           />
           <div class="invalid-tooltip">
-            <span>{{ cityMessage }}</span>
+            <span>{{ cityMessage$ | async }}</span>
           </div>
         </div>
       </div>
@@ -52,8 +52,8 @@
             class="form-control"
             formControlName="state"
             [ngClass]="{
-              'is-invalid': stateMessage && submitted,
-              'is-valid': !stateMessage
+              'is-invalid': (stateMessage$ | async) && submitted,
+              'is-valid': !(stateMessage$ | async)
             }"
           >
             <option value="" disabled hidden>State (required)</option>
@@ -63,7 +63,7 @@
           </select>
           <div class="invalid-tooltip">
             <span>
-              {{ stateMessage }}
+              {{ stateMessage$ | async }}
             </span>
           </div>
         </div>
@@ -82,12 +82,12 @@
             autocomplete="postal-code"
             placeholder="Zip (required)"
             [ngClass]="{
-              'is-invalid': zipMessage && submitted,
-              'is-valid': !zipMessage
+              'is-invalid': (zipMessage$ | async) && submitted,
+              'is-valid': !(zipMessage$ | async)
             }"
           />
           <div class="invalid-tooltip">
-            <span>{{ zipMessage }}</span>
+            <span>{{ zipMessage$ | async }}</span>
           </div>
         </div>
       </div>

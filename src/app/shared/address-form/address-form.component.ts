@@ -1,6 +1,12 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
@@ -12,6 +18,7 @@ import { UserAddress } from 'src/app/types/user-address';
   selector: 'ctacu-address-form',
   templateUrl: './address-form.component.html',
   styleUrls: ['./address-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddressFormComponent implements OnInit, OnDestroy {
   readonly defaultPageTitle = 'Address';
@@ -38,7 +45,10 @@ export class AddressFormComponent implements OnInit, OnDestroy {
     maxlength: `The street cannot be longer than ${this.streetMaxLength}
     characters.`,
   };
-  streetMessage = this.streetValidationMessages['required'];
+  private readonly streetMessageSubject = new BehaviorSubject<string>(
+    this.streetValidationMessages['required']
+  );
+  readonly streetMessage$ = this.streetMessageSubject.asObservable();
 
   private readonly cityValidationMessages = {
     required: 'Please enter a city.',
@@ -47,18 +57,27 @@ export class AddressFormComponent implements OnInit, OnDestroy {
     maxlength: `The city cannot be longer than ${this.cityMaxLength}
     characters.`,
   };
-  cityMessage = this.cityValidationMessages['required'];
+  private readonly cityMessageSubject = new BehaviorSubject<string>(
+    this.cityValidationMessages['required']
+  );
+  readonly cityMessage$ = this.cityMessageSubject.asObservable();
 
   private readonly stateValidationMessages = {
     required: 'Please select a state.',
   };
-  stateMessage = this.stateValidationMessages['required'];
+  private readonly stateMessageSubject = new BehaviorSubject<string>(
+    this.stateValidationMessages['required']
+  );
+  readonly stateMessage$ = this.stateMessageSubject.asObservable();
 
   private readonly zipValidationMessages = {
     required: 'Please enter a zip code.',
     pattern: 'Please enter a valid zip code.',
   };
-  zipMessage = this.zipValidationMessages['required'];
+  private readonly zipMessageSubject = new BehaviorSubject<string>(
+    this.zipValidationMessages['required']
+  );
+  readonly zipMessage$ = this.zipMessageSubject.asObservable();
 
   private readonly subscriptions: Subscription[] = [];
 
@@ -103,38 +122,39 @@ export class AddressFormComponent implements OnInit, OnDestroy {
   }
 
   private setMessage(c: AbstractControl, name: string): void {
+    let message = '';
     switch (name) {
       case 'street':
-        this.streetMessage = '';
         if (c.errors) {
-          this.streetMessage = Object.keys(c.errors)
+          message = Object.keys(c.errors)
             .map((key) => this.streetValidationMessages[key])
             .join(' ');
         }
+        this.streetMessageSubject.next(message);
         break;
       case 'city':
-        this.cityMessage = '';
         if (c.errors) {
-          this.cityMessage = Object.keys(c.errors)
+          message = Object.keys(c.errors)
             .map((key) => this.cityValidationMessages[key])
             .join(' ');
         }
+        this.cityMessageSubject.next(message);
         break;
       case 'state':
-        this.stateMessage = '';
         if (c.errors) {
-          this.stateMessage = Object.keys(c.errors)
+          message = Object.keys(c.errors)
             .map((key) => this.stateValidationMessages[key])
             .join(' ');
         }
+        this.stateMessageSubject.next(message);
         break;
       case 'zip':
-        this.zipMessage = '';
         if (c.errors) {
-          this.zipMessage = Object.keys(c.errors)
+          message = Object.keys(c.errors)
             .map((key) => this.zipValidationMessages[key])
             .join(' ');
         }
+        this.zipMessageSubject.next(message);
         break;
       default:
         console.error(`${name} did not match any names.`);
