@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
@@ -27,6 +28,7 @@ import { IUser } from 'src/app/types/user';
   selector: 'ctacu-edit-password',
   templateUrl: './edit-password.component.html',
   styleUrls: ['./edit-password.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditPasswordComponent implements OnInit, OnDestroy {
   @ViewChild('successTpl') private successTpl: TemplateRef<any>;

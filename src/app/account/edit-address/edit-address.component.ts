@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
@@ -25,6 +26,7 @@ import { IUser } from 'src/app/types/user';
   selector: 'ctacu-edit-address',
   templateUrl: './edit-address.component.html',
   styleUrls: ['./edit-address.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditAddressComponent implements OnInit {
   submitted = false;

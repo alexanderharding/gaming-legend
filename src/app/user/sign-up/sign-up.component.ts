@@ -1,17 +1,22 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
   NgbAccordionConfig,
   NgbProgressbarConfig,
 } from '@ng-bootstrap/ng-bootstrap';
-import { Observable } from 'rxjs';
 import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
 import { IUser, User, UserMaker } from 'src/app/types/user';
-import { UserAddress, UserAddressMaker } from 'src/app/types/user-address';
 import { UserContact, UserContactMaker } from 'src/app/types/user-contact';
 import { UserName, UserNameMaker } from 'src/app/types/user-name';
 
@@ -19,6 +24,7 @@ import { UserName, UserNameMaker } from 'src/app/types/user-name';
   selector: 'ctacu-sign-up',
   templateUrl: './sign-up.component.html',
   styleUrls: ['./sign-up.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignUpComponent implements OnInit {
   private readonly states = this.formValidationRuleService.states;
