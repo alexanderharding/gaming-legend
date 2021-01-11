@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   OnDestroy,
   OnInit,
@@ -17,7 +18,7 @@ import {
   NgbCollapse,
   NgbProgressbarConfig,
 } from '@ng-bootstrap/ng-bootstrap';
-import { combineLatest, EMPTY, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, EMPTY, Subscription } from 'rxjs';
 import { catchError, debounceTime, first, map } from 'rxjs/operators';
 
 import { emailMatcher } from 'src/app/functions/email-matcher';
@@ -110,6 +111,7 @@ function cardNumberChecker(
   templateUrl: './check-out.component.html',
   styleUrls: ['./check-out.component.scss'],
   providers: [NgbAccordionConfig],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CheckOutComponent implements OnInit, OnDestroy {
   /* Get data from CartService */
@@ -148,7 +150,9 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   emailTakenMessage: string;
   submitted = false;
   orderPlaced = false;
-  isLoading = false;
+
+  private readonly loadingSubject = new BehaviorSubject<boolean>(false);
+  readonly loading$ = this.loadingSubject.asObservable();
 
   /* Main form group */
   checkOutForm: FormGroup;
@@ -289,7 +293,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     }
     this.errorMessage = '';
     if (form.valid) {
-      this.isLoading = true;
+      this.setLoading(true);
       const signUpCheck = this.checkOutForm.get('signUpCheck').value as boolean;
       if (signUpCheck) {
         this.checkForUser(form, items);
@@ -348,6 +352,10 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     );
   }
 
+  private setLoading(value: boolean): void {
+    this.loadingSubject.next(value);
+  }
+
   private showSuccess(templateRef: TemplateRef<any>): void {
     const notification = {
       textOrTpl: templateRef,
@@ -371,7 +379,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     this.authService.checkForUser(email).subscribe(
       (result) => {
         if (result) {
-          this.isLoading = false;
+          this.setLoading(false);
           this.emailTakenMessage = `${email} is already registered to an
           account. Please sign in to continue.`;
         } else {
@@ -379,7 +387,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
         }
       },
       (error) => {
-        this.isLoading = false;
+        this.setLoading(false);
         this.showDanger(this.saveUserDangerTpl);
       }
     );
@@ -408,7 +416,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     this.authService.saveUser(user).subscribe(
       (result) => this.createOrder(form, items),
       (error) => {
-        this.isLoading = false;
+        this.setLoading(false);
         this.showDanger(this.saveUserDangerTpl);
       }
     );
@@ -485,7 +493,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
         this.removeAllItems(items);
       },
       (error) => {
-        this.isLoading = false;
+        this.setLoading(false);
         this.showDanger(this.orderDangerTpl);
       }
     );
@@ -507,7 +515,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   private getCartItems(): void {
     this.cartService.getCartItems().subscribe({
       error: (error) => console.error(error),
-      complete: () => (this.isLoading = false),
+      complete: () => this.setLoading(false),
     });
   }
 
