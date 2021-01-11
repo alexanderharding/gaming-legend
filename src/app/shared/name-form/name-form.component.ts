@@ -84,24 +84,23 @@ export class NameFormComponent implements OnInit, OnDestroy {
   }
 
   private setMessage(c: AbstractControl, name: string): void {
+    let message = '';
     switch (name) {
       case 'firstName':
-        this.firstNameMessageSubject.next('');
         if (c.errors) {
-          const message = Object.keys(c.errors)
+          message = Object.keys(c.errors)
             .map((key) => this.firstNameValidationMessages[key])
             .join(' ');
-          this.firstNameMessageSubject.next(message);
         }
+        this.firstNameMessageSubject.next(message);
         break;
       case 'lastName':
-        this.lastNameMessageSubject.next('');
         if (c.errors) {
-          const message = Object.keys(c.errors)
+          message = Object.keys(c.errors)
             .map((key) => this.lastNameValidationMessages[key])
             .join(' ');
-          this.lastNameMessageSubject.next(message);
         }
+        this.lastNameMessageSubject.next(message);
         break;
       default:
         console.error(`${name} did not match any names.`);

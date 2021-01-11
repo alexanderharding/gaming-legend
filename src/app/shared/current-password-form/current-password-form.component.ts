@@ -48,13 +48,13 @@ export class CurrentPasswordFormComponent implements OnInit, OnDestroy {
   }
 
   private setMessage(c: AbstractControl): void {
-    this.currentPasswordMessageSubject.next('');
+    let message = '';
     if (c.errors) {
-      const message = Object.keys(c.errors)
+      message = Object.keys(c.errors)
         .map((key) => this.currentPasswordValidationMessages[key])
         .join(' ');
-      this.currentPasswordMessageSubject.next(message);
     }
+    this.currentPasswordMessageSubject.next(message);
   }
 
   ngOnDestroy(): void {
