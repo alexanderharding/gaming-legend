@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
@@ -26,6 +27,7 @@ import { IUser, User } from 'src/app/types/user';
   selector: 'ctacu-edit-name',
   templateUrl: './edit-name.component.html',
   styleUrls: ['./edit-name.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditNameComponent implements OnInit, OnDestroy {
   submitted = false;
