@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
@@ -27,6 +28,7 @@ import { User } from 'src/app/types/user';
   selector: 'ctacu-edit-contact',
   templateUrl: './edit-contact.component.html',
   styleUrls: ['./edit-contact.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditContactComponent implements OnInit, OnDestroy {
   @ViewChild('successTpl') private successTpl: TemplateRef<any>;
@@ -35,6 +37,7 @@ export class EditContactComponent implements OnInit, OnDestroy {
   editForm: FormGroup;
   emailTakenMessage: string;
   hasValueChanged = false;
+  hasEmailChanged = false;
 
   private subscription: Subscription;
 
@@ -45,12 +48,6 @@ export class EditContactComponent implements OnInit, OnDestroy {
 
   private readonly phonePattern = this.formValidationRuleService
     .phonePattern as RegExp;
-
-  private get hasEmailChanged(): boolean {
-    const emailControl = this.editForm.get('contactGroup.email');
-    const userEmail = this.user.contact.email.toLowerCase();
-    return emailControl.value.toLowerCase() !== userEmail;
-  }
 
   constructor(
     private readonly fb: FormBuilder,
@@ -81,6 +78,10 @@ export class EditContactComponent implements OnInit, OnDestroy {
     this.subscription = contactControl.valueChanges.subscribe(() =>
       this.setHasValueChanged(contactControl)
     );
+    const emailControl = this.editForm.get('contactGroup.email');
+    this.subscription = emailControl.valueChanges.subscribe(() =>
+      this.setHasEmailChanged(emailControl)
+    );
   }
 
   onSubmit(form: FormGroup): void {
@@ -105,7 +106,6 @@ export class EditContactComponent implements OnInit, OnDestroy {
     this.submitted = false;
     const contact = user.contact;
     const contactControl = form.get('contactGroup');
-    form.reset();
     contactControl.setValue({
       phone: contact.phone as string,
       email: contact.email as string,
@@ -120,6 +120,12 @@ export class EditContactComponent implements OnInit, OnDestroy {
       confirmEmail: this.user.contact.email,
     }).toLowerCase();
     this.hasValueChanged = controlValue === userNameValue ? false : true;
+  }
+
+  private setHasEmailChanged(c: AbstractControl): void {
+    const emailValue = c.value.toLowerCase();
+    const userEmail = this.user.contact.email;
+    this.hasEmailChanged = emailValue === userEmail ? false : true;
   }
 
   private showSuccess(): void {
