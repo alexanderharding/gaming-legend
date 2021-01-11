@@ -45,10 +45,12 @@
               ><i>33%</i></ngb-progressbar
             >
           </p>
-          <ctacu-name-form
-            [parentForm]="signUpForm"
-            [submitted]="submitted"
-          ></ctacu-name-form>
+          <div class="mb-3">
+            <ctacu-name-form
+              [parentForm]="signUpForm"
+              [submitted]="submitted"
+            ></ctacu-name-form>
+          </div>
           <div class="d-none d-sm-flex justify-content-end">
             <input
               type="button"
@@ -95,12 +97,14 @@
               ><i>66%</i></ngb-progressbar
             >
           </p>
-          <ctacu-contact-form
-            [parentForm]="signUpForm"
-            [submitted]="submitted"
-            [emailTakenMessage]="emailTakenMessage"
-            (onValueChange)="setEmailTakenMessage($event)"
-          ></ctacu-contact-form>
+          <div class="mb-3">
+            <ctacu-contact-form
+              [parentForm]="signUpForm"
+              [submitted]="submitted"
+              [emailTakenMessage]="emailTakenMessage"
+              (onValueChange)="setEmailTakenMessage($event)"
+            ></ctacu-contact-form>
+          </div>
           <div class="d-none d-sm-flex justify-content-between">
             <input
               type="button"
@@ -156,11 +160,13 @@
               ><i>100%</i></ngb-progressbar
             >
           </p>
-          <ctacu-password-form
-            [parentForm]="signUpForm"
-            [submitted]="submitted"
-            pageTitle="Password"
-          ></ctacu-password-form>
+          <div class="mb-3">
+            <ctacu-password-form
+              [parentForm]="signUpForm"
+              [submitted]="submitted"
+              pageTitle="Password"
+            ></ctacu-password-form>
+          </div>
           <form
             [formGroup]="signUpForm"
             (ngSubmit)="onSubmit(signUpForm)"
