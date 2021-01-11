@@ -61,7 +61,7 @@ export class ContactFormComponent implements OnInit, OnDestroy {
     match: 'The confirmation does not match the email address.',
   };
   private readonly contactGroupMessageSubject = new BehaviorSubject<string>(
-    this.contactGroupValidationMessages['required']
+    this.contactGroupValidationMessages['match']
   );
   readonly contactGroupMessage$ = this.contactGroupMessageSubject.asObservable();
 

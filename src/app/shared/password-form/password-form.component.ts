@@ -1,6 +1,12 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { IUser } from 'src/app/types/user';
 
@@ -8,6 +14,7 @@ import { IUser } from 'src/app/types/user';
   selector: 'ctacu-password-form',
   templateUrl: './password-form.component.html',
   styleUrls: ['./password-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PasswordFormComponent implements OnInit, OnDestroy {
   @Input() parentForm: FormGroup;
@@ -21,17 +28,26 @@ export class PasswordFormComponent implements OnInit, OnDestroy {
     required: 'Please enter a password.',
     pattern: 'Please enter a valid password that is at least 8 characters.',
   };
-  passwordMessage = this.passwordValidationMessages['required'];
+  private readonly passwordMessageSubject = new BehaviorSubject<string>(
+    this.passwordValidationMessages['required']
+  );
+  readonly passwordMessage$ = this.passwordMessageSubject.asObservable();
 
   private readonly confirmPasswordValidationMessages = {
     required: 'Please confirm the password.',
   };
-  confirmPasswordMessage = this.confirmPasswordValidationMessages['required'];
+  private readonly confirmPasswordMessageSubject = new BehaviorSubject<string>(
+    this.confirmPasswordValidationMessages['required']
+  );
+  readonly confirmPasswordMessage$ = this.confirmPasswordMessageSubject.asObservable();
 
   private readonly passwordGroupValidationMessages = {
     match: 'The confirmation does not match the password.',
   };
-  passwordGroupMessage = this.passwordGroupValidationMessages['match'];
+  private readonly passwordGroupMessageSubject = new BehaviorSubject<string>(
+    this.passwordGroupValidationMessages['match']
+  );
+  readonly passwordGroupMessage$ = this.passwordGroupMessageSubject.asObservable();
 
   private readonly subscriptions: Subscription[] = [];
 
@@ -71,30 +87,31 @@ export class PasswordFormComponent implements OnInit, OnDestroy {
   }
 
   private setMessage(c: AbstractControl, name: string): void {
+    let message = '';
     switch (name) {
       case 'password':
-        this.passwordMessage = '';
         if (c.errors) {
-          this.passwordMessage = Object.keys(c.errors)
+          message = Object.keys(c.errors)
             .map((key) => this.passwordValidationMessages[key])
             .join(' ');
         }
+        this.passwordMessageSubject.next(message);
         break;
       case 'confirmPassword':
-        this.confirmPasswordMessage = '';
         if (c.errors) {
-          this.confirmPasswordMessage = Object.keys(c.errors)
+          message = Object.keys(c.errors)
             .map((key) => this.confirmPasswordValidationMessages[key])
             .join(' ');
         }
+        this.confirmPasswordMessageSubject.next(message);
         break;
       case 'passwordGroup':
-        this.passwordGroupMessage = '';
         if (c.errors) {
-          this.passwordGroupMessage = Object.keys(c.errors)
+          message = Object.keys(c.errors)
             .map((key) => this.passwordGroupValidationMessages[key])
             .join(' ');
         }
+        this.passwordGroupMessageSubject.next(message);
         break;
       default:
         console.error(`${name} did not match any names.`);
