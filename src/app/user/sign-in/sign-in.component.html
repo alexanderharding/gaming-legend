@@ -1,6 +1,6 @@
 <div class="container-xl py-3">
   <div
-    *ngIf="loading"
+    *ngIf="loading$ | async"
     class="spinner-border loadingSpinner text-primary"
     role="status"
   >
@@ -34,7 +34,10 @@
                   class="form-control custom-select text-capitalize"
                   formControlName="user"
                 >
-                  <option *ngFor="let u of users; index as i" [value]="i">
+                  <option
+                    *ngFor="let u of users$ | async; index as i"
+                    [value]="i"
+                  >
                     {{ i + 1 }}. {{ u.name.firstName | lowercase }}
                     {{ u.name.lastName | lowercase }}
                     {{ u.isAdmin ? "(Admin)" : "" }}
@@ -55,12 +58,13 @@
               autocomplete="email"
               placeholder="Email (required)"
               [ngClass]="{
-                'is-invalid': (emailMessage || signInMessage) && submitted,
-                'is-valid': !emailMessage && !signInMessage
+                'is-invalid':
+                  ((emailMessage$ | async) || signInMessage) && submitted,
+                'is-valid': !(emailMessage$ | async) && !signInMessage
               }"
             />
             <div *ngIf="!signInMessage" class="invalid-tooltip">
-              <span>{{ emailMessage }}</span>
+              <span>{{ emailMessage$ | async }}</span>
             </div>
           </div>
           <div class="input-group mb-3 shadow-sm">
@@ -76,12 +80,13 @@
               autocomplete="current-password"
               placeholder="Password (required)"
               [ngClass]="{
-                'is-invalid': (passwordMessage || signInMessage) && submitted,
-                'is-valid': !passwordMessage && !signInMessage
+                'is-invalid':
+                  ((passwordMessage$ | async) || signInMessage) && submitted,
+                'is-valid': !(passwordMessage$ | async) && !signInMessage
               }"
             />
             <div class="invalid-tooltip">
-              <span>{{ passwordMessage }}</span>
+              <span>{{ passwordMessage$ | async }}</span>
               <span>{{ signInMessage }}</span>
             </div>
             <div class="btn-group-toggle input-group-append">
@@ -101,7 +106,9 @@
         <button
           type="submit"
           class="btn btn-success btn-block shadow"
-          [disabled]="(this.signInForm.invalid && submitted) || loading"
+          [disabled]="
+            (this.signInForm.invalid && submitted) || (loading$ | async)
+          "
         >
           Sign In
         </button>
@@ -110,7 +117,7 @@
     </div>
     <div class="col-lg">
       <ctacu-sign-up
-        [loading]="loading"
+        [loading]="loading$ | async"
         (loadingChange)="setLoading($event)"
       ></ctacu-sign-up>
     </div>

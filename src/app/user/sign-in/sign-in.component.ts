@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   OnDestroy,
   OnInit,
@@ -12,29 +13,31 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { debounceTime, first } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { IUser } from 'src/app/types/user';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { NotificationService } from 'src/app/services/notification.service';
 import { INotification } from 'src/app/types/notification';
 
 @Component({
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignInComponent implements OnInit, OnDestroy {
   @ViewChild('successTpl') private successTpl: TemplateRef<any>;
   @ViewChild('dangerTpl') private dangerTpl: TemplateRef<any>;
 
-  users: IUser[];
+  users$ = this.authService.users$;
+
   private readonly subscriptions: Subscription[] = [];
 
   submitted = false;
   signInForm: FormGroup;
   signInMessage: string;
 
-  loading = false;
+  private readonly loadingSubject = new BehaviorSubject<boolean>(false);
+  readonly loading$ = this.loadingSubject.asObservable();
 
   private returnLink = this.route.snapshot.queryParamMap.get('returnLink');
 
@@ -42,12 +45,18 @@ export class SignInComponent implements OnInit, OnDestroy {
     required: 'Please enter your email address.',
     email: 'Please enter a valid email address',
   };
-  emailMessage = this.emailValidationMessages['required'];
+  private readonly emailMessageSubject = new BehaviorSubject<string>(
+    this.emailValidationMessages['required']
+  );
+  readonly emailMessage$ = this.emailMessageSubject.asObservable();
 
   private readonly passwordValidationMessages = {
     required: 'Please enter your password.',
   };
-  passwordMessage = this.passwordValidationMessages['required'];
+  private readonly passwordMessageSubject = new BehaviorSubject<string>(
+    this.passwordValidationMessages['required']
+  );
+  readonly passwordMessage$ = this.passwordMessageSubject.asObservable();
 
   constructor(
     private readonly authService: AuthService,
@@ -82,10 +91,6 @@ export class SignInComponent implements OnInit, OnDestroy {
         this.setUserData(+index)
       )
     );
-    this.authService.users$.pipe(first()).subscribe(
-      (users) => (this.users = users as IUser[]),
-      (error) => console.error(error)
-    );
   }
 
   onSubmit(form: FormGroup): void {
@@ -94,7 +99,7 @@ export class SignInComponent implements OnInit, OnDestroy {
       this.submitted = true;
     }
     if (form.valid) {
-      this.loading = true;
+      this.setLoading(true);
       const email = form.get('email').value as string;
       const password = form.get('password').value as string;
       this.signIn(email, password);
@@ -104,7 +109,6 @@ export class SignInComponent implements OnInit, OnDestroy {
   signIn(email: string, password: string): void {
     this.authService.signIn(email, password).subscribe(
       (result) => {
-        this.loading = false;
         if (result) {
           this.showSuccess();
           if (this.returnLink) {
@@ -116,15 +120,13 @@ export class SignInComponent implements OnInit, OnDestroy {
         }
         this.signInMessage = 'Invalid email or password.';
       },
-      (error) => {
-        this.loading = false;
-        this.showDanger();
-      }
+      (error) => this.showDanger(),
+      () => this.setLoading(false)
     );
   }
 
   setLoading(value: boolean): void {
-    this.loading = value;
+    this.loadingSubject.next(value);
   }
 
   private showSuccess(): void {
@@ -153,31 +155,33 @@ export class SignInComponent implements OnInit, OnDestroy {
   }
 
   private setUserData(index: number): void {
-    const user = this.users[index];
-    this.signInForm.patchValue({
-      email: user.contact.email,
-      password: user.password,
+    this.users$.subscribe((users) => {
+      this.signInForm.patchValue({
+        email: users[index].contact.email,
+        password: users[index].password,
+      });
     });
   }
 
   private setMessage(c: AbstractControl, name: string): void {
+    let message = '';
     this.signInMessage = '';
     switch (name) {
       case 'email':
-        this.emailMessage = '';
         if (c.errors) {
-          this.emailMessage = Object.keys(c.errors)
+          message = Object.keys(c.errors)
             .map((key) => this.emailValidationMessages[key])
             .join(' ');
         }
+        this.emailMessageSubject.next(message);
         break;
       case 'password':
-        this.passwordMessage = '';
         if (c.errors) {
-          this.passwordMessage = Object.keys(c.errors)
+          message = Object.keys(c.errors)
             .map((key) => this.passwordValidationMessages[key])
             .join(' ');
         }
+        this.passwordMessageSubject.next(message);
         break;
       default:
         console.error(`${name} did not match any names.`);
