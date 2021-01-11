@@ -1,12 +1,19 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'ctacu-current-password-form',
   templateUrl: './current-password-form.component.html',
   styleUrls: ['./current-password-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CurrentPasswordFormComponent implements OnInit, OnDestroy {
   readonly pageTitle = 'Current Password';
@@ -20,7 +27,10 @@ export class CurrentPasswordFormComponent implements OnInit, OnDestroy {
     required: 'Please confirm your current password.',
     invalid: 'This does not match the password on-file.',
   };
-  currentPasswordMessage = this.currentPasswordValidationMessages['required'];
+  private readonly currentPasswordMessageSubject = new BehaviorSubject<string>(
+    this.currentPasswordValidationMessages['required']
+  );
+  readonly currentPasswordMessage$ = this.currentPasswordMessageSubject.asObservable();
 
   constructor() {}
 
@@ -38,11 +48,12 @@ export class CurrentPasswordFormComponent implements OnInit, OnDestroy {
   }
 
   private setMessage(c: AbstractControl): void {
-    this.currentPasswordMessage = '';
+    this.currentPasswordMessageSubject.next('');
     if (c.errors) {
-      this.currentPasswordMessage = Object.keys(c.errors)
+      const message = Object.keys(c.errors)
         .map((key) => this.currentPasswordValidationMessages[key])
         .join(' ');
+      this.currentPasswordMessageSubject.next(message);
     }
   }
 
