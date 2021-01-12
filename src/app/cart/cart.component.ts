@@ -31,6 +31,7 @@ export class CartComponent implements OnInit {
   @ViewChild('updateErrTpl') private updateErrTpl: TemplateRef<any>;
   @ViewChild('removeErrTpl') private removeErrTpl: TemplateRef<any>;
   @ViewChild('clearDangerTpl') private clearDangerTpl: TemplateRef<any>;
+  @ViewChild('getCartErrTpl') private getCartErrTpl: TemplateRef<any>;
 
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
   readonly loading$ = this.loadingSubject.asObservable();
@@ -169,7 +170,10 @@ export class CartComponent implements OnInit {
 
   private getCartItems(): void {
     this.cartService.getCartItems().subscribe({
-      error: (error) => console.error(error),
+      error: () => {
+        this.showDanger(this.getCartErrTpl);
+        this.setLoading(false);
+      },
       complete: () => this.setLoading(false),
     });
   }
