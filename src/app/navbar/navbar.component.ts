@@ -31,9 +31,7 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit(): void {
     this.cartService.getCartItems().subscribe({
-      error: (error) => {
-        this.errorMessage = `Retrieval error: ${error}.`;
-      },
+      error: (err) => (this.errorMessage = `Retrieval error: ${err}.`),
     });
   }
 }
