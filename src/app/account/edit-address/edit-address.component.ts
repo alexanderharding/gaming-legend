@@ -189,9 +189,12 @@ export class EditAddressComponent implements OnInit {
         this.showSuccess();
         this.user = user;
         this.resetForm(form, user);
+        this.onLoadingChange.emit(false);
       },
-      (error) => this.showDanger(),
-      () => this.onLoadingChange.emit(false)
+      (error) => {
+        this.showDanger();
+        this.onLoadingChange.emit(false);
+      }
     );
   }
   ngOnDestroy(): void {

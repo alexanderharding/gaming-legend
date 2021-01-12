@@ -185,9 +185,12 @@ export class EditContactComponent implements OnInit, OnDestroy {
         this.showSuccess();
         this.user = user as User;
         this.resetForm(form, user);
+        this.onLoadingChange.emit(false);
       },
-      (error) => this.showDanger(),
-      () => this.onLoadingChange.emit(false)
+      (error) => {
+        this.showDanger();
+        this.onLoadingChange.emit(false);
+      }
     );
   }
 

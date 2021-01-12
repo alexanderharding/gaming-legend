@@ -142,12 +142,13 @@ export class EditPasswordComponent implements OnInit, OnDestroy {
         this.resetForm(form);
         this.updateCurrentPasswordValidators(form, user);
         this.showSuccess();
+        this.loadingChange.emit(false);
       },
       (error) => {
         this.showDanger();
         console.error(error);
-      },
-      () => this.loadingChange.emit(false)
+        this.loadingChange.emit(false);
+      }
     );
   }
 

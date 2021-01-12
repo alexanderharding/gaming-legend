@@ -120,36 +120,6 @@ export class SignUpComponent implements OnInit {
     this.emailTakenMessage = message;
   }
 
-  saveTestUser(value: boolean): void {
-    // this.loadingChange.emit(true);
-    // const user = UserMaker.create({
-    //   firstName: 'Test',
-    //   lastName: 'Test',
-    //   phone: `${this.getRandomNumber(1000000000, 9999999999)}`,
-    //   email: `testemail${this.getRandomNumber(1, 9999)}@test.com`,
-    //   street: `${this.getRandomNumber(1, 999)} Test Street`,
-    //   city: 'Test City',
-    //   state: `${this.states[this.getRandomNumber(0, this.states.length)]}`,
-    //   zip: `${this.getRandomNumber(10000, 99999)}`,
-    //   country: 'USA',
-    //   password: `TestPassword${this.getRandomNumber(1, 999)}`,
-    //   isAdmin: value,
-    // }) as User;
-    // this.checkForUser(user.email).subscribe(
-    //   (result) => {
-    //     if (result) {
-    //       this.loadingChange.emit(false);
-    //       return;
-    //     }
-    //     this.saveUser(user);
-    //   },
-    //   (error) => {
-    //     this.loadingChange.emit(false);
-    //     this.signUpError = 'There was an error signing up for an account.';
-    //   }
-    // );
-  }
-
   private getRandomNumber(min: number, max: number): number {
     return +(Math.floor(Math.random() * (max - min)) + min).toFixed();
   }

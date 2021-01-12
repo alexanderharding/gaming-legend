@@ -167,12 +167,15 @@ export class ProductDetailsComponent implements OnInit {
   private getCartItems(value?: boolean): void {
     this.cartService.getCartItems().subscribe(
       (result) => {
+        this.setLoading(false);
         if (value) {
           this.router.navigate(['/cart']);
         }
       },
-      (error) => console.error(error),
-      () => this.setLoading(false)
+      (error) => {
+        this.setLoading(false);
+        console.error(error);
+      }
     );
   }
 }

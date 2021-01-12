@@ -148,9 +148,12 @@ export class EditNameComponent implements OnInit, OnDestroy {
         this.showSuccess();
         this.user = user as IUser;
         this.resetForm(form, user);
+        this.onLoadingChange.emit(false);
       },
-      (error) => this.showDanger(),
-      () => this.onLoadingChange.emit(false)
+      (error) => {
+        this.showDanger();
+        this.onLoadingChange.emit(false);
+      }
     );
   }
 
