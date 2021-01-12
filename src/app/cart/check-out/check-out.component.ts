@@ -496,7 +496,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   }
 
   private saveOrder(order: Order, items: ICartItem[]): void {
-    this.orderService.saveOrder(order, -1).subscribe(
+    this.orderService.saveOrder(order).subscribe(
       (result) => {
         this.orderPlaced = true;
         this.showSuccess(this.orderSuccessTpl);

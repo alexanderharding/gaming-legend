@@ -45,10 +45,8 @@ export class OrderService {
       );
   }
 
-  saveOrder(order: Order, index: number): Observable<IOrder> {
-    return +index < 0
-      ? this.addOrder(order)
-      : this.updateOrder(order as IOrder);
+  saveOrder(order: Order): Observable<IOrder> {
+    return +order.id ? this.updateOrder(order as IOrder) : this.addOrder(order);
   }
 
   private addOrder(order: Order): Observable<IOrder> {
