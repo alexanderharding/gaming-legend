@@ -1,4 +1,10 @@
 <div class="container-xl pt-3">
+  <!-- <div class="d-block d-sm-none">Visible only on xs</div>
+  <div class="d-none d-sm-block d-md-none">Visible only on sm</div>
+  <div class="d-none d-md-block d-lg-none">Visible only on md</div>
+  <div class="d-none d-lg-block d-xl-none">Visible only on lg</div>
+  <div class="d-none d-xl-block">Visible only on xl</div> -->
+
   <section class="mb-3">
     <input
       type="button"
@@ -14,6 +20,13 @@
     />
   </section>
   <ng-container *ngIf="sortedProducts$ | async as products; else notSubscribed">
+    <div
+      *ngIf="isFiltering$ | async"
+      class="spinner-border loadingSpinner text-danger"
+      role="status"
+    >
+      <span class="sr-only">Loading...</span>
+    </div>
     <div class="row mb-3">
       <div class="col">
         <hr />
@@ -108,35 +121,16 @@
                 </div>
               </div>
             </ng-container>
-            <!-- <div class="col-5">
-                <div class="input-group">
-                  <select
-                    class="form-control custom-select"
-                    formControlName="pageSize"
-                  >
-                    <option [value]="4">4 items per page</option>
-                    <option [value]="6">6 items per page</option>
-                    <option [value]="8">8 items per page</option>
-                  </select>
-                </div>
-              </div> -->
           </div>
         </div>
       </div>
     </form>
-    <div
-      *ngIf="isFiltering$ | async"
-      class="spinner-border loadingSpinner text-danger"
-      role="status"
-    >
-      <span class="sr-only">Loading...</span>
-    </div>
+
     <ng-container *ngIf="products.length; else noProducts">
       <div class="table-responsive">
         <table class="table table-hover">
           <thead class="thead-dark">
-            <tr class="text-uppercase d-none d-md-table-row">
-              <!-- <th scope="col" class="d-none d-md-table-cell">#</th> -->
+            <tr class="text-uppercase d-none d-sm-table-row">
               <th scope="col">
                 <svg
                   width="1.35em"
@@ -153,7 +147,7 @@
                 </svg>
               </th>
               <th scope="col">Product</th>
-              <th scope="col">Brand</th>
+              <th scope="col" class="d-none d-md-table-cell">Brand</th>
               <th scope="col">Code</th>
               <th scope="col">Rating</th>
               <th scope="col">Price</th>
@@ -178,17 +172,33 @@
                   search: filterForm.get('search').value
                 }"
               >
-                <!-- <th scope="row" class="d-none d-md-table-cell">{{ p.id }}</th> -->
-                <td id="productImg" scope="row">
+                <td id="imgRow" scope="row">
                   <img
-                    class="img-fluid"
+                    class="img-fluid d-none d-sm-block"
+                    [src]="p.imageUrls ? p.imageUrls[0] : p.imageUrl"
+                    [title]="p.name"
+                  />
+                  <img
+                    class="img-fluid d-sm-none"
                     [src]="p.imageUrls ? p.imageUrls[0] : p.imageUrl"
                     [title]="p.name"
                   />
                   <div
                     class="d-flex flex-column justify-content-center align-items-center d-sm-none mt-3"
                   >
-                    <p>{{ p.brand }}: {{ p.name }}</p>
+                    <p>
+                      <ngb-highlight
+                        [result]="p.brand"
+                        [term]="filterForm.get('search').value"
+                        [highlightClass]="['bg-info', 'text-light']"
+                      ></ngb-highlight
+                      >:
+                      <ngb-highlight
+                        [result]="p.name"
+                        [term]="filterForm.get('search').value"
+                        [highlightClass]="['bg-info', 'text-light']"
+                      ></ngb-highlight>
+                    </p>
                     <p>{{ p.price | currency }}</p>
                     <ngb-rating
                       class="star"
@@ -199,13 +209,27 @@
                   </div>
                 </td>
                 <td scope="row" class="d-none d-sm-table-cell">
-                  <ngb-highlight
-                    [result]="p.name"
-                    [term]="filterForm.get('search').value"
-                    [highlightClass]="['bg-info', 'text-light']"
-                  ></ngb-highlight>
+                  <div class="row d-md-none">
+                    <div class="col-auto">
+                      <ngb-highlight
+                        [result]="p.brand"
+                        [term]="filterForm.get('search').value"
+                        [highlightClass]="['bg-info', 'text-light']"
+                      ></ngb-highlight
+                      >:
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-auto">
+                      <ngb-highlight
+                        [result]="p.name"
+                        [term]="filterForm.get('search').value"
+                        [highlightClass]="['bg-info', 'text-light']"
+                      ></ngb-highlight>
+                    </div>
+                  </div>
                 </td>
-                <td scope="row" class="d-none d-sm-table-cell">
+                <td scope="row" class="d-none d-md-table-cell">
                   <ngb-highlight
                     [result]="p.brand"
                     [term]="filterForm.get('search').value"
@@ -227,7 +251,6 @@
                     [max]="5"
                   ></ngb-rating>
                 </td>
-
                 <td scope="row" class="d-none d-sm-table-cell">
                   {{ p.price | currency }}
                 </td>
