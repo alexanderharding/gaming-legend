@@ -96,8 +96,12 @@ export class EditPasswordComponent implements OnInit, OnDestroy {
   private setHasValueChanged(c: AbstractControl): void {
     const passwordControl = c.get('password');
     const confirmPasswordControl = c.get('confirmPassword');
+    const hadValue = this.hasValue;
     this.hasValue =
       passwordControl.value || confirmPasswordControl.value ? true : false;
+    if (hadValue && !this.hasValue) {
+      this.resetForm(this.editPasswordForm);
+    }
   }
 
   private showSuccess(): void {
@@ -146,6 +150,7 @@ export class EditPasswordComponent implements OnInit, OnDestroy {
       () => this.loadingChange.emit(false)
     );
   }
+
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
