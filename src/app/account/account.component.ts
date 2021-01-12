@@ -123,27 +123,7 @@ export class AccountComponent implements OnInit, OnDestroy {
       search: ['', Validators.pattern(/^\d+$/)],
       sort: 0,
     });
-
-    const searchControl = this.filterForm.get('search');
-    this.subscriptions.push(
-      searchControl.valueChanges.subscribe((value: string) => {
-        this.setLoading(true);
-        this.searchSubject.next(value);
-        this.searchMessage = '';
-        if (searchControl.errors) {
-          this.searchMessage = Object.keys(searchControl.errors)
-            .map((key) => this.searchValidationMessages[key])
-            .join(' ');
-        }
-      })
-    );
-    const sortControl = this.filterForm.get('sort');
-    this.subscriptions.push(
-      sortControl.valueChanges.subscribe((value: number) => {
-        this.setLoading(true);
-        this.sortSubject.next(+value);
-      })
-    );
+    this.subscribeToControls();
   }
 
   clearSearch(): void {
@@ -160,6 +140,29 @@ export class AccountComponent implements OnInit, OnDestroy {
     this.authService.signOut();
     this.showSuccess();
     this.router.navigate(['/user']);
+  }
+
+  private subscribeToControls(): void {
+    const searchControl = this.filterForm.get('search');
+    this.subscriptions.push(
+      searchControl.valueChanges.subscribe((search: string) => {
+        this.setLoading(true);
+        this.searchSubject.next(search);
+        this.searchMessage = '';
+        if (searchControl.errors) {
+          this.searchMessage = Object.keys(searchControl.errors)
+            .map((key) => this.searchValidationMessages[key])
+            .join(' ');
+        }
+      })
+    );
+    const sortControl = this.filterForm.get('sort');
+    this.subscriptions.push(
+      sortControl.valueChanges.subscribe((value: number) => {
+        this.setLoading(true);
+        this.sortSubject.next(+value);
+      })
+    );
   }
 
   private showSuccess(): void {
