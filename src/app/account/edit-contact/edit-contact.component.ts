@@ -58,10 +58,6 @@ export class EditContactComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.editForm = this.fb.group({
-      currentPassword: [
-        '',
-        [Validators.required, passwordChecker(this.user.password)],
-      ],
       contactGroup: this.fb.group(
         {
           phone: [
@@ -73,6 +69,12 @@ export class EditContactComponent implements OnInit, OnDestroy {
         },
         { validator: emailMatcher }
       ),
+      passwordGroup: this.fb.group({
+        currentPassword: [
+          '',
+          [Validators.required, passwordChecker(this.user.password)],
+        ],
+      }),
     });
     const contactControl = this.editForm.get('contactGroup');
     this.subscription = contactControl.valueChanges.subscribe(() =>
@@ -106,12 +108,13 @@ export class EditContactComponent implements OnInit, OnDestroy {
     this.submitted = false;
     const contact = user.contact;
     const contactControl = form.get('contactGroup');
+    const passwordGroupControl = form.get('passwordGroup');
     contactControl.setValue({
       phone: contact.phone as string,
       email: contact.email as string,
       confirmEmail: contact.email as string,
     });
-    form.patchValue({
+    passwordGroupControl.patchValue({
       currentPassword: '',
     });
   }

@@ -59,10 +59,6 @@ export class EditAddressComponent implements OnInit {
 
   ngOnInit(): void {
     this.editForm = this.fb.group({
-      currentPassword: [
-        '',
-        [Validators.required, passwordChecker(this.user.password)],
-      ],
       addressGroup: this.fb.group({
         street: [
           '',
@@ -83,6 +79,12 @@ export class EditAddressComponent implements OnInit {
         state: ['', [Validators.required]],
         zip: ['', [Validators.required, Validators.pattern(this.zipPattern)]],
         country: ['USA', [Validators.required]],
+      }),
+      passwordGroup: this.fb.group({
+        currentPassword: [
+          '',
+          [Validators.required, passwordChecker(this.user.password)],
+        ],
       }),
     });
     const addressControl = this.editForm.get('addressGroup');
@@ -107,16 +109,17 @@ export class EditAddressComponent implements OnInit {
   resetForm(form: FormGroup, user: IUser): void {
     const address = user.address;
     const addressControl = form.get('addressGroup');
+    const passwordGroupControl = form.get('passwordGroup');
     this.submitted = false;
-    form.patchValue({
-      currentPassword: '',
-    });
     if (address) {
       addressControl.patchValue({
         street: address.street as string,
         city: address.city as string,
         state: address.state as string,
         zip: address.zip as string,
+      });
+      passwordGroupControl.patchValue({
+        currentPassword: '',
       });
     } else {
       form.reset();

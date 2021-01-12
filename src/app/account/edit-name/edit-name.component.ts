@@ -56,10 +56,6 @@ export class EditNameComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.editForm = this.fb.group({
-      currentPassword: [
-        '',
-        [Validators.required, passwordChecker(this.user.password)],
-      ],
       nameGroup: this.fb.group({
         firstName: [
           '',
@@ -76,6 +72,12 @@ export class EditNameComponent implements OnInit, OnDestroy {
             Validators.minLength(this.nameMinLength),
             Validators.maxLength(this.nameMaxLength),
           ],
+        ],
+      }),
+      passwordGroup: this.fb.group({
+        currentPassword: [
+          '',
+          [Validators.required, passwordChecker(this.user.password)],
         ],
       }),
     });
@@ -98,12 +100,13 @@ export class EditNameComponent implements OnInit, OnDestroy {
   resetForm(form: FormGroup, user: IUser): void {
     const name = user.name;
     const nameControl = form.get('nameGroup');
+    const passwordGroupControl = form.get('passwordGroup');
     this.submitted = false;
     nameControl.setValue({
       firstName: name.firstName,
       lastName: name.lastName,
     });
-    form.patchValue({
+    passwordGroupControl.patchValue({
       currentPassword: '',
     });
   }

@@ -35,7 +35,9 @@ export class CurrentPasswordFormComponent implements OnInit, OnDestroy {
   constructor() {}
 
   ngOnInit(): void {
-    const currentPasswordControl = this.parentForm.get('currentPassword');
+    const currentPasswordControl = this.parentForm.get(
+      'passwordGroup.currentPassword'
+    );
     this.subscriptions.push(
       currentPasswordControl.valueChanges
         .pipe(debounceTime(1000))

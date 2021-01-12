@@ -57,10 +57,6 @@ export class EditPasswordComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.editPasswordForm = this.fb.group({
-      currentPassword: [
-        '',
-        [Validators.required, passwordChecker(this.user.password)],
-      ],
       passwordGroup: this.fb.group(
         {
           password: [
@@ -68,6 +64,10 @@ export class EditPasswordComponent implements OnInit, OnDestroy {
             [Validators.required, Validators.pattern(this.passwordPattern)],
           ],
           confirmPassword: ['', [Validators.required]],
+          currentPassword: [
+            '',
+            [Validators.required, passwordChecker(this.user.password)],
+          ],
         },
         { validator: passwordMatcher }
       ),
@@ -123,7 +123,7 @@ export class EditPasswordComponent implements OnInit, OnDestroy {
   }
 
   private updateCurrentPasswordValidators(form: FormGroup, user: IUser): void {
-    const currentPasswordControl = form.get('currentPassword');
+    const currentPasswordControl = form.get('passwordGroup.currentPassword');
     currentPasswordControl.setValidators([
       Validators.required,
       passwordChecker(user.password),
