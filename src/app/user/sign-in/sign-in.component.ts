@@ -107,9 +107,8 @@ export class SignInComponent implements OnInit, OnDestroy {
   }
 
   signIn(email: string, password: string): void {
-    const subscription = this.authService.signIn(email, password).subscribe(
+    this.authService.signIn(email, password).subscribe(
       (result) => {
-        subscription.unsubscribe();
         if (result) {
           this.showSuccess();
           this.setLoading(false);
@@ -125,7 +124,6 @@ export class SignInComponent implements OnInit, OnDestroy {
       (error) => {
         this.showDanger();
         this.setLoading(false);
-        subscription.unsubscribe();
       }
     );
   }

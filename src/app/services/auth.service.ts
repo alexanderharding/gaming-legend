@@ -1,7 +1,6 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { catchError, delay, map, retry, tap } from 'rxjs/operators';
 import { IUser, User } from '../types/user';
 import { ErrorService } from './error.service';
@@ -11,9 +10,6 @@ import { ErrorService } from './error.service';
 })
 export class AuthService {
   private readonly baseUrl: string = 'http://localhost:3000';
-  // private currentUserSubject: BehaviorSubject<IUser>;
-  // currentUser$: Observable<IUser>;
-
   private readonly currentUserSubject = new BehaviorSubject<IUser>(
     JSON.parse(localStorage.getItem('currentUser'))
   );
@@ -22,12 +18,7 @@ export class AuthService {
   constructor(
     private readonly http: HttpClient,
     private readonly errorService: ErrorService
-  ) {
-    // this.currentUserSubject = new BehaviorSubject<IUser>(
-    //   JSON.parse(localStorage.getItem('currentUser'))
-    // );
-    // this.currentUser$ = this.currentUserSubject.asObservable();
-  }
+  ) {}
 
   users$ = this.http.get<IUser[]>(`${this.baseUrl}/users`).pipe(
     // delay(1000),
