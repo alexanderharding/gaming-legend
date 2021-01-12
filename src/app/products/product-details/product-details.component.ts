@@ -25,6 +25,8 @@ import { BehaviorSubject } from 'rxjs';
 export class ProductDetailsComponent implements OnInit {
   @ViewChild('successTpl') private successTpl: TemplateRef<any>;
   @ViewChild('dangerTpl') private dangerTpl: TemplateRef<any>;
+  @ViewChild('getCartErrTpl') private getCartErrTpl: TemplateRef<any>;
+
   private readonly productType = this.route.snapshot.paramMap.get('type');
   private readonly returnLink = this.route.snapshot.queryParamMap.get(
     'returnLink'
@@ -65,31 +67,34 @@ export class ProductDetailsComponent implements OnInit {
     this.setLoading(true);
     const index = this.getIndex(product, items);
     const item = this.getUpdatedItem(product, items, index);
-    this.cartService.saveItem(item, index).subscribe(
-      (result) => {
+    this.cartService.saveItem(item, index).subscribe({
+      error: () => {
+        this.setLoading(false);
+        this.showDanger(this.dangerTpl);
+      },
+      complete: () => {
         this.showSuccess();
         this.getCartItems(true);
       },
-      (error) => {
-        this.setLoading(false);
-        this.showDanger();
-        console.error(error);
-      }
-    );
+    });
   }
 
   addItem(product: IProduct, items: ICartItem[]): void {
     this.setLoading(true);
     const index = this.getIndex(product, items);
     const item = this.getUpdatedItem(product, items, index);
-    this.cartService.saveItem(item, index).subscribe(
-      (result) => {
+    this.cartService.saveItem(item, index).subscribe({
+      error: () => {
+        this.showDanger(this.dangerTpl);
+        this.setLoading(false);
+      },
+      complete: () => {
         this.getCartItems();
         this.showSuccess();
         const modalRef = this.modalService.open(ConfirmModalComponent);
         const instance = modalRef.componentInstance;
-        instance.title = `${result.name} Added`;
-        instance.message = `"${result.name}" added to the cart!`;
+        instance.title = `${product.name} Added`;
+        instance.message = `"${product.name}" added to the cart!`;
         instance.type = 'bg-success';
         instance.closeMessage = 'go to cart';
         instance.dismissMessage = 'keep shopping';
@@ -98,12 +103,7 @@ export class ProductDetailsComponent implements OnInit {
           (reason) => {}
         );
       },
-      (error) => {
-        this.setLoading(false);
-        this.showDanger();
-        console.error(error);
-      }
-    );
+    });
   }
 
   updateIndex(urls: string[], productUrl: string): void {
@@ -155,27 +155,27 @@ export class ProductDetailsComponent implements OnInit {
     this.notificationService.show(notification);
   }
 
-  private showDanger(): void {
+  private showDanger(templateRef: TemplateRef<any>): void {
     const notification = {
-      textOrTpl: this.dangerTpl,
+      textOrTpl: templateRef,
       className: 'bg-danger text-light',
       delay: 15000,
     } as INotification;
     this.notificationService.show(notification);
   }
 
-  private getCartItems(value?: boolean): void {
-    this.cartService.getCartItems().subscribe(
-      (result) => {
+  private getCartItems(buyNow?: boolean): void {
+    this.cartService.getCartItems().subscribe({
+      error: () => {
+        this.showDanger(this.getCartErrTpl);
         this.setLoading(false);
-        if (value) {
+      },
+      complete: () => {
+        this.setLoading(false);
+        if (buyNow) {
           this.router.navigate(['/cart']);
         }
       },
-      (error) => {
-        this.setLoading(false);
-        console.error(error);
-      }
-    );
+    });
   }
 }
