@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   OnDestroy,
   OnInit,
@@ -14,16 +15,15 @@ import { NotificationService } from '../services/notification.service';
 import { INotification } from '../types/notification';
 import { IOrder } from '../types/order';
 import { OrdersResult } from '../types/orders-result';
-import { IUser, User } from '../types/user';
 
 @Component({
   templateUrl: './account.component.html',
   styleUrls: ['./account.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountComponent implements OnInit, OnDestroy {
   @ViewChild('successTpl') private successTpl: TemplateRef<any>;
 
-  searchMessage = '';
   errorMessage = '';
   page = 1;
   pageSize = 5;
@@ -31,6 +31,8 @@ export class AccountComponent implements OnInit, OnDestroy {
   private readonly searchValidationMessages = {
     pattern: 'Please only use numbers.',
   };
+  searchMessage = '';
+
   /* Get data from resolver */
   private readonly resolvedData = this.route.data.pipe(
     map((d) => d.resolvedData as OrdersResult)
