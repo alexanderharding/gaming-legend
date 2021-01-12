@@ -6,8 +6,8 @@ import {
 } from '@angular/common/http/testing';
 
 describe('ProductService', () => {
-  let productType;
-  let productId;
+  let productType: string;
+  let productId: number;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -16,46 +16,48 @@ describe('ProductService', () => {
     });
   });
 
-  // describe('getProductsWithBrand', () => {
-  //   it('should call http client with the correct url', inject(
-  //     [ProductService, HttpTestingController],
-  //     (service: ProductService, controller: HttpTestingController) => {
-  //       // Arrange
-  //       productType = 'laptops';
+  it('should be created', inject(
+    [ProductService],
+    (service: ProductService) => {
+      expect(service).toBeTruthy();
+    }
+  ));
 
-  //       // Act
-  //       service.getProductsWithBrand(productType).subscribe();
+  describe('getProducts', () => {
+    it('should call http client with the correct url', inject(
+      [ProductService, HttpTestingController],
+      (service: ProductService, controller: HttpTestingController) => {
+        // Arrange
+        productType = 'laptops';
 
-  //       // Assert
-  //       controller.expectOne(`http://localhost:3000/${productType}`);
-  //       controller.expectOne(
-  //         `http://localhost:3000/brands/?type=${productType}`
-  //       );
-  //       controller.verify();
-  //     }
-  //   ));
-  // });
+        // Act
+        service.getProducts(productType).subscribe();
 
-  // describe('getProductWithBrand', () => {
-  //   it('should call http client with the correct url', inject(
-  //     [ProductService, HttpTestingController],
-  //     (service: ProductService, controller: HttpTestingController) => {
-  //       // Arrange
-  //       productType = 'laptops';
-  //       productId = 1;
+        // Assert
+        controller.expectOne(`http://localhost:3000/${productType}`);
+        controller.verify();
+      }
+    ));
+  });
 
-  //       // Act
-  //       service.getProductWithBrand(productType, productId).subscribe();
+  describe('getProductWithBrand', () => {
+    it('should call http client with the correct url', inject(
+      [ProductService, HttpTestingController],
+      (service: ProductService, controller: HttpTestingController) => {
+        // Arrange
+        productType = 'laptops';
+        productId = 1;
 
-  //       // Assert
-  //       controller.expectOne(
-  //         `http://localhost:3000/${productType}/${productId}`
-  //       );
-  //       controller.expectOne(
-  //         `http://localhost:3000/brands/?type=${productType}`
-  //       );
-  //       controller.verify();
-  //     }
-  //   ));
-  // });
+        // Act
+        service.getProductWithBrand(productType, productId).subscribe();
+
+        // Assert
+        controller.expectOne(
+          `http://localhost:3000/${productType}/${productId}`
+        );
+        controller.expectOne(`http://localhost:3000/${productType}Brands`);
+        controller.verify();
+      }
+    ));
+  });
 });
