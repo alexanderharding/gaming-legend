@@ -64,7 +64,7 @@
           >
             <ngb-accordion
               [destroyOnHide]="false"
-              activeIds="{{ user ? 'finalize' : 'name' }}"
+              [activeIds]="getActiveIdsString(user)"
               #acc="ngbAccordion"
             >
               <ngb-panel

@@ -330,6 +330,16 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     this.emailTakenMessage = message;
   }
 
+  getActiveIdsString(user: User): string {
+    if (!user) {
+      return 'name';
+    }
+    if (!user.address) {
+      return 'shipping';
+    }
+    return 'finalize';
+  }
+
   private subscribeToValueChanges(): void {
     const shippingRateControl = this.checkOutForm.get('shippingRate');
     this.subscriptions.push(
