@@ -20,12 +20,12 @@
         autocomplete="cc-number"
         placeholder="Card number (required)"
         [ngClass]="{
-          'is-invalid': cardNumberMessage && submitted,
-          'is-valid': !cardNumberMessage
+          'is-invalid': (cardNumberMessage$ | async) && submitted,
+          'is-valid': !(cardNumberMessage$ | async)
         }"
       />
       <div class="invalid-tooltip">
-        <span>{{ cardNumberMessage }}</span>
+        <span>{{ cardNumberMessage$ | async }}</span>
       </div>
     </div>
     <div class="form-row mb-2">
@@ -40,8 +40,11 @@
             class="custom-select"
             id="inputGroupSelect01"
             [ngClass]="{
-              'is-invalid': (monthMessage || paymentMessage) && submitted,
-              'is-valid': !monthMessage && !paymentMessage
+              'is-invalid':
+                ((monthMessage$ | async) || (paymentGroupMessage$ | async)) &&
+                submitted,
+              'is-valid':
+                !(monthMessage$ | async) && !(paymentGroupMessage$ | async)
             }"
           >
             <option [value]="0" hidden [attr.disabled]="true">- Month -</option>
@@ -55,18 +58,18 @@
           </select>
           <div class="invalid-tooltip">
             <span>
-              {{ monthMessage }}
+              {{ monthMessage$ | async }}
             </span>
-            <span *ngIf="!monthMessage">
-              {{ paymentMessage }}
+            <span *ngIf="!(monthMessage$ | async)">
+              {{ paymentGroupMessage$ | async }}
             </span>
           </div>
           <select
             formControlName="expiringYear"
             class="custom-select"
             [ngClass]="{
-              'is-invalid': yearMessage && submitted,
-              'is-valid': !yearMessage
+              'is-invalid': (yearMessage$ | async) && submitted,
+              'is-valid': !(yearMessage$ | async)
             }"
           >
             <option [value]="0" hidden [attr.disabled]="true">- Year -</option>
@@ -74,8 +77,8 @@
               {{ y }}
             </option>
           </select>
-          <div *ngIf="!monthMessage" class="invalid-tooltip">
-            <span>{{ yearMessage }}</span>
+          <div *ngIf="!(monthMessage$ | async)" class="invalid-tooltip">
+            <span>{{ yearMessage$ | async }}</span>
           </div>
         </div>
       </div>
@@ -92,12 +95,12 @@
             class="form-control"
             placeholder="CVV (required)"
             [ngClass]="{
-              'is-invalid': cvvMessage && submitted,
-              'is-valid': !cvvMessage
+              'is-invalid': (cvvMessage$ | async) && submitted,
+              'is-valid': !(cvvMessage$ | async)
             }"
           />
           <div class="invalid-tooltip">
-            <span>{{ cvvMessage }}</span>
+            <span>{{ cvvMessage$ | async }}</span>
           </div>
         </div>
       </div>
