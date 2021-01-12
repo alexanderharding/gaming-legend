@@ -85,7 +85,7 @@ export class CartComponent implements OnInit {
 
   updateQty(item: ICartItem, amount: number): void {
     if (item.quantity <= 1 && amount === -1) {
-      this.removeItem(item);
+      this.openRemoveModal(item);
       return;
     }
     this.setLoading(true);
@@ -105,7 +105,7 @@ export class CartComponent implements OnInit {
     );
   }
 
-  removeItem(item: ICartItem): void {
+  openRemoveModal(item: ICartItem): void {
     const modalRef = this.modalService.open(ConfirmModalComponent);
     const instance = modalRef.componentInstance;
     instance.title = 'Remove Item';
@@ -113,25 +113,13 @@ export class CartComponent implements OnInit {
     instance.warningMessage = 'This operation can not be undone.';
     instance.type = 'bg-danger';
     instance.closeMessage = 'remove';
-    modalRef.closed.pipe(first()).subscribe(
-      (result) => {
-        this.setLoading(true);
-        this.cartService.removeItem(item).subscribe(
-          (result) => {
-            this.getCartItems();
-          },
-          (error) => {
-            this.setLoading(false);
-            console.error(error);
-            this.showDanger(this.removeErrTpl);
-          }
-        );
-      },
-      (error) => {}
-    );
+    modalRef.closed.pipe(first()).subscribe({
+      error: () => {},
+      complete: () => this.removeItem(item),
+    });
   }
 
-  removeAllItems(items: ICartItem[]): void {
+  openRemoveAllModal(items: ICartItem[]): void {
     const modalRef = this.modalService.open(ConfirmModalComponent);
     const instance = modalRef.componentInstance;
     instance.title = 'Empty Cart';
@@ -139,20 +127,34 @@ export class CartComponent implements OnInit {
     instance.warningMessage = 'This operation can not be undone.';
     instance.type = 'bg-danger';
     instance.closeMessage = 'empty';
-    modalRef.closed.pipe(first()).subscribe(
-      (result) => {
+    modalRef.closed.pipe(first()).subscribe({
+      error: () => {},
+      complete: () => {
         this.setLoading(true);
-        this.cartService.removeAllItems(items).subscribe({
-          error: (err) => {
-            console.error(err);
-            this.showDanger(this.clearDangerTpl);
-            this.setLoading(false);
-          },
-          complete: () => this.getCartItems(),
-        });
+        this.removeAllItems(items);
       },
-      (error) => {}
-    );
+    });
+  }
+
+  private removeItem(item: ICartItem): void {
+    this.setLoading(true);
+    this.cartService.removeItem(item).subscribe({
+      error: () => {
+        this.showDanger(this.removeErrTpl);
+        this.setLoading(false);
+      },
+      complete: () => this.getCartItems(),
+    });
+  }
+
+  private removeAllItems(items: ICartItem[]): void {
+    this.cartService.removeAllItems(items).subscribe({
+      error: () => {
+        this.showDanger(this.clearDangerTpl);
+        this.setLoading(false);
+      },
+      complete: () => this.getCartItems(),
+    });
   }
 
   private showDanger(templateRef: TemplateRef<any>): void {
