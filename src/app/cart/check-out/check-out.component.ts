@@ -507,6 +507,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         this.getCartItems();
+        this.setLoading(false);
         this.router.navigate(['/cart', 'success']);
       },
     });

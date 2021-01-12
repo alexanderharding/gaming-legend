@@ -498,7 +498,8 @@
                       [disabled]="
                         ((checkOutForm.invalid || emailTakenMessage) &&
                           submitted) ||
-                        (loading$ | async)
+                        (loading$ | async) ||
+                        orderPlaced
                       "
                       [ngClass]="{
                         'btn-success':
