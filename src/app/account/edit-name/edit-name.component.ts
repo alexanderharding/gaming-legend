@@ -103,6 +103,9 @@ export class EditNameComponent implements OnInit, OnDestroy {
       firstName: name.firstName,
       lastName: name.lastName,
     });
+    form.patchValue({
+      currentPassword: '',
+    });
   }
 
   private setHasValueChanged(c: AbstractControl): void {

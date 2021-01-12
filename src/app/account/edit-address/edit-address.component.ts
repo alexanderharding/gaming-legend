@@ -108,16 +108,18 @@ export class EditAddressComponent implements OnInit {
     const address = user.address;
     const addressControl = form.get('addressGroup');
     this.submitted = false;
-    form.reset();
+    form.patchValue({
+      currentPassword: '',
+    });
     if (address) {
-      addressControl.setValue({
+      addressControl.patchValue({
         street: address.street as string,
         city: address.city as string,
         state: address.state as string,
         zip: address.zip as string,
-        country: address.country as string,
       });
     } else {
+      form.reset();
       addressControl.patchValue({
         state: '',
         country: 'USA',

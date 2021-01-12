@@ -111,6 +111,9 @@ export class EditContactComponent implements OnInit, OnDestroy {
       email: contact.email as string,
       confirmEmail: contact.email as string,
     });
+    form.patchValue({
+      currentPassword: '',
+    });
   }
 
   private setHasValueChanged(c: AbstractControl): void {
