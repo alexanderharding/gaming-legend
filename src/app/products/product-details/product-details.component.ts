@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CartService } from '../../services/cart.service';
-import { map, tap } from 'rxjs/operators';
+import { first, map, tap } from 'rxjs/operators';
 import { IProduct } from 'src/app/types/product';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ICartItem } from 'src/app/types/cart-item';
@@ -65,45 +65,12 @@ export class ProductDetailsComponent implements OnInit {
 
   buyNow(product: IProduct, items: ICartItem[]): void {
     this.setLoading(true);
-    const index = this.getIndex(product, items);
-    const item = this.getUpdatedItem(product, items, index);
-    this.cartService.saveItem(item, index).subscribe({
-      error: () => {
-        this.setLoading(false);
-        this.showDanger(this.dangerTpl);
-      },
-      complete: () => {
-        this.showSuccess();
-        this.getCartItems(true);
-      },
-    });
+    this.saveItem(product, items, true);
   }
 
   addItem(product: IProduct, items: ICartItem[]): void {
     this.setLoading(true);
-    const index = this.getIndex(product, items);
-    const item = this.getUpdatedItem(product, items, index);
-    this.cartService.saveItem(item, index).subscribe({
-      error: () => {
-        this.showDanger(this.dangerTpl);
-        this.setLoading(false);
-      },
-      complete: () => {
-        this.getCartItems();
-        this.showSuccess();
-        const modalRef = this.modalService.open(ConfirmModalComponent);
-        const instance = modalRef.componentInstance;
-        instance.title = `${product.name} Added`;
-        instance.message = `"${product.name}" added to the cart!`;
-        instance.type = 'bg-success';
-        instance.closeMessage = 'go to cart';
-        instance.dismissMessage = 'keep shopping';
-        modalRef.result.then(
-          (result) => this.router.navigate(['/cart']),
-          (reason) => {}
-        );
-      },
-    });
+    this.saveItem(product, items);
   }
 
   updateIndex(urls: string[], productUrl: string): void {
@@ -124,6 +91,42 @@ export class ProductDetailsComponent implements OnInit {
         queryParamsHandling: 'preserve',
       });
     }
+  }
+
+  private saveItem(
+    product: IProduct,
+    items: ICartItem[],
+    buyNow?: boolean
+  ): void {
+    const index = this.getIndex(product, items);
+    const item = this.getUpdatedItem(product, items, index);
+    this.cartService.saveItem(item, index).subscribe({
+      error: () => {
+        this.setLoading(false);
+        this.showDanger(this.dangerTpl);
+      },
+      complete: () => {
+        this.showSuccess();
+        this.getCartItems(buyNow);
+        if (!buyNow) {
+          this.openModal(product);
+        }
+      },
+    });
+  }
+
+  private openModal(product: IProduct): void {
+    const modalRef = this.modalService.open(ConfirmModalComponent);
+    const instance = modalRef.componentInstance;
+    instance.title = `${product.name} Added`;
+    instance.message = `"${product.name}" added to the cart!`;
+    instance.type = 'bg-success';
+    instance.closeMessage = 'go to cart';
+    instance.dismissMessage = 'keep shopping';
+    modalRef.closed.pipe(first()).subscribe({
+      error: () => {},
+      complete: () => this.router.navigate(['/cart']),
+    });
   }
 
   private getIndex(product: IProduct, items: IProduct[]): number {
