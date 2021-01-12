@@ -13,7 +13,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, first } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { NotificationService } from 'src/app/services/notification.service';
@@ -107,10 +107,12 @@ export class SignInComponent implements OnInit, OnDestroy {
   }
 
   signIn(email: string, password: string): void {
-    this.authService.signIn(email, password).subscribe(
+    const subscription = this.authService.signIn(email, password).subscribe(
       (result) => {
+        subscription.unsubscribe();
         if (result) {
           this.showSuccess();
+          this.setLoading(false);
           if (this.returnLink) {
             this.router.navigate([`/${this.returnLink}`]);
             return;
@@ -120,8 +122,11 @@ export class SignInComponent implements OnInit, OnDestroy {
         }
         this.signInMessage = 'Invalid email or password.';
       },
-      (error) => this.showDanger(),
-      () => this.setLoading(false)
+      (error) => {
+        this.showDanger();
+        this.setLoading(false);
+        subscription.unsubscribe();
+      }
     );
   }
 
@@ -155,7 +160,7 @@ export class SignInComponent implements OnInit, OnDestroy {
   }
 
   private setUserData(index: number): void {
-    this.users$.subscribe((users) => {
+    this.users$.pipe(first()).subscribe((users) => {
       this.signInForm.patchValue({
         email: users[index].contact.email,
         password: users[index].password,
