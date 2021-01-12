@@ -85,7 +85,7 @@ export class CartService {
   }
 
   removeAllItems(items: ICartItem[]): Observable<unknown> {
-    const array = [];
+    const array: Observable<ICartItem>[] = [];
     items.forEach((i) => array.push(this.removeItem(i)));
     return scheduled(array, asyncScheduler).pipe(concatAll());
   }
