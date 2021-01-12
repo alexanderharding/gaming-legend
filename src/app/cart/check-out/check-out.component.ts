@@ -466,7 +466,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
           customer: customer,
           items: items,
           payment: payment,
-          date: new Date(),
+          date: new Date().toString(),
           status: 'pending',
         }) as Order;
         if (this.user) {

@@ -1,12 +1,13 @@
 import { IProduct } from './product';
 import { Customer } from './customer';
 import { Payment } from './payment';
+import { ICartItem } from './cart-item';
 
 export interface IOrder {
   customer: Customer;
-  items: IProduct[];
+  items: ICartItem[];
   payment: Payment;
-  date: Date;
+  date: string;
   status: string;
   userId?: number;
   id: number;
@@ -15,9 +16,9 @@ export interface IOrder {
 export class Order {
   constructor(
     public customer: Customer,
-    public items: IProduct[],
+    public items: ICartItem[],
     public payment: Payment,
-    public date: Date,
+    public date: string,
     public status: string,
     public userId?: number,
     public id?: number
