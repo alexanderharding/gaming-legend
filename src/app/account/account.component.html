@@ -26,8 +26,8 @@
           </div>
         </div>
         <hr />
-        <nav ngbNav #nav="ngbNav" class="nav-tabs">
-          <ng-container ngbNavItem>
+        <ul ngbNav #nav="ngbNav" [(activeId)]="activeId" class="nav-tabs">
+          <li [ngbNavItem]="1">
             <a ngbNavLink><b>Name</b></a>
             <ng-template ngbNavContent>
               <ctacu-edit-name
@@ -36,8 +36,8 @@
                 (onLoadingChange)="setLoading($event)"
               ></ctacu-edit-name>
             </ng-template>
-          </ng-container>
-          <ng-container ngbNavItem>
+          </li>
+          <li [ngbNavItem]="2">
             <a ngbNavLink><b>Contact</b></a>
             <ng-template ngbNavContent>
               <ctacu-edit-contact
@@ -46,8 +46,8 @@
                 (onLoadingChange)="setLoading($event)"
               ></ctacu-edit-contact>
             </ng-template>
-          </ng-container>
-          <ng-container ngbNavItem>
+          </li>
+          <li [ngbNavItem]="3">
             <a ngbNavLink
               ><b>{{ user.address ? "" : "! " }}Address</b></a
             >
@@ -58,8 +58,8 @@
                 (onLoadingChange)="setLoading($event)"
               ></ctacu-edit-address>
             </ng-template>
-          </ng-container>
-          <ng-container ngbNavItem>
+          </li>
+          <li [ngbNavItem]="4">
             <a ngbNavLink><b>Password</b></a>
             <ng-template ngbNavContent>
               <ctacu-edit-password
@@ -68,8 +68,8 @@
                 (loadingChange)="setLoading($event)"
               ></ctacu-edit-password>
             </ng-template>
-          </ng-container>
-        </nav>
+          </li>
+        </ul>
 
         <div [ngbNavOutlet]="nav" class="mt-2"></div>
         <hr class="mt-0 d-lg-none" />

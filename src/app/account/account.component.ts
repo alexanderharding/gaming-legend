@@ -9,7 +9,7 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, combineLatest, EMPTY, Subscription } from 'rxjs';
-import { catchError, debounceTime, map } from 'rxjs/operators';
+import { catchError, debounceTime, first, map } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 import { NotificationService } from '../services/notification.service';
 import { INotification } from '../types/notification';
@@ -27,6 +27,7 @@ export class AccountComponent implements OnInit, OnDestroy {
   errorMessage = '';
   page = 1;
   pageSize = 5;
+  activeId = 1;
 
   private readonly searchValidationMessages = {
     pattern: 'Please only use numbers.',
@@ -113,6 +114,11 @@ export class AccountComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.user$.pipe(first()).subscribe((user) => {
+      if (!user.address) {
+        this.activeId = 3;
+      }
+    });
     this.filterForm = this.fb.group({
       search: ['', Validators.pattern(/^\d+$/)],
       sort: 0,
