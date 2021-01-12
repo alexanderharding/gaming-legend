@@ -16,46 +16,46 @@ describe('ProductService', () => {
     });
   });
 
-  describe('getProductsWithBrand', () => {
-    it('should call http client with the correct url', inject(
-      [ProductService, HttpTestingController],
-      (service: ProductService, controller: HttpTestingController) => {
-        // Arrange
-        productType = 'laptops';
+  // describe('getProductsWithBrand', () => {
+  //   it('should call http client with the correct url', inject(
+  //     [ProductService, HttpTestingController],
+  //     (service: ProductService, controller: HttpTestingController) => {
+  //       // Arrange
+  //       productType = 'laptops';
 
-        // Act
-        service.getProductsWithBrand(productType).subscribe();
+  //       // Act
+  //       service.getProductsWithBrand(productType).subscribe();
 
-        // Assert
-        controller.expectOne(`http://localhost:3000/${productType}`);
-        controller.expectOne(
-          `http://localhost:3000/brands/?type=${productType}`
-        );
-        controller.verify();
-      }
-    ));
-  });
+  //       // Assert
+  //       controller.expectOne(`http://localhost:3000/${productType}`);
+  //       controller.expectOne(
+  //         `http://localhost:3000/brands/?type=${productType}`
+  //       );
+  //       controller.verify();
+  //     }
+  //   ));
+  // });
 
-  describe('getProductWithBrand', () => {
-    it('should call http client with the correct url', inject(
-      [ProductService, HttpTestingController],
-      (service: ProductService, controller: HttpTestingController) => {
-        // Arrange
-        productType = 'laptops';
-        productId = 1;
+  // describe('getProductWithBrand', () => {
+  //   it('should call http client with the correct url', inject(
+  //     [ProductService, HttpTestingController],
+  //     (service: ProductService, controller: HttpTestingController) => {
+  //       // Arrange
+  //       productType = 'laptops';
+  //       productId = 1;
 
-        // Act
-        service.getProductWithBrand(productType, productId).subscribe();
+  //       // Act
+  //       service.getProductWithBrand(productType, productId).subscribe();
 
-        // Assert
-        controller.expectOne(
-          `http://localhost:3000/${productType}/${productId}`
-        );
-        controller.expectOne(
-          `http://localhost:3000/brands/?type=${productType}`
-        );
-        controller.verify();
-      }
-    ));
-  });
+  //       // Assert
+  //       controller.expectOne(
+  //         `http://localhost:3000/${productType}/${productId}`
+  //       );
+  //       controller.expectOne(
+  //         `http://localhost:3000/brands/?type=${productType}`
+  //       );
+  //       controller.verify();
+  //     }
+  //   ));
+  // });
 });

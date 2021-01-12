@@ -3,7 +3,6 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CartService } from 'src/app/services/cart.service';
-import { CheckOutService } from 'src/app/services/check-out.service';
 
 import { CheckOutComponent } from './check-out.component';
 
@@ -12,7 +11,6 @@ describe('CheckOutComponent', () => {
   let fixture: ComponentFixture<CheckOutComponent>;
   let mockRouter;
   let mockRoute;
-  let mockCheckOutService;
   let mockCartService;
   const activatedRouteMock = {
     snapshot: {
@@ -46,7 +44,6 @@ describe('CheckOutComponent', () => {
       providers: [
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: activatedRouteMock },
-        { provide: CheckOutService, useValue: mockCheckOutService },
         { provide: CartService, useValue: mockCartService },
       ],
     }).compileComponents();
