@@ -18,6 +18,10 @@ describe('CartService', () => {
     });
   });
 
+  it('should be created', inject([CartService], (service: CartService) => {
+    expect(service).toBeTruthy();
+  }));
+
   describe('getCartItems', () => {
     it('should call http client with the correct url', inject(
       [CartService, HttpTestingController],
