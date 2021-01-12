@@ -5,6 +5,8 @@ import {
   Input,
   OnInit,
   Output,
+  TemplateRef,
+  ViewChild,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -16,6 +18,8 @@ import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
+import { NotificationService } from 'src/app/services/notification.service';
+import { INotification } from 'src/app/types/notification';
 import { IUser, User, UserMaker } from 'src/app/types/user';
 import { UserContact, UserContactMaker } from 'src/app/types/user-contact';
 import { UserName, UserNameMaker } from 'src/app/types/user-name';
@@ -27,10 +31,11 @@ import { UserName, UserNameMaker } from 'src/app/types/user-name';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignUpComponent implements OnInit {
+  @ViewChild('signUpErrTpl') private signUpErrTpl: TemplateRef<any>;
+
   private readonly states = this.formValidationRuleService.states;
   signUpForm: FormGroup;
   submitted = false;
-  signUpError: string;
   emailTakenMessage: string;
 
   @Input() loading: boolean;
@@ -53,7 +58,8 @@ export class SignUpComponent implements OnInit {
     private readonly formValidationRuleService: FormValidationRuleService,
     private readonly authService: AuthService,
     private readonly router: Router,
-    private readonly progressBarConfig: NgbProgressbarConfig
+    private readonly progressBarConfig: NgbProgressbarConfig,
+    private readonly notificationService: NotificationService
   ) {
     accordionConfig.closeOthers = true;
     progressBarConfig.striped = true;
@@ -108,7 +114,6 @@ export class SignUpComponent implements OnInit {
     if (!this.submitted) {
       this.submitted = true;
     }
-    this.signUpError = '';
     this.setEmailTakenMessage('');
     if (form.valid) {
       this.loadingChange.emit(true);
@@ -122,6 +127,15 @@ export class SignUpComponent implements OnInit {
 
   private getRandomNumber(min: number, max: number): number {
     return +(Math.floor(Math.random() * (max - min)) + min).toFixed();
+  }
+
+  private showDanger(templateRef: TemplateRef<any>): void {
+    const notification = {
+      textOrTpl: templateRef,
+      className: 'bg-danger text-light',
+      delay: 15000,
+    } as INotification;
+    this.notificationService.show(notification);
   }
 
   private checkForUser(form: FormGroup): void {
@@ -138,7 +152,7 @@ export class SignUpComponent implements OnInit {
       },
       (error) => {
         this.loadingChange.emit(false);
-        this.signUpError = 'There was an error signing up for an account.';
+        this.showDanger(this.signUpErrTpl);
       }
     );
   }
@@ -156,15 +170,15 @@ export class SignUpComponent implements OnInit {
       password: form.get('passwordGroup.password').value as string,
       isAdmin: false,
     }) as User;
-    this.authService.saveUser(user).subscribe(
-      (result) => {
+    this.authService.saveUser(user).subscribe({
+      error: () => {
+        this.showDanger(this.signUpErrTpl);
+        this.loadingChange.emit(false);
+      },
+      complete: () => {
         this.loadingChange.emit(false);
         this.router.navigate(['/account']);
       },
-      (error) => {
-        this.loadingChange.emit(false);
-        this.signUpError = 'There was an error signing up for an account.';
-      }
-    );
+    });
   }
 }
