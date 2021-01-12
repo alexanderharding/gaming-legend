@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { NotFoundComponent } from './not-found.component';
 
 describe('NotFoundComponent', () => {
@@ -12,11 +12,13 @@ describe('NotFoundComponent', () => {
   })
   class FakeNgbAlertComponent {}
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [NotFoundComponent, FakeNgbAlertComponent],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [NotFoundComponent, FakeNgbAlertComponent],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(NotFoundComponent);
