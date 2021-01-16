@@ -14,5 +14,13 @@ export class ConfirmModalComponent {
   closeMessage = 'ok';
   dismissMessage = 'cancel';
 
-  constructor(public readonly confirmModal: NgbActiveModal) {}
+  constructor(private readonly confirmModal: NgbActiveModal) {}
+
+  dissmiss(reason: string): void {
+    this.confirmModal.dismiss(reason);
+  }
+
+  close(reason: string): void {
+    this.confirmModal.close(reason);
+  }
 }

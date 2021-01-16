@@ -1,9 +1,4 @@
-import {
-  async,
-  ComponentFixture,
-  TestBed,
-  waitForAsync,
-} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -64,12 +59,14 @@ describe('ConfirmModalComponent', () => {
 describe('ConfirmModalComponent w/ template', () => {
   let component: ConfirmModalComponent;
   let fixture: ComponentFixture<ConfirmModalComponent>;
+  let mockNgbActiveModal;
 
   beforeEach(
     waitForAsync(() => {
+      mockNgbActiveModal = jasmine.createSpyObj(['dismiss', 'close']);
       TestBed.configureTestingModule({
         declarations: [ConfirmModalComponent],
-        providers: [NgbActiveModal],
+        providers: [{ provide: NgbActiveModal, useValue: mockNgbActiveModal }],
       }).compileComponents();
     })
   );
@@ -173,5 +170,41 @@ describe('ConfirmModalComponent w/ template', () => {
     expect(elements[2].nativeElement.textContent).toContain(
       component.dismissMessage
     );
+  });
+
+  it('should dissmiss modal when clicked', () => {
+    // Arrange
+    const button = fixture.debugElement.queryAll(By.css('button'))[0];
+
+    // Act
+    button.triggerEventHandler('click', {});
+    fixture.detectChanges();
+
+    // Assert
+    expect(mockNgbActiveModal.dismiss).toHaveBeenCalled();
+  });
+
+  it('should close modal when clicked', () => {
+    // Arrange
+    const button = fixture.debugElement.queryAll(By.css('button'))[1];
+
+    // Act
+    button.triggerEventHandler('click', {});
+    fixture.detectChanges();
+
+    // Assert
+    expect(mockNgbActiveModal.close).toHaveBeenCalled();
+  });
+
+  it('should dissmiss modal when clicked', () => {
+    // Arrange
+    const button = fixture.debugElement.queryAll(By.css('button'))[2];
+
+    // Act
+    button.triggerEventHandler('click', {});
+    fixture.detectChanges();
+
+    // Assert
+    expect(mockNgbActiveModal.dismiss).toHaveBeenCalled();
   });
 });
