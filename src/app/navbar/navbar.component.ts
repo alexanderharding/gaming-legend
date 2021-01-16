@@ -14,7 +14,7 @@ import { CartService } from '../services/cart.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent implements OnInit {
-  @Input() readonly pageTitle: string;
+  @Input() pageTitle: string;
   errorMessage: string;
   isMenuCollapsed = true;
 
