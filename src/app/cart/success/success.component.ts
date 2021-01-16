@@ -1,16 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { CartService } from 'src/app/services/cart.service';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   templateUrl: './success.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SuccessComponent implements OnInit {
+export class SuccessComponent {
   readonly pageTitle = 'Order Placed';
 
-  constructor(private readonly cartService: CartService) {}
-
-  ngOnInit(): void {
-    // this.cartService.clearCart();
-  }
+  constructor() {}
 }
