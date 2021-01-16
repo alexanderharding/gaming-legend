@@ -13,7 +13,7 @@ import { of } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { ShippingRateService } from '../services/shipping-rate.service';
 
-fdescribe('CartComponent', () => {
+describe('CartComponent', () => {
   let component: CartComponent;
   let fixture: ComponentFixture<CartComponent>;
   let mockCartService;
