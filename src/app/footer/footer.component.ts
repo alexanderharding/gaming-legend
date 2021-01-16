@@ -7,7 +7,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FooterComponent {
-  @Input() readonly pageTitle: string;
+  @Input() pageTitle: string;
   readonly currentYear = new Date().getFullYear();
 
   constructor() {}

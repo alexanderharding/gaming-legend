@@ -6,6 +6,7 @@ import { FooterComponent } from './footer.component';
 describe('FooterComponent', () => {
   let component: FooterComponent;
   let fixture: ComponentFixture<FooterComponent>;
+  let year: number;
 
   beforeEach(
     waitForAsync(() => {
@@ -18,21 +19,25 @@ describe('FooterComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(FooterComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    // Arrange
+
+    // Act
+
+    // Assert
     expect(component).toBeTruthy();
   });
 
-  describe('currentYear', () => {
-    let year: number;
+  it('should set currentYear correctly', () => {
+    // Arrange
+    year = new Date().getFullYear();
 
-    it('should be set to current year', () => {
-      year = new Date().getFullYear();
+    // Act
 
-      expect(component.currentYear).toBe(year);
-    });
+    // Assert
+    expect(component.currentYear).toBe(year);
   });
 });
 
@@ -52,23 +57,26 @@ describe('FooterComponent w/ template', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(FooterComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should set the currentYear in the template', () => {
     // Arrange
     year = new Date().getFullYear();
+
     // Act
+    fixture.detectChanges();
 
     // Assert
     const elements = fixture.debugElement.queryAll(By.css('p'));
     expect(elements[0].nativeElement.textContent).toContain(year);
   });
 
-  xit('should set the pageTitle in the template', () => {
+  it('should set the pageTitle in the template', () => {
     // Arrange
+    component.pageTitle = 'Gaming Legend';
 
     // Act
+    fixture.detectChanges();
 
     // Assert
     const elements = fixture.debugElement.queryAll(By.css('p'));
