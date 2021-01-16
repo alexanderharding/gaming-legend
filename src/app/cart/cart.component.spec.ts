@@ -6,15 +6,21 @@ import {
   waitForAsync,
 } from '@angular/core/testing';
 
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CartComponent } from './cart.component';
 import { CartService } from '../services/cart.service';
 import { of } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { ShippingRateService } from '../services/shipping-rate.service';
 
-describe('CartComponent', () => {
+fdescribe('CartComponent', () => {
   let component: CartComponent;
   let fixture: ComponentFixture<CartComponent>;
   let mockCartService;
+  let mockShippingRateService;
+  let mockRoute;
   let ITEMS;
+  let SHIPPINGRATES;
 
   @Component({
     selector: 'ctacu-cart-summary',
@@ -152,12 +158,48 @@ describe('CartComponent', () => {
           quantity: 1,
         },
       ];
-
+      SHIPPINGRATES = [
+        {
+          id: 1,
+          rate: 7,
+          price: 6.99,
+        },
+        {
+          id: 2,
+          rate: 3,
+          price: 14.99,
+        },
+        {
+          id: 3,
+          rate: 1,
+          price: 19.99,
+        },
+      ];
       mockCartService = jasmine.createSpyObj(['cartItems$']);
-
+      mockShippingRateService = jasmine.createSpyObj([
+        'setShipping',
+        'getDeliveryDate',
+      ]);
+      mockRoute = {
+        snapshot: {
+          data: {
+            resolvedData: {
+              shippingRates: SHIPPINGRATES,
+            },
+          },
+        },
+      };
       TestBed.configureTestingModule({
+        imports: [HttpClientTestingModule],
+
         declarations: [CartComponent, FakeCartSummaryComponent],
-        providers: [{ provide: CartService, useValue: mockCartService }],
+
+        providers: [
+          { provide: CartService, useValue: mockCartService },
+          { provide: ShippingRateService, useValue: mockShippingRateService },
+
+          { provide: ActivatedRoute, useValue: mockRoute },
+        ],
       }).compileComponents();
     })
   );
@@ -165,18 +207,34 @@ describe('CartComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CartComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    // fixture.detectChanges();
   });
 
-  xit('should create', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should set items$ correctly from the cart service', () => {
-    mockCartService.cartItems$.and.returnValue(of(ITEMS));
+  it('should set shippingRates correctly', () => {
+    expect(component.shippingRates.length).toBe(3);
+  });
 
-    fixture.detectChanges();
+  it('should have no errorMessage to start', () => {
+    expect(component.errorMessage).toBeFalsy();
+  });
 
-    component.items$.subscribe((items) => expect(items.length).toBe(2));
+  it('should have "Cart" as pageTitle to start', () => {
+    expect(component.pageTitle).toBe('Cart');
+  });
+
+  it('should retrieve call getDeliveryDate 2 times', () => {
+    component.ngOnInit();
+
+    expect(mockShippingRateService.getDeliveryDate).toHaveBeenCalledTimes(2);
+  });
+
+  it('should retrieve call setShipping', () => {
+    component.ngOnInit();
+
+    expect(mockShippingRateService.setShipping).toHaveBeenCalled();
   });
 });
