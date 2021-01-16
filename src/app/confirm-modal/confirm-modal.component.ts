@@ -6,13 +6,13 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfirmModalComponent {
-  readonly title = 'confirm';
-  readonly message: string;
-  readonly warningMessage: string;
-  readonly infoMessage: string;
-  readonly type = 'bg-secondary';
-  readonly closeMessage = 'ok';
-  readonly dismissMessage = 'cancel';
+  title = 'confirm';
+  message: string;
+  warningMessage: string;
+  infoMessage: string;
+  type = 'bg-secondary';
+  closeMessage = 'ok';
+  dismissMessage = 'cancel';
 
   constructor(public readonly confirmModal: NgbActiveModal) {}
 }
