@@ -1,6 +1,6 @@
 import { UserContact } from './user-contact';
 
-fdescribe('UserContact', () => {
+describe('UserContact', () => {
   const phone = '8011231234';
   const email = 'test@test.com';
   it('should create an instance', () => {

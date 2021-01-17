@@ -1,7 +1,9 @@
 import { UserName } from './user-name';
 
-describe('UserName', () => {
-  // it('should create an instance', () => {
-  //   expect(new UserName()).toBeTruthy();
-  // });
+fdescribe('UserName', () => {
+  const firstName = 'John';
+  const lastName = 'Doe';
+  it('should create an instance', () => {
+    expect(new UserName(firstName, lastName)).toBeTruthy();
+  });
 });
