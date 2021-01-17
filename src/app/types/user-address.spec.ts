@@ -1,6 +1,6 @@
 import { UserAddress } from './user-address';
 
-fdescribe('UserAddress', () => {
+describe('UserAddress', () => {
   const street = '123 S Bend Ct';
   const city = 'Las Vegas';
   const state = 'Nevada';
