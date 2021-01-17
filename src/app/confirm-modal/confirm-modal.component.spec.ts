@@ -7,12 +7,14 @@ import { ConfirmModalComponent } from './confirm-modal.component';
 describe('ConfirmModalComponent', () => {
   let component: ConfirmModalComponent;
   let fixture: ComponentFixture<ConfirmModalComponent>;
+  let mockNgbActiveModal;
 
   beforeEach(
     waitForAsync(() => {
+      mockNgbActiveModal = jasmine.createSpyObj(['dismiss', 'close']);
       TestBed.configureTestingModule({
         declarations: [ConfirmModalComponent],
-        providers: [NgbActiveModal],
+        providers: [{ provide: NgbActiveModal, useValue: mockNgbActiveModal }],
       }).compileComponents();
     })
   );
@@ -54,6 +56,26 @@ describe('ConfirmModalComponent', () => {
   it('should have "cancel" as dismissMessage message to start', () => {
     expect(component.dismissMessage).toEqual('cancel');
   });
+
+  describe('dismiss', () => {
+    it('should call dismiss with the correct value', () => {
+      const reason = 'dismiss';
+
+      component.dismiss(reason);
+
+      expect(mockNgbActiveModal.dismiss).toHaveBeenCalledWith(reason);
+    });
+  });
+
+  describe('close', () => {
+    it('should call close with the correct value', () => {
+      const reason = 'close';
+
+      component.close(reason);
+
+      expect(mockNgbActiveModal.close).toHaveBeenCalledWith(reason);
+    });
+  });
 });
 
 describe('ConfirmModalComponent w/ template', () => {
@@ -63,7 +85,7 @@ describe('ConfirmModalComponent w/ template', () => {
 
   beforeEach(
     waitForAsync(() => {
-      mockNgbActiveModal = jasmine.createSpyObj(['dismiss', 'close']);
+      mockNgbActiveModal = jasmine.createSpyObj(['']);
       TestBed.configureTestingModule({
         declarations: [ConfirmModalComponent],
         providers: [{ provide: NgbActiveModal, useValue: mockNgbActiveModal }],
@@ -172,39 +194,37 @@ describe('ConfirmModalComponent w/ template', () => {
     );
   });
 
-  it('should dissmiss modal when clicked', () => {
-    // Arrange
+  it(`should call dismiss method when the ConfirmModal Component's
+    cross button is clicked`, () => {
+    spyOn(fixture.componentInstance, 'dismiss');
+
     const button = fixture.debugElement.queryAll(By.css('button'))[0];
-
-    // Act
     button.triggerEventHandler('click', {});
-    fixture.detectChanges();
 
-    // Assert
-    expect(mockNgbActiveModal.dismiss).toHaveBeenCalled();
+    expect(fixture.componentInstance.dismiss).toHaveBeenCalledWith(
+      'cross click'
+    );
   });
 
-  it('should close modal when clicked', () => {
-    // Arrange
-    const button = fixture.debugElement.queryAll(By.css('button'))[1];
+  it(`should call dismiss method when the ConfirmModal Component's cancel
+    button is clicked`, () => {
+    spyOn(fixture.componentInstance, 'dismiss');
 
-    // Act
-    button.triggerEventHandler('click', {});
-    fixture.detectChanges();
-
-    // Assert
-    expect(mockNgbActiveModal.close).toHaveBeenCalled();
-  });
-
-  it('should dissmiss modal when clicked', () => {
-    // Arrange
     const button = fixture.debugElement.queryAll(By.css('button'))[2];
-
-    // Act
     button.triggerEventHandler('click', {});
-    fixture.detectChanges();
 
-    // Assert
-    expect(mockNgbActiveModal.dismiss).toHaveBeenCalled();
+    expect(fixture.componentInstance.dismiss).toHaveBeenCalledWith(
+      'cancel click'
+    );
+  });
+
+  it(`should call close method when the ConfirmModal Component's ok button is
+    clicked`, () => {
+    spyOn(fixture.componentInstance, 'close');
+
+    const button = fixture.debugElement.queryAll(By.css('button'))[1];
+    button.triggerEventHandler('click', {});
+
+    expect(fixture.componentInstance.close).toHaveBeenCalledWith('ok click');
   });
 });

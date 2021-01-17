@@ -16,7 +16,7 @@ export class ConfirmModalComponent {
 
   constructor(private readonly confirmModal: NgbActiveModal) {}
 
-  dissmiss(reason: string): void {
+  dismiss(reason: string): void {
     this.confirmModal.dismiss(reason);
   }
 

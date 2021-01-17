@@ -7,7 +7,7 @@
       type="button"
       class="close"
       aria-describedby="modal-title"
-      (click)="confirmModal.dismiss('Cross click')"
+      (click)="dismiss('cross click')"
     >
       <svg
         width="1em"
@@ -39,14 +39,14 @@
     <button
       type="button"
       class="btn btn-sm btn-info text-uppercase"
-      (click)="confirmModal.close('ok click')"
+      (click)="close('ok click')"
     >
       {{ closeMessage }}
     </button>
     <button
       type="button"
       class="btn btn-sm btn-outline-secondary text-uppercase"
-      (click)="confirmModal.dismiss('cancel click')"
+      (click)="dismiss('cancel click')"
       ngbAutofocus
     >
       {{ dismissMessage }}
