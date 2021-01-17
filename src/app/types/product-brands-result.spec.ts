@@ -1,6 +1,6 @@
 import { ProductBrandsResult } from './product-brands-result';
 
-fdescribe('ProductBrandsResult', () => {
+describe('ProductBrandsResult', () => {
   it('should create an instance', () => {
     expect(new ProductBrandsResult()).toBeTruthy();
   });
