@@ -2,15 +2,14 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CurrentPasswordFormComponent } from './current-password-form.component';
 
-describe('CurrentPasswordFormComponent', () => {
+xdescribe('CurrentPasswordFormComponent', () => {
   let component: CurrentPasswordFormComponent;
   let fixture: ComponentFixture<CurrentPasswordFormComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CurrentPasswordFormComponent ]
-    })
-    .compileComponents();
+      declarations: [CurrentPasswordFormComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

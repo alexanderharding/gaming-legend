@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { ProductTypesResolverService } from './product-types-resolver.service';
 
-describe('ProductTypeResolverService', () => {
+xdescribe('ProductTypeResolverService', () => {
   let service: ProductTypesResolverService;
 
   beforeEach(() => {

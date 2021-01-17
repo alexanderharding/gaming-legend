@@ -6,7 +6,7 @@ import { ProductResult } from 'src/app/types/product-result';
 
 import { ProductDetailsComponent } from './product-details.component';
 
-describe('ProductDetailsComponent', () => {
+xdescribe('ProductDetailsComponent', () => {
   let component: ProductDetailsComponent;
   let fixture: ComponentFixture<ProductDetailsComponent>;
   let product: IProduct;
