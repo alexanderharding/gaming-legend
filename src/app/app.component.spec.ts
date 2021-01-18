@@ -9,17 +9,29 @@ describe('AppComponent', () => {
     template: '<div></div>',
   })
   class FakeNavbarComponent {}
+
   @Component({
     selector: 'ctacu-footer',
     template: '<div></div>',
   })
   class FakeFooterComponent {}
 
+  @Component({
+    selector: 'ctacu-notifications-container',
+    template: '<div></div>',
+  })
+  class FakeNotificationsContainerComponent {}
+
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
         imports: [RouterTestingModule],
-        declarations: [AppComponent, FakeNavbarComponent, FakeFooterComponent],
+        declarations: [
+          AppComponent,
+          FakeNavbarComponent,
+          FakeFooterComponent,
+          FakeNotificationsContainerComponent,
+        ],
       }).compileComponents();
     })
   );
