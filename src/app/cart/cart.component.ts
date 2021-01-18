@@ -93,16 +93,14 @@ export class CartComponent implements OnInit {
       ...item,
       quantity: item.quantity + amount,
     } as ICartItem;
-    this.cartService.saveItem(updatedItem, 0).subscribe(
-      (result) => {
-        this.getCartItems();
-      },
-      (error) => {
+    this.cartService.saveItem(updatedItem, 0).subscribe({
+      error: (err) => {
         this.setLoading(false);
-        console.error(error);
+        console.error(err);
         this.showDanger(this.updateErrTpl);
-      }
-    );
+      },
+      complete: () => this.getCartItems(),
+    });
   }
 
   openRemoveModal(item: ICartItem): void {
