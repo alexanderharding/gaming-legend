@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 
 import { SignInComponent } from './sign-in.component';
 
-fdescribe('SignInComponent', () => {
+describe('SignInComponent', () => {
   let component: SignInComponent;
   let fixture: ComponentFixture<SignInComponent>;
   let mockRouter: Router;
