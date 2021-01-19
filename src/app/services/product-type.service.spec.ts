@@ -24,8 +24,10 @@ describe('ProductTypeService', () => {
         service.getTypes().subscribe();
 
         // Assert
-        controller.expectOne(`http://localhost:3000/types`);
+        const req = controller.expectOne(`http://localhost:3000/types`);
+        expect(req.request.method).toEqual('GET');
         controller.verify();
+        req.flush({ types: [] });
       }
     ));
   });
