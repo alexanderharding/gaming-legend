@@ -8,30 +8,30 @@ import { User } from '../types/user';
 import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
-  let email: string;
-  let password: string;
-  let USER: User;
+  let USERS: User[];
 
   beforeEach(() => {
-    USER = {
-      name: {
-        firstName: 'John',
-        lastName: 'Doe',
+    USERS = [
+      {
+        name: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+        contact: {
+          phone: '8011231234',
+          email: 'test@test.com',
+        },
+        address: {
+          street: '123 S Bend Ct',
+          city: 'Las Vegas',
+          state: 'Nevada',
+          zip: '12345',
+          country: 'USA',
+        },
+        password: 'TestPassword1234',
+        isAdmin: true,
       },
-      contact: {
-        phone: '8011231234',
-        email: 'test@test.com',
-      },
-      address: {
-        street: '123 S Bend Ct',
-        city: 'Las Vegas',
-        state: 'Nevada',
-        zip: '12345',
-        country: 'USA',
-      },
-      password: 'TestPassword1234',
-      isAdmin: true,
-    };
+    ];
     TestBed.configureTestingModule({
       providers: [AuthService],
       imports: [HttpClientTestingModule],
@@ -47,18 +47,17 @@ describe('AuthService', () => {
       [AuthService, HttpTestingController],
       (service: AuthService, controller: HttpTestingController) => {
         // Arrange
-        email = 'testemail@test.com';
-        password = 'TestPassword1234';
 
         // Act
-        service.signIn(email, password).subscribe();
+        service.signIn(USERS[0].contact.email, USERS[0].password).subscribe();
 
         // Assert
         const req = controller.expectOne(
-          `http://localhost:3000/users/?contact.email=${email}`
+          `http://localhost:3000/users/?contact.email=${USERS[0].contact.email}`
         );
         expect(req.request.method).toEqual('GET');
         controller.verify();
+        req.flush({ user: USERS[0] });
       }
     ));
   });
@@ -68,17 +67,17 @@ describe('AuthService', () => {
       [AuthService, HttpTestingController],
       (service: AuthService, controller: HttpTestingController) => {
         // Arrange
-        email = 'testemail@test.com';
 
         // Act
-        service.checkForUser(email).subscribe();
+        service.checkForUser(USERS[0].contact.email).subscribe();
 
         // Assert
         const req = controller.expectOne(
-          `http://localhost:3000/users/?contact.email=${email}`
+          `http://localhost:3000/users/?contact.email=${USERS[0].contact.email}`
         );
         expect(req.request.method).toEqual('GET');
         controller.verify();
+        req.flush({ user: USERS[0] });
       }
     ));
   });
@@ -90,32 +89,34 @@ describe('AuthService', () => {
         // Arrange
 
         // Act
-        service.saveUser(USER).subscribe();
+        service.saveUser(USERS[0]).subscribe();
 
         // Assert
         const req = controller.expectOne(`http://localhost:3000/users`);
         expect(req.request.method).toEqual('POST');
         controller.verify();
+        req.flush({ user: USERS[0] });
       }
     ));
     it(`should call http client with the correct url when user has an id`, inject(
       [AuthService, HttpTestingController],
       (service: AuthService, controller: HttpTestingController) => {
         // Arrange
-        USER = {
-          ...USER,
+        USERS[0] = {
+          ...USERS[0],
           id: 1,
         };
 
         // Act
-        service.saveUser(USER).subscribe();
+        service.saveUser(USERS[0]).subscribe();
 
         // Assert
         const req = controller.expectOne(
-          `http://localhost:3000/users/${USER.id}`
+          `http://localhost:3000/users/${USERS[0].id}`
         );
         expect(req.request.method).toEqual('PUT');
         controller.verify();
+        req.flush({ user: USERS[0] });
       }
     ));
   });
@@ -133,6 +134,7 @@ describe('AuthService', () => {
         const req = controller.expectOne(`http://localhost:3000/users`);
         expect(req.request.method).toEqual('GET');
         controller.verify();
+        req.flush({ users: USERS });
       }
     ));
   });
