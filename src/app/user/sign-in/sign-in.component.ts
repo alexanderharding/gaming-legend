@@ -14,7 +14,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { debounceTime, first } from 'rxjs/operators';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { NotificationService } from 'src/app/services/notification.service';
 import { INotification } from 'src/app/types/notification';
@@ -39,8 +39,6 @@ export class SignInComponent implements OnInit, OnDestroy {
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
   readonly loading$ = this.loadingSubject.asObservable();
 
-  private returnLink = this.route.snapshot.queryParamMap.get('returnLink');
-
   private readonly emailValidationMessages = {
     required: 'Please enter your email address.',
     email: 'Please enter a valid email address',
@@ -62,7 +60,6 @@ export class SignInComponent implements OnInit, OnDestroy {
     private readonly authService: AuthService,
     private readonly fb: FormBuilder,
     private readonly router: Router,
-    private readonly route: ActivatedRoute,
     private readonly notificationService: NotificationService
   ) {}
 
@@ -112,10 +109,6 @@ export class SignInComponent implements OnInit, OnDestroy {
         if (result) {
           this.showSuccess();
           this.setLoading(false);
-          if (this.returnLink) {
-            this.router.navigate([`/${this.returnLink}`]);
-            return;
-          }
           this.router.navigate(['/account']);
           return;
         }

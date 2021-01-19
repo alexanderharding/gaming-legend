@@ -42,7 +42,7 @@ fdescribe('SignInComponent', () => {
   describe('signInForm', () => {
     beforeEach(() => component.ngOnInit());
 
-    it('invalid when empty', () => {
+    it('should be invalid when empty', () => {
       expect(component.signInForm.valid).toBeFalsy();
     });
 
