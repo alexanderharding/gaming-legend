@@ -19,12 +19,15 @@ describe('ShippingRateService', () => {
       [ShippingRateService, HttpTestingController],
       (service: ShippingRateService, controller: HttpTestingController) => {
         // Arrange
+
         // Act
         service.shippingRates$.subscribe();
 
         // Assert
-        controller.expectOne('http://localhost:3000/shipping');
+        const req = controller.expectOne('http://localhost:3000/shipping');
+        expect(req.request.method).toEqual('GET');
         controller.verify();
+        req.flush({ data: [] });
       }
     ));
   });

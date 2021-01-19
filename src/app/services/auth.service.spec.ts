@@ -10,9 +10,28 @@ import { AuthService } from './auth.service';
 describe('AuthService', () => {
   let email: string;
   let password: string;
-  let user: User;
+  let USER: User;
 
   beforeEach(() => {
+    USER = {
+      name: {
+        firstName: 'John',
+        lastName: 'Doe',
+      },
+      contact: {
+        phone: '8011231234',
+        email: 'test@test.com',
+      },
+      address: {
+        street: '123 S Bend Ct',
+        city: 'Las Vegas',
+        state: 'Nevada',
+        zip: '12345',
+        country: 'USA',
+      },
+      password: 'TestPassword1234',
+      isAdmin: true,
+    };
     TestBed.configureTestingModule({
       providers: [AuthService],
       imports: [HttpClientTestingModule],
@@ -35,9 +54,10 @@ describe('AuthService', () => {
         service.signIn(email, password).subscribe();
 
         // Assert
-        controller.expectOne(
+        const req = controller.expectOne(
           `http://localhost:3000/users/?contact.email=${email}`
         );
+        expect(req.request.method).toEqual('GET');
         controller.verify();
       }
     ));
@@ -54,9 +74,10 @@ describe('AuthService', () => {
         service.checkForUser(email).subscribe();
 
         // Assert
-        controller.expectOne(
+        const req = controller.expectOne(
           `http://localhost:3000/users/?contact.email=${email}`
         );
+        expect(req.request.method).toEqual('GET');
         controller.verify();
       }
     ));
@@ -67,31 +88,13 @@ describe('AuthService', () => {
       [AuthService, HttpTestingController],
       (service: AuthService, controller: HttpTestingController) => {
         // Arrange
-        user = {
-          name: {
-            firstName: 'John',
-            lastName: 'Doe',
-          },
-          contact: {
-            phone: '8011231234',
-            email: 'test@test.com',
-          },
-          address: {
-            street: '123 S Bend Ct',
-            city: 'Las Vegas',
-            state: 'Nevada',
-            zip: '12345',
-            country: 'USA',
-          },
-          password: 'TestPassword1234',
-          isAdmin: true,
-        };
 
         // Act
-        service.saveUser(user).subscribe();
+        service.saveUser(USER).subscribe();
 
         // Assert
-        controller.expectOne(`http://localhost:3000/users`);
+        const req = controller.expectOne(`http://localhost:3000/users`);
+        expect(req.request.method).toEqual('POST');
         controller.verify();
       }
     ));
@@ -99,32 +102,19 @@ describe('AuthService', () => {
       [AuthService, HttpTestingController],
       (service: AuthService, controller: HttpTestingController) => {
         // Arrange
-        user = {
-          name: {
-            firstName: 'John',
-            lastName: 'Doe',
-          },
-          contact: {
-            phone: '8011231234',
-            email: 'test@test.com',
-          },
-          address: {
-            street: '123 S Bend Ct',
-            city: 'Las Vegas',
-            state: 'Nevada',
-            zip: '12345',
-            country: 'USA',
-          },
-          password: 'TestPassword1234',
-          isAdmin: true,
-          id: 111214,
+        USER = {
+          ...USER,
+          id: 1,
         };
 
         // Act
-        service.saveUser(user).subscribe();
+        service.saveUser(USER).subscribe();
 
         // Assert
-        controller.expectOne(`http://localhost:3000/users/${user.id}`);
+        const req = controller.expectOne(
+          `http://localhost:3000/users/${USER.id}`
+        );
+        expect(req.request.method).toEqual('PUT');
         controller.verify();
       }
     ));
@@ -140,7 +130,8 @@ describe('AuthService', () => {
         service.users$.subscribe();
 
         // Assert
-        controller.expectOne(`http://localhost:3000/users`);
+        const req = controller.expectOne(`http://localhost:3000/users`);
+        expect(req.request.method).toEqual('GET');
         controller.verify();
       }
     ));
