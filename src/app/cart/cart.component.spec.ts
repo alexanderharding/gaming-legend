@@ -12,15 +12,18 @@ import { CartService } from '../services/cart.service';
 import { of } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { ShippingRateService } from '../services/shipping-rate.service';
+import { ICartItem } from '../types/cart-item';
+import { IShipping } from '../types/shipping';
+import { By } from '@angular/platform-browser';
 
 describe('CartComponent', () => {
-  let component: CartComponent;
-  let fixture: ComponentFixture<CartComponent>;
-  let mockCartService;
-  let mockShippingRateService;
-  let mockRoute;
-  let ITEMS;
-  let SHIPPINGRATES;
+  let component: CartComponent,
+    fixture: ComponentFixture<CartComponent>,
+    mockCartService,
+    mockShippingRateService: ShippingRateService,
+    mockActivatedRoute,
+    ITEMS: ICartItem[],
+    SHIPPINGRATES: IShipping[];
 
   @Component({
     selector: 'ctacu-cart-summary',
@@ -175,16 +178,15 @@ describe('CartComponent', () => {
           price: 19.99,
         },
       ];
-      mockCartService = jasmine.createSpyObj([
-        'saveItem',
-        'getCartItems',
-        'cartItems$',
-      ]);
+      mockCartService = jasmine.createSpyObj(
+        ['saveItem', 'removeItem', 'removeAllItems', 'getCartItems'],
+        { cartItems$: of(ITEMS) }
+      );
       mockShippingRateService = jasmine.createSpyObj([
         'setShipping',
         'getDeliveryDate',
       ]);
-      mockRoute = {
+      mockActivatedRoute = {
         snapshot: {
           data: {
             resolvedData: {
@@ -202,7 +204,7 @@ describe('CartComponent', () => {
           { provide: CartService, useValue: mockCartService },
           { provide: ShippingRateService, useValue: mockShippingRateService },
 
-          { provide: ActivatedRoute, useValue: mockRoute },
+          { provide: ActivatedRoute, useValue: mockActivatedRoute },
         ],
       }).compileComponents();
     })
@@ -220,6 +222,7 @@ describe('CartComponent', () => {
 
   it('should set shippingRates correctly', () => {
     expect(component.shippingRates.length).toBe(3);
+    expect(component.shippingRates).toBe(SHIPPINGRATES);
   });
 
   it('should have no errorMessage to start', () => {
@@ -230,10 +233,16 @@ describe('CartComponent', () => {
     expect(component.pageTitle).toBe('Cart');
   });
 
-  it('should retrieve call getDeliveryDate 2 times', () => {
+  it('should retrieve call getDeliveryDate 2 times with correct values', () => {
     component.ngOnInit();
 
     expect(mockShippingRateService.getDeliveryDate).toHaveBeenCalledTimes(2);
+    expect(mockShippingRateService.getDeliveryDate).toHaveBeenCalledWith(
+      SHIPPINGRATES[0].rate
+    );
+    expect(mockShippingRateService.getDeliveryDate).toHaveBeenCalledWith(
+      SHIPPINGRATES[2].rate
+    );
   });
 
   it('should retrieve call setShipping', () => {
@@ -243,26 +252,34 @@ describe('CartComponent', () => {
   });
 
   describe('updateQty', () => {
-    it('should call saveItem with the correct value', () => {
+    it('should call saveItem method with the correct value', () => {
       mockCartService.saveItem.and.returnValue(of(true));
-      mockCartService.getCartItems.and.returnValue(of(true));
+      mockCartService.getCartItems.and.returnValue(of(ITEMS));
 
       component.updateQty(ITEMS[2], 0);
 
       expect(mockCartService.saveItem).toHaveBeenCalledWith(ITEMS[2], 0);
       expect(mockCartService.getCartItems).toHaveBeenCalled();
     });
+    it('should call getCartItems method', () => {
+      mockCartService.saveItem.and.returnValue(of(true));
+      mockCartService.getCartItems.and.returnValue(of(ITEMS));
+
+      component.updateQty(ITEMS[2], 0);
+
+      expect(mockCartService.getCartItems).toHaveBeenCalled();
+    });
   });
 });
 
-xdescribe('CartComponent w/ template', () => {
-  let component: CartComponent;
-  let fixture: ComponentFixture<CartComponent>;
-  let mockCartService;
-  let mockShippingRateService;
-  let mockRoute;
-  let ITEMS;
-  let SHIPPINGRATES;
+describe('CartComponent w/ template', () => {
+  let component: CartComponent,
+    fixture: ComponentFixture<CartComponent>,
+    mockCartService,
+    mockShippingRateService: ShippingRateService,
+    mockActivatedRoute,
+    ITEMS,
+    SHIPPINGRATES;
 
   @Component({
     selector: 'ctacu-cart-summary',
@@ -400,14 +417,15 @@ xdescribe('CartComponent w/ template', () => {
           quantity: 1,
         },
       ];
-      mockCartService = jasmine.createSpyObj([
-        'saveItem',
-        'removeItem',
-        'removeAllItems',
-        'getCartItems',
+      mockCartService = jasmine.createSpyObj(
+        ['saveItem', 'removeItem', 'removeAllItems', 'getCartItems'],
+        { cartItems$: of(ITEMS) }
+      );
+      mockShippingRateService = jasmine.createSpyObj([
+        'setShipping',
+        'getDeliveryDate',
       ]);
-
-      mockRoute = {
+      mockActivatedRoute = {
         snapshot: {
           data: {
             resolvedData: {
@@ -423,7 +441,7 @@ xdescribe('CartComponent w/ template', () => {
 
         providers: [
           { provide: CartService, useValue: mockCartService },
-          { provide: ActivatedRoute, useValue: mockRoute },
+          { provide: ActivatedRoute, useValue: mockActivatedRoute },
         ],
       }).compileComponents();
     })
@@ -438,4 +456,23 @@ xdescribe('CartComponent w/ template', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  // it(`should call openRemoveModal when the remove input button is
+  //   clicked`, () => {
+  //   spyOn(fixture.componentInstance, 'openRemoveModal');
+  //   mockCartService.getCartItems.and.returnValue(of(ITEMS));
+
+  //   fixture.detectChanges();
+
+  //   const heroComponents = fixture.debugElement.queryAll(By.css('tr td input'));
+  //   // (<HeroComponent>heroComponents[0].componentInstance).delete.emit(undefined);
+  //   heroComponents[0].triggerEventHandler('click', null);
+
+  //   // this is how to trigger the click even manually:
+  //   // heroComponents[0].query(By.css('button'))
+  //   //   .triggerEventHandler('click', { stopPropagation: () => {} });
+  //   expect(fixture.componentInstance.openRemoveModal).toHaveBeenCalledWith(
+  //     ITEMS[0]
+  //   );
+  // });
 });
