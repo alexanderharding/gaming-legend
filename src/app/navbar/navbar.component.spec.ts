@@ -1,9 +1,11 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Component, Input } from '@angular/core';
+import { Component, Input, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
+import { AuthService } from '../services/auth.service';
 import { CartService } from '../services/cart.service';
+import { IUser, User } from '../types/user';
 
 import { NavbarComponent } from './navbar.component';
 
@@ -12,12 +14,18 @@ describe('NavbarComponent', () => {
   let fixture: ComponentFixture<NavbarComponent>;
   let mockCartService;
 
+  @Component({
+    selector: 'ngb-alert',
+    template: '<div></div>',
+  })
+  class FakeNgbAlertComponent {}
+
   beforeEach(
     waitForAsync(() => {
       mockCartService = jasmine.createSpyObj(['getCartItems']);
       TestBed.configureTestingModule({
         imports: [HttpClientTestingModule],
-        declarations: [NavbarComponent],
+        declarations: [NavbarComponent, FakeNgbAlertComponent],
         providers: [{ provide: CartService, useValue: mockCartService }],
       }).compileComponents();
     })
@@ -54,20 +62,39 @@ describe('NavbarComponent', () => {
 });
 
 describe('NavbarComponent w/ template', () => {
-  let component: NavbarComponent;
-  let fixture: ComponentFixture<NavbarComponent>;
-
-  @Component({
-    selector: 'ngb-alert',
-    template: '<div></div>',
-  })
-  class FakeNgbAlertComponent {}
+  let component: NavbarComponent,
+    fixture: ComponentFixture<NavbarComponent>,
+    mockAuthService: AuthService,
+    USER: IUser;
 
   beforeEach(
     waitForAsync(() => {
+      USER = {
+        name: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+        contact: {
+          phone: '8011231234',
+          email: 'test@test.com',
+        },
+        address: {
+          street: '123 S Bend Ct',
+          city: 'Las Vegas',
+          state: 'Nevada',
+          zip: '12345',
+          country: 'USA',
+        },
+        password: 'TestPassword1234',
+        isAdmin: true,
+        id: 121014,
+      };
+      mockAuthService = jasmine.createSpyObj([''], { currentUser$: of(USER) });
       TestBed.configureTestingModule({
         imports: [HttpClientTestingModule],
-        declarations: [NavbarComponent, FakeNgbAlertComponent],
+        declarations: [NavbarComponent],
+        providers: [{ provide: AuthService, userValue: mockAuthService }],
+        schemas: [NO_ERRORS_SCHEMA],
       }).compileComponents();
     })
   );
@@ -90,7 +117,7 @@ describe('NavbarComponent w/ template', () => {
     fixture.detectChanges();
 
     // Assert
-    const elements = fixture.debugElement.queryAll(By.css('span'));
+    const elements = fixture.debugElement.queryAll(By.css('ngb-alert span'));
     expect(elements[0].nativeElement.textContent).toContain(
       component.errorMessage
     );
