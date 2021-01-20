@@ -273,7 +273,7 @@ describe('CartComponent', () => {
   });
 });
 
-fdescribe('CartComponent w/ template', () => {
+describe('CartComponent w/ template', () => {
   let component: CartComponent,
     fixture: ComponentFixture<CartComponent>,
     mockCartService,

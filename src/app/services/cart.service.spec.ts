@@ -170,16 +170,19 @@ describe('CartService', () => {
     [CartService, HttpTestingController],
     (service: CartService, controller: HttpTestingController) => {
       // Arrange
+      let items: ICartItem[];
       service.getCartItems().subscribe();
       const req = controller.expectOne('http://localhost:3000/cart');
       expect(req.request.method).toEqual('GET');
       controller.verify();
-      req.flush({ items: ITEMS });
+      // req.flush({ items: ITEMS });
 
       // Act
-      service.cartItems$.subscribe((i) => expect(i.length).toEqual(3));
-
-      // Assert
+      service.cartItems$.pipe(take(2)).subscribe({
+        next: (i) => (items = i),
+        // Assert
+        complete: () => expect(items).toBe(ITEMS),
+      });
     }
   ));
 
@@ -199,17 +202,75 @@ describe('CartService', () => {
     [CartService, HttpTestingController],
     (service: CartService, controller: HttpTestingController) => {
       // Arrange
+      let quantity: number;
       service.getCartItems().subscribe();
       const req = controller.expectOne('http://localhost:3000/cart');
       expect(req.request.method).toEqual('GET');
-      controller.verify();
-      req.flush({ items: ITEMS });
 
       // Act
-      // service.cartItems$.pipe()).subscribe((q) => {
-      //   // Asserts
-      //   expect(q).toBe(ITEMS);
-      // });
+      service.cartQuantity$.pipe(take(2)).subscribe({
+        next: (q) => (quantity = q),
+        // Assert
+        complete: () => expect(quantity).toBe(QUANTITY),
+      });
+      controller.verify();
+    }
+  ));
+
+  xit('should set total$ correctly', inject(
+    [CartService, HttpTestingController],
+    (service: CartService, controller: HttpTestingController) => {
+      // Arrange
+      let total: number;
+      service.getCartItems().subscribe();
+      const req = controller.expectOne('http://localhost:3000/cart');
+      expect(req.request.method).toEqual('GET');
+
+      // Act
+      service.total$.pipe(take(2)).subscribe({
+        next: (q) => (total = q),
+        // Assert
+        complete: () => expect(total).toBe(TOTAL),
+      });
+      controller.verify();
+    }
+  ));
+
+  it('should set totalTax$ correctly', inject(
+    [CartService, HttpTestingController],
+    (service: CartService, controller: HttpTestingController) => {
+      // Arrange
+      let totalTax: number;
+      service.getCartItems().subscribe();
+      const req = controller.expectOne('http://localhost:3000/cart');
+      expect(req.request.method).toEqual('GET');
+
+      // Act
+      service.totalTax$.pipe(take(2)).subscribe({
+        next: (t) => (totalTax = t),
+        // Assert
+        complete: () => expect(totalTax).toBe(TOTALTAX),
+      });
+      controller.verify();
+    }
+  ));
+
+  xit('should set total$ correctly', inject(
+    [CartService, HttpTestingController],
+    (service: CartService, controller: HttpTestingController) => {
+      // Arrange
+      let total: number;
+      // service.getCartItems().subscribe();
+      const req = controller.expectOne('http://localhost:3000/cart');
+      expect(req.request.method).toEqual('GET');
+
+      // Act
+      service.total$.pipe(take(2)).subscribe({
+        next: (t) => (total = t),
+        // Assert
+        complete: () => expect(total).toBe(TOTAL),
+      });
+      controller.verify();
     }
   ));
 
