@@ -7,7 +7,7 @@ import { take } from 'rxjs/operators';
 import { ICartItem } from '../types/cart-item';
 import { CartService } from './cart.service';
 
-fdescribe('CartService', () => {
+describe('CartService', () => {
   let ITEMS: ICartItem[],
     TAX: number,
     QUANTITY: number,

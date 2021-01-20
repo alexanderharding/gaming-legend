@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
 import {
   async,
   ComponentFixture,
@@ -15,6 +15,7 @@ import { ShippingRateService } from '../services/shipping-rate.service';
 import { ICartItem } from '../types/cart-item';
 import { IShipping } from '../types/shipping';
 import { By } from '@angular/platform-browser';
+import { CartSummaryComponent } from './cart-summary/cart-summary.component';
 
 describe('CartComponent', () => {
   let component: CartComponent,
@@ -272,7 +273,7 @@ describe('CartComponent', () => {
   });
 });
 
-describe('CartComponent w/ template', () => {
+fdescribe('CartComponent w/ template', () => {
   let component: CartComponent,
     fixture: ComponentFixture<CartComponent>,
     mockCartService,
@@ -281,11 +282,11 @@ describe('CartComponent w/ template', () => {
     ITEMS,
     SHIPPINGRATES;
 
-  @Component({
-    selector: 'ctacu-cart-summary',
-    template: '<div></div>',
-  })
-  class FakeCartSummaryComponent {}
+  // @Component({
+  //   selector: 'ctacu-cart-summary',
+  //   template: '<div></div>',
+  // })
+  // class FakeCartSummaryComponent {}
 
   beforeEach(
     waitForAsync(() => {
@@ -437,12 +438,13 @@ describe('CartComponent w/ template', () => {
       TestBed.configureTestingModule({
         imports: [HttpClientTestingModule],
 
-        declarations: [CartComponent, FakeCartSummaryComponent],
+        declarations: [CartComponent, CartSummaryComponent],
 
         providers: [
           { provide: CartService, useValue: mockCartService },
           { provide: ActivatedRoute, useValue: mockActivatedRoute },
         ],
+        schemas: [NO_ERRORS_SCHEMA],
       }).compileComponents();
     })
   );
@@ -450,29 +452,23 @@ describe('CartComponent w/ template', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CartComponent);
     component = fixture.componentInstance;
-    // fixture.detectChanges();
+    fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  // it(`should call openRemoveModal when the remove input button is
-  //   clicked`, () => {
-  //   spyOn(fixture.componentInstance, 'openRemoveModal');
-  //   mockCartService.getCartItems.and.returnValue(of(ITEMS));
+  xit('should render each item as a tr', () => {
+    // run ngOnInit
+    fixture.detectChanges();
 
-  //   fixture.detectChanges();
-
-  //   const heroComponents = fixture.debugElement.queryAll(By.css('tr td input'));
-  //   // (<HeroComponent>heroComponents[0].componentInstance).delete.emit(undefined);
-  //   heroComponents[0].triggerEventHandler('click', null);
-
-  //   // this is how to trigger the click even manually:
-  //   // heroComponents[0].query(By.css('button'))
-  //   //   .triggerEventHandler('click', { stopPropagation: () => {} });
-  //   expect(fixture.componentInstance.openRemoveModal).toHaveBeenCalledWith(
-  //     ITEMS[0]
-  //   );
-  // });
+    // hero component debug elements
+    const elements = fixture.debugElement.queryAll(By.css('tr'));
+    expect(elements.length).toEqual(3);
+    for (let index = 0; index < elements.length; index++) {
+      const items = elements[index];
+      expect(items.componentInstance.item).toEqual(ITEMS[index]);
+    }
+  });
 });
