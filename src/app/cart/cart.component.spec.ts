@@ -604,8 +604,17 @@ describe('CartComponent w/ template', () => {
     fixture.detectChanges();
 
     // item debug elements
-    const elements = fixture.debugElement.queryAll(By.css('td a'));
+    const elements = fixture.debugElement.queryAll(By.css('tr td a'));
     expect(elements[0].nativeElement.textContent).toContain(ITEMS[0].name);
+  });
+
+  it('should set the item image url in the template', () => {
+    // run ngOnInit
+    fixture.detectChanges();
+
+    // item debug elements
+    const elements = fixture.debugElement.queryAll(By.css('#itemImage img'));
+    expect(elements[0].nativeElement.src).toContain(ITEMS[0].imageUrl);
   });
 
   it('should set the item price in the template', () => {
@@ -613,7 +622,7 @@ describe('CartComponent w/ template', () => {
     fixture.detectChanges();
 
     // item debug elements
-    const elements = fixture.debugElement.queryAll(By.css('td'));
+    const elements = fixture.debugElement.queryAll(By.css('tr td'));
     expect(elements[2].nativeElement.textContent).toContain(ITEMS[0].price);
   });
 
