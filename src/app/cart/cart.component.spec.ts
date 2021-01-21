@@ -1,25 +1,52 @@
 import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from '@angular/core/testing';
 
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CartComponent } from './cart.component';
 import { CartService } from '../services/cart.service';
-import { of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { ShippingRateService } from '../services/shipping-rate.service';
 import { ICartItem } from '../types/cart-item';
 import { IShipping } from '../types/shipping';
 import { By } from '@angular/platform-browser';
 import { CartSummaryComponent } from './cart-summary/cart-summary.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
+
+export class MockNgbModalRef {
+  componentInstance = {
+    prompt: undefined,
+    title: undefined,
+  };
+  closed: Observable<any> = of(true);
+}
+
+export class MockErrorNgbModalRef {
+  componentInstance = {
+    prompt: undefined,
+    title: undefined,
+  };
+  closed: Observable<never> = throwError('error');
+}
 
 describe('CartComponent', () => {
   let component: CartComponent,
     fixture: ComponentFixture<CartComponent>,
     mockCartService,
+    mockModalService,
     mockShippingRateService: ShippingRateService,
     mockActivatedRoute,
     ITEMS: ICartItem[],
-    SHIPPINGRATES: IShipping[];
+    SHIPPINGRATES: IShipping[],
+    mockModalRef: MockNgbModalRef,
+    mockErrorModalRef: MockErrorNgbModalRef;
 
   @Component({
     selector: 'ctacu-cart-summary',
@@ -191,6 +218,10 @@ describe('CartComponent', () => {
           },
         },
       };
+      mockModalService = jasmine.createSpyObj(['open']);
+      mockModalRef = new MockNgbModalRef();
+      mockErrorModalRef = new MockErrorNgbModalRef();
+
       TestBed.configureTestingModule({
         imports: [HttpClientTestingModule],
 
@@ -199,6 +230,7 @@ describe('CartComponent', () => {
         providers: [
           { provide: CartService, useValue: mockCartService },
           { provide: ShippingRateService, useValue: mockShippingRateService },
+          { provide: NgbModal, useValue: mockModalService },
 
           { provide: ActivatedRoute, useValue: mockActivatedRoute },
         ],
@@ -242,10 +274,12 @@ describe('CartComponent', () => {
     );
   });
 
-  it('should retrieve call setShipping ngOnInit()', () => {
+  it('should retrieve call setShipping with correct value ngOnInit()', () => {
     component.ngOnInit();
 
-    expect(mockShippingRateService.setShipping).toHaveBeenCalled();
+    expect(mockShippingRateService.setShipping).toHaveBeenCalledWith(
+      SHIPPINGRATES[0].price
+    );
   });
 
   describe('updateQty', () => {
@@ -266,6 +300,90 @@ describe('CartComponent', () => {
 
       expect(mockCartService.getCartItems).toHaveBeenCalled();
     });
+    it(`should call openRemoveModal method with the correct value when called
+      if item quantity is less than or equal to 1 and amount equals -1`, () => {
+      mockCartService.saveItem.and.returnValue(of(ITEMS[2]));
+      mockCartService.getCartItems.and.returnValue(of(ITEMS));
+      spyOn(component, 'openRemoveModal');
+
+      component.updateQty(ITEMS[2], -1);
+
+      expect(component.openRemoveModal).toHaveBeenCalledWith(ITEMS[2]);
+    });
+  });
+
+  describe('openRemoveModal', () => {
+    it(`should call modalService.open method with the correct value when
+      called`, () => {
+      mockModalService.open.and.returnValue(mockModalRef);
+      mockCartService.removeItem.and.returnValue(of(ITEMS[0]));
+      mockCartService.getCartItems.and.returnValue(of(ITEMS));
+
+      component.openRemoveModal(ITEMS[0]);
+
+      expect(mockModalService.open).toHaveBeenCalledWith(ConfirmModalComponent);
+    });
+
+    it(`should call cartService.removeItem method with the correct value and
+      cartService.getCartItems method when called`, fakeAsync(() => {
+      mockModalService.open.and.returnValue(mockModalRef);
+      mockCartService.removeItem.and.returnValue(of(ITEMS[0]));
+      mockCartService.getCartItems.and.returnValue(of(ITEMS));
+
+      component.openRemoveModal(ITEMS[0]);
+      tick(1000);
+
+      expect(mockCartService.removeItem).toHaveBeenCalledWith(ITEMS[0]);
+      expect(mockCartService.getCartItems).toHaveBeenCalled();
+    }));
+
+    it(`should not call cartService.removeItem and cartService.getCartItems
+      methods when called if modalService.open returns
+      mockErrorModalRef`, () => {
+      mockModalService.open.and.returnValue(mockErrorModalRef);
+
+      component.openRemoveModal(ITEMS[0]);
+
+      expect(mockCartService.removeItem).toHaveBeenCalledTimes(0);
+      expect(mockCartService.getCartItems).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  describe('openRemoveAllModal', () => {
+    it(`should call modalService.open method with the correct value when
+      called`, () => {
+      mockModalService.open.and.returnValue(mockModalRef);
+      mockCartService.removeAllItems.and.returnValue(of(true));
+      mockCartService.getCartItems.and.returnValue(of(ITEMS));
+
+      component.openRemoveAllModal(ITEMS);
+
+      expect(mockModalService.open).toHaveBeenCalledWith(ConfirmModalComponent);
+    });
+
+    it(`should call cartService.removeAllItems method with the correct value and
+      cartService.getCartItems method when called`, fakeAsync(() => {
+      mockModalService.open.and.returnValue(mockModalRef);
+      mockCartService.removeAllItems.and.returnValue(of(true));
+      mockCartService.getCartItems.and.returnValue(of(ITEMS));
+
+      component.openRemoveAllModal(ITEMS);
+      tick(ITEMS.length * 1000 + 1000);
+
+      expect(mockCartService.removeAllItems).toHaveBeenCalledWith(ITEMS);
+      expect(mockCartService.getCartItems).toHaveBeenCalled();
+    }));
+
+    it(`should not call cartService.removeAllItems cartService.getCartItems
+      methods when called if modalService.open returns
+      mockErrorModalRef`, () => {
+      mockModalService.open.and.returnValue(mockErrorModalRef);
+
+      component.openRemoveModal(ITEMS[0]);
+
+      expect(mockCartService.removeAllItems).toHaveBeenCalledTimes(0);
+      expect(mockCartService.getCartItems).toHaveBeenCalledTimes(0);
+    });
   });
 });
 
@@ -273,9 +391,7 @@ describe('CartComponent w/ template', () => {
   let component: CartComponent,
     fixture: ComponentFixture<CartComponent>,
     mockCartService,
-    mockShippingRateService: ShippingRateService,
     mockActivatedRoute,
-    // mockRouter,
     ITEMS: ICartItem[],
     SHIPPINGRATES;
 
@@ -436,10 +552,6 @@ describe('CartComponent w/ template', () => {
         ['saveItem', 'removeItem', 'removeAllItems', 'getCartItems'],
         { cartItems$: of(ITEMS) }
       );
-      mockShippingRateService = jasmine.createSpyObj([
-        'setShipping',
-        'getDeliveryDate',
-      ]);
       mockActivatedRoute = {
         snapshot: {
           data: {
@@ -449,7 +561,6 @@ describe('CartComponent w/ template', () => {
           },
         },
       };
-      // mockRouter = jasmine.createSpyObj(['navigate']);
 
       TestBed.configureTestingModule({
         imports: [HttpClientTestingModule],
@@ -515,31 +626,59 @@ describe('CartComponent w/ template', () => {
     expect(elements[1].nativeElement.value).toContain(ITEMS[0].quantity);
   });
 
-  it('should call openRemoveModal method when remove input button is clicked', () => {
+  it(`should call openRemoveModal method with correct value when remove input
+    button is clicked`, () => {
     // Arrange
-    spyOn(component, 'openRemoveModal');
     fixture.detectChanges();
+    spyOn(component, 'openRemoveModal');
     const input = fixture.debugElement.queryAll(By.css('td input'))[3];
 
     // Act
     input.triggerEventHandler('click', null);
 
     // Assert
-    expect(component.openRemoveModal).toHaveBeenCalled();
+    expect(component.openRemoveModal).toHaveBeenCalledWith(ITEMS[0]);
   });
 
-  xit(`should call cartService.removeItem method when remove input button is
-    clicked`, () => {
+  it(`should call openRemoveAllModal method with correct value when empty
+    input button is clicked`, () => {
     // Arrange
     fixture.detectChanges();
-    mockCartService.removeItem.and.returnValue(of(ITEMS[0]));
-    const input = fixture.debugElement.queryAll(By.css('td input'))[3];
+    spyOn(component, 'openRemoveAllModal');
+    const input = fixture.debugElement.queryAll(By.css('input'))[1];
 
     // Act
     input.triggerEventHandler('click', null);
-    fixture.detectChanges();
 
     // Assert
-    expect(mockCartService.removeItem).toHaveBeenCalledWith(ITEMS[0]);
+    expect(component.openRemoveAllModal).toHaveBeenCalledWith(ITEMS);
+  });
+
+  it(`should call updateQty method with correct value when decrease input button
+    is clicked`, () => {
+    // Arrange
+    fixture.detectChanges();
+    spyOn(component, 'updateQty');
+    const input = fixture.debugElement.queryAll(By.css('td input'))[0];
+
+    // Act
+    input.triggerEventHandler('click', null);
+
+    // Assert
+    expect(component.updateQty).toHaveBeenCalledWith(ITEMS[0], -1);
+  });
+
+  it(`should call updateQty method with correct value when increase input button
+    is clicked`, () => {
+    // Arrange
+    fixture.detectChanges();
+    spyOn(component, 'updateQty');
+    const input = fixture.debugElement.queryAll(By.css('td input'))[2];
+
+    // Act
+    input.triggerEventHandler('click', null);
+
+    // Assert
+    expect(component.updateQty).toHaveBeenCalledWith(ITEMS[0], 1);
   });
 });
