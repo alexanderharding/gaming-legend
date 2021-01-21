@@ -1,10 +1,5 @@
 import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
-import {
-  async,
-  ComponentFixture,
-  TestBed,
-  waitForAsync,
-} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CartComponent } from './cart.component';
@@ -207,6 +202,7 @@ describe('CartComponent', () => {
 
           { provide: ActivatedRoute, useValue: mockActivatedRoute },
         ],
+        schemas: [NO_ERRORS_SCHEMA],
       }).compileComponents();
     })
   );
@@ -214,7 +210,6 @@ describe('CartComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CartComponent);
     component = fixture.componentInstance;
-    // fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -234,8 +229,9 @@ describe('CartComponent', () => {
     expect(component.pageTitle).toBe('Cart');
   });
 
-  it('should retrieve call getDeliveryDate 2 times with correct values', () => {
-    component.ngOnInit();
+  it(`should retrieve call getDeliveryDate 2 times with correct values
+    ngOnInit()`, () => {
+    fixture.detectChanges();
 
     expect(mockShippingRateService.getDeliveryDate).toHaveBeenCalledTimes(2);
     expect(mockShippingRateService.getDeliveryDate).toHaveBeenCalledWith(
@@ -246,15 +242,15 @@ describe('CartComponent', () => {
     );
   });
 
-  it('should retrieve call setShipping', () => {
+  it('should retrieve call setShipping ngOnInit()', () => {
     component.ngOnInit();
 
     expect(mockShippingRateService.setShipping).toHaveBeenCalled();
   });
 
   describe('updateQty', () => {
-    it('should call saveItem method with the correct value', () => {
-      mockCartService.saveItem.and.returnValue(of(true));
+    it('should call saveItem method with the correct value when called', () => {
+      mockCartService.saveItem.and.returnValue(of(ITEMS[2]));
       mockCartService.getCartItems.and.returnValue(of(ITEMS));
 
       component.updateQty(ITEMS[2], 0);
@@ -262,8 +258,8 @@ describe('CartComponent', () => {
       expect(mockCartService.saveItem).toHaveBeenCalledWith(ITEMS[2], 0);
       expect(mockCartService.getCartItems).toHaveBeenCalled();
     });
-    it('should call getCartItems method', () => {
-      mockCartService.saveItem.and.returnValue(of(true));
+    it('should call getCartItems method when called', () => {
+      mockCartService.saveItem.and.returnValue(of(ITEMS[2]));
       mockCartService.getCartItems.and.returnValue(of(ITEMS));
 
       component.updateQty(ITEMS[2], 0);
@@ -279,7 +275,8 @@ describe('CartComponent w/ template', () => {
     mockCartService,
     mockShippingRateService: ShippingRateService,
     mockActivatedRoute,
-    ITEMS,
+    // mockRouter,
+    ITEMS: ICartItem[],
     SHIPPINGRATES;
 
   // @Component({
@@ -418,6 +415,23 @@ describe('CartComponent w/ template', () => {
           quantity: 1,
         },
       ];
+      SHIPPINGRATES = [
+        {
+          id: 1,
+          rate: 7,
+          price: 6.99,
+        },
+        {
+          id: 2,
+          rate: 3,
+          price: 14.99,
+        },
+        {
+          id: 3,
+          rate: 1,
+          price: 19.99,
+        },
+      ];
       mockCartService = jasmine.createSpyObj(
         ['saveItem', 'removeItem', 'removeAllItems', 'getCartItems'],
         { cartItems$: of(ITEMS) }
@@ -435,6 +449,8 @@ describe('CartComponent w/ template', () => {
           },
         },
       };
+      // mockRouter = jasmine.createSpyObj(['navigate']);
+
       TestBed.configureTestingModule({
         imports: [HttpClientTestingModule],
 
@@ -443,6 +459,7 @@ describe('CartComponent w/ template', () => {
         providers: [
           { provide: CartService, useValue: mockCartService },
           { provide: ActivatedRoute, useValue: mockActivatedRoute },
+          // { provide: Router, useValue: mockRouter },
         ],
         schemas: [NO_ERRORS_SCHEMA],
       }).compileComponents();
@@ -452,23 +469,62 @@ describe('CartComponent w/ template', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CartComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  xit('should render each item as a tr', () => {
+  it('should set items$ in the template', () => {
     // run ngOnInit
     fixture.detectChanges();
 
-    // hero component debug elements
+    // item debug elements
     const elements = fixture.debugElement.queryAll(By.css('tr'));
-    expect(elements.length).toEqual(3);
-    for (let index = 0; index < elements.length; index++) {
-      const items = elements[index];
-      expect(items.componentInstance.item).toEqual(ITEMS[index]);
-    }
+    expect(elements.length).toEqual(ITEMS.length);
+    // for (let index = 0; index < elements.length; index++) {
+    //   const items = elements[index];
+    //   expect(items.componentInstance.item).toEqual(ITEMS[index]);
+    // }
+  });
+
+  it('should set the item name in the template', () => {
+    // run ngOnInit
+    fixture.detectChanges();
+
+    // item debug elements
+    const elements = fixture.debugElement.queryAll(By.css('td a'));
+    expect(elements[0].nativeElement.textContent).toContain(ITEMS[0].name);
+  });
+
+  it('should set the item price in the template', () => {
+    // run ngOnInit
+    fixture.detectChanges();
+
+    // item debug elements
+    const elements = fixture.debugElement.queryAll(By.css('td'));
+    expect(elements[2].nativeElement.textContent).toContain(ITEMS[0].price);
+  });
+
+  it('should set the item quantity in the template', () => {
+    // run ngOnInit
+    fixture.detectChanges();
+
+    // item debug elements
+    const elements = fixture.debugElement.queryAll(By.css('td input'));
+    expect(elements[1].nativeElement.value).toContain(ITEMS[0].quantity);
+  });
+
+  xit('should navigate when clicked', () => {
+    // Arrange
+    fixture.detectChanges();
+    const a = fixture.debugElement.queryAll(By.css('td a'))[0];
+
+    // Act
+    a.triggerEventHandler('click', null);
+    fixture.detectChanges();
+
+    // Assert
+    // expect(mockRouter.navigate).toHaveBeenCalled();
   });
 });
