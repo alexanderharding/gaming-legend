@@ -515,16 +515,31 @@ describe('CartComponent w/ template', () => {
     expect(elements[1].nativeElement.value).toContain(ITEMS[0].quantity);
   });
 
-  xit('should navigate when clicked', () => {
+  it('should call openRemoveModal method when remove input button is clicked', () => {
     // Arrange
+    spyOn(component, 'openRemoveModal');
     fixture.detectChanges();
-    const a = fixture.debugElement.queryAll(By.css('td a'))[0];
+    const input = fixture.debugElement.queryAll(By.css('td input'))[3];
 
     // Act
-    a.triggerEventHandler('click', null);
+    input.triggerEventHandler('click', null);
+
+    // Assert
+    expect(component.openRemoveModal).toHaveBeenCalled();
+  });
+
+  xit(`should call cartService.removeItem method when remove input button is
+    clicked`, () => {
+    // Arrange
+    fixture.detectChanges();
+    mockCartService.removeItem.and.returnValue(of(ITEMS[0]));
+    const input = fixture.debugElement.queryAll(By.css('td input'))[3];
+
+    // Act
+    input.triggerEventHandler('click', null);
     fixture.detectChanges();
 
     // Assert
-    // expect(mockRouter.navigate).toHaveBeenCalled();
+    expect(mockCartService.removeItem).toHaveBeenCalledWith(ITEMS[0]);
   });
 });
