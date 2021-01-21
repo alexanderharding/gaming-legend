@@ -257,7 +257,7 @@ describe('CartComponent', () => {
     expect(component.errorMessage).toBeFalsy();
   });
 
-  it('should have "Cart" as pageTitle to start', () => {
+  it(`should have 'Cart' as pageTitle to start`, () => {
     expect(component.pageTitle).toBe('Cart');
   });
 
