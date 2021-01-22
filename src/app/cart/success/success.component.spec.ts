@@ -29,6 +29,7 @@ describe('SuccessComponent', () => {
 
   it('should create', () => {
     // Arrange
+    fixture.detectChanges();
 
     // Act
 
@@ -38,7 +39,10 @@ describe('SuccessComponent', () => {
 
   it('should set the pageTitle correctly', () => {
     // Arrange
+    fixture.detectChanges();
+
     // Act
+
     // Assert
     expect(component.pageTitle).toBe('Order Placed');
   });

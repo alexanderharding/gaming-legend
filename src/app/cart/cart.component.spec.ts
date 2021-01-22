@@ -247,16 +247,21 @@ describe('CartComponent', () => {
   });
 
   it('should create', () => {
+    fixture.detectChanges();
+
     expect(component).toBeTruthy();
   });
 
   it('should set shippingRates correctly', () => {
+    fixture.detectChanges();
+
     expect(component.shippingRates.length).toBe(3);
     expect(component.shippingRates).toBe(SHIPPINGRATES);
   });
 
   it('should set items$ correctly', () => {
     let items: ICartItem[];
+    fixture.detectChanges();
 
     component.items$.subscribe((i) => (items = i));
 
@@ -266,6 +271,7 @@ describe('CartComponent', () => {
 
   it('should set quantity$ correctly', () => {
     let quantity: number;
+    fixture.detectChanges();
 
     component.quantity$.subscribe((q) => (quantity = q));
 
@@ -273,10 +279,14 @@ describe('CartComponent', () => {
   });
 
   it('should have no errorMessage', () => {
+    fixture.detectChanges();
+
     expect(component.errorMessage).toBeFalsy();
   });
 
   it(`should have 'Cart' as pageTitle to start`, () => {
+    fixture.detectChanges();
+
     expect(component.pageTitle).toBe('Cart');
   });
 
@@ -660,6 +670,8 @@ describe('CartComponent w/ template', () => {
   });
 
   it('should create', () => {
+    fixture.detectChanges();
+
     expect(component).toBeTruthy();
   });
 

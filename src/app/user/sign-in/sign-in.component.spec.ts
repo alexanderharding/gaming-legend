@@ -36,11 +36,13 @@ describe('SignInComponent', () => {
   });
 
   it('should create', () => {
+    fixture.detectChanges();
+
     expect(component).toBeTruthy();
   });
 
   describe('signInForm', () => {
-    beforeEach(() => component.ngOnInit());
+    beforeEach(() => fixture.detectChanges());
 
     it('should be invalid when empty', () => {
       expect(component.signInForm.valid).toBeFalsy();

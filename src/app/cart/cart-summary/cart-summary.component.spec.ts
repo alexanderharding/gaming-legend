@@ -191,15 +191,20 @@ describe('CartSummaryComponent', () => {
   });
 
   it('should create', () => {
+    fixture.detectChanges();
+
     expect(component).toBeTruthy();
   });
 
   it('should set tax correctly from CartService', () => {
+    fixture.detectChanges();
+
     expect(component.tax).toBe(TAX);
   });
 
   it('should set items$ correctly from CartService', () => {
     let items: ICartItem[];
+    fixture.detectChanges();
 
     component.items$.subscribe((i) => (items = i));
 
@@ -209,6 +214,7 @@ describe('CartSummaryComponent', () => {
 
   it('should set quantity$ correctly from CartService', () => {
     let quantity: number;
+    fixture.detectChanges();
 
     component.quantity$.subscribe((q) => (quantity = q));
 
@@ -217,6 +223,7 @@ describe('CartSummaryComponent', () => {
 
   it('should set subtotal$ correctly from CartService', () => {
     let subtotal: number;
+    fixture.detectChanges();
 
     component.subtotal$.subscribe((s) => (subtotal = s));
 
@@ -225,6 +232,7 @@ describe('CartSummaryComponent', () => {
 
   it('should set totalTax$ correctly from CartService', () => {
     let totalTax: number;
+    fixture.detectChanges();
 
     component.totalTax$.subscribe((t) => (totalTax = t));
 
@@ -233,6 +241,7 @@ describe('CartSummaryComponent', () => {
 
   it('should set total$ correctly from CartService', () => {
     let total: number;
+    fixture.detectChanges();
 
     component.total$.subscribe((t) => (total = t));
 
@@ -241,6 +250,7 @@ describe('CartSummaryComponent', () => {
 
   it('should set shippingPrice$ correctly from ShippingRateService', () => {
     let shippingPrice: number;
+    fixture.detectChanges();
 
     component.shippingPrice$.subscribe((p) => (shippingPrice = p));
 
@@ -429,6 +439,8 @@ describe('CartSummaryComponent w/ template', () => {
   });
 
   it('should create', () => {
+    fixture.detectChanges();
+
     expect(component).toBeTruthy();
   });
 
@@ -437,8 +449,8 @@ describe('CartSummaryComponent w/ template', () => {
     let subtotal: number;
 
     // Act
-    component.subtotal$.subscribe((s) => (subtotal = s));
     fixture.detectChanges();
+    component.subtotal$.subscribe((s) => (subtotal = s));
 
     // Assert
     const elements = fixture.debugElement.queryAll(By.css('div span'));
@@ -463,8 +475,8 @@ describe('CartSummaryComponent w/ template', () => {
     let totalTax: number;
 
     // Act
-    component.totalTax$.subscribe((t) => (totalTax = t));
     fixture.detectChanges();
+    component.totalTax$.subscribe((t) => (totalTax = t));
 
     // Assert
     const elements = fixture.debugElement.queryAll(By.css('div span'));
@@ -478,8 +490,8 @@ describe('CartSummaryComponent w/ template', () => {
     let shippingPrice: number;
 
     // Act
-    component.shippingPrice$.subscribe((s) => (shippingPrice = s));
     fixture.detectChanges();
+    component.shippingPrice$.subscribe((s) => (shippingPrice = s));
 
     // Assert
     const elements = fixture.debugElement.queryAll(By.css('div span'));
@@ -493,8 +505,8 @@ describe('CartSummaryComponent w/ template', () => {
     let total: number;
 
     // Act
-    component.total$.subscribe((t) => (total = t));
     fixture.detectChanges();
+    component.total$.subscribe((t) => (total = t));
 
     // Assert
     const elements = fixture.debugElement.queryAll(By.css('h5 span'));

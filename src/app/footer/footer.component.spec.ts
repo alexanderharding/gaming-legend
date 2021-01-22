@@ -23,6 +23,7 @@ describe('FooterComponent', () => {
 
   it('should create', () => {
     // Arrange
+    fixture.detectChanges();
 
     // Act
 
@@ -33,6 +34,7 @@ describe('FooterComponent', () => {
   it('should set currentYear correctly', () => {
     // Arrange
     year = new Date().getFullYear();
+    fixture.detectChanges();
 
     // Act
 
