@@ -43,7 +43,8 @@ describe('CartComponent', () => {
     ITEMS: ICartItem[],
     SHIPPINGRATES: IShipping[],
     mockModalRef: MockNgbModalRef,
-    mockErrorModalRef: MockErrorNgbModalRef;
+    mockErrorModalRef: MockErrorNgbModalRef,
+    QUANTITY: number;
 
   @Component({
     selector: 'ctacu-cart-summary',
@@ -181,6 +182,9 @@ describe('CartComponent', () => {
           quantity: 1,
         },
       ];
+      QUANTITY = ITEMS.reduce((prev, current) => {
+        return +prev + +current.quantity;
+      }, 0);
       SHIPPINGRATES = [
         {
           id: 1,
@@ -200,7 +204,7 @@ describe('CartComponent', () => {
       ];
       mockCartService = jasmine.createSpyObj(
         ['saveItem', 'removeItem', 'removeAllItems', 'getCartItems'],
-        { cartItems$: of(ITEMS) }
+        { cartItems$: of(ITEMS), cartQuantity$: of(QUANTITY) }
       );
       mockShippingRateService = jasmine.createSpyObj([
         'setShipping',
@@ -251,7 +255,24 @@ describe('CartComponent', () => {
     expect(component.shippingRates).toBe(SHIPPINGRATES);
   });
 
-  it('should have no errorMessage to start', () => {
+  it('should set items$ correctly', () => {
+    let items: ICartItem[];
+
+    component.items$.subscribe((i) => (items = i));
+
+    expect(items.length).toBe(ITEMS.length);
+    expect(items).toBe(ITEMS);
+  });
+
+  it('should set quantity$ correctly', () => {
+    let quantity: number;
+
+    component.quantity$.subscribe((q) => (quantity = q));
+
+    expect(quantity).toBe(QUANTITY);
+  });
+
+  it('should have no errorMessage', () => {
     expect(component.errorMessage).toBeFalsy();
   });
 
@@ -378,8 +399,8 @@ describe('CartComponent', () => {
       expect(mockNotificationService.show).toHaveBeenCalled();
     });
 
-    it(`should not call cartService.removeItem and cartService.getCartItems
-      methods when called when modalService.open returns
+    it(`should not call cartService.removeItem or cartService.getCartItems
+      method when called when modalService.open returns
       mockErrorModalRef`, () => {
       mockModalService.open.and.returnValue(mockErrorModalRef);
 
@@ -427,7 +448,7 @@ describe('CartComponent', () => {
     });
 
     it(`should not call CartService.removeAllItems or CartService.getCartItems
-      methods when called if modalService.open returns
+      method when called if modalService.open returns
       mockErrorModalRef`, () => {
       mockModalService.open.and.returnValue(mockErrorModalRef);
 
@@ -445,7 +466,8 @@ describe('CartComponent w/ template', () => {
     mockCartService,
     mockActivatedRoute,
     ITEMS: ICartItem[],
-    SHIPPINGRATES;
+    SHIPPINGRATES,
+    QUANTITY: number;
 
   // @Component({
   //   selector: 'ctacu-cart-summary',
@@ -583,6 +605,9 @@ describe('CartComponent w/ template', () => {
           quantity: 1,
         },
       ];
+      QUANTITY = ITEMS.reduce((prev, current) => {
+        return +prev + +current.quantity;
+      }, 0);
       SHIPPINGRATES = [
         {
           id: 1,
@@ -602,7 +627,7 @@ describe('CartComponent w/ template', () => {
       ];
       mockCartService = jasmine.createSpyObj(
         ['saveItem', 'removeItem', 'removeAllItems', 'getCartItems'],
-        { cartItems$: of(ITEMS) }
+        { cartItems$: of(ITEMS), cartQuantity$: of(QUANTITY) }
       );
       mockActivatedRoute = {
         snapshot: {
@@ -638,6 +663,16 @@ describe('CartComponent w/ template', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should set pageTitle in the template', () => {
+    // run ngOnInit
+    fixture.detectChanges();
+
+    const elements = fixture.debugElement.queryAll(By.css('h4 span'));
+    expect(elements[0].nativeElement.textContent).toContain(
+      component.pageTitle
+    );
+  });
+
   it('should set items$ in the template', () => {
     // run ngOnInit
     fixture.detectChanges();
@@ -663,6 +698,14 @@ describe('CartComponent w/ template', () => {
         ITEMS[index].quantity
       );
     }
+  });
+
+  it('should set quantity$ in the template', () => {
+    // run ngOnInit
+    fixture.detectChanges();
+
+    const elements = fixture.debugElement.queryAll(By.css('h4 span'));
+    expect(elements[1].nativeElement.textContent).toContain(QUANTITY);
   });
 
   it(`should call openRemoveModal method with correct value when remove input
