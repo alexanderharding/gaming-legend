@@ -1,11 +1,5 @@
 import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CartComponent } from './cart.component';
@@ -277,7 +271,7 @@ describe('CartComponent', () => {
   });
 
   it('should retrieve call setShipping with correct value', () => {
-    component.ngOnInit();
+    fixture.detectChanges();
 
     expect(mockShippingRateService.setShipping).toHaveBeenCalledWith(
       SHIPPINGRATES[0].price
@@ -287,12 +281,17 @@ describe('CartComponent', () => {
   describe('updateQty', () => {
     it(`should call CartService.saveItem method with the correct value when
       called`, () => {
+      const amount = 1;
       mockCartService.saveItem.and.returnValue(of(ITEMS[2]));
       mockCartService.getCartItems.and.returnValue(of(ITEMS));
 
-      component.updateQty(ITEMS[2], 0);
+      component.updateQty(ITEMS[2], amount);
+      const updatedItem = {
+        ...ITEMS[2],
+        quantity: ITEMS[2].quantity + amount,
+      } as ICartItem;
 
-      expect(mockCartService.saveItem).toHaveBeenCalledWith(ITEMS[2], 0);
+      expect(mockCartService.saveItem).toHaveBeenCalledWith(updatedItem, 0);
       expect(mockCartService.getCartItems).toHaveBeenCalled();
     });
 
