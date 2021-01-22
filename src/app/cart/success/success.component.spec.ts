@@ -36,7 +36,7 @@ describe('SuccessComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should set the pageTitle corrently', () => {
+  it('should set the pageTitle correctly', () => {
     // Arrange
     // Act
     // Assert
