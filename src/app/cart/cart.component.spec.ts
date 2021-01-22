@@ -14,6 +14,7 @@ import { CartSummaryComponent } from './cart-summary/cart-summary.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
 import { NotificationService } from '../services/notification.service';
+import { formatCurrency } from '@angular/common';
 
 export class MockNgbModalRef {
   componentInstance = {
@@ -644,46 +645,24 @@ describe('CartComponent w/ template', () => {
     // item debug elements
     const elements = fixture.debugElement.queryAll(By.css('tr'));
     expect(elements.length).toEqual(ITEMS.length);
-    // for (let index = 0; index < elements.length; index++) {
-    //   const items = elements[index];
-    //   expect(items.componentInstance.item).toEqual(ITEMS[index]);
-    // }
-  });
+    for (let index = 0; index < elements.length; index++) {
+      const cellElements = elements[index].queryAll(By.css('td'));
+      const imgElement = cellElements[0].query(By.css('img'));
+      const linkElement = cellElements[1].query(By.css('a'));
+      const priceElement = cellElements[2];
+      const inputElements = cellElements[3].queryAll(By.css('input'));
 
-  it('should set the item name in the template', () => {
-    // run ngOnInit
-    fixture.detectChanges();
-
-    // item debug elements
-    const elements = fixture.debugElement.queryAll(By.css('tr td a'));
-    expect(elements[0].nativeElement.textContent).toContain(ITEMS[0].name);
-  });
-
-  it('should set the item image url in the template', () => {
-    // run ngOnInit
-    fixture.detectChanges();
-
-    // item debug elements
-    const elements = fixture.debugElement.queryAll(By.css('#itemImage img'));
-    expect(elements[0].nativeElement.src).toContain(ITEMS[0].imageUrl);
-  });
-
-  it('should set the item price in the template', () => {
-    // run ngOnInit
-    fixture.detectChanges();
-
-    // item debug elements
-    const elements = fixture.debugElement.queryAll(By.css('tr td'));
-    expect(elements[2].nativeElement.textContent).toContain(ITEMS[0].price);
-  });
-
-  it('should set the item quantity in the template', () => {
-    // run ngOnInit
-    fixture.detectChanges();
-
-    // item debug elements
-    const elements = fixture.debugElement.queryAll(By.css('td input'));
-    expect(elements[1].nativeElement.value).toContain(ITEMS[0].quantity);
+      expect(linkElement.nativeElement.textContent).toContain(
+        ITEMS[index].name
+      );
+      expect(imgElement.nativeElement.src).toContain(ITEMS[index].imageUrl);
+      expect(priceElement.nativeElement.textContent).toContain(
+        formatCurrency(ITEMS[index].price, 'en-US', '$')
+      );
+      expect(inputElements[1].nativeElement.value).toContain(
+        ITEMS[index].quantity
+      );
+    }
   });
 
   it(`should call openRemoveModal method with correct value when remove input
