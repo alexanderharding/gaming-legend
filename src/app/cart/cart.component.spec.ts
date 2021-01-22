@@ -19,6 +19,7 @@ import { By } from '@angular/platform-browser';
 import { CartSummaryComponent } from './cart-summary/cart-summary.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
+import { NotificationService } from '../services/notification.service';
 
 export class MockNgbModalRef {
   componentInstance = {
@@ -42,6 +43,7 @@ describe('CartComponent', () => {
     mockCartService,
     mockModalService,
     mockShippingRateService: ShippingRateService,
+    mockNotificationService,
     mockActivatedRoute,
     ITEMS: ICartItem[],
     SHIPPINGRATES: IShipping[],
@@ -218,6 +220,7 @@ describe('CartComponent', () => {
           },
         },
       };
+      mockNotificationService = jasmine.createSpyObj(['show']);
       mockModalService = jasmine.createSpyObj(['open']);
       mockModalRef = new MockNgbModalRef();
       mockErrorModalRef = new MockErrorNgbModalRef();
@@ -231,7 +234,7 @@ describe('CartComponent', () => {
           { provide: CartService, useValue: mockCartService },
           { provide: ShippingRateService, useValue: mockShippingRateService },
           { provide: NgbModal, useValue: mockModalService },
-
+          { provide: NotificationService, useValue: mockNotificationService },
           { provide: ActivatedRoute, useValue: mockActivatedRoute },
         ],
         schemas: [NO_ERRORS_SCHEMA],
@@ -261,8 +264,7 @@ describe('CartComponent', () => {
     expect(component.pageTitle).toBe('Cart');
   });
 
-  it(`should retrieve call getDeliveryDate 2 times with correct values
-    ngOnInit()`, () => {
+  it(`should retrieve call getDeliveryDate 2 times with correct values`, () => {
     fixture.detectChanges();
 
     expect(mockShippingRateService.getDeliveryDate).toHaveBeenCalledTimes(2);
@@ -274,7 +276,7 @@ describe('CartComponent', () => {
     );
   });
 
-  it('should retrieve call setShipping with correct value ngOnInit()', () => {
+  it('should retrieve call setShipping with correct value', () => {
     component.ngOnInit();
 
     expect(mockShippingRateService.setShipping).toHaveBeenCalledWith(
@@ -283,7 +285,8 @@ describe('CartComponent', () => {
   });
 
   describe('updateQty', () => {
-    it('should call saveItem method with the correct value when called', () => {
+    it(`should call CartService.saveItem method with the correct value when
+      called`, () => {
       mockCartService.saveItem.and.returnValue(of(ITEMS[2]));
       mockCartService.getCartItems.and.returnValue(of(ITEMS));
 
@@ -292,7 +295,19 @@ describe('CartComponent', () => {
       expect(mockCartService.saveItem).toHaveBeenCalledWith(ITEMS[2], 0);
       expect(mockCartService.getCartItems).toHaveBeenCalled();
     });
-    it('should call getCartItems method when called', () => {
+
+    it(`should call NotificationService.show method when CartService.saveItem
+      returns an error`, () => {
+      mockCartService.saveItem.and.returnValue(
+        throwError('TEST: saveItem error')
+      );
+
+      component.updateQty(ITEMS[2], 0);
+
+      expect(mockNotificationService.show).toHaveBeenCalled();
+    });
+
+    it('should call CartService.getCartItems method when called', () => {
       mockCartService.saveItem.and.returnValue(of(ITEMS[2]));
       mockCartService.getCartItems.and.returnValue(of(ITEMS));
 
@@ -300,6 +315,21 @@ describe('CartComponent', () => {
 
       expect(mockCartService.getCartItems).toHaveBeenCalled();
     });
+
+    it(`should call NotificationService.show method when
+      CartService.getCartItems returns an error`, () => {
+      mockCartService.saveItem.and.returnValue(of(ITEMS[2]));
+      mockCartService.getCartItems.and.returnValue(
+        throwError('TEST: getCartItems error')
+      );
+
+      component.updateQty(ITEMS[2], 0);
+
+      expect(mockCartService.saveItem).toHaveBeenCalledWith(ITEMS[2], 0);
+      expect(mockCartService.getCartItems).toHaveBeenCalled();
+      expect(mockNotificationService.show).toHaveBeenCalled();
+    });
+
     it(`should call openRemoveModal method with the correct value when called
       if item quantity is less than or equal to 1 and amount equals -1`, () => {
       mockCartService.saveItem.and.returnValue(of(ITEMS[2]));
@@ -313,7 +343,7 @@ describe('CartComponent', () => {
   });
 
   describe('openRemoveModal', () => {
-    it(`should call modalService.open method with the correct value when
+    it(`should call ModalService.open method with the correct value when
       called`, () => {
       mockModalService.open.and.returnValue(mockModalRef);
       mockCartService.removeItem.and.returnValue(of(ITEMS[0]));
@@ -324,21 +354,32 @@ describe('CartComponent', () => {
       expect(mockModalService.open).toHaveBeenCalledWith(ConfirmModalComponent);
     });
 
-    it(`should call cartService.removeItem method with the correct value and
-      cartService.getCartItems method when called`, fakeAsync(() => {
+    it(`should call CartService.removeItem method with the correct value and
+      CartService.getCartItems method when called`, () => {
       mockModalService.open.and.returnValue(mockModalRef);
       mockCartService.removeItem.and.returnValue(of(ITEMS[0]));
       mockCartService.getCartItems.and.returnValue(of(ITEMS));
 
       component.openRemoveModal(ITEMS[0]);
-      tick(1000);
 
       expect(mockCartService.removeItem).toHaveBeenCalledWith(ITEMS[0]);
       expect(mockCartService.getCartItems).toHaveBeenCalled();
-    }));
+    });
+
+    it(`should call NotificationService.show method when CartService.removeItem
+      returns an error`, () => {
+      mockCartService.removeItem.and.returnValue(
+        throwError('TEST: removeItem error')
+      );
+      mockModalService.open.and.returnValue(mockModalRef);
+
+      component.openRemoveModal(ITEMS[2]);
+
+      expect(mockNotificationService.show).toHaveBeenCalled();
+    });
 
     it(`should not call cartService.removeItem and cartService.getCartItems
-      methods when called if modalService.open returns
+      methods when called when modalService.open returns
       mockErrorModalRef`, () => {
       mockModalService.open.and.returnValue(mockErrorModalRef);
 
@@ -350,7 +391,7 @@ describe('CartComponent', () => {
   });
 
   describe('openRemoveAllModal', () => {
-    it(`should call modalService.open method with the correct value when
+    it(`should call ModalService.open method with the correct value when
       called`, () => {
       mockModalService.open.and.returnValue(mockModalRef);
       mockCartService.removeAllItems.and.returnValue(of(true));
@@ -361,20 +402,31 @@ describe('CartComponent', () => {
       expect(mockModalService.open).toHaveBeenCalledWith(ConfirmModalComponent);
     });
 
-    it(`should call cartService.removeAllItems method with the correct value and
-      cartService.getCartItems method when called`, fakeAsync(() => {
+    it(`should call CartService.removeAllItems method with the correct value and
+      CartService.getCartItems method when called`, () => {
       mockModalService.open.and.returnValue(mockModalRef);
       mockCartService.removeAllItems.and.returnValue(of(true));
       mockCartService.getCartItems.and.returnValue(of(ITEMS));
 
       component.openRemoveAllModal(ITEMS);
-      tick(ITEMS.length * 1000 + 1000);
 
       expect(mockCartService.removeAllItems).toHaveBeenCalledWith(ITEMS);
       expect(mockCartService.getCartItems).toHaveBeenCalled();
-    }));
+    });
 
-    it(`should not call cartService.removeAllItems cartService.getCartItems
+    it(`should call NotificationService.show method when
+    CartService.removeAllItems returns an error`, () => {
+      mockModalService.open.and.returnValue(mockModalRef);
+      mockCartService.removeAllItems.and.returnValue(
+        throwError('TEST: removeAllItems error')
+      );
+
+      component.openRemoveAllModal(ITEMS);
+
+      expect(mockNotificationService.show).toHaveBeenCalled();
+    });
+
+    it(`should not call CartService.removeAllItems or CartService.getCartItems
       methods when called if modalService.open returns
       mockErrorModalRef`, () => {
       mockModalService.open.and.returnValue(mockErrorModalRef);
