@@ -3,10 +3,10 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { fakeAsync, inject, TestBed, tick } from '@angular/core/testing';
-import { of } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { of, throwError } from 'rxjs';
 import { ICartItem } from '../types/cart-item';
 import { CartService } from './cart.service';
+import { ErrorService } from './error.service';
 import { ShippingRateService } from './shipping-rate.service';
 
 describe('CartService', () => {
@@ -18,7 +18,8 @@ describe('CartService', () => {
     TOTALTAX: number,
     TOTAL: number,
     SHIPPINGPRICESELECTED: number,
-    mockShippingRateService: ShippingRateService;
+    mockShippingRateService: ShippingRateService,
+    mockErrorService;
 
   beforeEach(() => {
     ITEMS = [
@@ -162,10 +163,12 @@ describe('CartService', () => {
     mockShippingRateService = jasmine.createSpyObj([''], {
       shippingPriceSelectedAction$: of(SHIPPINGPRICESELECTED),
     });
+    mockErrorService = jasmine.createSpyObj(['handleError']);
     TestBed.configureTestingModule({
       providers: [
         CartService,
         { provide: ShippingRateService, useValue: mockShippingRateService },
+        { provide: ErrorService, useValue: mockErrorService },
       ],
       imports: [HttpClientTestingModule],
     });
@@ -291,6 +294,24 @@ describe('CartService', () => {
         req.flush(ITEMS);
       }
     ));
+
+    // it('should call ErrorService.handleError on error', inject(
+    //   [CartService, HttpTestingController],
+    //   (service: CartService, controller: HttpTestingController) => {
+    //     // Arrange
+    //     service.getCartItems().subscribe();
+    //     mockErrorService.handleError.and.returnValue(throwError(null));
+
+    //     // Act
+    //     const req = controller.expectOne('http://localhost:3000/cart');
+    //     expect(req.request.method).toEqual('GET');
+    //     controller.verify();
+    //     req.error(null);
+
+    //     // Assert
+    //     expect(mockErrorService.handleError).toHaveBeenCalled();
+    //   }
+    // ));
   });
 
   describe('saveItem', () => {
