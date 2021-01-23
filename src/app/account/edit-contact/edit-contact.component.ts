@@ -175,7 +175,6 @@ export class EditContactComponent implements OnInit, OnDestroy {
     const updatedUser = {
       ...this.user,
       contact: {
-        ...this.user.contact,
         phone: form.get('contactGroup.phone').value as string,
         email: form.get('contactGroup.email').value as string,
       },
