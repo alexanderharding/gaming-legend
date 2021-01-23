@@ -55,7 +55,7 @@ describe('EditNameComponent', () => {
 
   beforeEach(
     waitForAsync(() => {
-      mockAuthService = jasmine.createSpyObj(['']);
+      mockAuthService = jasmine.createSpyObj(['saveUser']);
       TestBed.configureTestingModule({
         imports: [
           HttpClientTestingModule,
@@ -78,10 +78,29 @@ describe('EditNameComponent', () => {
     component = fixture.componentInstance;
     component.user = USER;
     component.loading = false;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    fixture.detectChanges();
+
     expect(component).toBeTruthy();
+  });
+
+  it('should set editForm correctly', () => {
+    fixture.detectChanges();
+
+    const nameGroupControl = component.editForm.controls['nameGroup'];
+    const passwordGroupControl = component.editForm.controls['passwordGroup'];
+    expect(nameGroupControl.get('firstName').value).toEqual('');
+    expect(nameGroupControl.get('lastName').value).toEqual('');
+    expect(passwordGroupControl.get('currentPassword').value).toEqual('');
+  });
+
+  xit('email field validity', () => {
+    let errors = {};
+    let email = component.editForm.controls['email'];
+    errors = email.errors || {};
+    expect(errors['required']).toBeTruthy();
+    1;
   });
 });
