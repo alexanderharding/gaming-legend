@@ -8,7 +8,9 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { IUser } from 'src/app/types/user';
+import { of } from 'rxjs';
+import { AuthService } from 'src/app/services/auth.service';
+import { IUser, User } from 'src/app/types/user';
 
 import { EditNameComponent } from './edit-name.component';
 
@@ -19,7 +21,7 @@ describe('EditNameComponent', () => {
 
   const USER: IUser = {
     name: {
-      firstName: 'Doe',
+      firstName: 'John',
       lastName: 'Doe',
     },
     contact: {
@@ -73,6 +75,7 @@ describe('EditNameComponent', () => {
           FakeNameFormComponent,
           FakeCurrentPasswordFormComponent,
         ],
+        providers: [{ provide: AuthService, useValue: mockAuthService }],
         // schemas: [NO_ERRORS_SCHEMA],
       }).compileComponents();
     })
@@ -89,6 +92,12 @@ describe('EditNameComponent', () => {
     fixture.detectChanges();
 
     expect(component).toBeTruthy();
+  });
+
+  it('should set submitted to false to start', () => {
+    fixture.detectChanges();
+
+    expect(component.submitted).toBeFalsy();
   });
 
   describe('editForm', () => {
@@ -330,6 +339,71 @@ describe('EditNameComponent', () => {
         expect(errors['invalid']).toBeFalsy();
         expect(currentPasswordControl.valid).toBeTruthy();
       });
+    });
+  });
+
+  describe('onSubmit', () => {
+    it('should set submitted to true', () => {
+      fixture.detectChanges();
+
+      component.onSubmit(component.editForm);
+
+      expect(component.submitted).toBeTruthy();
+    });
+
+    xit(`should call onLoadingChange.emit with correct value when editForm is
+      valid`, () => {
+      fixture.detectChanges();
+      spyOn(component.onLoadingChange, 'emit');
+      mockAuthService.saveUser.and.returnValue(of(true));
+
+      const nameGroupControl = component.editForm.controls['nameGroup'];
+      const passwordGroupControl = component.editForm.controls['passwordGroup'];
+      nameGroupControl.setValue({
+        firstName: 'John',
+        lastName: 'Doe',
+      });
+      passwordGroupControl.setValue({
+        currentPassword: USER.password,
+      });
+      expect(component.editForm.valid).toBeTruthy();
+      component.onSubmit(component.editForm);
+
+      expect(component.onLoadingChange.emit).toHaveBeenCalledWith(true);
+      expect(component.onLoadingChange.emit).toHaveBeenCalledTimes(1);
+    });
+
+    xit(`should call AuthService.saveUser and onLoadingChange.emit with correct
+      values when editForm is valid`, () => {
+      let updatedUser: User;
+      spyOn(component.onLoadingChange, 'emit');
+      fixture.detectChanges();
+      const nameGroupControl = component.editForm.controls['nameGroup'];
+      const passwordGroupControl = component.editForm.controls['passwordGroup'];
+      nameGroupControl.setValue({
+        firstName: 'John',
+        lastName: 'Doe',
+      });
+      passwordGroupControl.setValue({
+        currentPassword: USER.password,
+      });
+      updatedUser = {
+        ...USER,
+        name: {
+          firstName: nameGroupControl.get('firstName').value as string,
+          lastName: nameGroupControl.get('lastName').value as string,
+        },
+      };
+      mockAuthService.saveUser.and.returnValue(of(updatedUser as IUser));
+      expect(component.editForm.valid).toBeTruthy();
+
+      component.onSubmit(component.editForm);
+
+      expect(component.onLoadingChange.emit).toHaveBeenCalledWith(true);
+      expect(component.onLoadingChange.emit).toHaveBeenCalledWith(false);
+      expect(component.onLoadingChange.emit).toHaveBeenCalledTimes(2);
+      expect(mockAuthService.saveUser).toHaveBeenCalledWith(updatedUser);
+      expect(component.user).toEqual(updatedUser as IUser);
     });
   });
 
