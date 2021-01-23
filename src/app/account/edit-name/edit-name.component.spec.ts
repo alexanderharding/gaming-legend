@@ -301,28 +301,23 @@ describe('EditNameComponent', () => {
 
         expect(currentPasswordControl.valid).toBeFalsy();
         expect(errors['required']).toBeTruthy();
+        expect(errors['invalid']).toBeFalsy();
       });
 
-      xit(`should be invalid when input doesn't match the USER.password`, () => {
+      it(`should be invalid when input doesn't match the USER.password`, () => {
         let errors = {};
         fixture.detectChanges();
 
         const currentPasswordControl = component.editForm.get(
           'passwordGroup.currentPassword'
         );
-        console.log(currentPasswordControl.validator({} as AbstractControl));
 
-        currentPasswordControl.setValue('4');
+        currentPasswordControl.setValue('testPassword42');
         errors = currentPasswordControl.errors || {};
 
         expect(currentPasswordControl.valid).toBeFalsy();
-
         expect(errors['invalid']).toBeTruthy();
-
-        // currentPasswordControl.setValue('Joe');
-        // errors = lastNameControl.errors || {};
-        // expect(lastNameControl.valid).toBeTruthy();
-        // expect(errors['minlength']).toBeFalsy();
+        expect(errors['required']).toBeFalsy();
       });
 
       it('should be valid if set correctly', () => {

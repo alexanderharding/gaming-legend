@@ -2,7 +2,7 @@ import { AbstractControl, ValidatorFn } from '@angular/forms';
 
 export function passwordChecker(password: string): ValidatorFn {
   return (c: AbstractControl): { [key: string]: boolean } | null => {
-    if (c.pristine || !c.value) {
+    if (!c.value) {
       return null;
     }
 
