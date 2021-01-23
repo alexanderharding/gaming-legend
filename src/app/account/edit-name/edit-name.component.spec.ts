@@ -16,6 +16,7 @@ import {
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { of, throwError } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
+import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { IUser, User } from 'src/app/types/user';
 
@@ -26,6 +27,9 @@ describe('EditNameComponent', () => {
   let fixture: ComponentFixture<EditNameComponent>;
   let mockAuthService;
   let mockNotificationService;
+  let mockFormValidationRuleService: FormValidationRuleService;
+  let NAMEMINLENGTH: number;
+  let NAMEMAXLENGTH: number;
 
   const USER: IUser = {
     name: {
@@ -70,8 +74,14 @@ describe('EditNameComponent', () => {
 
   beforeEach(
     waitForAsync(() => {
+      NAMEMINLENGTH = 3;
+      NAMEMAXLENGTH = 20;
       mockAuthService = jasmine.createSpyObj(['saveUser']);
       mockNotificationService = jasmine.createSpyObj(['show']);
+      mockFormValidationRuleService = jasmine.createSpyObj([''], {
+        nameMinLength: NAMEMINLENGTH,
+        nameMaxLength: NAMEMAXLENGTH,
+      });
       TestBed.configureTestingModule({
         imports: [
           HttpClientTestingModule,
@@ -87,6 +97,10 @@ describe('EditNameComponent', () => {
         providers: [
           { provide: AuthService, useValue: mockAuthService },
           { provide: NotificationService, useValue: mockNotificationService },
+          {
+            provide: FormValidationRuleService,
+            useValue: mockFormValidationRuleService,
+          },
         ],
         // schemas: [NO_ERRORS_SCHEMA],
       }).compileComponents();
@@ -110,6 +124,24 @@ describe('EditNameComponent', () => {
     fixture.detectChanges();
 
     expect(component.submitted).toBeFalsy();
+  });
+
+  it('should set hasValueChanged correctly to start', () => {
+    fixture.detectChanges();
+
+    expect(component.hasValueChanged).toBeFalsy();
+  });
+
+  it('should set nameMinLength correctly', () => {
+    fixture.detectChanges();
+
+    expect(component.nameMinLength).toBe(NAMEMINLENGTH);
+  });
+
+  it('should set nameMaxLength correctly', () => {
+    fixture.detectChanges();
+
+    expect(component.nameMaxLength).toBe(NAMEMAXLENGTH);
   });
 
   describe('editForm', () => {
@@ -149,6 +181,15 @@ describe('EditNameComponent', () => {
 
         expect(firstNameControl.value).toEqual('');
       });
+      // it('should set hasValueChanged correctly', () => {
+      //   fixture.detectChanges()
+
+      //   const nameGroupControl = component.editForm.controls['nameGroup']
+      //   nameGroupControl.setValue({
+      //     firstName: 'Ricky',
+      //     lastName: 'Bobby',
+      //   })
+      // });
 
       it('should be invalid when empty', () => {
         let errors = {};
@@ -161,58 +202,80 @@ describe('EditNameComponent', () => {
         expect(errors['required']).toBeTruthy();
       });
 
-      it('should be invalid when length is less than 3', () => {
-        let errors = {};
+      it('should not be required when there is a value', () => {
+        let errors = {},
+          name: string;
         fixture.detectChanges();
 
         const firstNameControl = component.editForm.get('nameGroup.firstName');
-        firstNameControl.setValue('Jo');
+        name = 'J';
+        expect(name.length).toBeGreaterThanOrEqual(1);
+        firstNameControl.setValue(name);
+        errors = firstNameControl.errors || {};
+
+        expect(errors['required']).toBeFalsy();
+      });
+
+      it('should be invalid when length is less than NAMEMINLENGTH', () => {
+        let errors = {},
+          name: string;
+        fixture.detectChanges();
+
+        const firstNameControl = component.editForm.get('nameGroup.firstName');
+        name = 'Jo';
+        expect(name.length).toBeLessThan(NAMEMINLENGTH);
+        firstNameControl.setValue(name);
         errors = firstNameControl.errors || {};
 
         expect(firstNameControl.valid).toBeFalsy();
         expect(errors['minlength']).toBeTruthy();
+      });
 
-        firstNameControl.setValue('Joe');
+      it(`should be valid when length is greater than or equal to
+        NAMEMINLENGTH`, () => {
+        let errors = {},
+          name: string;
+        fixture.detectChanges();
+
+        const firstNameControl = component.editForm.get('nameGroup.firstName');
+
+        name = 'Joe';
+        expect(name.length).toBeGreaterThanOrEqual(NAMEMINLENGTH);
+        firstNameControl.setValue(name);
         errors = firstNameControl.errors || {};
         expect(firstNameControl.valid).toBeTruthy();
         expect(errors['minlength']).toBeFalsy();
       });
 
-      it('should be invalid when length is more than 20', () => {
-        const maxLength = 20;
+      it('should be invalid when length is greater than NAMEMAXLENGTH', () => {
         let errors = {},
           name: string;
         fixture.detectChanges();
 
         const firstNameControl = component.editForm.get('nameGroup.firstName');
         name = 'Hardndeisnckdslfsalwf';
-        expect(name.length).toBeGreaterThan(maxLength);
+        expect(name.length).toBeGreaterThan(NAMEMAXLENGTH);
         firstNameControl.setValue(name);
         errors = firstNameControl.errors || {};
 
         expect(firstNameControl.valid).toBeFalsy();
         expect(errors['maxlength']).toBeTruthy();
-
-        name = 'Hardndeisnckdslfsalw';
-        firstNameControl.setValue(name);
-        expect(name.length).toBeLessThanOrEqual(maxLength);
-        errors = firstNameControl.errors || {};
-        expect(firstNameControl.valid).toBeTruthy();
-        expect(errors['maxlength']).toBeFalsy();
       });
 
-      it('should be valid when set correctly', () => {
-        let errors = {};
+      it(`should be valid when length is less than or equal to
+          NAMEMAXLENGTH`, () => {
+        let errors = {},
+          name: string;
         fixture.detectChanges();
+
         const firstNameControl = component.editForm.get('nameGroup.firstName');
 
-        firstNameControl.setValue('John');
+        name = 'Hardndeisnckdslfsalw';
+        expect(name.length).toBeLessThanOrEqual(NAMEMAXLENGTH);
+        firstNameControl.setValue(name);
         errors = firstNameControl.errors || {};
-
-        expect(errors['required']).toBeFalsy();
-        expect(errors['minlength']).toBeFalsy();
-        expect(errors['maxlength']).toBeFalsy();
         expect(firstNameControl.valid).toBeTruthy();
+        expect(errors['maxlength']).toBeFalsy();
       });
     });
 
@@ -236,58 +299,80 @@ describe('EditNameComponent', () => {
         expect(errors['required']).toBeTruthy();
       });
 
-      it('should be invalid when length is less than 3', () => {
-        let errors = {};
+      it('should not be required when there is a value', () => {
+        let errors = {},
+          name: string;
         fixture.detectChanges();
 
         const lastNameControl = component.editForm.get('nameGroup.lastName');
-        lastNameControl.setValue('Jo');
+        name = 'J';
+        expect(name.length).toBeGreaterThanOrEqual(1);
+        lastNameControl.setValue(name);
+        errors = lastNameControl.errors || {};
+
+        expect(errors['required']).toBeFalsy();
+      });
+
+      it('should be invalid when length is less than NAMEMINLENGTH', () => {
+        let errors = {},
+          name: string;
+        fixture.detectChanges();
+
+        const lastNameControl = component.editForm.get('nameGroup.lastName');
+        name = 'Jo';
+        expect(name.length).toBeLessThan(NAMEMINLENGTH);
+        lastNameControl.setValue(name);
         errors = lastNameControl.errors || {};
 
         expect(lastNameControl.valid).toBeFalsy();
         expect(errors['minlength']).toBeTruthy();
+      });
 
-        lastNameControl.setValue('Joe');
+      it(`should be valid when length is greater than or equal to
+        NAMEMINLENGTH`, () => {
+        let errors = {},
+          name: string;
+        fixture.detectChanges();
+
+        const lastNameControl = component.editForm.get('nameGroup.lastName');
+
+        name = 'Joe';
+        expect(name.length).toBeGreaterThanOrEqual(NAMEMINLENGTH);
+        lastNameControl.setValue(name);
         errors = lastNameControl.errors || {};
         expect(lastNameControl.valid).toBeTruthy();
         expect(errors['minlength']).toBeFalsy();
       });
 
-      it('should be invalid when length is more than 20', () => {
-        const maxLength = 20;
+      it('should be invalid when length is greater than NAMEMAXLENGTH', () => {
         let errors = {},
           name: string;
         fixture.detectChanges();
 
         const lastNameControl = component.editForm.get('nameGroup.lastName');
         name = 'Hardndeisnckdslfsalwf';
-        expect(name.length).toBeGreaterThan(maxLength);
+        expect(name.length).toBeGreaterThan(NAMEMAXLENGTH);
         lastNameControl.setValue(name);
         errors = lastNameControl.errors || {};
 
         expect(lastNameControl.valid).toBeFalsy();
         expect(errors['maxlength']).toBeTruthy();
-
-        name = 'Hardndeisnckdslfsalw';
-        lastNameControl.setValue(name);
-        expect(name.length).toBeLessThanOrEqual(maxLength);
-        errors = lastNameControl.errors || {};
-        expect(lastNameControl.valid).toBeTruthy();
-        expect(errors['maxlength']).toBeFalsy();
       });
 
-      it('should be valid when set correctly', () => {
-        let errors = {};
+      it(`should be valid when length is less than or equal to
+          NAMEMAXLENGTH`, () => {
+        let errors = {},
+          name: string;
         fixture.detectChanges();
+
         const lastNameControl = component.editForm.get('nameGroup.lastName');
 
-        lastNameControl.setValue('Doe');
+        name = 'Hardndeisnckdslfsalw';
+        expect(name.length).toBeLessThanOrEqual(NAMEMAXLENGTH);
+        lastNameControl.setValue(name);
         errors = lastNameControl.errors || {};
-
-        expect(errors['required']).toBeFalsy();
-        expect(errors['minlength']).toBeFalsy();
-        expect(errors['maxlength']).toBeFalsy();
         expect(lastNameControl.valid).toBeTruthy();
+        expect(errors['maxlength']).toBeFalsy();
       });
     });
 
