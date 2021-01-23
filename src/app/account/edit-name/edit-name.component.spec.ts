@@ -1,6 +1,12 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Component, Input } from '@angular/core';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from '@angular/core/testing';
 import {
   AbstractControl,
   FormGroup,
@@ -8,8 +14,9 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
+import { NotificationService } from 'src/app/services/notification.service';
 import { IUser, User } from 'src/app/types/user';
 
 import { EditNameComponent } from './edit-name.component';
@@ -18,6 +25,7 @@ describe('EditNameComponent', () => {
   let component: EditNameComponent;
   let fixture: ComponentFixture<EditNameComponent>;
   let mockAuthService;
+  let mockNotificationService;
 
   const USER: IUser = {
     name: {
@@ -63,6 +71,7 @@ describe('EditNameComponent', () => {
   beforeEach(
     waitForAsync(() => {
       mockAuthService = jasmine.createSpyObj(['saveUser']);
+      mockNotificationService = jasmine.createSpyObj(['show']);
       TestBed.configureTestingModule({
         imports: [
           HttpClientTestingModule,
@@ -75,7 +84,10 @@ describe('EditNameComponent', () => {
           FakeNameFormComponent,
           FakeCurrentPasswordFormComponent,
         ],
-        providers: [{ provide: AuthService, useValue: mockAuthService }],
+        providers: [
+          { provide: AuthService, useValue: mockAuthService },
+          { provide: NotificationService, useValue: mockNotificationService },
+        ],
         // schemas: [NO_ERRORS_SCHEMA],
       }).compileComponents();
     })
@@ -94,7 +106,7 @@ describe('EditNameComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should set submitted to false to start', () => {
+  it('should set submitted correctly to start', () => {
     fixture.detectChanges();
 
     expect(component.submitted).toBeFalsy();
@@ -346,10 +358,11 @@ describe('EditNameComponent', () => {
       expect(component.submitted).toBeTruthy();
     });
 
-    xit(`should call onLoadingChange.emit with correct value when editForm is
-      valid`, () => {
+    it(`should call onLoadingChange.emit with correct value`, () => {
       fixture.detectChanges();
       spyOn(component.onLoadingChange, 'emit');
+      spyOn(component, 'resetForm');
+
       mockAuthService.saveUser.and.returnValue(of(true));
 
       const nameGroupControl = component.editForm.controls['nameGroup'];
@@ -365,11 +378,21 @@ describe('EditNameComponent', () => {
       component.onSubmit(component.editForm);
 
       expect(component.onLoadingChange.emit).toHaveBeenCalledWith(true);
-      expect(component.onLoadingChange.emit).toHaveBeenCalledTimes(1);
+      expect(component.onLoadingChange.emit).toHaveBeenCalledWith(false);
+      expect(component.onLoadingChange.emit).toHaveBeenCalledTimes(2);
     });
 
-    xit(`should call AuthService.saveUser and onLoadingChange.emit with correct
-      values when editForm is valid`, () => {
+    it(`should not call onLoadingChange.emit when editForm is not
+      valid`, () => {
+      fixture.detectChanges();
+      spyOn(component.onLoadingChange, 'emit');
+
+      component.onSubmit(component.editForm);
+
+      expect(component.onLoadingChange.emit).toHaveBeenCalledTimes(0);
+    });
+
+    it(`should call saveUser method on AuthService with correct value`, () => {
       let updatedUser: User;
       spyOn(component.onLoadingChange, 'emit');
       fixture.detectChanges();
@@ -394,29 +417,153 @@ describe('EditNameComponent', () => {
 
       component.onSubmit(component.editForm);
 
-      expect(component.onLoadingChange.emit).toHaveBeenCalledWith(true);
-      expect(component.onLoadingChange.emit).toHaveBeenCalledWith(false);
-      expect(component.onLoadingChange.emit).toHaveBeenCalledTimes(2);
       expect(mockAuthService.saveUser).toHaveBeenCalledWith(updatedUser);
       expect(component.user).toEqual(updatedUser as IUser);
     });
+
+    it(`should not call saveUser method on AuthService when editForm is not
+      valid`, () => {
+      fixture.detectChanges();
+
+      component.onSubmit(component.editForm);
+
+      expect(mockAuthService.saveUser).toHaveBeenCalledTimes(0);
+    });
+
+    it(`should call resetForm method with correct value`, () => {
+      let updatedUser: User;
+      spyOn(component, 'resetForm');
+      fixture.detectChanges();
+      const nameGroupControl = component.editForm.controls['nameGroup'];
+      const passwordGroupControl = component.editForm.controls['passwordGroup'];
+      nameGroupControl.setValue({
+        firstName: 'John',
+        lastName: 'Doe',
+      });
+      passwordGroupControl.setValue({
+        currentPassword: USER.password,
+      });
+      updatedUser = {
+        ...USER,
+        name: {
+          firstName: nameGroupControl.get('firstName').value as string,
+          lastName: nameGroupControl.get('lastName').value as string,
+        },
+      };
+      mockAuthService.saveUser.and.returnValue(of(updatedUser as IUser));
+      expect(component.editForm.valid).toBeTruthy();
+
+      component.onSubmit(component.editForm);
+
+      expect(component.resetForm).toHaveBeenCalledWith(
+        component.editForm,
+        updatedUser as IUser
+      );
+    });
+
+    it(`should not call resetForm method when editForm is not valid`, () => {
+      fixture.detectChanges();
+      spyOn(component, 'resetForm');
+
+      component.onSubmit(component.editForm);
+
+      expect(component.resetForm).toHaveBeenCalledTimes(0);
+    });
+
+    it(`should not call resetForm method when saveUser on AuthService throws an
+      error`, () => {
+      fixture.detectChanges();
+      mockAuthService.saveUser.and.returnValue(throwError(''));
+      spyOn(component, 'resetForm');
+
+      component.onSubmit(component.editForm);
+
+      expect(component.resetForm).toHaveBeenCalledTimes(0);
+    });
+
+    it(`should call show method on Notification service`, () => {
+      mockAuthService.saveUser.and.returnValue(of(true));
+      spyOn(component, 'resetForm');
+      fixture.detectChanges();
+      const nameGroupControl = component.editForm.controls['nameGroup'];
+      const passwordGroupControl = component.editForm.controls['passwordGroup'];
+      nameGroupControl.setValue({
+        firstName: 'John',
+        lastName: 'Doe',
+      });
+      passwordGroupControl.setValue({
+        currentPassword: USER.password,
+      });
+      expect(component.editForm.valid).toBeTruthy();
+
+      component.onSubmit(component.editForm);
+
+      expect(mockNotificationService.show).toHaveBeenCalledTimes(1);
+    });
+
+    it(`should call show method on Notification service when saveUser on
+      AuthService throws an error`, () => {
+      mockAuthService.saveUser.and.returnValue(throwError(''));
+      fixture.detectChanges();
+      const nameGroupControl = component.editForm.controls['nameGroup'];
+      const passwordGroupControl = component.editForm.controls['passwordGroup'];
+      nameGroupControl.setValue({
+        firstName: 'John',
+        lastName: 'Doe',
+      });
+      passwordGroupControl.setValue({
+        currentPassword: USER.password,
+      });
+      expect(component.editForm.valid).toBeTruthy();
+
+      component.onSubmit(component.editForm);
+
+      expect(mockNotificationService.show).toHaveBeenCalledTimes(1);
+    });
+
+    it(`should not call show method on Notification service when editForm is not
+      valid`, () => {
+      fixture.detectChanges();
+
+      component.onSubmit(component.editForm);
+
+      expect(mockNotificationService.show).toHaveBeenCalledTimes(0);
+    });
   });
 
-  xit('should set editForm correctly', () => {
-    fixture.detectChanges();
+  describe('resetForm', () => {
+    it('should set submitted correctly', () => {
+      fixture.detectChanges();
+      component.submitted = true;
 
-    const nameGroupControl = component.editForm.controls['nameGroup'];
-    const passwordGroupControl = component.editForm.controls['passwordGroup'];
-    expect(nameGroupControl.get('firstName').value).toEqual('');
-    expect(nameGroupControl.get('lastName').value).toEqual('');
-    expect(passwordGroupControl.get('currentPassword').value).toEqual('');
-  });
+      component.resetForm(component.editForm, USER);
 
-  xit('email field validity', () => {
-    let errors = {};
-    let email = component.editForm.controls['email'];
-    errors = email.errors || {};
-    expect(errors['required']).toBeTruthy();
-    1;
+      expect(component.submitted).toBeFalsy();
+    });
+
+    it('should set nameGroup control correctly', () => {
+      fixture.detectChanges();
+      const nameGroupControl = component.editForm.controls['nameGroup'];
+      const updatedUser = {
+        ...USER,
+        name: {
+          firstName: 'Ricky',
+          lastName: 'Bobby',
+        },
+      };
+      component.resetForm(component.editForm, updatedUser);
+
+      expect(nameGroupControl.get('firstName').value).toEqual('Ricky');
+      expect(nameGroupControl.get('lastName').value).toEqual('Bobby');
+    });
+
+    it('should set passwordGroup control correctly', () => {
+      fixture.detectChanges();
+      const passwordGroupControl = component.editForm.controls['passwordGroup'];
+
+      component.resetForm(component.editForm, USER);
+
+      expect(passwordGroupControl.get('currentPassword').value).toEqual('');
+    });
   });
 });
