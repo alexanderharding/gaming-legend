@@ -256,7 +256,7 @@ describe('EditNameComponent', () => {
         });
 
         it(`should be valid when length is greater than or equal to
-        NAMEMINLENGTH`, () => {
+         NAMEMINLENGTH`, () => {
           let errors = {},
             name: string;
           fixture.detectChanges();
@@ -432,7 +432,7 @@ describe('EditNameComponent', () => {
         expect(errors['invalid']).toBeFalsy();
       });
 
-      it(`should be invalid when input doesn't match the USER.password`, () => {
+      it(`should be invalid when value doesn't match the USER.password`, () => {
         let errors = {};
         fixture.detectChanges();
 
