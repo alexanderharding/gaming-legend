@@ -198,7 +198,7 @@ describe('EditNameComponent', () => {
         expect(component.hasValueChanged).toBeFalsy();
       });
 
-      describe('firstName field', () => {
+      describe('firstName control', () => {
         it('should be set to an empty string to start', () => {
           fixture.detectChanges();
 
@@ -309,7 +309,7 @@ describe('EditNameComponent', () => {
         });
       });
 
-      describe('lastName field', () => {
+      describe('lastName control', () => {
         it('should be set to an empty string to start', () => {
           fixture.detectChanges();
 
@@ -407,7 +407,7 @@ describe('EditNameComponent', () => {
       });
     });
 
-    describe('currentPassword field', () => {
+    describe('currentPassword control', () => {
       it('should be set to an empty string to start', () => {
         fixture.detectChanges();
 
