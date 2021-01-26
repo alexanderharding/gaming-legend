@@ -8,6 +8,7 @@ import {
   waitForAsync,
 } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { By } from '@angular/platform-browser';
 import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
 import { IUser } from 'src/app/types/user';
 
@@ -68,7 +69,6 @@ describe('NameFormComponent', () => {
     fixture = TestBed.createComponent(NameFormComponent);
     component = fixture.componentInstance;
     component.user = USER;
-    component.submitted = false;
     component.parentForm = fb.group({
       nameGroup: fb.group({
         firstName: [
@@ -362,4 +362,135 @@ describe('NameFormComponent', () => {
       });
     });
   });
+});
+
+describe('NameFormComponent w/ template', () => {
+  let component: NameFormComponent;
+  let fixture: ComponentFixture<NameFormComponent>;
+  let mockFormValidationRuleService: FormValidationRuleService;
+  let NAMEMINLENGTH: number;
+  let NAMEMAXLENGTH: number;
+  let USER: IUser;
+
+  beforeEach(
+    waitForAsync(() => {
+      USER = {
+        name: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+        contact: {
+          phone: '8011231234',
+          email: 'test@test.com',
+        },
+        address: {
+          street: '123 S Bend Ct',
+          city: 'Las Vegas',
+          state: 'Nevada',
+          zip: '12345',
+          country: 'USA',
+        },
+        password: 'TestPassword1234',
+        isAdmin: true,
+        id: 121014,
+      };
+      NAMEMINLENGTH = 3;
+      NAMEMAXLENGTH = 20;
+      mockFormValidationRuleService = jasmine.createSpyObj([''], {
+        nameMinLength: NAMEMINLENGTH,
+        nameMaxLength: NAMEMAXLENGTH,
+      });
+      TestBed.configureTestingModule({
+        // imports: [ReactiveFormsModule],
+        declarations: [NameFormComponent],
+        providers: [
+          FormBuilder,
+          {
+            provide: FormValidationRuleService,
+            useValue: mockFormValidationRuleService,
+          },
+        ],
+        schemas: [NO_ERRORS_SCHEMA],
+      }).compileComponents();
+    })
+  );
+
+  beforeEach(inject([FormBuilder], (fb: FormBuilder) => {
+    fixture = TestBed.createComponent(NameFormComponent);
+    component = fixture.componentInstance;
+    component.user = USER;
+    component.parentForm = fb.group({
+      nameGroup: fb.group({
+        firstName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(NAMEMINLENGTH),
+            Validators.maxLength(NAMEMAXLENGTH),
+          ],
+        ],
+        lastName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(NAMEMINLENGTH),
+            Validators.maxLength(NAMEMAXLENGTH),
+          ],
+        ],
+      }),
+    });
+  }));
+
+  it('should create', () => {
+    fixture.detectChanges();
+
+    expect(component).toBeTruthy();
+  });
+
+  it('should set defaultPageTitle correctly in template', () => {
+    fixture.detectChanges();
+
+    const element = fixture.debugElement.query(By.css('legend'));
+
+    expect(component.pageTitle).toBeUndefined();
+    expect(element.nativeElement.textContent).toContain(
+      component.defaultPageTitle.toLocaleLowerCase()
+    );
+  });
+
+  it('should set pageTitle correctly in template', () => {
+    component.pageTitle = 'Test title';
+    fixture.detectChanges();
+
+    const element = fixture.debugElement.query(By.css('legend'));
+
+    expect(element.nativeElement.textContent).toContain(
+      component.pageTitle.toLocaleLowerCase()
+    );
+  });
+
+  xit('should set firstName input correctly in template', fakeAsync(() => {
+    fixture.detectChanges();
+    tick(1000);
+
+    const input = fixture.debugElement.queryAll(By.css('input'))[0];
+    expect(input.nativeElement.autocomplete).toBe('given-name');
+    expect(input.nativeElement.type).toBe('text');
+    expect(input.nativeElement.placeholder).toBe('First name (required)');
+    expect(input.nativeElement.value).toBe(USER.name.firstName);
+    // expect(input.classes).toEqual({ 'form-control': true });
+  }));
+
+  xit('should set lastName input correctly in template', fakeAsync(() => {
+    fixture.detectChanges();
+    tick(1000);
+
+    const input = fixture.debugElement.queryAll(By.css('input'))[1];
+    expect(input.nativeElement.autocomplete).toBe('family-name');
+    expect(input.nativeElement.type).toBe('text');
+    console.log(input.classes);
+    expect(input.nativeElement.placeholder).toBe('Last name (required)');
+    expect(input.classes).toEqual({ 'form-control': true });
+    // expect(input.nativeElement.value).toBe(USER.name.lastName);
+  }));
 });
