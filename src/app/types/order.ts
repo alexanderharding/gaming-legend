@@ -1,4 +1,3 @@
-import { IProduct } from './product';
 import { Customer } from './customer';
 import { Payment } from './payment';
 import { ICartItem } from './cart-item';

@@ -1,4 +1,4 @@
-import { UserAddress } from './user-address';
+import { UserAddress, UserAddressMaker } from './user-address';
 
 describe('UserAddress', () => {
   const street = '123 S Bend Ct';
@@ -8,5 +8,11 @@ describe('UserAddress', () => {
   const country = 'USA';
   it('should create an instance', () => {
     expect(new UserAddress(street, city, state, zip, country)).toBeTruthy();
+  });
+});
+
+describe('UserAddressMaker', () => {
+  it('should create an instance', () => {
+    expect(new UserAddressMaker()).toBeTruthy();
   });
 });

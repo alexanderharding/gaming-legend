@@ -1,4 +1,4 @@
-import { Payment } from './payment';
+import { Payment, PaymentMaker } from './payment';
 
 describe('Payment', () => {
   const cardNumber = 1214121474125;
@@ -22,5 +22,11 @@ describe('Payment', () => {
         total
       )
     ).toBeTruthy();
+  });
+});
+
+describe('PaymentMaker', () => {
+  it('should create an instance', () => {
+    expect(new PaymentMaker()).toBeTruthy();
   });
 });

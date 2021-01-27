@@ -1,4 +1,4 @@
-import { User } from './user';
+import { User, UserMaker } from './user';
 
 describe('User', () => {
   const userName = {
@@ -36,5 +36,11 @@ describe('User', () => {
     expect(
       new User(userName, contact, password, isAdmin, address, null)
     ).toBeTruthy();
+  });
+});
+
+describe('UserMaker', () => {
+  it('should create an instance', () => {
+    expect(new UserMaker()).toBeTruthy();
   });
 });
