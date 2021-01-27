@@ -1,5 +1,5 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Component, Input } from '@angular/core';
+import { Component, Input, NO_ERRORS_SCHEMA } from '@angular/core';
 import {
   ComponentFixture,
   fakeAsync,
@@ -7,12 +7,8 @@ import {
   tick,
   waitForAsync,
 } from '@angular/core/testing';
-import {
-  AbstractControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { By } from '@angular/platform-browser';
+import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { of, throwError } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
@@ -21,6 +17,8 @@ import { NotificationService } from 'src/app/services/notification.service';
 import { IUser, User } from 'src/app/types/user';
 
 import { EditNameComponent } from './edit-name.component';
+import { NameFormComponent } from 'src/app/shared/name-form/name-form.component';
+import { CurrentPasswordFormComponent } from 'src/app/shared/current-password-form/current-password-form.component';
 
 describe('EditNameComponent', () => {
   let component: EditNameComponent;
@@ -83,12 +81,7 @@ describe('EditNameComponent', () => {
         nameMaxLength: NAMEMAXLENGTH,
       });
       TestBed.configureTestingModule({
-        imports: [
-          HttpClientTestingModule,
-          ReactiveFormsModule,
-          FormsModule,
-          NgbModule,
-        ],
+        imports: [HttpClientTestingModule, ReactiveFormsModule, NgbModule],
         declarations: [
           EditNameComponent,
           FakeNameFormComponent,
@@ -102,7 +95,6 @@ describe('EditNameComponent', () => {
             useValue: mockFormValidationRuleService,
           },
         ],
-        // schemas: [NO_ERRORS_SCHEMA],
       }).compileComponents();
     })
   );
@@ -144,7 +136,7 @@ describe('EditNameComponent', () => {
     expect(component.nameMaxLength).toBe(NAMEMAXLENGTH);
   });
 
-  it('should create editForm', () => {
+  it('should set editForm correctly', () => {
     fixture.detectChanges();
 
     expect(component.editForm).toBeTruthy();
@@ -683,5 +675,250 @@ describe('EditNameComponent', () => {
 
       expect(passwordGroupControl.get('currentPassword').value).toEqual('');
     });
+  });
+});
+
+describe('EditNameComponent w/ template', () => {
+  let component: EditNameComponent;
+  let fixture: ComponentFixture<EditNameComponent>;
+
+  const USER: IUser = {
+    name: {
+      firstName: 'John',
+      lastName: 'Doe',
+    },
+    contact: {
+      phone: '8011231234',
+      email: 'test@test.com',
+    },
+    address: {
+      street: '123 S Bend Ct',
+      city: 'Las Vegas',
+      state: 'Nevada',
+      zip: '12345',
+      country: 'USA',
+    },
+    password: 'TestPassword1234',
+    isAdmin: true,
+    id: 121014,
+  };
+
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        imports: [HttpClientTestingModule, ReactiveFormsModule, NgbModule],
+        declarations: [
+          EditNameComponent,
+          NameFormComponent,
+          CurrentPasswordFormComponent,
+        ],
+        schemas: [NO_ERRORS_SCHEMA],
+      }).compileComponents();
+    })
+  );
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(EditNameComponent);
+    component = fixture.componentInstance;
+    component.user = USER;
+  });
+
+  it('should create', () => {
+    fixture.detectChanges();
+
+    expect(component).toBeTruthy();
+  });
+
+  it('should set NameFormComponent in the template', () => {
+    fixture.detectChanges();
+
+    const elements = fixture.debugElement.queryAll(
+      By.directive(NameFormComponent)
+    );
+    expect(elements.length).toBe(1);
+  });
+
+  it('should set CurrentPasswordFormComponent in the template', () => {
+    fixture.detectChanges();
+
+    const elements = fixture.debugElement.queryAll(
+      By.directive(CurrentPasswordFormComponent)
+    );
+    expect(elements.length).toBe(1);
+  });
+
+  it(`should call onSubmit method with correct value when editForm is
+    submitted`, () => {
+    spyOn(component, 'onSubmit');
+    fixture.detectChanges();
+    const form = fixture.debugElement.query(By.css('form'));
+
+    form.triggerEventHandler('ngSubmit', null);
+
+    expect(component.onSubmit).toHaveBeenCalledWith(component.editForm);
+  });
+
+  it(`should call resetForm method with correct value when cancel input is
+    clicked`, () => {
+    spyOn(component, 'resetForm');
+    fixture.detectChanges();
+    const input = fixture.debugElement.query(By.css('#cancel'));
+
+    input.triggerEventHandler('click', null);
+
+    expect(component.resetForm).toHaveBeenCalledWith(
+      component.editForm,
+      component.user
+    );
+  });
+
+  it(`should disable submit input when loading`, () => {
+    const input = fixture.debugElement.query(By.css('#submit'));
+    component.loading = true;
+    fixture.detectChanges();
+
+    expect(input.nativeElement.disabled).toBeTruthy();
+  });
+
+  it(`should set submit input classes correctly when editForm is
+    valid`, fakeAsync(() => {
+    const input = fixture.debugElement.query(By.css('#submit'));
+    fixture.detectChanges();
+    const nameGroupControl = component.editForm.controls['nameGroup'];
+    const passwordGroupControl = component.editForm.controls['passwordGroup'];
+
+    nameGroupControl.setValue({
+      firstName: 'John',
+      lastName: 'Doe',
+    });
+    passwordGroupControl.setValue({
+      currentPassword: USER.password,
+    });
+    tick(1000);
+    fixture.detectChanges();
+
+    expect(component.editForm.valid).toBeTruthy();
+    expect(input.classes).toEqual({
+      btn: true,
+      'btn-sm': true,
+      'btn-success': true,
+    });
+  }));
+
+  it(`should set submit input classes correctly when not submitted`, () => {
+    const input = fixture.debugElement.query(By.css('#submit'));
+    component.submitted = false;
+    fixture.detectChanges();
+
+    expect(component.editForm.valid).toBeFalsy();
+    expect(input.classes).toEqual({
+      btn: true,
+      'btn-sm': true,
+      'btn-success': true,
+    });
+  });
+
+  it(`should set submit input classes correctly when
+    submitted`, fakeAsync(() => {
+    const input = fixture.debugElement.query(By.css('#submit'));
+    component.submitted = true;
+    fixture.detectChanges();
+    const nameGroupControl = component.editForm.controls['nameGroup'];
+    const passwordGroupControl = component.editForm.controls['passwordGroup'];
+
+    expect(component.editForm.valid).toBeFalsy();
+    expect(input.classes).toEqual({
+      btn: true,
+      'btn-sm': true,
+      'btn-outline-danger': true,
+    });
+
+    nameGroupControl.setValue({
+      firstName: 'John',
+      lastName: 'Doe',
+    });
+    passwordGroupControl.setValue({
+      currentPassword: USER.password,
+    });
+    tick(1000);
+    fixture.detectChanges();
+
+    expect(component.editForm.valid).toBeTruthy();
+    expect(input.classes).toEqual({
+      btn: true,
+      'btn-sm': true,
+      'btn-success': true,
+    });
+  }));
+
+  it(`should disable submit input when editForm is not valid`, fakeAsync(() => {
+    const input = fixture.debugElement.query(By.css('#submit'));
+    component.submitted = true;
+    fixture.detectChanges();
+    tick(1000);
+
+    expect(component.editForm.valid).toBeFalsy();
+    expect(input.nativeElement.disabled).toBeTruthy();
+  }));
+
+  it(`should not disable submit input when editForm is valid`, fakeAsync(() => {
+    const input = fixture.debugElement.query(By.css('#submit'));
+    component.submitted = true;
+    fixture.detectChanges();
+    const nameGroupControl = component.editForm.controls['nameGroup'];
+    const passwordGroupControl = component.editForm.controls['passwordGroup'];
+
+    nameGroupControl.setValue({
+      firstName: 'John',
+      lastName: 'Doe',
+    });
+    passwordGroupControl.setValue({
+      currentPassword: USER.password,
+    });
+    tick(1000);
+    fixture.detectChanges();
+
+    expect(component.editForm.valid).toBeTruthy();
+    expect(input.nativeElement.disabled).toBeFalsy();
+  }));
+
+  it(`should not disable submit input when not submitted`, fakeAsync(() => {
+    const input = fixture.debugElement.query(By.css('#submit'));
+    component.submitted = false;
+    fixture.detectChanges();
+    const nameGroupControl = component.editForm.controls['nameGroup'];
+    const passwordGroupControl = component.editForm.controls['passwordGroup'];
+
+    expect(component.editForm.valid).toBeFalsy();
+    expect(input.nativeElement.disabled).toBeFalsy();
+
+    nameGroupControl.setValue({
+      firstName: 'John',
+      lastName: 'Doe',
+    });
+    passwordGroupControl.setValue({
+      currentPassword: USER.password,
+    });
+    tick(1000);
+    fixture.detectChanges();
+
+    expect(component.editForm.valid).toBeTruthy();
+    expect(input.nativeElement.disabled).toBeFalsy();
+  }));
+
+  it(`should disable cancel input when loading`, () => {
+    const input = fixture.debugElement.query(By.css('#cancel'));
+    component.loading = true;
+    fixture.detectChanges();
+
+    expect(input.nativeElement.disabled).toBeTruthy();
+  });
+
+  it(`should not disable cancel input when not loading`, () => {
+    const input = fixture.debugElement.query(By.css('#cancel'));
+    component.loading = false;
+    fixture.detectChanges();
+
+    expect(input.nativeElement.disabled).toBeFalsy();
   });
 });
