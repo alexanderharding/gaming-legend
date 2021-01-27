@@ -729,22 +729,48 @@ describe('EditNameComponent w/ template', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should set NameFormComponent in the template', () => {
+  it('should set NameFormComponent in the template', fakeAsync(() => {
     fixture.detectChanges();
-
-    const elements = fixture.debugElement.queryAll(
+    tick(1000);
+    const firstNameControl = component.editForm.get('nameGroup.firstName');
+    const NameFormComponentDEs = fixture.debugElement.queryAll(
       By.directive(NameFormComponent)
     );
-    expect(elements.length).toBe(1);
-  });
+
+    expect(component.hasValueChanged).toBeFalsy();
+    expect(NameFormComponentDEs.length).toBe(1);
+    expect(NameFormComponentDEs[0].componentInstance.user).toBe(component.user);
+    expect(NameFormComponentDEs[0].componentInstance.submitted).toBe(
+      component.submitted
+    );
+    expect(NameFormComponentDEs[0].componentInstance.parentForm).toBe(
+      component.editForm
+    );
+    expect(NameFormComponentDEs[0].componentInstance.pageTitle).toBe('');
+
+    firstNameControl.setValue('j');
+    fixture.detectChanges();
+    tick(1000);
+
+    expect(component.hasValueChanged).toBeTruthy();
+    expect(NameFormComponentDEs[0].componentInstance.pageTitle).toBe(
+      'Edit Full Name'
+    );
+  }));
 
   it('should set CurrentPasswordFormComponent in the template', () => {
     fixture.detectChanges();
-
-    const elements = fixture.debugElement.queryAll(
+    const CurrentPasswordFormComponentDEs = fixture.debugElement.queryAll(
       By.directive(CurrentPasswordFormComponent)
     );
-    expect(elements.length).toBe(1);
+
+    expect(CurrentPasswordFormComponentDEs.length).toBe(1);
+    expect(CurrentPasswordFormComponentDEs[0].componentInstance.submitted).toBe(
+      component.submitted
+    );
+    expect(
+      CurrentPasswordFormComponentDEs[0].componentInstance.parentForm
+    ).toBe(component.editForm);
   });
 
   it(`should call onSubmit method with correct value when editForm is
