@@ -532,12 +532,6 @@ describe('CartComponent w/ template', () => {
     SHIPPINGRATES,
     QUANTITY: number;
 
-  // @Component({
-  //   selector: 'ctacu-cart-summary',
-  //   template: '<div></div>',
-  // })
-  // class FakeCartSummaryComponent {}
-
   beforeEach(
     waitForAsync(() => {
       ITEMS = [
@@ -701,7 +695,6 @@ describe('CartComponent w/ template', () => {
           },
         },
       };
-
       TestBed.configureTestingModule({
         imports: [HttpClientTestingModule],
 
@@ -710,7 +703,6 @@ describe('CartComponent w/ template', () => {
         providers: [
           { provide: CartService, useValue: mockCartService },
           { provide: ActivatedRoute, useValue: mockActivatedRoute },
-          // { provide: Router, useValue: mockRouter },
         ],
         schemas: [NO_ERRORS_SCHEMA],
       }).compileComponents();
@@ -763,6 +755,16 @@ describe('CartComponent w/ template', () => {
         ITEMS[index].quantity
       );
     }
+  });
+
+  it('should set CartSummaryComponent in the template', () => {
+    // run ngOnInit
+    fixture.detectChanges();
+
+    const CartSummaryComponentDEs = fixture.debugElement.queryAll(
+      By.directive(CartSummaryComponent)
+    );
+    expect(CartSummaryComponentDEs.length).toBe(1);
   });
 
   it('should set quantity$ in the template', () => {
