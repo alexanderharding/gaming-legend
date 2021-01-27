@@ -40,7 +40,6 @@ export class SignUpComponent implements OnInit {
 
   @Input() loading: boolean;
 
-  @Output() onSignUp = new EventEmitter<IUser>();
   @Output() loadingChange = new EventEmitter<boolean>();
 
   private readonly nameMinLength = +this.formValidationRuleService

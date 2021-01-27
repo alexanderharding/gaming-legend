@@ -15,94 +15,91 @@
         autocomplete="off"
         class="mb-3"
       >
-        <fieldset>
-          <div class="row align-items-center">
-            <div class="col">
-              <h1 class="text-primary mb-3">Sign In</h1>
-            </div>
-            <div class="col-auto">
-              <div class="input-group input-group-sm">
-                <div class="input-group-prepend">
-                  <span
-                    class="input-group-text bg-info text-white"
-                    id="basic-addon1"
-                    >User</span
-                  >
-                </div>
-
-                <select
-                  class="form-control custom-select text-capitalize"
-                  formControlName="user"
+        <div class="row align-items-center">
+          <div class="col">
+            <h1 class="text-primary text-capitalize mb-3">{{ pageTitle }}</h1>
+          </div>
+          <div class="col-auto">
+            <div class="input-group input-group-sm">
+              <div class="input-group-prepend">
+                <span
+                  class="input-group-text bg-info text-white"
+                  id="basic-addon1"
+                  >User</span
                 >
-                  <option
-                    *ngFor="let u of users$ | async; index as i"
-                    [value]="i"
-                  >
-                    {{ i + 1 }}. {{ u.name.firstName | lowercase }}
-                    {{ u.name.lastName | lowercase }}
-                    {{ u.isAdmin ? "(Admin)" : "" }}
-                  </option>
-                </select>
               </div>
-            </div>
-          </div>
 
-          <div class="input-group mb-3 shadow-sm">
-            <div class="input-group-prepend">
-              <span class="input-group-text bg-info text-white">Email</span>
-            </div>
-            <input
-              type="email"
-              formControlName="email"
-              class="form-control"
-              autocomplete="email"
-              placeholder="Email (required)"
-              [ngClass]="{
-                'is-invalid':
-                  ((emailMessage$ | async) || signInMessage) && submitted,
-                'is-valid': !(emailMessage$ | async) && !signInMessage
-              }"
-            />
-            <div *ngIf="!signInMessage" class="invalid-tooltip">
-              <span>{{ emailMessage$ | async }}</span>
+              <select
+                class="form-control custom-select text-capitalize"
+                formControlName="user"
+              >
+                <option
+                  *ngFor="let u of users$ | async; index as i"
+                  [value]="i"
+                >
+                  {{ i + 1 }}. {{ u.name.firstName | lowercase }}
+                  {{ u.name.lastName | lowercase }}
+                  {{ u.isAdmin ? "(Admin)" : "" }}
+                </option>
+              </select>
             </div>
           </div>
-          <div class="input-group mb-3 shadow-sm">
-            <div class="input-group-prepend">
-              <span class="input-group-text bg-info text-white">Password</span>
-            </div>
-            <input
-              [type]="
-                signInForm.get('showPassword').value ? 'text' : 'password'
-              "
-              formControlName="password"
-              class="form-control"
-              autocomplete="current-password"
-              placeholder="Password (required)"
-              [ngClass]="{
-                'is-invalid':
-                  ((passwordMessage$ | async) || signInMessage) && submitted,
-                'is-valid': !(passwordMessage$ | async) && !signInMessage
-              }"
-            />
-            <div class="invalid-tooltip">
-              <span>{{ passwordMessage$ | async }}</span>
-              <span>{{ signInMessage }}</span>
-            </div>
-            <div class="btn-group-toggle input-group-append">
-              <label class="btn-secondary text-capitalize" ngbButtonLabel>
-                <input
-                  type="checkbox"
-                  ngbButton
-                  formControlName="showPassword"
-                />
-                {{
-                  this.signInForm.get("showPassword").value ? "hide" : "show"
-                }}
-              </label>
-            </div>
+        </div>
+
+        <div class="input-group mb-3 shadow-sm">
+          <div class="input-group-prepend">
+            <span class="input-group-text bg-info text-white">Email</span>
           </div>
-        </fieldset>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            class="form-control"
+            autocomplete="email"
+            placeholder="Email (required)"
+            [ngClass]="{
+              'is-invalid':
+                ((emailMessage$ | async) || signInMessage) && submitted,
+              'is-valid': !(emailMessage$ | async) && !signInMessage
+            }"
+          />
+          <div *ngIf="!signInMessage" class="invalid-tooltip">
+            <span>{{ emailMessage$ | async }}</span>
+          </div>
+        </div>
+        <div class="input-group mb-3 shadow-sm">
+          <div class="input-group-prepend">
+            <span class="input-group-text bg-info text-white">Password</span>
+          </div>
+          <input
+            id="password"
+            [type]="signInForm.get('showPassword').value ? 'text' : 'password'"
+            formControlName="password"
+            class="form-control"
+            autocomplete="current-password"
+            placeholder="Password (required)"
+            [ngClass]="{
+              'is-invalid':
+                ((passwordMessage$ | async) || signInMessage) && submitted,
+              'is-valid': !(passwordMessage$ | async) && !signInMessage
+            }"
+          />
+          <div class="invalid-tooltip">
+            <span>{{ passwordMessage$ | async }}</span>
+            <span>{{ signInMessage }}</span>
+          </div>
+          <div class="btn-group-toggle input-group-append">
+            <label class="btn-secondary text-capitalize" ngbButtonLabel>
+              <input
+                id="showPassword"
+                type="checkbox"
+                ngbButton
+                formControlName="showPassword"
+              />
+              {{ this.signInForm.get("showPassword").value ? "hide" : "show" }}
+            </label>
+          </div>
+        </div>
         <button
           type="submit"
           class="btn btn-success btn-block shadow"

@@ -30,11 +30,13 @@ export class SignInComponent implements OnInit, OnDestroy {
 
   users$ = this.authService.users$;
 
+  pageTitle = 'sign in';
+
   private readonly subscriptions: Subscription[] = [];
 
   submitted = false;
   signInForm: FormGroup;
-  signInMessage: string;
+  signInMessage = '';
 
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
   readonly loading$ = this.loadingSubject.asObservable();
