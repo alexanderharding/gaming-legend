@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { SuccessComponent } from './success.component';
 
@@ -8,16 +9,11 @@ describe('SuccessComponent', () => {
   let component: SuccessComponent;
   let fixture: ComponentFixture<SuccessComponent>;
 
-  @Component({
-    selector: 'ngb-alert',
-    template: '<div></div>',
-  })
-  class FakeNgbAlertComponent {}
-
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        declarations: [SuccessComponent, FakeNgbAlertComponent],
+        imports: [NgbModule],
+        declarations: [SuccessComponent],
       }).compileComponents();
     })
   );
@@ -52,16 +48,11 @@ describe('SuccessComponent w/ template', () => {
   let component: SuccessComponent;
   let fixture: ComponentFixture<SuccessComponent>;
 
-  @Component({
-    selector: 'ngb-alert',
-    template: '<div></div>',
-  })
-  class FakeNgbAlertComponent {}
-
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        declarations: [SuccessComponent, FakeNgbAlertComponent],
+        imports: [NgbModule],
+        declarations: [SuccessComponent],
       }).compileComponents();
     })
   );
