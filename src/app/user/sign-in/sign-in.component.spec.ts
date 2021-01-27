@@ -582,16 +582,119 @@ describe('SignInComponent w/ template', () => {
     expect(SignUpComponentDEs[0].componentInstance.loading).toBe(loading);
   });
 
-  xit(`should set email field classes correctly in the template when
-    email field is valid`, () => {
+  it(`should set email field classes correctly in the template when
+    submitted is false`, fakeAsync(() => {
     const input = fixture.debugElement.query(By.css('#email'));
-
     fixture.detectChanges();
+    const emailControl = component.signInForm.get('email');
 
     expect(input.classes).toEqual({
       'form-control': true,
+      'ng-untouched': true,
+      'ng-pristine': true,
+      'ng-invalid': true,
     });
-  });
+
+    emailControl.setValue('validEmail@test.com');
+    tick(1000);
+    fixture.detectChanges();
+
+    expect(emailControl.valid).toBeTruthy();
+    expect(input.classes).toEqual({
+      'form-control': true,
+      'is-valid': true,
+      'ng-valid': true,
+      'ng-untouched': true,
+      'ng-pristine': true,
+    });
+  }));
+
+  it(`should set email field classes correctly in the template when
+    submitted is true`, fakeAsync(() => {
+    const input = fixture.debugElement.query(By.css('#email'));
+    component.submitted = true;
+    fixture.detectChanges();
+    const emailControl = component.signInForm.get('email');
+
+    expect(emailControl.valid).toBeFalsy();
+    expect(input.classes).toEqual({
+      'form-control': true,
+      'ng-untouched': true,
+      'ng-pristine': true,
+      'ng-invalid': true,
+      'is-invalid': true,
+    });
+
+    emailControl.setValue('validEmail@test.com');
+    tick(1000);
+    fixture.detectChanges();
+
+    expect(emailControl.valid).toBeTruthy();
+    expect(input.classes).toEqual({
+      'form-control': true,
+      'is-valid': true,
+      'ng-valid': true,
+      'ng-untouched': true,
+      'ng-pristine': true,
+    });
+  }));
+
+  it(`should set password field classes correctly in the template when
+    submitted is false`, fakeAsync(() => {
+    const input = fixture.debugElement.query(By.css('#password'));
+    fixture.detectChanges();
+    const passwordControl = component.signInForm.get('password');
+
+    expect(input.classes).toEqual({
+      'form-control': true,
+      'ng-untouched': true,
+      'ng-pristine': true,
+      'ng-invalid': true,
+    });
+
+    passwordControl.setValue('validpasswordm');
+    tick(1000);
+    fixture.detectChanges();
+
+    expect(passwordControl.valid).toBeTruthy();
+    expect(input.classes).toEqual({
+      'form-control': true,
+      'is-valid': true,
+      'ng-valid': true,
+      'ng-untouched': true,
+      'ng-pristine': true,
+    });
+  }));
+
+  it(`should set password field classes correctly in the template when
+    submitted is true`, fakeAsync(() => {
+    const input = fixture.debugElement.query(By.css('#password'));
+    component.submitted = true;
+    fixture.detectChanges();
+    const passwordControl = component.signInForm.get('password');
+
+    expect(passwordControl.valid).toBeFalsy();
+    expect(input.classes).toEqual({
+      'form-control': true,
+      'ng-untouched': true,
+      'ng-pristine': true,
+      'ng-invalid': true,
+      'is-invalid': true,
+    });
+
+    passwordControl.setValue('validPassword');
+    tick(1000);
+    fixture.detectChanges();
+
+    expect(passwordControl.valid).toBeTruthy();
+    expect(input.classes).toEqual({
+      'form-control': true,
+      'is-valid': true,
+      'ng-valid': true,
+      'ng-untouched': true,
+      'ng-pristine': true,
+    });
+  }));
 
   it(`should set password field type correctly in the template`, () => {
     const input = fixture.debugElement.query(By.css('#password'));
