@@ -16,20 +16,10 @@ import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component'
 import { NotificationService } from '../services/notification.service';
 import { formatCurrency } from '@angular/common';
 
-class MockNgbModalRef {
-  componentInstance = {
-    prompt: undefined,
-    title: undefined,
-  };
-  closed: Observable<any> = of(true);
-}
-
-class MockErrorNgbModalRef {
-  componentInstance = {
-    prompt: undefined,
-    title: undefined,
-  };
-  closed: Observable<never> = throwError('error');
+function getQuantity(items: ICartItem[]): number {
+  return items.reduce((prev, current) => {
+    return +prev + +current.quantity;
+  }, 0);
 }
 
 describe('CartComponent', () => {
@@ -43,14 +33,29 @@ describe('CartComponent', () => {
     ITEMS: ICartItem[],
     SHIPPINGRATES: IShipping[],
     mockModalRef: MockNgbModalRef,
-    mockErrorModalRef: MockErrorNgbModalRef,
-    QUANTITY: number;
+    mockErrorModalRef: MockErrorNgbModalRef;
 
   @Component({
     selector: 'ctacu-cart-summary',
     template: '<div></div>',
   })
   class FakeCartSummaryComponent {}
+
+  class MockNgbModalRef {
+    componentInstance = {
+      prompt: undefined,
+      title: undefined,
+    };
+    closed: Observable<any> = of(true);
+  }
+
+  class MockErrorNgbModalRef {
+    componentInstance = {
+      prompt: undefined,
+      title: undefined,
+    };
+    closed: Observable<never> = throwError('error');
+  }
 
   beforeEach(
     waitForAsync(() => {
@@ -182,9 +187,6 @@ describe('CartComponent', () => {
           quantity: 1,
         },
       ];
-      QUANTITY = ITEMS.reduce((prev, current) => {
-        return +prev + +current.quantity;
-      }, 0);
       SHIPPINGRATES = [
         {
           id: 1,
@@ -204,7 +206,7 @@ describe('CartComponent', () => {
       ];
       mockCartService = jasmine.createSpyObj(
         ['saveItem', 'removeItem', 'removeAllItems', 'getCartItems'],
-        { cartItems$: of(ITEMS), cartQuantity$: of(QUANTITY) }
+        { cartItems$: of(ITEMS), cartQuantity$: of(getQuantity(ITEMS)) }
       );
       mockShippingRateService = jasmine.createSpyObj([
         'setShipping',
@@ -275,7 +277,7 @@ describe('CartComponent', () => {
 
     component.quantity$.subscribe((q) => (quantity = q));
 
-    expect(quantity).toBe(QUANTITY);
+    expect(quantity).toBe(getQuantity(ITEMS));
   });
 
   it('should have no errorMessage', () => {
@@ -529,8 +531,7 @@ describe('CartComponent w/ template', () => {
     mockCartService,
     mockActivatedRoute,
     ITEMS: ICartItem[],
-    SHIPPINGRATES,
-    QUANTITY: number;
+    SHIPPINGRATES;
 
   beforeEach(
     waitForAsync(() => {
@@ -662,9 +663,6 @@ describe('CartComponent w/ template', () => {
           quantity: 1,
         },
       ];
-      QUANTITY = ITEMS.reduce((prev, current) => {
-        return +prev + +current.quantity;
-      }, 0);
       SHIPPINGRATES = [
         {
           id: 1,
@@ -684,7 +682,7 @@ describe('CartComponent w/ template', () => {
       ];
       mockCartService = jasmine.createSpyObj(
         ['saveItem', 'removeItem', 'removeAllItems', 'getCartItems'],
-        { cartItems$: of(ITEMS), cartQuantity$: of(QUANTITY) }
+        { cartItems$: of(ITEMS), cartQuantity$: of(getQuantity(ITEMS)) }
       );
       mockActivatedRoute = {
         snapshot: {
@@ -772,7 +770,7 @@ describe('CartComponent w/ template', () => {
     fixture.detectChanges();
 
     const elements = fixture.debugElement.queryAll(By.css('h4 span'));
-    expect(elements[1].nativeElement.textContent).toContain(QUANTITY);
+    expect(elements[1].nativeElement.textContent).toContain(getQuantity(ITEMS));
   });
 
   it(`should call openRemoveModal method with correct value when remove input
