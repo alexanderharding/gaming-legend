@@ -16,7 +16,7 @@ import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component'
 import { NotificationService } from '../services/notification.service';
 import { formatCurrency } from '@angular/common';
 
-export class MockNgbModalRef {
+class MockNgbModalRef {
   componentInstance = {
     prompt: undefined,
     title: undefined,
@@ -24,7 +24,7 @@ export class MockNgbModalRef {
   closed: Observable<any> = of(true);
 }
 
-export class MockErrorNgbModalRef {
+class MockErrorNgbModalRef {
   componentInstance = {
     prompt: undefined,
     title: undefined,
