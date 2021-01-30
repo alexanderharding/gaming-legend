@@ -611,9 +611,9 @@ describe('SignInComponent w/ template', () => {
 
   it(`should set email field classes correctly in the template when
     submitted is true`, fakeAsync(() => {
-    const input = fixture.debugElement.query(By.css('#email'));
     component.submitted = true;
     fixture.detectChanges();
+    const input = fixture.debugElement.query(By.css('#email'));
     const emailControl = component.signInForm.get('email');
 
     expect(emailControl.valid).toBeFalsy();
