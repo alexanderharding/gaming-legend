@@ -1,4 +1,4 @@
-import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
+import { Component, DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -311,7 +311,7 @@ describe('CartComponent', () => {
 
     fixture.detectChanges();
 
-    expect(component.earliestArrival).toEqual(date);
+    expect(component.earliestArrival).toBe(date);
   });
 
   it(`should set latestArrival correctly`, () => {
@@ -320,7 +320,7 @@ describe('CartComponent', () => {
 
     fixture.detectChanges();
 
-    expect(component.latestArrival).toEqual(date);
+    expect(component.latestArrival).toBe(date);
   });
 
   it(`should call setShipping method on ShippingRateService with correct
@@ -723,9 +723,7 @@ describe('CartComponent w/ template', () => {
     fixture.detectChanges();
 
     const elements = fixture.debugElement.queryAll(By.css('h4 span'));
-    expect(elements[0].nativeElement.textContent).toContain(
-      component.pageTitle
-    );
+    expect(elements[0].nativeElement.textContent).toBe(component.pageTitle);
   });
 
   it('should set items$ in the template', () => {
@@ -733,25 +731,25 @@ describe('CartComponent w/ template', () => {
     fixture.detectChanges();
 
     // item debug elements
-    const elements = fixture.debugElement.queryAll(By.css('tbody tr'));
-    expect(elements.length).toEqual(ITEMS.length);
-    for (let index = 0; index < elements.length; index++) {
-      const cellElements = elements[index].queryAll(By.css('td'));
-      const imgElement = cellElements[0].query(By.css('img'));
-      const linkElement = cellElements[1].query(By.css('a'));
-      const priceElement = cellElements[2];
-      const inputElements = cellElements[3].queryAll(By.css('input'));
+    const tabelRowElements = fixture.debugElement.queryAll(By.css('tbody tr'));
+    expect(tabelRowElements.length).toEqual(ITEMS.length);
+    for (let i = 0; i < tabelRowElements.length; i++) {
+      let element: DebugElement;
+      const tableCellElements = tabelRowElements[i].queryAll(By.css('td'));
 
-      expect(linkElement.nativeElement.textContent).toContain(
-        ITEMS[index].name
+      element = tableCellElements[0].query(By.css('img'));
+      expect(element.nativeElement.src).toContain(ITEMS[i].imageUrl);
+
+      element = tableCellElements[1].query(By.css('a'));
+      expect(element.nativeElement.textContent).toBe(ITEMS[i].name);
+
+      element = tableCellElements[2];
+      expect(element.nativeElement.textContent).toBe(
+        formatCurrency(ITEMS[i].price, 'en-US', '$')
       );
-      expect(imgElement.nativeElement.src).toContain(ITEMS[index].imageUrl);
-      expect(priceElement.nativeElement.textContent).toContain(
-        formatCurrency(ITEMS[index].price, 'en-US', '$')
-      );
-      expect(inputElements[1].nativeElement.value).toContain(
-        ITEMS[index].quantity
-      );
+
+      element = tableCellElements[3].queryAll(By.css('input'))[1];
+      expect(+element.nativeElement.value).toBe(ITEMS[i].quantity);
     }
   });
 
@@ -770,7 +768,7 @@ describe('CartComponent w/ template', () => {
     fixture.detectChanges();
 
     const elements = fixture.debugElement.queryAll(By.css('h4 span'));
-    expect(elements[1].nativeElement.textContent).toContain(getQuantity(ITEMS));
+    expect(+elements[1].nativeElement.textContent).toBe(getQuantity(ITEMS));
   });
 
   it(`should call openRemoveModal method with correct value when remove input
@@ -790,8 +788,8 @@ describe('CartComponent w/ template', () => {
   it(`should call openRemoveAllModal method with correct value when empty
     input button is clicked`, () => {
     // Arrange
-    fixture.detectChanges();
     spyOn(component, 'openRemoveAllModal');
+    fixture.detectChanges();
     const input = fixture.debugElement.queryAll(By.css('input'))[1];
 
     // Act
@@ -804,8 +802,8 @@ describe('CartComponent w/ template', () => {
   it(`should call updateQty method with correct value when decrease input button
     is clicked`, () => {
     // Arrange
-    fixture.detectChanges();
     spyOn(component, 'updateQty');
+    fixture.detectChanges();
     const input = fixture.debugElement.queryAll(By.css('td input'))[0];
 
     // Act
@@ -818,8 +816,8 @@ describe('CartComponent w/ template', () => {
   it(`should call updateQty method with correct value when increase input button
     is clicked`, () => {
     // Arrange
-    fixture.detectChanges();
     spyOn(component, 'updateQty');
+    fixture.detectChanges();
     const input = fixture.debugElement.queryAll(By.css('td input'))[2];
 
     // Act
