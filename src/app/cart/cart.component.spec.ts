@@ -351,7 +351,7 @@ describe('CartComponent', () => {
     );
   });
 
-  describe('updateQty', () => {
+  describe('saveItem', () => {
     it(`should call saveItem method on CartService with correct value when item
       quantity is greater than 1`, () => {
       let item: ICartItem;
@@ -365,7 +365,7 @@ describe('CartComponent', () => {
         quantity: 2,
       };
       amount = -1;
-      component.updateQty(item, amount);
+      component.saveItem(item, amount);
 
       const updatedItem = {
         ...item,
@@ -388,7 +388,7 @@ describe('CartComponent', () => {
         quantity: 1,
       };
       amount = 0;
-      component.updateQty(item, amount);
+      component.saveItem(item, amount);
 
       const updatedItem = {
         ...item,
@@ -410,7 +410,7 @@ describe('CartComponent', () => {
         quantity: 1,
       };
       amount = -1;
-      component.updateQty(item, amount);
+      component.saveItem(item, amount);
 
       expect(mockCartService.saveItem).toHaveBeenCalledTimes(0);
     });
@@ -428,7 +428,7 @@ describe('CartComponent', () => {
         quantity: 2,
       };
       amount = -1;
-      component.updateQty(item, amount);
+      component.saveItem(item, amount);
 
       expect(mockCartService.getCartItems).toHaveBeenCalledTimes(1);
     });
@@ -446,7 +446,7 @@ describe('CartComponent', () => {
         quantity: 1,
       };
       amount = 0;
-      component.updateQty(item, amount);
+      component.saveItem(item, amount);
 
       expect(mockCartService.getCartItems).toHaveBeenCalledTimes(1);
     });
@@ -463,7 +463,7 @@ describe('CartComponent', () => {
         quantity: 1,
       };
       amount = -1;
-      component.updateQty(item, amount);
+      component.saveItem(item, amount);
 
       expect(mockCartService.getCartItems).toHaveBeenCalledTimes(0);
     });
@@ -480,7 +480,7 @@ describe('CartComponent', () => {
         quantity: 1,
       };
       amount = 1;
-      component.updateQty(item, amount);
+      component.saveItem(item, amount);
 
       expect(mockCartService.getCartItems).toHaveBeenCalledTimes(0);
     });
@@ -497,7 +497,7 @@ describe('CartComponent', () => {
         quantity: 1,
       };
       amount = -1;
-      component.updateQty(item, amount);
+      component.saveItem(item, amount);
 
       expect(component.openRemoveModal).toHaveBeenCalledTimes(1);
       expect(component.openRemoveModal).toHaveBeenCalledWith(item);
@@ -517,7 +517,7 @@ describe('CartComponent', () => {
         quantity: 2,
       };
       amount = -1;
-      component.updateQty(item, amount);
+      component.saveItem(item, amount);
 
       expect(component.openRemoveModal).toHaveBeenCalledTimes(0);
     });
@@ -536,7 +536,7 @@ describe('CartComponent', () => {
         quantity: 1,
       };
       amount = 0;
-      component.updateQty(item, amount);
+      component.saveItem(item, amount);
 
       expect(component.openRemoveModal).toHaveBeenCalledTimes(0);
     });
@@ -554,7 +554,7 @@ describe('CartComponent', () => {
         quantity: 1,
       };
       amount = 1;
-      component.updateQty(item, amount);
+      component.saveItem(item, amount);
 
       expect(mockNotificationService.show).toHaveBeenCalledTimes(0);
 
@@ -563,7 +563,7 @@ describe('CartComponent', () => {
         quantity: 1,
       };
       amount = -1;
-      component.updateQty(item, amount);
+      component.saveItem(item, amount);
 
       expect(mockNotificationService.show).toHaveBeenCalledTimes(0);
     });
@@ -580,7 +580,7 @@ describe('CartComponent', () => {
         quantity: 1,
       };
       amount = 1;
-      component.updateQty(item, amount);
+      component.saveItem(item, amount);
 
       expect(mockNotificationService.show).toHaveBeenCalledTimes(1);
     });
@@ -598,7 +598,7 @@ describe('CartComponent', () => {
         quantity: 1,
       };
       amount = 1;
-      component.updateQty(item, amount);
+      component.saveItem(item, amount);
 
       expect(mockNotificationService.show).toHaveBeenCalledTimes(1);
     });
@@ -1108,10 +1108,10 @@ describe('CartComponent w/ template', () => {
     expect(component.openRemoveAllModal).toHaveBeenCalledWith(ITEMS);
   });
 
-  it(`should call updateQty method with correct value when decrease input button
+  it(`should call saveItem method with correct value when decrease input button
     is clicked`, () => {
     // Arrange
-    spyOn(component, 'updateQty');
+    spyOn(component, 'saveItem');
     fixture.detectChanges();
     const input = fixture.debugElement.queryAll(By.css('tbody tr td input'))[0];
 
@@ -1119,14 +1119,14 @@ describe('CartComponent w/ template', () => {
     input.triggerEventHandler('click', null);
 
     // Assert
-    expect(component.updateQty).toHaveBeenCalledTimes(1);
-    expect(component.updateQty).toHaveBeenCalledWith(ITEMS[0], -1);
+    expect(component.saveItem).toHaveBeenCalledTimes(1);
+    expect(component.saveItem).toHaveBeenCalledWith(ITEMS[0], -1);
   });
 
-  it(`should call updateQty method with correct value when increase input button
+  it(`should call saveItem method with correct value when increase input button
     is clicked`, () => {
     // Arrange
-    spyOn(component, 'updateQty');
+    spyOn(component, 'saveItem');
     fixture.detectChanges();
     const input = fixture.debugElement.queryAll(By.css('tbody tr td input'))[2];
 
@@ -1134,7 +1134,7 @@ describe('CartComponent w/ template', () => {
     input.triggerEventHandler('click', null);
 
     // Assert
-    expect(component.updateQty).toHaveBeenCalledTimes(1);
-    expect(component.updateQty).toHaveBeenCalledWith(ITEMS[0], 1);
+    expect(component.saveItem).toHaveBeenCalledTimes(1);
+    expect(component.saveItem).toHaveBeenCalledWith(ITEMS[0], 1);
   });
 });

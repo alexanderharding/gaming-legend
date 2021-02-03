@@ -65,7 +65,7 @@
                           name="decrease"
                           type="button"
                           value="-"
-                          (click)="updateQty(item, -1)"
+                          (click)="saveItem(item, -1)"
                           class="btn btn-sm btn-secondary"
                           [disabled]="loading$ | async"
                         />
@@ -82,7 +82,7 @@
                           name="increase"
                           type="button"
                           value="+"
-                          (click)="updateQty(item, 1)"
+                          (click)="saveItem(item, 1)"
                           class="btn btn-sm btn-info"
                           [disabled]="loading$ | async"
                         />

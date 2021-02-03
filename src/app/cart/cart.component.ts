@@ -83,7 +83,7 @@ export class CartComponent implements OnInit {
     this.config.backdrop = 'static';
   }
 
-  updateQty(item: ICartItem, amount: number): void {
+  saveItem(item: ICartItem, amount: number): void {
     if (item.quantity <= 1 && amount === -1) {
       this.openRemoveModal(item);
       return;
