@@ -1,12 +1,12 @@
-import { AbstractControl } from "@angular/forms";
+import { AbstractControl } from '@angular/forms';
 
 export function passwordMatcher(
   c: AbstractControl
 ): { [key: string]: boolean } | null {
-  const passwordControl = c.get("password");
-  const confirmControl = c.get("confirmPassword");
+  const passwordControl = c.get('password');
+  const confirmControl = c.get('confirmPassword');
 
-  if (passwordControl.pristine || confirmControl.pristine) {
+  if (!passwordControl.value || !confirmControl.value) {
     return null;
   }
 
