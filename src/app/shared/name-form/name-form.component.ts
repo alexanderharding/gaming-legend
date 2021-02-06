@@ -109,8 +109,8 @@ export class NameFormComponent implements OnInit, OnDestroy {
   }
 
   private setUserData(name: UserName): void {
-    const nameControl = this.parentForm.get('nameGroup');
-    nameControl.setValue({
+    const nameGroupControl = this.parentForm.get('nameGroup');
+    nameGroupControl.setValue({
       firstName: name.firstName,
       lastName: name.lastName,
     });

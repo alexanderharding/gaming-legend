@@ -54,13 +54,11 @@ describe('NameFormComponent', () => {
         imports: [ReactiveFormsModule],
         declarations: [NameFormComponent],
         providers: [
-          FormBuilder,
           {
             provide: FormValidationRuleService,
             useValue: mockFormValidationRuleService,
           },
         ],
-        // schemas: [NO_ERRORS_SCHEMA],
       }).compileComponents();
     })
   );
@@ -123,245 +121,197 @@ describe('NameFormComponent', () => {
     expect(message).toBe('');
   }));
 
-  describe('parentForm', () => {
-    describe('nameGroup', () => {
-      describe('firstName control', () => {
-        it('should be set correctly to start', fakeAsync(() => {
-          let errors = {};
-          const nameGroupControl = component.parentForm.controls['nameGroup'];
-          const firstNameControl = nameGroupControl.get('firstName');
-          fixture.detectChanges();
-          tick(1000);
+  it(`should set nameGroup control value on parentForm correctly to
+    start`, fakeAsync(() => {
+    const nameGroupControl = component.parentForm.controls['nameGroup'];
+    fixture.detectChanges();
+    tick(1000);
 
-          errors = nameGroupControl.errors || {};
-
-          expect(errors['required']).toBeFalsy();
-          expect(errors['minlength']).toBeFalsy();
-          expect(errors['maxlength']).toBeFalsy();
-          expect(firstNameControl.valid).toBeTruthy();
-          expect(firstNameControl.value).toEqual(USER.name.firstName);
-        }));
-
-        it(`should set firstNameMessage$ correctly when there's no
-          value`, fakeAsync(() => {
-          let errors: Object;
-          let name: string;
-          let message: string;
-          const nameGroupControl = component.parentForm.controls['nameGroup'];
-          const firstNameControl = nameGroupControl.get('firstName');
-          fixture.detectChanges();
-          tick(1000);
-
-          name = '';
-          firstNameControl.setValue(name);
-          tick(1000);
-          component.firstNameMessage$.subscribe((m) => (message = m));
-          errors = firstNameControl.errors || {};
-
-          expect(firstNameControl.valid).toBeFalsy();
-          expect(errors['minlength']).toBeFalsy();
-          expect(errors['maxlength']).toBeFalsy();
-          expect(errors['required']).toBeTruthy();
-          expect(message).toBe('Please enter a first name.');
-        }));
-
-        it(`should set firstNameMessage$ correctly when value is less than
-          NAMEMINLENGTH`, fakeAsync(() => {
-          let errors: Object;
-          let name: string;
-          let message: string;
-          const nameGroupControl = component.parentForm.controls['nameGroup'];
-          const firstNameControl = nameGroupControl.get('firstName');
-          fixture.detectChanges();
-          tick(1000);
-
-          name = 'j';
-          expect(name.length).toBeLessThan(NAMEMINLENGTH);
-          expect(name.length).toBeGreaterThan(0);
-          firstNameControl.setValue(name);
-          tick(1000);
-          component.firstNameMessage$.subscribe((m) => (message = m));
-          errors = firstNameControl.errors || {};
-
-          expect(firstNameControl.valid).toBeFalsy();
-          expect(errors['required']).toBeFalsy();
-          expect(errors['maxlength']).toBeFalsy();
-          expect(errors['minlength']).toBeTruthy();
-          expect(message).toBe(`First name must be longer than ${
-            NAMEMINLENGTH - 1
-          }
-    characters.`);
-        }));
-
-        it(`should set firstNameMessage$ correctly when value is greater than or
-          equal to NAMEMAXLENGTH`, fakeAsync(() => {
-          let errors: Object;
-          let name: string;
-          let message: string;
-          const nameGroupControl = component.parentForm.controls['nameGroup'];
-          const firstNameControl = nameGroupControl.get('firstName');
-          fixture.detectChanges();
-          tick(1000);
-
-          name = 'johnnysilverhandsiscool';
-          expect(name.length).toBeGreaterThanOrEqual(NAMEMAXLENGTH);
-          firstNameControl.setValue(name);
-          tick(1000);
-          component.firstNameMessage$.subscribe((m) => (message = m));
-          errors = firstNameControl.errors || {};
-
-          expect(firstNameControl.valid).toBeFalsy();
-          expect(errors['required']).toBeFalsy();
-          expect(errors['minlength']).toBeFalsy();
-          expect(errors['maxlength']).toBeTruthy();
-          expect(message)
-            .toBe(`First name cannot be longer than ${NAMEMAXLENGTH}
-    characters.`);
-        }));
-
-        it(`should set firstNameMessage$ correctly when
-          valid`, fakeAsync(() => {
-          let errors: Object;
-          let name: string;
-          let message: string;
-          const nameGroupControl = component.parentForm.controls['nameGroup'];
-          const firstNameControl = nameGroupControl.get('firstName');
-          fixture.detectChanges();
-          tick(1000);
-
-          name = 'johnny';
-          expect(name.length).toBeLessThanOrEqual(NAMEMAXLENGTH);
-          expect(name.length).toBeGreaterThanOrEqual(NAMEMINLENGTH);
-          firstNameControl.setValue(name);
-          tick(1000);
-          component.firstNameMessage$.subscribe((m) => (message = m));
-          errors = firstNameControl.errors || {};
-
-          expect(errors['required']).toBeFalsy();
-          expect(errors['minlength']).toBeFalsy();
-          expect(errors['maxlength']).toBeFalsy();
-          expect(message).toBe('');
-          expect(firstNameControl.valid).toBeTruthy();
-        }));
-      });
-
-      describe('lastName control', () => {
-        it('should be set correctly to start', fakeAsync(() => {
-          let errors = {};
-          fixture.detectChanges();
-          tick(1000);
-          const nameGroupControl = component.parentForm.controls['nameGroup'];
-          const lastNameControl = nameGroupControl.get('lastName');
-
-          errors = lastNameControl.errors || {};
-
-          expect(errors['required']).toBeFalsy();
-          expect(errors['minlength']).toBeFalsy();
-          expect(errors['maxlength']).toBeFalsy();
-          expect(lastNameControl.valid).toBeTruthy();
-          expect(lastNameControl.value).toEqual(USER.name.lastName);
-        }));
-
-        it(`should set lastNameMessage$ correctly when there's no
-          value`, fakeAsync(() => {
-          let errors: Object;
-          let name: string;
-          let message: string;
-          const nameGroupControl = component.parentForm.controls['nameGroup'];
-          const lastNameControl = nameGroupControl.get('lastName');
-          fixture.detectChanges();
-          tick(1000);
-
-          name = '';
-          lastNameControl.setValue(name);
-          tick(1000);
-          component.lastNameMessage$.subscribe((m) => (message = m));
-          errors = lastNameControl.errors || {};
-
-          expect(lastNameControl.valid).toBeFalsy();
-          expect(errors['required']).toBeTruthy();
-          expect(message).toBe('Please enter a last name.');
-        }));
-
-        it(`should set lastNameMessage$ correctly when value is less than
-          NAMEMINLENGTH`, fakeAsync(() => {
-          let errors: Object;
-          let name: string;
-          let message: string;
-          const nameGroupControl = component.parentForm.controls['nameGroup'];
-          const lastNameControl = nameGroupControl.get('lastName');
-          fixture.detectChanges();
-          tick(1000);
-
-          name = 'j';
-          expect(name.length).toBeLessThan(NAMEMINLENGTH);
-          expect(name.length).toBeGreaterThan(0);
-          lastNameControl.setValue(name);
-          tick(1000);
-          component.lastNameMessage$.subscribe((m) => (message = m));
-          errors = lastNameControl.errors || {};
-
-          expect(lastNameControl.valid).toBeFalsy();
-          expect(errors['required']).toBeFalsy();
-          expect(errors['maxlength']).toBeFalsy();
-          expect(errors['minlength']).toBeTruthy();
-          expect(message).toBe(`Last name must be longer than ${
-            NAMEMINLENGTH - 1
-          }
-    characters.`);
-        }));
-
-        it(`should set lastNameMessage$ correctly when value is greater than or
-          equal to NAMEMAXLENGTH`, fakeAsync(() => {
-          let errors: Object;
-          let name: string;
-          let message: string;
-          const nameGroupControl = component.parentForm.controls['nameGroup'];
-          const lastNameControl = nameGroupControl.get('lastName');
-          fixture.detectChanges();
-          tick(1000);
-
-          name = 'johnnysilverhandsiscool';
-          expect(name.length).toBeGreaterThanOrEqual(NAMEMAXLENGTH);
-          lastNameControl.setValue(name);
-          tick(1000);
-          component.lastNameMessage$.subscribe((m) => (message = m));
-          errors = lastNameControl.errors || {};
-
-          expect(lastNameControl.valid).toBeFalsy();
-          expect(errors['required']).toBeFalsy();
-          expect(errors['minlength']).toBeFalsy();
-          expect(errors['maxlength']).toBeTruthy();
-          expect(message).toBe(`Last name cannot be longer than ${NAMEMAXLENGTH}
-    characters.`);
-        }));
-
-        it(`should set lastNameMessage$ correctly when valid`, fakeAsync(() => {
-          let errors: Object;
-          let name: string;
-          let message: string;
-          const nameGroupControl = component.parentForm.controls['nameGroup'];
-          const lastNameControl = nameGroupControl.get('lastName');
-          fixture.detectChanges();
-          tick(1000);
-
-          name = 'johnny';
-          expect(name.length).toBeLessThanOrEqual(NAMEMAXLENGTH);
-          expect(name.length).toBeGreaterThanOrEqual(NAMEMINLENGTH);
-          lastNameControl.setValue(name);
-          tick(1000);
-          component.lastNameMessage$.subscribe((m) => (message = m));
-          errors = lastNameControl.errors || {};
-
-          expect(errors['required']).toBeFalsy();
-          expect(errors['minlength']).toBeFalsy();
-          expect(errors['maxlength']).toBeFalsy();
-          expect(lastNameControl.valid).toBeTruthy();
-          expect(message).toBe('');
-        }));
-      });
+    expect(nameGroupControl.valid).toBeTruthy();
+    expect(nameGroupControl.value).toEqual({
+      firstName: USER.name.firstName,
+      lastName: USER.name.lastName,
     });
-  });
+  }));
+
+  it(`should set firstNameMessage$ correctly when firstName control on the
+    parentForm is required`, fakeAsync(() => {
+    let errors: Object;
+    let message: string;
+    const firstNameControl = component.parentForm.get('nameGroup.firstName');
+    fixture.detectChanges();
+
+    firstNameControl.setValue('');
+    tick(1000);
+    component.firstNameMessage$.subscribe((m) => (message = m));
+    errors = firstNameControl.errors || {};
+
+    expect(firstNameControl.valid).toBeFalsy();
+    expect(errors['minlength']).toBeFalsy();
+    expect(errors['maxlength']).toBeFalsy();
+    expect(errors['required']).toBeTruthy();
+    expect(message).toBe('Please enter a first name.');
+  }));
+
+  it(`should set firstNameMessage$ correctly when firstName control value.length
+    on parentForm is less than NAMEMINLENGTH and greater than 0`, fakeAsync(() => {
+    let errors: Object;
+    let name: string;
+    let message: string;
+    const firstNameControl = component.parentForm.get('nameGroup.firstName');
+    fixture.detectChanges();
+
+    name = 'j';
+    expect(name.length).toBeLessThan(NAMEMINLENGTH);
+    expect(name.length).toBeGreaterThan(0);
+    firstNameControl.setValue(name);
+    tick(1000);
+    component.firstNameMessage$.subscribe((m) => (message = m));
+    errors = firstNameControl.errors || {};
+
+    expect(firstNameControl.valid).toBeFalsy();
+    expect(errors['required']).toBeFalsy();
+    expect(errors['maxlength']).toBeFalsy();
+    expect(errors['minlength']).toBeTruthy();
+    expect(message).toBe(`First name must be longer than ${NAMEMINLENGTH - 1}
+    characters.`);
+  }));
+
+  it(`should set firstNameMessage$ correctly when firstName control value.length
+    on parentForm is greater than or equal to NAMEMAXLENGTH`, fakeAsync(() => {
+    let errors: Object;
+    let name: string;
+    let message: string;
+    const firstNameControl = component.parentForm.get('nameGroup.firstName');
+    fixture.detectChanges();
+
+    name = 'johnnysilverhandsiscool';
+    expect(name.length).toBeGreaterThanOrEqual(NAMEMAXLENGTH);
+    firstNameControl.setValue(name);
+    tick(1000);
+    component.firstNameMessage$.subscribe((m) => (message = m));
+    errors = firstNameControl.errors || {};
+
+    expect(firstNameControl.valid).toBeFalsy();
+    expect(errors['required']).toBeFalsy();
+    expect(errors['minlength']).toBeFalsy();
+    expect(errors['maxlength']).toBeTruthy();
+    expect(message).toBe(`First name cannot be longer than ${NAMEMAXLENGTH}
+    characters.`);
+  }));
+
+  it(`should set firstNameMessage$ correctly when firstName control on the
+    parentForm is valid`, fakeAsync(() => {
+    let errors: Object;
+    let name: string;
+    let message: string;
+    const firstNameControl = component.parentForm.get('nameGroup.firstName');
+    fixture.detectChanges();
+
+    name = 'johnny';
+    expect(name.length).toBeLessThanOrEqual(NAMEMAXLENGTH);
+    expect(name.length).toBeGreaterThanOrEqual(NAMEMINLENGTH);
+    firstNameControl.setValue(name);
+    tick(1000);
+    component.firstNameMessage$.subscribe((m) => (message = m));
+    errors = firstNameControl.errors || {};
+
+    expect(errors['required']).toBeFalsy();
+    expect(errors['minlength']).toBeFalsy();
+    expect(errors['maxlength']).toBeFalsy();
+    expect(firstNameControl.valid).toBeTruthy();
+    expect(message).toBe('');
+  }));
+
+  it(`should set lastNameMessage$ correctly when lastName control on the
+    parentForm is required`, fakeAsync(() => {
+    let errors: Object;
+    let message: string;
+    const lastNameControl = component.parentForm.get('nameGroup.lastName');
+    fixture.detectChanges();
+
+    lastNameControl.setValue('');
+    tick(1000);
+    component.lastNameMessage$.subscribe((m) => (message = m));
+    errors = lastNameControl.errors || {};
+
+    expect(lastNameControl.valid).toBeFalsy();
+    expect(errors['minlength']).toBeFalsy();
+    expect(errors['maxlength']).toBeFalsy();
+    expect(errors['required']).toBeTruthy();
+    expect(message).toBe('Please enter a last name.');
+  }));
+
+  it(`should set lastNameMessage$ correctly when lastName control value.length
+    on parentForm is less than NAMEMINLENGTH and greater than
+    0`, fakeAsync(() => {
+    let errors: Object;
+    let name: string;
+    let message: string;
+    const lastNameControl = component.parentForm.get('nameGroup.lastName');
+    fixture.detectChanges();
+
+    name = 'j';
+    expect(name.length).toBeLessThan(NAMEMINLENGTH);
+    expect(name.length).toBeGreaterThan(0);
+    lastNameControl.setValue(name);
+    tick(1000);
+    component.lastNameMessage$.subscribe((m) => (message = m));
+    errors = lastNameControl.errors || {};
+
+    expect(lastNameControl.valid).toBeFalsy();
+    expect(errors['required']).toBeFalsy();
+    expect(errors['maxlength']).toBeFalsy();
+    expect(errors['minlength']).toBeTruthy();
+    expect(message).toBe(`Last name must be longer than ${NAMEMINLENGTH - 1}
+    characters.`);
+  }));
+
+  it(`should set lastNameMessage$ correctly when lastName control value on
+    parentForm is greater than or equal to NAMEMAXLENGTH`, fakeAsync(() => {
+    let errors: Object;
+    let name: string;
+    let message: string;
+    const lastNameControl = component.parentForm.get('nameGroup.lastName');
+    fixture.detectChanges();
+
+    name = 'johnnysilverhandsiscool';
+    expect(name.length).toBeGreaterThanOrEqual(NAMEMAXLENGTH);
+    lastNameControl.setValue(name);
+    tick(1000);
+    component.lastNameMessage$.subscribe((m) => (message = m));
+    errors = lastNameControl.errors || {};
+
+    expect(lastNameControl.valid).toBeFalsy();
+    expect(errors['required']).toBeFalsy();
+    expect(errors['minlength']).toBeFalsy();
+    expect(errors['maxlength']).toBeTruthy();
+    expect(message).toBe(`Last name cannot be longer than ${NAMEMAXLENGTH}
+    characters.`);
+  }));
+
+  it(`should set lastNameMessage$ correctly when lastName control on the
+    parentForm is valid`, fakeAsync(() => {
+    let errors: Object;
+    let name: string;
+    let message: string;
+    const lastNameControl = component.parentForm.get('nameGroup.lastName');
+    fixture.detectChanges();
+
+    name = 'johnny';
+    expect(name.length).toBeLessThanOrEqual(NAMEMAXLENGTH);
+    expect(name.length).toBeGreaterThanOrEqual(NAMEMINLENGTH);
+    lastNameControl.setValue(name);
+    tick(1000);
+    component.lastNameMessage$.subscribe((m) => (message = m));
+    errors = lastNameControl.errors || {};
+
+    expect(errors['required']).toBeFalsy();
+    expect(errors['maxlength']).toBeFalsy();
+    expect(errors['minlength']).toBeFalsy();
+    expect(lastNameControl.valid).toBeTruthy();
+    expect(message).toBe('');
+  }));
 });
 
 describe('NameFormComponent w/ template', () => {
@@ -420,7 +370,6 @@ describe('NameFormComponent w/ template', () => {
         imports: [ReactiveFormsModule],
         declarations: [NameFormComponent],
         providers: [
-          FormBuilder,
           {
             provide: FormValidationRuleService,
             useValue: mockFormValidationRuleService,
@@ -466,10 +415,10 @@ describe('NameFormComponent w/ template', () => {
   it('should set defaultPageTitle correctly in the template', () => {
     fixture.detectChanges();
 
-    const element = fixture.debugElement.query(By.css('legend'));
-
+    const elements = fixture.debugElement.queryAll(By.css('legend span'));
+    expect(elements.length).toBe(1);
     expect(component.pageTitle).toBeUndefined();
-    expect(element.nativeElement.textContent).toContain(
+    expect(elements[0].nativeElement.textContent).toBe(
       component.defaultPageTitle.toLocaleLowerCase()
     );
   });
@@ -478,312 +427,367 @@ describe('NameFormComponent w/ template', () => {
     component.pageTitle = 'Test title';
     fixture.detectChanges();
 
-    const element = fixture.debugElement.query(By.css('legend'));
-
-    expect(element.nativeElement.textContent).toContain(
+    const element = fixture.debugElement.query(By.css('legend span'));
+    expect(element.nativeElement.textContent).toBe(
       component.pageTitle.toLocaleLowerCase()
     );
   });
 
-  it('should set firstName field correctly in the template', () => {
+  it(`should set firstName control on parentForm correctly in the
+    template`, () => {
+    fixture.detectChanges();
+    const inputs = fixture.debugElement.queryAll(By.css('#firstName'));
+
+    expect(inputs.length).toBe(1);
+    expect(inputs[0].nativeElement.autocomplete).toBe('given-name');
+    expect(inputs[0].nativeElement.type).toBe('text');
+    expect(inputs[0].nativeElement.placeholder).toBe('First name (required)');
+    expect(inputs[0].nativeElement.value).toBe(USER.name.firstName);
+  });
+
+  it(`should set firstName control value on parentForm when firstName input
+    value changes`, () => {
+    const name = 'Jay';
+    const firstNameControl = component.parentForm.get('nameGroup.firstName');
     fixture.detectChanges();
     const input = fixture.debugElement.query(By.css('#firstName'));
 
-    expect(input.nativeElement.autocomplete).toBe('given-name');
-    expect(input.nativeElement.type).toBe('text');
-    expect(input.nativeElement.placeholder).toBe('First name (required)');
-    expect(input.nativeElement.value).toBe(USER.name.firstName);
+    input.nativeElement.value = name;
+    input.nativeElement.dispatchEvent(new Event('input'));
+
+    expect(firstNameControl.value).toBe(name);
   });
 
-  describe('firstName field', () => {
-    it(`should set firstName control value when value
-      changes`, fakeAsync(() => {
-      const name = 'Jay';
-      fixture.detectChanges();
-      const firstNameControl = component.parentForm.get('nameGroup.firstName');
-      const input = fixture.debugElement.query(By.css('#firstName'));
-
-      input.nativeElement.value = name;
-      input.nativeElement.dispatchEvent(new Event('input'));
-      tick(1000);
-
-      expect(firstNameControl.value).toBe(name);
-    }));
-
-    it(`should set firstName field classes correctly in the template when
-      valid`, fakeAsync(() => {
-      fixture.detectChanges();
-      const input = fixture.debugElement.query(By.css('#firstName'));
-      tick(1000);
-
-      fixture.detectChanges();
-      expect(input.classes).toEqual({
-        'form-control': true,
-        'is-valid': true,
-        'ng-untouched': true,
-        'ng-pristine': true,
-        'ng-valid': true,
-      });
-    }));
-
-    it(`should set firstName field classes correctly in the template when
-      firstName field is required and submitted is true`, fakeAsync(() => {
-      const firstNameControl = component.parentForm.get('nameGroup.firstName');
-      component.submitted = true;
-      fixture.detectChanges();
-
-      const input = fixture.debugElement.query(By.css('#firstName'));
-      firstNameControl.setValue('');
-      tick(1000);
-      fixture.detectChanges();
-
-      expect(firstNameControl.valid).toBeFalsy();
-      expect(input.classes).toEqual({
-        'form-control': true,
-        'is-invalid': true,
-        'ng-untouched': true,
-        'ng-pristine': true,
-        'ng-invalid': true,
-      });
-    }));
-
-    it(`should set firstName field classes correctly in the template when
-    firstName field is required and submitted is false`, fakeAsync(() => {
-      const firstNameControl = component.parentForm.get('nameGroup.firstName');
-      component.submitted = false;
-      fixture.detectChanges();
-
-      const input = fixture.debugElement.query(By.css('#firstName'));
-      firstNameControl.setValue('');
-      tick(1000);
-      fixture.detectChanges();
-
-      expect(firstNameControl.valid).toBeFalsy();
-      expect(input.classes).toEqual({
-        'form-control': true,
-        'ng-untouched': true,
-        'ng-pristine': true,
-        'ng-invalid': true,
-      });
-    }));
-  });
-
-  describe('lastName field', () => {
-    it('should set lastName field correctly in the template', () => {
-      fixture.detectChanges();
-
-      const input = fixture.debugElement.queryAll(By.css('input'))[1];
-      expect(input.nativeElement.autocomplete).toBe('family-name');
-      expect(input.nativeElement.type).toBe('text');
-      expect(input.nativeElement.placeholder).toBe('Last name (required)');
-      expect(input.nativeElement.value).toBe(USER.name.lastName);
-    });
-
-    it(`should set lastName control value when value
-      changes`, fakeAsync(() => {
-      const name = 'Jay';
-      fixture.detectChanges();
-      const firstNameControl = component.parentForm.get('nameGroup.lastName');
-      const input = fixture.debugElement.query(By.css('#lastName'));
-
-      input.nativeElement.value = name;
-      input.nativeElement.dispatchEvent(new Event('input'));
-      tick(1000);
-
-      expect(firstNameControl.value).toBe(name);
-    }));
-
-    it(`should set lastName field classes correctly in the template when
-      valid`, fakeAsync(() => {
-      fixture.detectChanges();
-      const input = fixture.debugElement.query(By.css('#lastName'));
-      tick(1000);
-
-      fixture.detectChanges();
-
-      expect(input.classes).toEqual({
-        'form-control': true,
-        'is-valid': true,
-        'ng-untouched': true,
-        'ng-pristine': true,
-        'ng-valid': true,
-      });
-    }));
-
-    it(`should set lastName field classes correctly in the template when
-      submitted is true`, fakeAsync(() => {
-      const lastNameControl = component.parentForm.get('nameGroup.lastName');
-      component.submitted = true;
-      fixture.detectChanges();
-      const input = fixture.debugElement.query(By.css('#lastName'));
-      tick(1000);
-
-      fixture.detectChanges();
-
-      expect(lastNameControl.valid).toBeTruthy();
-      expect(input.classes).toEqual({
-        'form-control': true,
-        'is-valid': true,
-        'ng-untouched': true,
-        'ng-pristine': true,
-        'ng-valid': true,
-      });
-
-      lastNameControl.setValue('');
-      tick(1000);
-      fixture.detectChanges();
-
-      expect(lastNameControl.valid).toBeFalsy();
-      expect(input.classes).toEqual({
-        'form-control': true,
-        'is-invalid': true,
-        'ng-untouched': true,
-        'ng-pristine': true,
-        'ng-invalid': true,
-      });
-    }));
-  });
-
-  it(`should set firstNameMessage$ correctly in the template when firstName
-    field is valid`, fakeAsync(() => {
+  it(`should set firstName input classes correctly in the template when
+    firstName control on parentForm is valid`, fakeAsync(() => {
     const firstNameControl = component.parentForm.get('nameGroup.firstName');
     fixture.detectChanges();
-    const element = fixture.debugElement.queryAll(By.css('span'))[1];
     tick(1000);
 
     fixture.detectChanges();
 
+    const input = fixture.debugElement.query(By.css('#firstName'));
     expect(firstNameControl.valid).toBeTruthy();
-    expect(element.nativeElement.textContent).toEqual('');
+    expect(input.classes).toEqual({
+      'form-control': true,
+      'is-valid': true,
+      'ng-untouched': true,
+      'ng-pristine': true,
+      'ng-valid': true,
+    });
   }));
 
-  it(`should set firstNameMessage$ correctly in the template when firstName
-    field is required`, fakeAsync(() => {
-    let errors: Object;
-    const element = fixture.debugElement.queryAll(By.css('span'))[1];
+  it(`should set firstName input classes correctly in the template when
+    firstName control on parentForm is not valid and submitted is
+    true`, fakeAsync(() => {
     const firstNameControl = component.parentForm.get('nameGroup.firstName');
+    component.submitted = true;
     fixture.detectChanges();
-    tick(1000);
 
     firstNameControl.setValue('');
     tick(1000);
-    errors = firstNameControl.errors || {};
     fixture.detectChanges();
 
+    const input = fixture.debugElement.query(By.css('#firstName'));
+    expect(component.submitted).toBeTrue();
+    expect(firstNameControl.valid).toBeFalsy();
+    expect(input.classes).toEqual({
+      'form-control': true,
+      'is-invalid': true,
+      'ng-untouched': true,
+      'ng-pristine': true,
+      'ng-invalid': true,
+    });
+  }));
+
+  it(`should set firstName input classes correctly in the template when
+    firstName control on parentForm is not valid and submitted is
+    false`, fakeAsync(() => {
+    let errors: Object;
+    const firstNameControl = component.parentForm.get('nameGroup.firstName');
+    component.submitted = false;
+    fixture.detectChanges();
+
+    firstNameControl.setValue('');
+    tick(1000);
+    fixture.detectChanges();
+    errors = firstNameControl.errors || {};
+
+    const input = fixture.debugElement.query(By.css('#firstName'));
+    expect(component.submitted).toBeFalse();
     expect(firstNameControl.valid).toBeFalsy();
     expect(errors['required']).toBeTruthy();
-    expect(element.nativeElement.textContent).toEqual(
+    expect(input.classes).toEqual({
+      'form-control': true,
+      'ng-untouched': true,
+      'ng-pristine': true,
+      'ng-invalid': true,
+    });
+  }));
+
+  it(`should set lastName control on parentForm correctly in the
+    template`, () => {
+    fixture.detectChanges();
+
+    const inputs = fixture.debugElement.queryAll(By.css('#lastName'));
+    expect(inputs.length).toBe(1);
+    expect(inputs[0].nativeElement.autocomplete).toBe('family-name');
+    expect(inputs[0].nativeElement.type).toBe('text');
+    expect(inputs[0].nativeElement.placeholder).toBe('Last name (required)');
+    expect(inputs[0].nativeElement.value).toBe(USER.name.lastName);
+  });
+
+  it(`should set lastName control value on parentForm when lastName input value
+    changes`, fakeAsync(() => {
+    const name = 'Jay';
+    fixture.detectChanges();
+    const firstNameControl = component.parentForm.get('nameGroup.lastName');
+    const input = fixture.debugElement.query(By.css('#lastName'));
+
+    input.nativeElement.value = name;
+    input.nativeElement.dispatchEvent(new Event('input'));
+    tick(1000);
+
+    expect(firstNameControl.value).toBe(name);
+  }));
+
+  it(`should set lastName input classes correctly in the template when lastName
+    control on parentForm is valid`, fakeAsync(() => {
+    const lastNameControl = component.parentForm.get('nameGroup.lastName');
+    fixture.detectChanges();
+    tick(1000);
+
+    fixture.detectChanges();
+
+    const input = fixture.debugElement.query(By.css('#lastName'));
+    expect(lastNameControl.valid).toBeTruthy();
+    expect(input.classes).toEqual({
+      'form-control': true,
+      'is-valid': true,
+      'ng-untouched': true,
+      'ng-pristine': true,
+      'ng-valid': true,
+    });
+  }));
+
+  it(`should set lastName input classes correctly in the template when
+    lastName control on parentForm is not valid and submitted is
+    true`, fakeAsync(() => {
+    const lastNameControl = component.parentForm.get('nameGroup.lastName');
+    component.submitted = true;
+    fixture.detectChanges();
+    const input = fixture.debugElement.query(By.css('#lastName'));
+    tick(1000);
+
+    fixture.detectChanges();
+
+    expect(component.submitted).toBeTrue();
+    expect(lastNameControl.valid).toBeTruthy();
+    expect(input.classes).toEqual({
+      'form-control': true,
+      'is-valid': true,
+      'ng-untouched': true,
+      'ng-pristine': true,
+      'ng-valid': true,
+    });
+  }));
+
+  it(`should set lastName input classes correctly in the template when
+    lastName control on parentForm is not valid and submitted is
+    false`, fakeAsync(() => {
+    let errors: Object;
+    const lastNameControl = component.parentForm.get('nameGroup.lastName');
+    component.submitted = false;
+    fixture.detectChanges();
+
+    lastNameControl.setValue('');
+    tick(1000);
+    fixture.detectChanges();
+    errors = lastNameControl.errors || {};
+
+    const input = fixture.debugElement.query(By.css('#lastName'));
+    expect(component.submitted).toBeFalse();
+    expect(lastNameControl.valid).toBeFalsy();
+    expect(errors['required']).toBeTruthy();
+    expect(input.classes).toEqual({
+      'form-control': true,
+      'ng-untouched': true,
+      'ng-pristine': true,
+      'ng-invalid': true,
+    });
+  }));
+
+  it(`should set firstNameMessage$ correctly in the template when firstName
+    control on parentForm is valid`, fakeAsync(() => {
+    const firstNameControl = component.parentForm.get('nameGroup.firstName');
+    fixture.detectChanges();
+    tick(1000);
+
+    fixture.detectChanges();
+
+    const element = fixture.debugElement.queryAll(
+      By.css('.invalid-tooltip span')
+    )[0];
+    expect(firstNameControl.valid).toBeTruthy();
+    expect(element.nativeElement.textContent).toBe('');
+  }));
+
+  it(`should set firstNameMessage$ correctly in the template when firstName
+    control on parentForm is required`, fakeAsync(() => {
+    let errors: Object;
+    const firstNameControl = component.parentForm.get('nameGroup.firstName');
+    fixture.detectChanges();
+
+    firstNameControl.setValue('');
+    tick(1000);
+    fixture.detectChanges();
+    errors = firstNameControl.errors || {};
+
+    const element = fixture.debugElement.queryAll(
+      By.css('.invalid-tooltip span')
+    )[0];
+    expect(firstNameControl.valid).toBeFalsy();
+    expect(errors['required']).toBeTruthy();
+    expect(element.nativeElement.textContent).toBe(
       FIRSTNAMEVALIDATIONMESSAGES['required']
     );
   }));
 
   it(`should set firstNameMessage$ correctly in the template when firstName
-    field value is less than NAMEMINLENGTH`, fakeAsync(() => {
+    control value.length on parentForm is less than NAMEMINLENGTH and greater
+    than 0`, fakeAsync(() => {
+    let name: string;
     let errors: Object;
     const firstNameControl = component.parentForm.get('nameGroup.firstName');
     fixture.detectChanges();
-    const element = fixture.debugElement.queryAll(By.css('span'))[1];
 
-    firstNameControl.setValue('jo');
+    name = 'jo';
+    expect(name.length).toBeLessThan(NAMEMINLENGTH);
+    expect(name.length).toBeGreaterThan(0);
+    firstNameControl.setValue(name);
     tick(1000);
     errors = firstNameControl.errors || {};
     fixture.detectChanges();
 
+    const element = fixture.debugElement.queryAll(
+      By.css('.invalid-tooltip span')
+    )[0];
     expect(firstNameControl.valid).toBeFalsy();
     expect(errors['minlength']).toBeTruthy();
-    expect(element.nativeElement.textContent).toEqual(
+    expect(element.nativeElement.textContent).toBe(
       FIRSTNAMEVALIDATIONMESSAGES['minlength']
     );
   }));
 
   it(`should set firstNameMessage$ correctly in the template when firstName
-    field value is greater than or equal to NAMEMAXLENGTH`, fakeAsync(() => {
+    control value.length on parentForm is greater than or equal to
+    NAMEMAXLENGTH`, fakeAsync(() => {
+    let name: string;
     let errors: Object;
-    const element = fixture.debugElement.queryAll(By.css('span'))[1];
     const firstNameControl = component.parentForm.get('nameGroup.firstName');
     fixture.detectChanges();
-    tick(1000);
 
-    firstNameControl.setValue('johnnysilverhandsiscool');
+    name = 'johnnysilverhandsiscool';
+    expect(name.length).toBeGreaterThanOrEqual(NAMEMAXLENGTH);
+    firstNameControl.setValue(name);
     tick(1000);
-    errors = firstNameControl.errors || {};
     fixture.detectChanges();
+    errors = firstNameControl.errors || {};
 
+    const element = fixture.debugElement.queryAll(
+      By.css('.invalid-tooltip span')
+    )[0];
     expect(firstNameControl.valid).toBeFalsy();
     expect(errors['maxlength']).toBeTruthy();
-    expect(element.nativeElement.textContent).toEqual(
+    expect(element.nativeElement.textContent).toBe(
       FIRSTNAMEVALIDATIONMESSAGES['maxlength']
     );
   }));
 
   it(`should set lastNameMessage$ correctly in the template when lastName
-    field is valid`, fakeAsync(() => {
-    const element = fixture.debugElement.queryAll(By.css('span'))[3];
+    constrol on parentForm is valid`, fakeAsync(() => {
     const lastNameControl = component.parentForm.get('nameGroup.lastName');
     fixture.detectChanges();
     tick(1000);
 
     fixture.detectChanges();
+
+    const element = fixture.debugElement.queryAll(
+      By.css('.invalid-tooltip span')
+    )[1];
     expect(lastNameControl.valid).toBeTruthy();
-    expect(element.nativeElement.textContent).toEqual('');
+    expect(element.nativeElement.textContent).toBe('');
   }));
 
   it(`should set lastNameMessage$ correctly in the template when lastName
-    field value is less than NAMEMINLENGTH`, fakeAsync(() => {
+    control on parentForm is required`, fakeAsync(() => {
     let errors: Object;
-    const element = fixture.debugElement.queryAll(By.css('span'))[3];
     const lastNameControl = component.parentForm.get('nameGroup.lastName');
     fixture.detectChanges();
     tick(1000);
 
-    lastNameControl.setValue('jo');
+    lastNameControl.setValue('');
     tick(1000);
     errors = lastNameControl.errors || {};
     fixture.detectChanges();
 
+    const element = fixture.debugElement.queryAll(
+      By.css('.invalid-tooltip span')
+    )[1];
+    expect(lastNameControl.valid).toBeFalsy();
+    expect(errors['required']).toBeTruthy();
+    expect(element.nativeElement.textContent).toBe(
+      LASTNAMEVALIDATIONMESSAGES['required']
+    );
+  }));
+
+  it(`should set lastNameMessage$ correctly in the template when lastName
+    control value.length on parentForm is less than NAMEMINLENGTH and greater
+    than 0`, fakeAsync(() => {
+    let name: string;
+    let errors: Object;
+    const lastNameControl = component.parentForm.get('nameGroup.lastName');
+    fixture.detectChanges();
+
+    name = 'jo';
+    expect(name.length).toBeLessThan(NAMEMINLENGTH);
+    expect(name.length).toBeGreaterThan(0);
+    lastNameControl.setValue(name);
+    tick(1000);
+    errors = lastNameControl.errors || {};
+    fixture.detectChanges();
+
+    const element = fixture.debugElement.queryAll(
+      By.css('.invalid-tooltip span')
+    )[1];
     expect(lastNameControl.valid).toBeFalsy();
     expect(errors['minlength']).toBeTruthy();
-    expect(element.nativeElement.textContent).toEqual(
+    expect(element.nativeElement.textContent).toBe(
       LASTNAMEVALIDATIONMESSAGES['minlength']
     );
   }));
 
   it(`should set lastNameMessage$ correctly in the template when lastName
-    field value is less than NAMEMINLENGTH`, fakeAsync(() => {
+    control value on parentForm is greater than or equal to
+    NAMEMAXLENGTH`, fakeAsync(() => {
+    let name: string;
     let errors: Object;
-    const element = fixture.debugElement.queryAll(By.css('span'))[3];
     const lastNameControl = component.parentForm.get('nameGroup.lastName');
     fixture.detectChanges();
-    tick(1000);
 
-    lastNameControl.setValue('jo');
+    name = 'johnnysilverhandsiscool';
+    expect(name.length).toBeGreaterThanOrEqual(NAMEMAXLENGTH);
+    lastNameControl.setValue(name);
     tick(1000);
     errors = lastNameControl.errors || {};
     fixture.detectChanges();
 
-    expect(lastNameControl.valid).toBeFalsy();
-    expect(errors['minlength']).toBeTruthy();
-    expect(element.nativeElement.textContent).toEqual(
-      LASTNAMEVALIDATIONMESSAGES['minlength']
-    );
-  }));
-
-  it(`should set lastNameMessage$ correctly in the template when lastName
-    field value is greater than or equal to NAMEMAXLENGTH`, fakeAsync(() => {
-    let errors: Object;
-    const element = fixture.debugElement.queryAll(By.css('span'))[3];
-    const lastNameControl = component.parentForm.get('nameGroup.lastName');
-    fixture.detectChanges();
-    tick(1000);
-
-    lastNameControl.setValue('johnnysilverhandsiscool');
-    tick(1000);
-    errors = lastNameControl.errors || {};
-    fixture.detectChanges();
-
+    const element = fixture.debugElement.queryAll(
+      By.css('.invalid-tooltip span')
+    )[1];
     expect(lastNameControl.valid).toBeFalsy();
     expect(errors['maxlength']).toBeTruthy();
-    expect(element.nativeElement.textContent).toEqual(
+    expect(element.nativeElement.textContent).toBe(
       LASTNAMEVALIDATIONMESSAGES['maxlength']
     );
   }));
