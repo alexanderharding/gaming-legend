@@ -74,12 +74,12 @@ export class CartComponent implements OnInit {
       this.latestArrival = this.shippingRateService.getDeliveryDate(
         +slowestRate
       );
+      /* Config NgbModal settings */
+      this.config.centered = true;
+      this.config.backdrop = 'static';
     } else {
       this.pageTitle = 'Retrieval Error';
     }
-    /* Config NgbModal settings */
-    this.config.centered = true;
-    this.config.backdrop = 'static';
   }
 
   saveItem(item: ICartItem, amount: number): void {
