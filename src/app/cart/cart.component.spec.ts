@@ -14,7 +14,7 @@ import { CartSummaryComponent } from './cart-summary/cart-summary.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
 import { NotificationService } from '../services/notification.service';
-import { formatCurrency } from '@angular/common';
+import { formatCurrency, formatDate } from '@angular/common';
 
 function getQuantity(items: ICartItem[]): number {
   return items.reduce((prev, current) => {
@@ -267,7 +267,7 @@ describe('CartComponent', () => {
   it('should set shippingRates correctly', () => {
     fixture.detectChanges();
 
-    expect(component.shippingRates.length).toBe(3);
+    expect(component.shippingRates.length).toBe(SHIPPINGRATES.length);
     expect(component.shippingRates).toBe(SHIPPINGRATES);
   });
 
@@ -346,6 +346,7 @@ describe('CartComponent', () => {
     value`, () => {
     fixture.detectChanges();
 
+    expect(mockShippingRateService.setShipping).toHaveBeenCalledTimes(1);
     expect(mockShippingRateService.setShipping).toHaveBeenCalledWith(
       SHIPPINGRATES[0].price
     );
@@ -827,6 +828,7 @@ describe('CartComponent w/ template', () => {
     fixture: ComponentFixture<CartComponent>,
     mockCartService,
     mockActivatedRoute,
+    mockShippingRateService,
     ITEMS: ICartItem[],
     SHIPPINGRATES;
 
@@ -990,6 +992,10 @@ describe('CartComponent w/ template', () => {
           },
         },
       };
+      mockShippingRateService = jasmine.createSpyObj([
+        'setShipping',
+        'getDeliveryDate',
+      ]);
       TestBed.configureTestingModule({
         imports: [HttpClientTestingModule],
 
@@ -998,6 +1004,7 @@ describe('CartComponent w/ template', () => {
         providers: [
           { provide: CartService, useValue: mockCartService },
           { provide: ActivatedRoute, useValue: mockActivatedRoute },
+          { provide: ShippingRateService, useValue: mockShippingRateService },
         ],
         schemas: [NO_ERRORS_SCHEMA],
       }).compileComponents();
@@ -1068,15 +1075,29 @@ describe('CartComponent w/ template', () => {
     expect(+elements[1].nativeElement.textContent).toBe(getQuantity(ITEMS));
   });
 
-  // it('should set earliestArrival in the template', () => {
-  //   // run ngOnInit
-  //   fixture.detectChanges();
-  // });
+  it('should set earliestArrival in the template', () => {
+    let arrivalDate: string;
+    mockShippingRateService.getDeliveryDate.and.returnValue(new Date());
 
-  // it('should set latestArrival in the template', () => {
-  //   // run ngOnInit
-  //   fixture.detectChanges();
-  // });
+    fixture.detectChanges();
+    const elements = fixture.debugElement.queryAll(By.css('#expectedArrival'));
+    arrivalDate = formatDate(component.earliestArrival, 'longDate', 'en-US');
+
+    expect(elements.length).toBe(1);
+    expect(elements[0].nativeElement.textContent).toContain(arrivalDate);
+  });
+
+  it('should set latestArrival in the template', () => {
+    let arrivalDate: string;
+    mockShippingRateService.getDeliveryDate.and.returnValue(new Date());
+
+    fixture.detectChanges();
+    const elements = fixture.debugElement.queryAll(By.css('#expectedArrival'));
+    arrivalDate = formatDate(component.latestArrival, 'longDate', 'en-US');
+
+    expect(elements.length).toBe(1);
+    expect(elements[0].nativeElement.textContent).toContain(arrivalDate);
+  });
 
   it(`should call openRemoveModal method with correct value when remove input
     button is clicked`, () => {

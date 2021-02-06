@@ -75,7 +75,6 @@ export class CartComponent implements OnInit {
         +slowestRate
       );
     } else {
-      this.setLoading(false);
       this.pageTitle = 'Retrieval Error';
     }
     /* Config NgbModal settings */

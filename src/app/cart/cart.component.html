@@ -133,8 +133,9 @@
             <div class="pt-2">
               <h5 class="font-weight-bold mb-3">Expected shipping delivery</h5>
 
-              <p class="mb-0">
-                {{ earliestArrival | date }} - {{ latestArrival | date }}
+              <p id="expectedArrival" class="mb-0">
+                {{ earliestArrival | date: "longDate" }} -
+                {{ latestArrival | date: "longDate" }}
               </p>
               <small>Shipping options available at checkout</small>
             </div>
