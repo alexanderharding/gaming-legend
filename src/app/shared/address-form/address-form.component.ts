@@ -46,7 +46,7 @@ export class AddressFormComponent implements OnInit, OnDestroy {
     characters.`,
   };
   private readonly streetMessageSubject = new BehaviorSubject<string>(
-    this.streetValidationMessages['required']
+    this.streetValidationMessages.required
   );
   readonly streetMessage$ = this.streetMessageSubject.asObservable();
 
@@ -58,7 +58,7 @@ export class AddressFormComponent implements OnInit, OnDestroy {
     characters.`,
   };
   private readonly cityMessageSubject = new BehaviorSubject<string>(
-    this.cityValidationMessages['required']
+    this.cityValidationMessages.required
   );
   readonly cityMessage$ = this.cityMessageSubject.asObservable();
 
@@ -66,7 +66,7 @@ export class AddressFormComponent implements OnInit, OnDestroy {
     required: 'Please select a state.',
   };
   private readonly stateMessageSubject = new BehaviorSubject<string>(
-    this.stateValidationMessages['required']
+    this.stateValidationMessages.required
   );
   readonly stateMessage$ = this.stateMessageSubject.asObservable();
 
@@ -75,7 +75,7 @@ export class AddressFormComponent implements OnInit, OnDestroy {
     pattern: 'Please enter a valid zip code.',
   };
   private readonly zipMessageSubject = new BehaviorSubject<string>(
-    this.zipValidationMessages['required']
+    this.zipValidationMessages.required
   );
   readonly zipMessage$ = this.zipMessageSubject.asObservable();
 

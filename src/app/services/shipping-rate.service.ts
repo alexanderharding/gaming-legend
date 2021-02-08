@@ -9,6 +9,11 @@ import { ErrorService } from './error.service';
   providedIn: 'root',
 })
 export class ShippingRateService {
+  constructor(
+    private readonly http: HttpClient,
+    private readonly errorService: ErrorService
+  ) {}
+
   private readonly baseUrl: string = 'http://localhost:3000';
 
   readonly shippingDeadline: number = 23;
@@ -18,18 +23,13 @@ export class ShippingRateService {
   );
   readonly shippingPriceSelectedAction$ = this.shippingPriceSelectedSubject.asObservable();
 
-  setShipping(price: number): void {
-    this.shippingPriceSelectedSubject.next(+price);
-  }
-
-  constructor(
-    private readonly http: HttpClient,
-    private readonly errorService: ErrorService
-  ) {}
-
   shippingRates$ = this.http
     .get<IShipping[]>(`${this.baseUrl}/shipping`)
     .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
+
+  setShipping(price: number): void {
+    this.shippingPriceSelectedSubject.next(+price);
+  }
 
   getShippingRate(id: number): Observable<IShipping> {
     return this.http

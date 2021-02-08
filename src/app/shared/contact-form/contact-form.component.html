@@ -15,7 +15,7 @@
         placeholder="Phone number (required)"
         [ngClass]="{
           'is-invalid': (phoneMessage$ | async) && submitted,
-          'is-valid': !(phoneMessage$ | async)
+          'is-valid': (phoneMessage$ | async) === ''
         }"
       />
       <div class="invalid-tooltip">
@@ -36,12 +36,14 @@
         [ngClass]="{
           'is-invalid':
             ((emailMessage$ | async) || emailTakenMessage) && submitted,
-          'is-valid': !(emailMessage$ | async) && !emailTakenMessage
+          'is-valid': (emailMessage$ | async) === '' && !emailTakenMessage
         }"
       />
       <div class="invalid-tooltip">
         <span>{{ emailMessage$ | async }}</span>
-        <span *ngIf="!(emailMessage$ | async)">{{ emailTakenMessage }}</span>
+        <span *ngIf="(emailMessage$ | async) === ''">{{
+          emailTakenMessage
+        }}</span>
       </div>
     </div>
     <div class="input-group">
@@ -60,14 +62,15 @@
               (contactGroupMessage$ | async)) &&
             submitted,
           'is-valid':
-            !(confirmEmailMessage$ | async) && !(contactGroupMessage$ | async)
+            (confirmEmailMessage$ | async) === '' &&
+            (contactGroupMessage$ | async) === ''
         }"
       />
-      <div *ngIf="!(emailMessage$ | async)" class="invalid-tooltip">
+      <div *ngIf="(emailMessage$ | async) === ''" class="invalid-tooltip">
         <span>
           {{ confirmEmailMessage$ | async }}
         </span>
-        <span *ngIf="!(confirmEmailMessage$ | async)">
+        <span *ngIf="(confirmEmailMessage$ | async) === ''">
           {{ contactGroupMessage$ | async }}
         </span>
       </div>

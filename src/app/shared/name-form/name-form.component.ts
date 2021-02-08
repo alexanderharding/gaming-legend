@@ -41,7 +41,7 @@ export class NameFormComponent implements OnInit, OnDestroy {
     characters.`,
   };
   private readonly firstNameMessageSubject = new BehaviorSubject<string>(
-    this.firstNameValidationMessages['required']
+    this.firstNameValidationMessages.required
   );
   readonly firstNameMessage$ = this.firstNameMessageSubject.asObservable();
 
@@ -53,7 +53,7 @@ export class NameFormComponent implements OnInit, OnDestroy {
     characters.`,
   };
   private readonly lastNameMessageSubject = new BehaviorSubject<string>(
-    this.lastNameValidationMessages['required']
+    this.lastNameValidationMessages.required
   );
   readonly lastNameMessage$ = this.lastNameMessageSubject.asObservable();
 

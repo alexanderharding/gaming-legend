@@ -74,8 +74,8 @@ describe('SignInComponent', () => {
     fixture.detectChanges();
 
     expect(component.signInForm).toBeTruthy();
-    expect(component.signInForm.controls['email']).toBeTruthy();
-    expect(component.signInForm.controls['password']).toBeTruthy();
+    expect(component.signInForm.controls.email).toBeTruthy();
+    expect(component.signInForm.controls.password).toBeTruthy();
   });
 
   it('should set pageTitle correctly', () => {
@@ -111,7 +111,7 @@ describe('SignInComponent', () => {
 
     component.emailMessage$.subscribe((m) => (message = m));
 
-    expect(message).toBe(EMAILVALIDATIONMESSAGES['required']);
+    expect(message).toBe(EMAILVALIDATIONMESSAGES.required);
   });
 
   it('should set passwordMessage$ correctly to start', () => {
@@ -120,7 +120,7 @@ describe('SignInComponent', () => {
 
     component.passwordMessage$.subscribe((m) => (message = m));
 
-    expect(message).toBe(PASSWORDVALIDATIONMESSAGES['required']);
+    expect(message).toBe(PASSWORDVALIDATIONMESSAGES.required);
   });
 
   describe('signInForm', () => {
@@ -132,8 +132,8 @@ describe('SignInComponent', () => {
 
     it('should be valid when set correctly', () => {
       fixture.detectChanges();
-      const emailControl = component.signInForm.controls['email'];
-      const passwordControl = component.signInForm.controls['password'];
+      const emailControl = component.signInForm.controls.email;
+      const passwordControl = component.signInForm.controls.password;
 
       emailControl.setValue('validEmail@test.com');
       passwordControl.setValue('ValidPassword');
@@ -144,71 +144,84 @@ describe('SignInComponent', () => {
     describe('emailControl', () => {
       it('should be set to an empty string to start', () => {
         fixture.detectChanges();
-        const emailControl = component.signInForm.controls['email'];
+        const emailControl = component.signInForm.controls.email;
 
         expect(emailControl.value).toBe('');
       });
 
       it('should be invalid when empty', () => {
-        let errors: Object;
+        let errors: object;
         let message: string;
+        let key: string;
         fixture.detectChanges();
-        const emailControl = component.signInForm.controls['email'];
+        const emailControl = component.signInForm.controls.email;
 
         component.emailMessage$.subscribe((m) => (message = m));
         errors = emailControl.errors || {};
 
-        expect(errors['email']).toBeFalsy();
-        expect(errors['required']).toBeTruthy();
+        key = 'email';
+        expect(errors[key]).toBeFalsy();
+        key = 'required';
+        expect(errors[key]).toBeTruthy();
       });
 
       it('should set emailMessage$ correctly when empty', fakeAsync(() => {
         let message: string;
+        let key: string;
         fixture.detectChanges();
-        const emailControl = component.signInForm.controls['email'];
+        const emailControl = component.signInForm.controls.email;
 
         emailControl.setValue('');
         tick(1000);
         component.emailMessage$.subscribe((m) => (message = m));
 
-        expect(message).toBe(EMAILVALIDATIONMESSAGES['required']);
+        key = 'required';
+        expect(message).toBe(EMAILVALIDATIONMESSAGES[key]);
       }));
 
       it(`should be invalid when value isn't a valid email`, () => {
-        let errors: Object;
+        let errors: object;
+        let key: string;
         fixture.detectChanges();
-        const emailControl = component.signInForm.controls['email'];
+        const emailControl = component.signInForm.controls.email;
 
         emailControl.setValue('invalidEmail');
         errors = emailControl.errors || {};
 
-        expect(errors['required']).toBeFalsy();
-        expect(errors['email']).toBeTruthy();
+        key = 'required';
+        expect(errors[key]).toBeFalsy();
+        key = 'email';
+        expect(errors[key]).toBeTruthy();
       });
 
       it(`should set emailMessage$ correctly when value isn't a valid
         email`, fakeAsync(() => {
+        let key: string;
         let message: string;
         fixture.detectChanges();
-        const emailControl = component.signInForm.controls['email'];
+        const emailControl = component.signInForm.controls.email;
 
         emailControl.setValue('invalidEmail');
         tick(1000);
         component.emailMessage$.subscribe((m) => (message = m));
 
-        expect(message).toBe(EMAILVALIDATIONMESSAGES['email']);
+        key = 'email';
+        expect(message).toBe(EMAILVALIDATIONMESSAGES[key]);
       }));
 
       it(`should be valid when value is a valid email`, () => {
-        let errors: Object;
+        let key: string;
+        let errors: object;
         fixture.detectChanges();
-        const emailControl = component.signInForm.controls['email'];
+        const emailControl = component.signInForm.controls.email;
 
         emailControl.setValue('validEmail@test.com');
         errors = emailControl.errors || {};
 
-        expect(errors['required']).toBeFalsy();
-        expect(errors['email']).toBeFalsy();
+        key = 'required';
+        expect(errors[key]).toBeFalsy();
+        key = 'email';
+        expect(errors[key]).toBeFalsy();
         expect(emailControl.valid).toBeTruthy();
       });
 
@@ -216,7 +229,7 @@ describe('SignInComponent', () => {
         email`, fakeAsync(() => {
         let message: string;
         fixture.detectChanges();
-        const emailControl = component.signInForm.controls['email'];
+        const emailControl = component.signInForm.controls.email;
 
         emailControl.setValue('validEmail@test.com');
         tick(1000);
@@ -229,43 +242,47 @@ describe('SignInComponent', () => {
     describe('passwordControl', () => {
       it('should be set to an empty string to start', () => {
         fixture.detectChanges();
-        const passwordControl = component.signInForm.controls['password'];
+        const passwordControl = component.signInForm.controls.password;
 
         expect(passwordControl.value).toBe('');
       });
 
       it('should be invalid when empty', () => {
-        let errors: Object;
+        let errors: object;
+        let key: string;
         fixture.detectChanges();
-        const passwordControl = component.signInForm.controls['password'];
+        const passwordControl = component.signInForm.controls.password;
 
         errors = passwordControl.errors || {};
 
         expect(passwordControl.valid).toBeFalsy();
-        expect(errors['required']).toBeTruthy();
+        key = 'required';
+        expect(errors[key]).toBeTruthy();
       });
 
       it('should set passwordMessage$ correctly when empty', fakeAsync(() => {
         let message: string;
         fixture.detectChanges();
-        const passwordControl = component.signInForm.controls['password'];
+        const passwordControl = component.signInForm.controls.password;
 
         passwordControl.setValue('');
         tick(1000);
         component.passwordMessage$.subscribe((m) => (message = m));
 
-        expect(message).toBe(PASSWORDVALIDATIONMESSAGES['required']);
+        expect(message).toBe(PASSWORDVALIDATIONMESSAGES.required);
       }));
 
       it('should be valid when there is a value', () => {
-        let errors: Object;
+        let errors: object;
+        let key: string;
         fixture.detectChanges();
-        const passwordControl = component.signInForm.controls['password'];
+        const passwordControl = component.signInForm.controls.password;
 
         passwordControl.setValue('t');
         errors = passwordControl.errors || {};
 
-        expect(errors['required']).toBeFalsy();
+        key = 'required';
+        expect(errors[key]).toBeFalsy();
         expect(passwordControl.valid).toBeTruthy();
       });
 
@@ -273,7 +290,7 @@ describe('SignInComponent', () => {
         value`, fakeAsync(() => {
         let message: string;
         fixture.detectChanges();
-        const passwordControl = component.signInForm.controls['password'];
+        const passwordControl = component.signInForm.controls.password;
 
         passwordControl.setValue('j');
         tick(1000);
@@ -312,8 +329,8 @@ describe('SignInComponent', () => {
       const form = component.signInForm;
 
       form.patchValue({
-        email: email,
-        password: password,
+        email,
+        password,
       });
       component.onSubmit(form);
 
@@ -342,8 +359,8 @@ describe('SignInComponent', () => {
       const form = component.signInForm;
 
       form.patchValue({
-        email: email,
-        password: password,
+        email,
+        password,
       });
       component.onSubmit(form);
 
@@ -584,7 +601,7 @@ describe('SignInComponent w/ template', () => {
 
   it(`should set email field classes correctly in the template when
     submitted is false`, fakeAsync(() => {
-    const input = fixture.debugElement.query(By.css('#email'));
+    const input = fixture.debugElement.query(By.css('#userEmail'));
     fixture.detectChanges();
     const emailControl = component.signInForm.get('email');
 
@@ -613,7 +630,7 @@ describe('SignInComponent w/ template', () => {
     submitted is true`, fakeAsync(() => {
     component.submitted = true;
     fixture.detectChanges();
-    const input = fixture.debugElement.query(By.css('#email'));
+    const input = fixture.debugElement.query(By.css('#userEmail'));
     const emailControl = component.signInForm.get('email');
 
     expect(emailControl.valid).toBeFalsy();
@@ -641,7 +658,7 @@ describe('SignInComponent w/ template', () => {
 
   it(`should set password field classes correctly in the template when
     submitted is false`, fakeAsync(() => {
-    const input = fixture.debugElement.query(By.css('#password'));
+    const input = fixture.debugElement.query(By.css('#userPassword'));
     fixture.detectChanges();
     const passwordControl = component.signInForm.get('password');
 
@@ -668,7 +685,7 @@ describe('SignInComponent w/ template', () => {
 
   it(`should set password field classes correctly in the template when
     submitted is true`, fakeAsync(() => {
-    const input = fixture.debugElement.query(By.css('#password'));
+    const input = fixture.debugElement.query(By.css('#userPassword'));
     component.submitted = true;
     fixture.detectChanges();
     const passwordControl = component.signInForm.get('password');
@@ -697,7 +714,7 @@ describe('SignInComponent w/ template', () => {
   }));
 
   it(`should set password field type correctly in the template`, () => {
-    const input = fixture.debugElement.query(By.css('#password'));
+    const input = fixture.debugElement.query(By.css('#userPassword'));
     fixture.detectChanges();
 
     component.signInForm.get('showPassword').setValue(false);
@@ -720,7 +737,7 @@ describe('SignInComponent w/ template', () => {
 
     expect(emailControl.valid).toBeFalsy();
     expect(element.nativeElement.textContent).toBe(
-      EMAILVALIDATIONMESSAGES['required']
+      EMAILVALIDATIONMESSAGES.required
     );
   });
 
@@ -733,7 +750,7 @@ describe('SignInComponent w/ template', () => {
 
     expect(passwordControl.valid).toBeFalsy();
     expect(element.nativeElement.textContent).toBe(
-      PASSWORDVALIDATIONMESSAGES['required']
+      PASSWORDVALIDATIONMESSAGES.required
     );
   });
 
@@ -779,9 +796,8 @@ describe('SignInComponent w/ template', () => {
       By.directive(SignUpComponent)
     );
 
-    (<SignUpComponent>(
-      SignUpComponentDEs[0].componentInstance
-    )).loadingChange.emit(true);
+    (SignUpComponentDEs[0]
+      .componentInstance as SignUpComponent).loadingChange.emit(true);
 
     expect(component.setLoading).toHaveBeenCalledWith(true);
   });

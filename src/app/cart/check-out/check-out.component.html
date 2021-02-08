@@ -160,7 +160,7 @@
                       [submitted]="submitted"
                       [user]="user"
                       [emailTakenMessage]="emailTakenMessage"
-                      (onValueChange)="setEmailTakenMessage($event)"
+                      (valueChange)="setEmailTakenMessage($event)"
                     ></ctacu-contact-form>
                   </div>
                   <div class="d-none d-sm-flex justify-content-between">
@@ -526,7 +526,10 @@
                           : 'place order'
                       "
                       class="btn btn-block btn-success text-capitalize"
-                      *ngIf="!(loading$ | async); else loading"
+                      *ngIf="
+                        (loading$ | async) === (false || null || undefined);
+                        else loading
+                      "
                       [disabled]="checkOutForm.invalid && submitted"
                     />
                     <ng-template #loading>

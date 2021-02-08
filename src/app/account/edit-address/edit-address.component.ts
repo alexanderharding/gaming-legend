@@ -3,6 +3,7 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output,
   TemplateRef,
@@ -28,7 +29,7 @@ import { IUser } from 'src/app/types/user';
   styleUrls: ['./edit-address.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EditAddressComponent implements OnInit {
+export class EditAddressComponent implements OnInit, OnDestroy {
   submitted = false;
   editForm: FormGroup;
   hasValueChanged = false;
@@ -41,7 +42,7 @@ export class EditAddressComponent implements OnInit {
   @Input() user: IUser;
   @Input() loading: boolean;
 
-  @Output() onLoadingChange = new EventEmitter<boolean>();
+  @Output() loadingChange = new EventEmitter<boolean>();
 
   readonly streetMinLength = +this.formValidationRuleService.streetMinLength;
   readonly streetMaxLength = +this.formValidationRuleService.streetMaxLength;
@@ -101,7 +102,7 @@ export class EditAddressComponent implements OnInit {
       this.submitted = true;
     }
     if (form.valid) {
-      this.onLoadingChange.emit(true);
+      this.loadingChange.emit(true);
       this.saveUser(form);
     }
   }
@@ -189,11 +190,11 @@ export class EditAddressComponent implements OnInit {
         this.showSuccess();
         this.user = user;
         this.resetForm(form, user);
-        this.onLoadingChange.emit(false);
+        this.loadingChange.emit(false);
       },
       (error) => {
         this.showDanger();
-        this.onLoadingChange.emit(false);
+        this.loadingChange.emit(false);
       }
     );
   }

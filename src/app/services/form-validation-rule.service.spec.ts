@@ -4,9 +4,9 @@ import { IMonthOption } from '../types/month-option';
 import { FormValidationRuleService } from './form-validation-rule.service';
 
 describe('FormValidationRuleService', () => {
-  let service: FormValidationRuleService,
-    STATES: string[],
-    MONTHOPTIONS: IMonthOption[];
+  let service: FormValidationRuleService;
+  let STATES: string[];
+  let MONTHOPTIONS: IMonthOption[];
 
   beforeEach(() => {
     STATES = [

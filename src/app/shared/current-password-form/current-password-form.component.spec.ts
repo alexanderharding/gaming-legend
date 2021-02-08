@@ -1,4 +1,9 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  async,
+  ComponentFixture,
+  TestBed,
+  waitForAsync,
+} from '@angular/core/testing';
 
 import { CurrentPasswordFormComponent } from './current-password-form.component';
 
@@ -6,11 +11,13 @@ xdescribe('CurrentPasswordFormComponent', () => {
   let component: CurrentPasswordFormComponent;
   let fixture: ComponentFixture<CurrentPasswordFormComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [CurrentPasswordFormComponent],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [CurrentPasswordFormComponent],
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(CurrentPasswordFormComponent);

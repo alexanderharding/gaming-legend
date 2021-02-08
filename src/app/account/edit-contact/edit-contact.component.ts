@@ -44,7 +44,7 @@ export class EditContactComponent implements OnInit, OnDestroy {
   @Input() user: User;
   @Input() loading: boolean;
 
-  @Output() onLoadingChange = new EventEmitter<boolean>();
+  @Output() loadingChange = new EventEmitter<boolean>();
 
   private readonly phonePattern = this.formValidationRuleService
     .phonePattern as RegExp;
@@ -91,7 +91,7 @@ export class EditContactComponent implements OnInit, OnDestroy {
       this.submitted = true;
     }
     if (form.valid) {
-      this.onLoadingChange.emit(true);
+      this.loadingChange.emit(true);
       if (this.hasEmailChanged) {
         this.checkForUser(form);
       } else {
@@ -159,14 +159,14 @@ export class EditContactComponent implements OnInit, OnDestroy {
         if (result) {
           this.emailTakenMessage = `${emailControl.value} is already registered
           to an account.`;
-          this.onLoadingChange.emit(false);
+          this.loadingChange.emit(false);
         } else {
           this.saveUser(form);
         }
       },
       (error) => {
         this.showDanger();
-        this.onLoadingChange.emit(false);
+        this.loadingChange.emit(false);
       }
     );
   }
@@ -184,11 +184,11 @@ export class EditContactComponent implements OnInit, OnDestroy {
         this.showSuccess();
         this.user = user as User;
         this.resetForm(form, user);
-        this.onLoadingChange.emit(false);
+        this.loadingChange.emit(false);
       },
       (error) => {
         this.showDanger();
-        this.onLoadingChange.emit(false);
+        this.loadingChange.emit(false);
       }
     );
   }

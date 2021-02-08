@@ -463,9 +463,9 @@ export class CheckOutComponent implements OnInit, OnDestroy {
           total: +total,
         }) as Payment;
         let order = OrderMaker.create({
-          customer: customer,
-          items: items,
-          payment: payment,
+          customer,
+          items,
+          payment,
           date: new Date().toString(),
           status: 'pending',
         }) as Order;

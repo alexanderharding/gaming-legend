@@ -8,11 +8,11 @@ import { ProductResult } from '../types/product-result';
 import { ProductResolverService } from './product-resolver.service';
 
 describe('ProductResolverService', () => {
-  let service: ProductResolverService,
-    mockProductService,
-    mockActivatedRouteSnapshot,
-    mockActivatedRouteSnapshotWithInvalidId,
-    PRODUCT: IProduct;
+  let service: ProductResolverService;
+  let mockProductService;
+  let mockActivatedRouteSnapshot;
+  let mockActivatedRouteSnapshotWithInvalidId;
+  let PRODUCT: IProduct;
 
   beforeEach(() => {
     PRODUCT = {

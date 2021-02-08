@@ -29,7 +29,7 @@ export class PasswordFormComponent implements OnInit, OnDestroy {
     pattern: 'Please enter a valid password that is at least 8 characters.',
   };
   private readonly passwordMessageSubject = new BehaviorSubject<string>(
-    this.passwordValidationMessages['required']
+    this.passwordValidationMessages.required
   );
   readonly passwordMessage$ = this.passwordMessageSubject.asObservable();
 
@@ -37,7 +37,7 @@ export class PasswordFormComponent implements OnInit, OnDestroy {
     required: 'Please confirm the password.',
   };
   private readonly confirmPasswordMessageSubject = new BehaviorSubject<string>(
-    this.confirmPasswordValidationMessages['required']
+    this.confirmPasswordValidationMessages.required
   );
   readonly confirmPasswordMessage$ = this.confirmPasswordMessageSubject.asObservable();
 
@@ -45,7 +45,7 @@ export class PasswordFormComponent implements OnInit, OnDestroy {
     match: 'The confirmation does not match the password.',
   };
   private readonly passwordGroupMessageSubject = new BehaviorSubject<string>(
-    this.passwordGroupValidationMessages['match']
+    this.passwordGroupValidationMessages.match
   );
   readonly passwordGroupMessage$ = this.passwordGroupMessageSubject.asObservable();
 

@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  HostBinding,
   OnInit,
   TemplateRef,
 } from '@angular/core';

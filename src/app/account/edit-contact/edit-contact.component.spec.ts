@@ -17,13 +17,13 @@ import { IUser, User } from 'src/app/types/user';
 import { EditContactComponent } from './edit-contact.component';
 
 xdescribe('EditContactComponent', () => {
-  let component: EditContactComponent,
-    fixture: ComponentFixture<EditContactComponent>,
-    USER: IUser,
-    mockAuthService,
-    mockFormValidationRuleService: FormValidationRuleService,
-    mockNotificationService,
-    PHONEPATTERN: RegExp;
+  let component: EditContactComponent;
+  let fixture: ComponentFixture<EditContactComponent>;
+  let USER: IUser;
+  let mockAuthService;
+  let mockFormValidationRuleService: FormValidationRuleService;
+  let mockNotificationService;
+  let PHONEPATTERN: RegExp;
 
   @Component({
     selector: 'ctacu-current-password-form',
@@ -150,8 +150,8 @@ xdescribe('EditContactComponent', () => {
     it('should be valid when set correctly', () => {
       fixture.detectChanges();
 
-      const contactGroupControl = component.editForm.controls['contactGroup'];
-      const passwordGroupControl = component.editForm.controls['passwordGroup'];
+      const contactGroupControl = component.editForm.controls.contactGroup;
+      const passwordGroupControl = component.editForm.controls.passwordGroup;
       contactGroupControl.setValue({
         phone: USER.contact.phone,
         email: USER.contact.email,
@@ -168,13 +168,13 @@ xdescribe('EditContactComponent', () => {
       it('should create', () => {
         fixture.detectChanges();
 
-        expect(component.editForm.controls['contactGroup']).toBeTruthy();
+        expect(component.editForm.controls.contactGroup).toBeTruthy();
       });
 
       it('should set hasValueChanged correctly', () => {
         fixture.detectChanges();
 
-        const contactGroupControl = component.editForm.controls['contactGroup'];
+        const contactGroupControl = component.editForm.controls.contactGroup;
         contactGroupControl.setValue({
           phone: '8011471471',
           email: 'testEmail1232@email.com',
@@ -202,18 +202,21 @@ xdescribe('EditContactComponent', () => {
 
         it('should be invalid when empty', () => {
           let errors = {};
+          let key: string;
           fixture.detectChanges();
 
           const emailControl = component.editForm.get('contactGroup.email');
           errors = emailControl.errors || {};
 
           expect(emailControl.valid).toBeFalsy();
-          expect(errors['required']).toBeTruthy();
+          key = 'required';
+          expect(errors[key]).toBeTruthy();
         });
 
         it('should not be required when there is a value', () => {
-          let errors = {},
-            email: string;
+          let errors = {};
+          let email: string;
+          let key: string;
           fixture.detectChanges();
 
           const emailControl = component.editForm.get('contactGroup.email');
@@ -222,12 +225,14 @@ xdescribe('EditContactComponent', () => {
           emailControl.setValue(email);
           errors = emailControl.errors || {};
 
-          expect(errors['required']).toBeFalsy();
+          key = 'required';
+          expect(errors[key]).toBeFalsy();
         });
 
         it('should be valid when value is a valid email', () => {
-          let errors = {},
-            email: string;
+          let errors = {};
+          let email: string;
+          let key: string;
           fixture.detectChanges();
 
           const emailControl = component.editForm.get('contactGroup.email');
@@ -236,12 +241,15 @@ xdescribe('EditContactComponent', () => {
           errors = emailControl.errors || {};
 
           expect(emailControl.valid).toBeTruthy();
-          expect(errors['required']).toBeFalsy();
-          expect(errors['email']).toBeFalsy();
+          key = 'required';
+          expect(errors[key]).toBeFalsy();
+          key = 'email';
+          expect(errors[key]).toBeFalsy();
         });
 
         it('should be invalid when value is not a valid email', () => {
           let errors = {};
+          let key: string;
           fixture.detectChanges();
 
           const emailControl = component.editForm.get('contactGroup.email');
@@ -249,7 +257,8 @@ xdescribe('EditContactComponent', () => {
           errors = emailControl.errors || {};
 
           expect(emailControl.valid).toBeFalsy();
-          expect(errors['email']).toBeTruthy();
+          key = 'email';
+          expect(errors[key]).toBeTruthy();
         });
       });
 
@@ -266,6 +275,7 @@ xdescribe('EditContactComponent', () => {
 
         it('should be invalid when empty', () => {
           let errors = {};
+          let key: string;
           fixture.detectChanges();
 
           const confirmEmailControl = component.editForm.get(
@@ -274,12 +284,14 @@ xdescribe('EditContactComponent', () => {
           errors = confirmEmailControl.errors || {};
 
           expect(confirmEmailControl.valid).toBeFalsy();
-          expect(errors['required']).toBeTruthy();
+          key = 'required';
+          expect(errors[key]).toBeTruthy();
         });
 
         it('should be valid when there is a value', () => {
-          let errors = {},
-            email: string;
+          let errors = {};
+          let email: string;
+          let key: string;
           fixture.detectChanges();
 
           const confirmEmailControl = component.editForm.get(
@@ -289,8 +301,9 @@ xdescribe('EditContactComponent', () => {
           confirmEmailControl.setValue(email);
           errors = confirmEmailControl.errors || {};
 
+          key = 'required';
           expect(confirmEmailControl.valid).toBeTruthy();
-          expect(errors['required']).toBeFalsy();
+          expect(errors[key]).toBeFalsy();
         });
       });
 
@@ -307,6 +320,7 @@ xdescribe('EditContactComponent', () => {
 
         it('should be required when empty', () => {
           let errors = {};
+          let key: string;
           fixture.detectChanges();
 
           const currentPasswordControl = component.editForm.get(
@@ -315,12 +329,15 @@ xdescribe('EditContactComponent', () => {
           errors = currentPasswordControl.errors || {};
 
           expect(currentPasswordControl.valid).toBeFalsy();
-          expect(errors['required']).toBeTruthy();
-          expect(errors['invalid']).toBeFalsy();
+          key = 'required';
+          expect(errors[key]).toBeTruthy();
+          key = 'invalid';
+          expect(errors[key]).toBeFalsy();
         });
 
         it(`should be invalid when value doesn't match the USER.password`, () => {
           let errors = {};
+          let key: string;
           const password = 'testPassword42';
           fixture.detectChanges();
 
@@ -333,12 +350,15 @@ xdescribe('EditContactComponent', () => {
 
           expect(currentPasswordControl.value === USER.password).toBeFalsy();
           expect(currentPasswordControl.valid).toBeFalsy();
-          expect(errors['invalid']).toBeTruthy();
-          expect(errors['required']).toBeFalsy();
+          key = 'invalid';
+          expect(errors[key]).toBeTruthy();
+          key = 'required';
+          expect(errors[key]).toBeFalsy();
         });
 
         it(`should be valid when value matches USER.password`, () => {
           let errors = {};
+          let key: string;
           fixture.detectChanges();
           const currentPasswordControl = component.editForm.get(
             'passwordGroup.currentPassword'
@@ -349,8 +369,10 @@ xdescribe('EditContactComponent', () => {
 
           expect(currentPasswordControl.value === USER.password).toBeTruthy();
           expect(currentPasswordControl.valid).toBeTruthy();
-          expect(errors['required']).toBeFalsy();
-          expect(errors['invalid']).toBeFalsy();
+          key = 'required';
+          expect(errors[key]).toBeFalsy();
+          key = 'invalid';
+          expect(errors[key]).toBeFalsy();
         });
       });
     });
@@ -365,15 +387,15 @@ xdescribe('EditContactComponent', () => {
       expect(component.submitted).toBeTruthy();
     });
 
-    it(`should call onLoadingChange.emit with correct value`, () => {
+    it(`should call loadingChange.emit with correct value`, () => {
       fixture.detectChanges();
       mockAuthService.checkForUser.and.returnValue(of(true));
       mockAuthService.saveUser.and.returnValue(of(true));
-      spyOn(component.onLoadingChange, 'emit');
+      spyOn(component.loadingChange, 'emit');
       spyOn(component, 'resetForm');
 
-      const contactGroupControl = component.editForm.controls['contactGroup'];
-      const passwordGroupControl = component.editForm.controls['passwordGroup'];
+      const contactGroupControl = component.editForm.controls.contactGroup;
+      const passwordGroupControl = component.editForm.controls.passwordGroup;
       contactGroupControl.setValue({
         phone: '8011231471',
         email: 'testemail@test.com',
@@ -385,27 +407,27 @@ xdescribe('EditContactComponent', () => {
       expect(component.editForm.valid).toBeTruthy();
       component.onSubmit(component.editForm);
 
-      expect(component.onLoadingChange.emit).toHaveBeenCalledWith(true);
-      expect(component.onLoadingChange.emit).toHaveBeenCalledWith(false);
-      expect(component.onLoadingChange.emit).toHaveBeenCalledTimes(2);
+      expect(component.loadingChange.emit).toHaveBeenCalledWith(true);
+      expect(component.loadingChange.emit).toHaveBeenCalledWith(false);
+      expect(component.loadingChange.emit).toHaveBeenCalledTimes(2);
     });
 
-    it(`should not call onLoadingChange.emit when editForm is not
+    it(`should not call loadingChange.emit when editForm is not
       valid`, () => {
       fixture.detectChanges();
-      spyOn(component.onLoadingChange, 'emit');
+      spyOn(component.loadingChange, 'emit');
 
       component.onSubmit(component.editForm);
 
-      expect(component.onLoadingChange.emit).toHaveBeenCalledTimes(0);
+      expect(component.loadingChange.emit).toHaveBeenCalledTimes(0);
     });
 
     xit(`should call saveUser method on AuthService with correct value`, () => {
       let updatedUser: User;
       // mockAuthService.checkForUser.and.returnValue(of(true));
       fixture.detectChanges();
-      const contactGroupControl = component.editForm.controls['contactGroup'];
-      const passwordGroupControl = component.editForm.controls['passwordGroup'];
+      const contactGroupControl = component.editForm.controls.contactGroup;
+      const passwordGroupControl = component.editForm.controls.passwordGroup;
       contactGroupControl.setValue({
         phone: '8011231471',
         email: USER.contact.email,
@@ -443,8 +465,8 @@ xdescribe('EditContactComponent', () => {
       let updatedUser: User;
       spyOn(component, 'resetForm');
       fixture.detectChanges();
-      const contactGroupControl = component.editForm.controls['contactGroup'];
-      const passwordGroupControl = component.editForm.controls['passwordGroup'];
+      const contactGroupControl = component.editForm.controls.contactGroup;
+      const passwordGroupControl = component.editForm.controls.passwordGroup;
       contactGroupControl.setValue({
         firstName: 'John',
         lastName: 'Doe',
@@ -494,8 +516,8 @@ xdescribe('EditContactComponent', () => {
       mockAuthService.saveUser.and.returnValue(of(true));
       spyOn(component, 'resetForm');
       fixture.detectChanges();
-      const contactGroupControl = component.editForm.controls['contactGroup'];
-      const passwordGroupControl = component.editForm.controls['passwordGroup'];
+      const contactGroupControl = component.editForm.controls.contactGroup;
+      const passwordGroupControl = component.editForm.controls.passwordGroup;
       contactGroupControl.setValue({
         firstName: 'John',
         lastName: 'Doe',
@@ -514,8 +536,8 @@ xdescribe('EditContactComponent', () => {
       AuthService throws an error`, () => {
       mockAuthService.saveUser.and.returnValue(throwError(''));
       fixture.detectChanges();
-      const contactGroupControl = component.editForm.controls['contactGroup'];
-      const passwordGroupControl = component.editForm.controls['passwordGroup'];
+      const contactGroupControl = component.editForm.controls.contactGroup;
+      const passwordGroupControl = component.editForm.controls.passwordGroup;
       contactGroupControl.setValue({
         firstName: 'John',
         lastName: 'Doe',

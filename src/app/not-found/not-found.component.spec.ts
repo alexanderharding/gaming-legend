@@ -6,16 +6,19 @@ describe('NotFoundComponent', () => {
   let component: NotFoundComponent;
   let fixture: ComponentFixture<NotFoundComponent>;
 
-  @Component({
-    selector: 'ngb-alert',
-    template: '<div></div>',
-  })
-  class FakeNgbAlertComponent {}
+  // @Component({
+  //   selector: 'ngb-alert',
+  //   template: '<div></div>',
+  // })
+  // class FakeNgbAlertComponent {}
 
   beforeEach(
     waitForAsync(() => {
       TestBed.configureTestingModule({
-        declarations: [NotFoundComponent, FakeNgbAlertComponent],
+        declarations: [
+          NotFoundComponent,
+          // FakeNgbAlertComponent
+        ],
       }).compileComponents();
     })
   );

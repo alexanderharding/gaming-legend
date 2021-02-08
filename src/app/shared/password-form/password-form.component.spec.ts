@@ -8,6 +8,7 @@ import {
 } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
+import { Key } from 'protractor';
 import { passwordChecker } from 'src/app/functions/password-checker';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
 import { IUser } from 'src/app/types/user';
@@ -98,13 +99,14 @@ describe('PasswordFormComponent', () => {
     tick(1000);
 
     component.passwordMessage$.subscribe((m) => (message = m));
-    expect(message).toBe(PASSWORDVALIDATIONMESSAGES['required']);
+    expect(message).toBe(PASSWORDVALIDATIONMESSAGES.required);
   }));
 
   it(`should set passwordMessage$ correctly when password control on the
     parentForm is not valid`, fakeAsync(() => {
+    let key: string;
     let password: string;
-    let errors: Object;
+    let errors: object;
     let message: string;
     const passwordControl = component.parentForm.get('passwordGroup.password');
     fixture.detectChanges();
@@ -115,10 +117,12 @@ describe('PasswordFormComponent', () => {
     component.passwordMessage$.subscribe((m) => (message = m));
     errors = passwordControl.errors || {};
 
+    key = 'pattern';
     expect(passwordControl.valid).toBeFalsy();
-    expect(errors['pattern']).toBeFalsy();
-    expect(errors['required']).toBeTruthy();
-    expect(message).toBe(PASSWORDVALIDATIONMESSAGES['required']);
+    expect(errors[key]).toBeFalsy();
+    key = 'required';
+    expect(errors[key]).toBeTruthy();
+    expect(message).toBe(PASSWORDVALIDATIONMESSAGES.required);
 
     password = 'invalidpassword';
     expect(PASSWORDPATTERN.test(password)).toBeFalse();
@@ -128,16 +132,19 @@ describe('PasswordFormComponent', () => {
     errors = passwordControl.errors || {};
 
     expect(passwordControl.valid).toBeFalsy();
-    expect(errors['required']).toBeFalsy();
-    expect(errors['pattern']).toBeTruthy();
-    expect(message).toBe(PASSWORDVALIDATIONMESSAGES['pattern']);
+    key = 'required';
+    expect(errors[key]).toBeFalsy();
+    key = 'pattern';
+    expect(errors[key]).toBeTruthy();
+    expect(message).toBe(PASSWORDVALIDATIONMESSAGES.pattern);
   }));
 
   it(`should set passwordMessage$ correctly when password control on the
     parentForm is valid`, fakeAsync(() => {
     let password: string;
-    let errors: Object;
+    let errors: object;
     let message: string;
+    let key: string;
     const passwordControl = component.parentForm.get('passwordGroup.password');
     fixture.detectChanges();
 
@@ -148,8 +155,10 @@ describe('PasswordFormComponent', () => {
     component.passwordMessage$.subscribe((m) => (message = m));
     errors = passwordControl.errors || {};
 
-    expect(errors['pattern']).toBeFalsy();
-    expect(errors['required']).toBeFalsy();
+    key = 'pattern';
+    expect(errors[key]).toBeFalsy();
+    key = 'required';
+    expect(errors[key]).toBeFalsy();
     expect(passwordControl.valid).toBeTruthy();
     expect(message).toBe('');
   }));
@@ -161,13 +170,14 @@ describe('PasswordFormComponent', () => {
     tick(1000);
 
     component.confirmPasswordMessage$.subscribe((m) => (message = m));
-    expect(message).toBe(CONFIRMPASSWORDVALIDATIONMESSAGES['required']);
+    expect(message).toBe(CONFIRMPASSWORDVALIDATIONMESSAGES.required);
   }));
 
   it(`should set confirmPasswordMessage$ correctly when confirmPassword control
     on parentForm is not valid`, fakeAsync(() => {
-    let errors: Object;
+    let errors: object;
     let message: string;
+    let key: string;
     const confirmPasswordControl = component.parentForm.get(
       'passwordGroup.confirmPassword'
     );
@@ -179,14 +189,16 @@ describe('PasswordFormComponent', () => {
     errors = confirmPasswordControl.errors || {};
 
     expect(confirmPasswordControl.valid).toBeFalsy();
-    expect(errors['required']).toBeTruthy();
-    expect(message).toBe(CONFIRMPASSWORDVALIDATIONMESSAGES['required']);
+    key = 'required';
+    expect(errors[key]).toBeTruthy();
+    expect(message).toBe(CONFIRMPASSWORDVALIDATIONMESSAGES.required);
   }));
 
   it(`should set confirmPasswordMessage$ correctly when confirmPassword control
     on parentForm is valid`, fakeAsync(() => {
-    let errors: Object;
+    let errors: object;
     let message: string;
+    let key: string;
     const confirmPasswordControl = component.parentForm.get(
       'passwordGroup.confirmPassword'
     );
@@ -197,7 +209,8 @@ describe('PasswordFormComponent', () => {
     component.confirmPasswordMessage$.subscribe((m) => (message = m));
     errors = confirmPasswordControl.errors || {};
 
-    expect(errors['required']).toBeFalsy();
+    key = 'required';
+    expect(errors[key]).toBeFalsy();
     expect(confirmPasswordControl.valid).toBeTruthy();
     expect(message).toBe('');
   }));
@@ -209,14 +222,15 @@ describe('PasswordFormComponent', () => {
     tick(1000);
 
     component.passwordGroupMessage$.subscribe((m) => (message = m));
-    expect(message).toBe(PASSWORDGROUPVALIDATIONMESSAGES['match']);
+    expect(message).toBe(PASSWORDGROUPVALIDATIONMESSAGES.match);
   }));
 
   it(`should set passwordGroupMessage$ correctly when passwordControl value
     and passwordGroup control value on parentForm is not
     valid`, fakeAsync(() => {
-    let errors: Object;
+    let errors: object;
     let message: string;
+    let key: string;
     const passwordGroupControl = component.parentForm.get('passwordGroup');
     const passwordControl = passwordGroupControl.get('password');
     const confirmPasswordControl = passwordGroupControl.get('confirmPassword');
@@ -230,15 +244,17 @@ describe('PasswordFormComponent', () => {
     errors = passwordGroupControl.errors || {};
 
     expect(passwordGroupControl.valid).toBeFalsy();
-    expect(errors['match']).toBeTruthy();
-    expect(message).toBe(PASSWORDGROUPVALIDATIONMESSAGES['match']);
+    key = 'match';
+    expect(errors[key]).toBeTruthy();
+    expect(message).toBe(PASSWORDGROUPVALIDATIONMESSAGES.match);
   }));
 
   it(`should set passwordGroupMessage$ correctly when passwordGroup on
     parentForm is valid`, fakeAsync(() => {
     let password: string;
-    let errors: Object;
+    let errors: object;
     let message: string;
+    let key: string;
     const passwordGroupControl = component.parentForm.get('passwordGroup');
     const passwordControl = passwordGroupControl.get('password');
     const confirmPasswordControl = passwordGroupControl.get('confirmPassword');
@@ -253,7 +269,8 @@ describe('PasswordFormComponent', () => {
     errors = passwordGroupControl.errors || {};
 
     expect(passwordGroupControl.valid).toBeTruthy();
-    expect(errors['match']).toBeFalsy();
+    key = 'match';
+    expect(errors[key]).toBeFalsy();
     expect(message).toBe('');
   }));
 });

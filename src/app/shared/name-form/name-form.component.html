@@ -16,7 +16,7 @@
         placeholder="First name (required)"
         [ngClass]="{
           'is-invalid': (firstNameMessage$ | async) && submitted,
-          'is-valid': !(firstNameMessage$ | async)
+          'is-valid': (firstNameMessage$ | async) === ''
         }"
       />
       <div class="invalid-tooltip">
@@ -36,7 +36,7 @@
         autocomplete="family-name"
         [ngClass]="{
           'is-invalid': (lastNameMessage$ | async) && submitted,
-          'is-valid': !(lastNameMessage$ | async)
+          'is-valid': (lastNameMessage$ | async) === ''
         }"
       />
       <div class="invalid-tooltip">

@@ -46,7 +46,7 @@ export class SignInComponent implements OnInit, OnDestroy {
     email: 'Please enter a valid email address',
   };
   private readonly emailMessageSubject = new BehaviorSubject<string>(
-    this.emailValidationMessages['required']
+    this.emailValidationMessages.required
   );
   readonly emailMessage$ = this.emailMessageSubject.asObservable();
 
@@ -54,7 +54,7 @@ export class SignInComponent implements OnInit, OnDestroy {
     required: 'Please enter your password.',
   };
   private readonly passwordMessageSubject = new BehaviorSubject<string>(
-    this.passwordValidationMessages['required']
+    this.passwordValidationMessages.required
   );
   readonly passwordMessage$ = this.passwordMessageSubject.asObservable();
 

@@ -80,7 +80,7 @@ export class AuthService {
     return this.http.post<IUser>(`${this.baseUrl}/users`, user).pipe(
       delay(1000),
       retry(3),
-      tap((user) => this.setCurrentUser(user)),
+      tap((u) => this.setCurrentUser(u)),
       catchError(this.errorService.handleError)
     );
   }
@@ -90,7 +90,7 @@ export class AuthService {
     return this.http.put<IUser>(`${this.baseUrl}/users/${+user.id}`, user).pipe(
       delay(1000),
       retry(3),
-      tap((user) => this.setCurrentUser(user)),
+      tap((u) => this.setCurrentUser(u)),
       catchError(this.errorService.handleError)
     );
   }

@@ -140,8 +140,8 @@ describe('EditNameComponent', () => {
     fixture.detectChanges();
 
     expect(component.editForm).toBeTruthy();
-    expect(component.editForm.controls['nameGroup']).toBeTruthy();
-    expect(component.editForm.controls['passwordGroup']).toBeTruthy();
+    expect(component.editForm.controls.nameGroup).toBeTruthy();
+    expect(component.editForm.controls.passwordGroup).toBeTruthy();
   });
 
   describe('editForm', () => {
@@ -154,8 +154,8 @@ describe('EditNameComponent', () => {
     it('should be valid when set correctly', () => {
       fixture.detectChanges();
 
-      const nameGroupControl = component.editForm.controls['nameGroup'];
-      const passwordGroupControl = component.editForm.controls['passwordGroup'];
+      const nameGroupControl = component.editForm.controls.nameGroup;
+      const passwordGroupControl = component.editForm.controls.passwordGroup;
       nameGroupControl.setValue({
         firstName: 'John',
         lastName: 'Doe',
@@ -171,7 +171,7 @@ describe('EditNameComponent', () => {
       it('should set hasValueChanged correctly', () => {
         fixture.detectChanges();
 
-        const nameGroupControl = component.editForm.controls['nameGroup'];
+        const nameGroupControl = component.editForm.controls.nameGroup;
         nameGroupControl.setValue({
           firstName: 'Ricky',
           lastName: 'Bobby',
@@ -199,6 +199,7 @@ describe('EditNameComponent', () => {
 
         it('should be invalid when empty', () => {
           let errors = {};
+          let key: string;
           fixture.detectChanges();
 
           const firstNameControl = component.editForm.get(
@@ -207,12 +208,14 @@ describe('EditNameComponent', () => {
           errors = firstNameControl.errors || {};
 
           expect(firstNameControl.valid).toBeFalsy();
-          expect(errors['required']).toBeTruthy();
+          key = 'required';
+          expect(errors[key]).toBeTruthy();
         });
 
         it('should not be required when there is a value', () => {
-          let errors = {},
-            name: string;
+          let errors = {};
+          let name: string;
+          let key: string;
           fixture.detectChanges();
 
           const firstNameControl = component.editForm.get(
@@ -223,13 +226,15 @@ describe('EditNameComponent', () => {
           firstNameControl.setValue(name);
           errors = firstNameControl.errors || {};
 
-          expect(errors['required']).toBeFalsy();
+          key = 'required';
+          expect(errors[key]).toBeFalsy();
         });
 
         it(`should be invalid when value.length is less than
           NAMEMINLENGTH`, () => {
-          let errors = {},
-            name: string;
+          let errors = {};
+          let name: string;
+          let key: string;
           fixture.detectChanges();
 
           const firstNameControl = component.editForm.get(
@@ -241,13 +246,15 @@ describe('EditNameComponent', () => {
           errors = firstNameControl.errors || {};
 
           expect(firstNameControl.valid).toBeFalsy();
-          expect(errors['minlength']).toBeTruthy();
+          key = 'minlength';
+          expect(errors[key]).toBeTruthy();
         });
 
         it(`should be valid when value.length is greater than or equal to
          NAMEMINLENGTH`, () => {
-          let errors = {},
-            name: string;
+          let errors = {};
+          let name: string;
+          let key: string;
           fixture.detectChanges();
 
           const firstNameControl = component.editForm.get(
@@ -259,13 +266,15 @@ describe('EditNameComponent', () => {
           firstNameControl.setValue(name);
           errors = firstNameControl.errors || {};
           expect(firstNameControl.valid).toBeTruthy();
-          expect(errors['minlength']).toBeFalsy();
+          key = 'minlength';
+          expect(errors[key]).toBeFalsy();
         });
 
         it(`should be invalid when value.length is greater than
           NAMEMAXLENGTH`, () => {
-          let errors = {},
-            name: string;
+          let errors = {};
+          let name: string;
+          let key: string;
           fixture.detectChanges();
 
           const firstNameControl = component.editForm.get(
@@ -277,15 +286,16 @@ describe('EditNameComponent', () => {
           errors = firstNameControl.errors || {};
 
           expect(firstNameControl.valid).toBeFalsy();
-          expect(errors['maxlength']).toBeTruthy();
+          key = 'maxlength';
+          expect(errors[key]).toBeTruthy();
         });
 
         it(`should be valid when value.length is less than or equal to
           NAMEMAXLENGTH`, () => {
-          let errors = {},
-            name: string;
+          let errors = {};
+          let name: string;
+          let key: string;
           fixture.detectChanges();
-
           const firstNameControl = component.editForm.get(
             'nameGroup.firstName'
           );
@@ -294,8 +304,10 @@ describe('EditNameComponent', () => {
           expect(name.length).toBeLessThanOrEqual(NAMEMAXLENGTH);
           firstNameControl.setValue(name);
           errors = firstNameControl.errors || {};
+
           expect(firstNameControl.valid).toBeTruthy();
-          expect(errors['maxlength']).toBeFalsy();
+          key = 'maxlength';
+          expect(errors[key]).toBeFalsy();
         });
       });
 
@@ -310,18 +322,21 @@ describe('EditNameComponent', () => {
 
         it('should be invalid when empty', () => {
           let errors = {};
+          let key: string;
           fixture.detectChanges();
 
           const lastNameControl = component.editForm.get('nameGroup.lastName');
           errors = lastNameControl.errors || {};
 
           expect(lastNameControl.valid).toBeFalsy();
-          expect(errors['required']).toBeTruthy();
+          key = 'required';
+          expect(errors[key]).toBeTruthy();
         });
 
         it('should not be required when there is a value', () => {
-          let errors = {},
-            name: string;
+          let errors = {};
+          let name: string;
+          let key: string;
           fixture.detectChanges();
 
           const lastNameControl = component.editForm.get('nameGroup.lastName');
@@ -330,13 +345,15 @@ describe('EditNameComponent', () => {
           lastNameControl.setValue(name);
           errors = lastNameControl.errors || {};
 
-          expect(errors['required']).toBeFalsy();
+          key = 'required';
+          expect(errors[key]).toBeFalsy();
         });
 
         it(`should be invalid when value.length is less than
           NAMEMINLENGTH`, () => {
-          let errors = {},
-            name: string;
+          let errors = {};
+          let name: string;
+          let key: string;
           fixture.detectChanges();
 
           const lastNameControl = component.editForm.get('nameGroup.lastName');
@@ -346,13 +363,15 @@ describe('EditNameComponent', () => {
           errors = lastNameControl.errors || {};
 
           expect(lastNameControl.valid).toBeFalsy();
-          expect(errors['minlength']).toBeTruthy();
+          key = 'minlength';
+          expect(errors[key]).toBeTruthy();
         });
 
         it(`should be valid when value.length is greater than or equal to
           NAMEMINLENGTH`, () => {
-          let errors = {},
-            name: string;
+          let errors = {};
+          let name: string;
+          let key: string;
           fixture.detectChanges();
 
           const lastNameControl = component.editForm.get('nameGroup.lastName');
@@ -362,13 +381,15 @@ describe('EditNameComponent', () => {
           lastNameControl.setValue(name);
           errors = lastNameControl.errors || {};
           expect(lastNameControl.valid).toBeTruthy();
-          expect(errors['minlength']).toBeFalsy();
+          key = 'minlength';
+          expect(errors[key]).toBeFalsy();
         });
 
         it(`should be invalid when value.length is greater than
           NAMEMAXLENGTH`, () => {
-          let errors = {},
-            name: string;
+          let errors = {};
+          let name: string;
+          let key: string;
           fixture.detectChanges();
 
           const lastNameControl = component.editForm.get('nameGroup.lastName');
@@ -378,23 +399,26 @@ describe('EditNameComponent', () => {
           errors = lastNameControl.errors || {};
 
           expect(lastNameControl.valid).toBeFalsy();
-          expect(errors['maxlength']).toBeTruthy();
+          key = 'maxlength';
+          expect(errors[key]).toBeTruthy();
         });
 
         it(`should be valid when value.length is less than or equal to
           NAMEMAXLENGTH`, () => {
-          let errors = {},
-            name: string;
+          let errors = {};
+          let name: string;
+          let key: string;
           fixture.detectChanges();
-
           const lastNameControl = component.editForm.get('nameGroup.lastName');
 
           name = 'Hardndeisnckdslfsalw';
           expect(name.length).toBeLessThanOrEqual(NAMEMAXLENGTH);
           lastNameControl.setValue(name);
           errors = lastNameControl.errors || {};
+
           expect(lastNameControl.valid).toBeTruthy();
-          expect(errors['maxlength']).toBeFalsy();
+          key = 'maxlength';
+          expect(errors[key]).toBeFalsy();
         });
       });
     });
@@ -413,6 +437,7 @@ describe('EditNameComponent', () => {
 
         it('should be invalid when empty', () => {
           let errors = {};
+          let key: string;
           fixture.detectChanges();
 
           const currentPasswordControl = component.editForm.get(
@@ -421,12 +446,15 @@ describe('EditNameComponent', () => {
           errors = currentPasswordControl.errors || {};
 
           expect(currentPasswordControl.valid).toBeFalsy();
-          expect(errors['required']).toBeTruthy();
-          expect(errors['invalid']).toBeFalsy();
+          key = 'required';
+          expect(errors[key]).toBeTruthy();
+          key = 'invalid';
+          expect(errors[key]).toBeFalsy();
         });
 
         it(`should be invalid when value doesn't match the USER.password`, () => {
           let errors = {};
+          let key: string;
           fixture.detectChanges();
 
           const currentPasswordControl = component.editForm.get(
@@ -437,12 +465,15 @@ describe('EditNameComponent', () => {
           errors = currentPasswordControl.errors || {};
 
           expect(currentPasswordControl.valid).toBeFalsy();
-          expect(errors['invalid']).toBeTruthy();
-          expect(errors['required']).toBeFalsy();
+          key = 'invalid';
+          expect(errors[key]).toBeTruthy();
+          key = 'required';
+          expect(errors[key]).toBeFalsy();
         });
 
         it('should be valid when set correctly', () => {
           let errors = {};
+          let key: string;
           fixture.detectChanges();
           const currentPasswordControl = component.editForm.get(
             'passwordGroup.currentPassword'
@@ -451,8 +482,10 @@ describe('EditNameComponent', () => {
           currentPasswordControl.setValue(USER.password);
           errors = currentPasswordControl.errors || {};
 
-          expect(errors['required']).toBeFalsy();
-          expect(errors['invalid']).toBeFalsy();
+          key = 'required';
+          expect(errors[key]).toBeFalsy();
+          key = 'invalid';
+          expect(errors[key]).toBeFalsy();
           expect(currentPasswordControl.valid).toBeTruthy();
         });
       });
@@ -468,15 +501,15 @@ describe('EditNameComponent', () => {
       expect(component.submitted).toBeTruthy();
     });
 
-    it(`should call onLoadingChange.emit with correct value`, () => {
+    it(`should call loadingChange.emit with correct value`, () => {
       fixture.detectChanges();
-      spyOn(component.onLoadingChange, 'emit');
+      spyOn(component.loadingChange, 'emit');
       spyOn(component, 'resetForm');
 
       mockAuthService.saveUser.and.returnValue(of(true));
 
-      const nameGroupControl = component.editForm.controls['nameGroup'];
-      const passwordGroupControl = component.editForm.controls['passwordGroup'];
+      const nameGroupControl = component.editForm.controls.nameGroup;
+      const passwordGroupControl = component.editForm.controls.passwordGroup;
       nameGroupControl.setValue({
         firstName: 'John',
         lastName: 'Doe',
@@ -487,27 +520,27 @@ describe('EditNameComponent', () => {
       expect(component.editForm.valid).toBeTruthy();
       component.onSubmit(component.editForm);
 
-      expect(component.onLoadingChange.emit).toHaveBeenCalledWith(true);
-      expect(component.onLoadingChange.emit).toHaveBeenCalledWith(false);
-      expect(component.onLoadingChange.emit).toHaveBeenCalledTimes(2);
+      expect(component.loadingChange.emit).toHaveBeenCalledWith(true);
+      expect(component.loadingChange.emit).toHaveBeenCalledWith(false);
+      expect(component.loadingChange.emit).toHaveBeenCalledTimes(2);
     });
 
-    it(`should not call onLoadingChange.emit when editForm is not
+    it(`should not call loadingChange.emit when editForm is not
       valid`, () => {
       fixture.detectChanges();
-      spyOn(component.onLoadingChange, 'emit');
+      spyOn(component.loadingChange, 'emit');
 
       component.onSubmit(component.editForm);
 
-      expect(component.onLoadingChange.emit).toHaveBeenCalledTimes(0);
+      expect(component.loadingChange.emit).toHaveBeenCalledTimes(0);
     });
 
     it(`should call saveUser method on AuthService with correct value`, () => {
       let updatedUser: User;
-      spyOn(component.onLoadingChange, 'emit');
+      spyOn(component.loadingChange, 'emit');
       fixture.detectChanges();
-      const nameGroupControl = component.editForm.controls['nameGroup'];
-      const passwordGroupControl = component.editForm.controls['passwordGroup'];
+      const nameGroupControl = component.editForm.controls.nameGroup;
+      const passwordGroupControl = component.editForm.controls.passwordGroup;
       nameGroupControl.setValue({
         firstName: 'John',
         lastName: 'Doe',
@@ -544,8 +577,8 @@ describe('EditNameComponent', () => {
       let updatedUser: User;
       spyOn(component, 'resetForm');
       fixture.detectChanges();
-      const nameGroupControl = component.editForm.controls['nameGroup'];
-      const passwordGroupControl = component.editForm.controls['passwordGroup'];
+      const nameGroupControl = component.editForm.controls.nameGroup;
+      const passwordGroupControl = component.editForm.controls.passwordGroup;
       nameGroupControl.setValue({
         firstName: 'John',
         lastName: 'Doe',
@@ -595,8 +628,8 @@ describe('EditNameComponent', () => {
       mockAuthService.saveUser.and.returnValue(of(true));
       spyOn(component, 'resetForm');
       fixture.detectChanges();
-      const nameGroupControl = component.editForm.controls['nameGroup'];
-      const passwordGroupControl = component.editForm.controls['passwordGroup'];
+      const nameGroupControl = component.editForm.controls.nameGroup;
+      const passwordGroupControl = component.editForm.controls.passwordGroup;
       nameGroupControl.setValue({
         firstName: 'John',
         lastName: 'Doe',
@@ -615,8 +648,8 @@ describe('EditNameComponent', () => {
       AuthService throws an error`, () => {
       mockAuthService.saveUser.and.returnValue(throwError(''));
       fixture.detectChanges();
-      const nameGroupControl = component.editForm.controls['nameGroup'];
-      const passwordGroupControl = component.editForm.controls['passwordGroup'];
+      const nameGroupControl = component.editForm.controls.nameGroup;
+      const passwordGroupControl = component.editForm.controls.passwordGroup;
       nameGroupControl.setValue({
         firstName: 'John',
         lastName: 'Doe',
@@ -653,7 +686,7 @@ describe('EditNameComponent', () => {
 
     it('should set nameGroup control correctly', () => {
       fixture.detectChanges();
-      const nameGroupControl = component.editForm.controls['nameGroup'];
+      const nameGroupControl = component.editForm.controls.nameGroup;
       const updatedUser = {
         ...USER,
         name: {
@@ -669,7 +702,7 @@ describe('EditNameComponent', () => {
 
     it('should set passwordGroup control correctly', () => {
       fixture.detectChanges();
-      const passwordGroupControl = component.editForm.controls['passwordGroup'];
+      const passwordGroupControl = component.editForm.controls.passwordGroup;
 
       component.resetForm(component.editForm, USER);
 
@@ -810,8 +843,8 @@ describe('EditNameComponent w/ template', () => {
     valid`, fakeAsync(() => {
     const input = fixture.debugElement.query(By.css('#submit'));
     fixture.detectChanges();
-    const nameGroupControl = component.editForm.controls['nameGroup'];
-    const passwordGroupControl = component.editForm.controls['passwordGroup'];
+    const nameGroupControl = component.editForm.controls.nameGroup;
+    const passwordGroupControl = component.editForm.controls.passwordGroup;
 
     nameGroupControl.setValue({
       firstName: 'John',
@@ -849,8 +882,8 @@ describe('EditNameComponent w/ template', () => {
     const input = fixture.debugElement.query(By.css('#submit'));
     component.submitted = true;
     fixture.detectChanges();
-    const nameGroupControl = component.editForm.controls['nameGroup'];
-    const passwordGroupControl = component.editForm.controls['passwordGroup'];
+    const nameGroupControl = component.editForm.controls.nameGroup;
+    const passwordGroupControl = component.editForm.controls.passwordGroup;
 
     expect(component.editForm.valid).toBeFalsy();
     expect(input.classes).toEqual({
@@ -891,8 +924,8 @@ describe('EditNameComponent w/ template', () => {
     const input = fixture.debugElement.query(By.css('#submit'));
     component.submitted = true;
     fixture.detectChanges();
-    const nameGroupControl = component.editForm.controls['nameGroup'];
-    const passwordGroupControl = component.editForm.controls['passwordGroup'];
+    const nameGroupControl = component.editForm.controls.nameGroup;
+    const passwordGroupControl = component.editForm.controls.passwordGroup;
 
     nameGroupControl.setValue({
       firstName: 'John',
@@ -912,8 +945,8 @@ describe('EditNameComponent w/ template', () => {
     const input = fixture.debugElement.query(By.css('#submit'));
     component.submitted = false;
     fixture.detectChanges();
-    const nameGroupControl = component.editForm.controls['nameGroup'];
-    const passwordGroupControl = component.editForm.controls['passwordGroup'];
+    const nameGroupControl = component.editForm.controls.nameGroup;
+    const passwordGroupControl = component.editForm.controls.passwordGroup;
 
     expect(component.editForm.valid).toBeFalsy();
     expect(input.nativeElement.disabled).toBeFalsy();

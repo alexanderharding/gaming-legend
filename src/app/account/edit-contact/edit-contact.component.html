@@ -6,7 +6,7 @@
       [user]="user"
       [emailTakenMessage]="emailTakenMessage"
       pageTitle="{{ hasValueChanged ? 'Edit Contact Information' : '' }}"
-      (onValueChange)="setEmailTakenMessage($event)"
+      (valueChange)="setEmailTakenMessage($event)"
     ></ctacu-contact-form>
     <div #collapse="ngbCollapse" [(ngbCollapse)]="!hasValueChanged">
       <div class="pt-3">

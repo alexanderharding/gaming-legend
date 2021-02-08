@@ -32,7 +32,7 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
     cardNumber: 'Please enter a valid card number with no hyphens.',
   };
   private readonly cardNumberMessageSubject = new BehaviorSubject<string>(
-    this.cardNumberValidationMessages['required']
+    this.cardNumberValidationMessages.required
   );
   readonly cardNumberMessage$ = this.cardNumberMessageSubject.asObservable();
 
@@ -40,7 +40,7 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
     required: 'Please select the month your card expires.',
   };
   private readonly monthMessageSubject = new BehaviorSubject<string>(
-    this.monthValidationMessages['required']
+    this.monthValidationMessages.required
   );
   readonly monthMessage$ = this.monthMessageSubject.asObservable();
 
@@ -48,7 +48,7 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
     required: 'Please select the year your card expires.',
   };
   private readonly yearMessageSubject = new BehaviorSubject<string>(
-    this.yearValidationMessages['required']
+    this.yearValidationMessages.required
   );
   readonly yearMessage$ = this.yearMessageSubject.asObservable();
 
@@ -57,7 +57,7 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
     pattern: 'Please enter a valid security code.',
   };
   private readonly cvvMessageSubject = new BehaviorSubject<string>(
-    this.cvvValidationMessages['required']
+    this.cvvValidationMessages.required
   );
   readonly cvvMessage$ = this.cvvMessageSubject.asObservable();
 
@@ -65,7 +65,7 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
     expired: 'Please select a valid expiration date.',
   };
   private readonly paymentGroupMessageSubject = new BehaviorSubject<string>(
-    this.paymentGroupValidationMessages['expired']
+    this.paymentGroupValidationMessages.expired
   );
   readonly paymentGroupMessage$ = this.paymentGroupMessageSubject.asObservable();
 

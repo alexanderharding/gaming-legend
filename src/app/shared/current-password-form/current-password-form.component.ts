@@ -28,7 +28,7 @@ export class CurrentPasswordFormComponent implements OnInit, OnDestroy {
     invalid: 'This does not match the password on-file.',
   };
   private readonly currentPasswordMessageSubject = new BehaviorSubject<string>(
-    this.currentPasswordValidationMessages['required']
+    this.currentPasswordValidationMessages.required
   );
   readonly currentPasswordMessage$ = this.currentPasswordMessageSubject.asObservable();
 

@@ -15,7 +15,7 @@
         placeholder="Street address (required)"
         [ngClass]="{
           'is-invalid': (streetMessage$ | async) && submitted,
-          'is-valid': !(streetMessage$ | async)
+          'is-valid': (streetMessage$ | async) === ('' || null || undefined)
         }"
       />
       <div class="invalid-tooltip">
@@ -35,7 +35,7 @@
             placeholder="City (required)"
             [ngClass]="{
               'is-invalid': (cityMessage$ | async) && submitted,
-              'is-valid': !(cityMessage$ | async)
+              'is-valid': (cityMessage$ | async) === ('' || null || undefined)
             }"
           />
           <div class="invalid-tooltip">
@@ -53,7 +53,7 @@
             formControlName="state"
             [ngClass]="{
               'is-invalid': (stateMessage$ | async) && submitted,
-              'is-valid': !(stateMessage$ | async)
+              'is-valid': (stateMessage$ | async) === ('' || null || undefined)
             }"
           >
             <option value="" disabled hidden>State (required)</option>
@@ -83,7 +83,7 @@
             placeholder="Zip (required)"
             [ngClass]="{
               'is-invalid': (zipMessage$ | async) && submitted,
-              'is-valid': !(zipMessage$ | async)
+              'is-valid': (zipMessage$ | async) === ('' || null || undefined)
             }"
           />
           <div class="invalid-tooltip">

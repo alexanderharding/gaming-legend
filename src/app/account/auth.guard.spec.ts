@@ -8,7 +8,10 @@ import { AuthGuard } from './auth.guard';
 
 describe('AuthGuard', () => {
   describe('w/ USER', () => {
-    let guard: AuthGuard, mockAuthService, USER: IUser, mockRouter;
+    let guard: AuthGuard;
+    let mockAuthService;
+    let USER: IUser;
+    let mockRouter;
     beforeEach(() => {
       USER = {
         name: {
@@ -71,8 +74,13 @@ describe('AuthGuard', () => {
       });
     });
   });
+
   describe('w/o USER', () => {
-    let guard: AuthGuard, mockAuthService, USER: IUser, mockRouter;
+    let guard: AuthGuard;
+    let mockAuthService;
+    let USER: IUser;
+    let mockRouter;
+
     beforeEach(() => {
       USER = null;
       mockAuthService = jasmine.createSpyObj([''], { currentUser$: of(USER) });

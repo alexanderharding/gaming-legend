@@ -17,10 +17,10 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('AppComponent', () => {
-  let location: Location,
-    router: Router,
-    app: AppComponent,
-    fixture: ComponentFixture<AppComponent>;
+  // let location: Location;
+  // let router: Router;
+  let app: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
 
   @Component({
     selector: 'ctacu-navbar',

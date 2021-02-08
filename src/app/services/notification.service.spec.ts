@@ -25,7 +25,7 @@ describe('NotificationService', () => {
       // Act
       service.notifications$.subscribe((n) => (notifications = n));
 
-      //Assert
+      // Assert
       expect(notifications.length).toBe(0);
     });
 

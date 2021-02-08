@@ -7,7 +7,8 @@ import { IProductBrand } from '../types/product-brand';
 import { ProductBrandService } from './product-brand.service';
 
 describe('ProductBrandService', () => {
-  let productType, BRANDS;
+  let productType;
+  let BRANDS;
   beforeEach(() => {
     BRANDS = [
       {

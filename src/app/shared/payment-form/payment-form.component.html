@@ -21,7 +21,7 @@
         placeholder="Card number (required)"
         [ngClass]="{
           'is-invalid': (cardNumberMessage$ | async) && submitted,
-          'is-valid': !(cardNumberMessage$ | async)
+          'is-valid': (cardNumberMessage$ | async) === ''
         }"
       />
       <div class="invalid-tooltip">
@@ -44,7 +44,8 @@
                 ((monthMessage$ | async) || (paymentGroupMessage$ | async)) &&
                 submitted,
               'is-valid':
-                !(monthMessage$ | async) && !(paymentGroupMessage$ | async)
+                (monthMessage$ | async) === '' &&
+                (paymentGroupMessage$ | async) === ''
             }"
           >
             <option [value]="0" hidden [attr.disabled]="true">- Month -</option>
@@ -60,7 +61,7 @@
             <span>
               {{ monthMessage$ | async }}
             </span>
-            <span *ngIf="!(monthMessage$ | async)">
+            <span *ngIf="(monthMessage$ | async) === ''">
               {{ paymentGroupMessage$ | async }}
             </span>
           </div>
@@ -69,7 +70,7 @@
             class="custom-select"
             [ngClass]="{
               'is-invalid': (yearMessage$ | async) && submitted,
-              'is-valid': !(yearMessage$ | async)
+              'is-valid': (yearMessage$ | async) === ''
             }"
           >
             <option [value]="0" hidden [attr.disabled]="true">- Year -</option>
@@ -77,7 +78,7 @@
               {{ y }}
             </option>
           </select>
-          <div *ngIf="!(monthMessage$ | async)" class="invalid-tooltip">
+          <div *ngIf="(monthMessage$ | async) === ''" class="invalid-tooltip">
             <span>{{ yearMessage$ | async }}</span>
           </div>
         </div>
@@ -96,7 +97,7 @@
             placeholder="CVV (required)"
             [ngClass]="{
               'is-invalid': (cvvMessage$ | async) && submitted,
-              'is-valid': !(cvvMessage$ | async)
+              'is-valid': (cvvMessage$ | async) === ''
             }"
           />
           <div class="invalid-tooltip">

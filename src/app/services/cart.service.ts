@@ -17,31 +17,19 @@ import { ShippingRateService } from './shipping-rate.service';
   providedIn: 'root',
 })
 export class CartService {
-  private readonly baseUrl: string = 'http://localhost:3000';
-
-  tax = 0.0687;
-  // items: ICartItem[];
-
   constructor(
     private readonly http: HttpClient,
     private readonly shippingRateService: ShippingRateService,
 
     private readonly errorService: ErrorService
-  ) {
-    // this.items = this.getItems();
-  }
+  ) {}
+
+  private readonly baseUrl: string = 'http://localhost:3000';
+
+  tax = 0.0687;
 
   private readonly cartItemsSubject = new BehaviorSubject<ICartItem[]>([]);
   readonly cartItems$ = this.cartItemsSubject.asObservable();
-
-  getCartItems(): Observable<ICartItem[]> {
-    return this.http.get<ICartItem[]>(`${this.baseUrl}/cart`).pipe(
-      delay(1000),
-      retry(3),
-      tap((items) => this.cartItemsSubject.next(items)),
-      catchError(this.errorService.handleError)
-    );
-  }
 
   cartQuantity$ = this.cartItems$.pipe(
     map((items) =>
@@ -73,6 +61,15 @@ export class CartService {
         +(subtotal + totalTax + shippingPrice).toFixed(2)
     )
   );
+
+  getCartItems(): Observable<ICartItem[]> {
+    return this.http.get<ICartItem[]>(`${this.baseUrl}/cart`).pipe(
+      delay(1000),
+      retry(3),
+      tap((items) => this.cartItemsSubject.next(items)),
+      catchError(this.errorService.handleError)
+    );
+  }
 
   saveItem(item: ICartItem, index: number): Observable<ICartItem> {
     return +index < 0 ? this.addItem(item) : this.updateItem(item);

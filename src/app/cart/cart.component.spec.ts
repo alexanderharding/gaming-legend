@@ -31,18 +31,18 @@ function getQuantity(items: ICartItem[]): number {
 
 describe('CartComponent', () => {
   describe('w/ SHIPPINGRATES', () => {
-    let component: CartComponent,
-      fixture: ComponentFixture<CartComponent>,
-      mockCartService,
-      mockNgbModal,
-      mockNgbModalConfig,
-      mockShippingRateService,
-      mockNotificationService,
-      mockActivatedRoute,
-      ITEMS: ICartItem[],
-      RESOLVEDDATA: ShippingRatesResult,
-      mockModalRef: MockNgbModalRef,
-      mockErrorModalRef: MockErrorNgbModalRef;
+    let component: CartComponent;
+    let fixture: ComponentFixture<CartComponent>;
+    let mockCartService;
+    let mockNgbModal;
+    let mockNgbModalConfig;
+    let mockShippingRateService;
+    let mockNotificationService;
+    let mockActivatedRoute;
+    let ITEMS: ICartItem[];
+    let RESOLVEDDATA: ShippingRatesResult;
+    let mockModalRef: MockNgbModalRef;
+    let mockErrorModalRef: MockErrorNgbModalRef;
 
     const SHIPPINGRATES: IShipping[] = [
       {
@@ -214,8 +214,13 @@ describe('CartComponent', () => {
             id: 1,
             name: 'Ideapad L340',
             brandId: 1,
-            description:
-              "With the Lenovo Idea Pad L340 gaming Laptop, you know you've made the right decision with one serious laptop. Equipped with the latest Intel Core i5 processor, next-gen NVIDIA GeForce graphics, and jaw-dropping Dolby Audio, you'll experience first-hand real power and seamless play. You'll stay focused on the task at hand, concentrating on beating Your opponents and confident that your sleek, stylish computer will keep up with the competition.",
+            description: `With the Lenovo Idea Pad L340 gaming Laptop, you know
+            you've made the right decision with one serious laptop. Equipped
+            with the latest Intel Core i5 processor, next-gen NVIDIA GeForce
+            graphics, and jaw-dropping Dolby Audio, you'll experience first-hand
+            real power and seamless play. You'll stay focused on the task at
+            hand, concentrating on beating Your opponents and confident that
+            your sleek, stylish computer will keep up with the competition.`,
             price: 855.67,
             imageUrl: 'assets/images/ideapadL340.jpg',
             code: 'LDN-1',
@@ -233,6 +238,7 @@ describe('CartComponent', () => {
           'setShipping',
           'getDeliveryDate',
         ]);
+        mockNgbModal = jasmine.createSpyObj(['']);
         RESOLVEDDATA = {
           shippingRates: SHIPPINGRATES,
         };
@@ -848,13 +854,13 @@ describe('CartComponent', () => {
   });
 
   describe('w/o SHIPPINGRATES', () => {
-    let component: CartComponent,
-      fixture: ComponentFixture<CartComponent>,
-      mockCartService,
-      mockShippingRateService,
-      mockActivatedRoute,
-      ITEMS: ICartItem[],
-      RESOLVEDDATA: ShippingRatesResult;
+    let component: CartComponent;
+    let fixture: ComponentFixture<CartComponent>;
+    let mockCartService;
+    let mockShippingRateService;
+    let mockActivatedRoute;
+    let ITEMS: ICartItem[];
+    let RESOLVEDDATA: ShippingRatesResult;
 
     const SHIPPINGRATES = null;
     const ERRORMESSAGE = 'Error!';
@@ -1088,16 +1094,16 @@ describe('CartComponent', () => {
 
 describe('CartComponent w/ template', () => {
   describe('w/ SHIPPINGRATES', () => {
-    let component: CartComponent,
-      fixture: ComponentFixture<CartComponent>,
-      mockCartService,
-      mockNgbModal,
-      mockNgbModalConfig,
-      mockActivatedRoute,
-      mockShippingRateService,
-      mockNotificationService,
-      ITEMS: ICartItem[],
-      RESOLVEDDATA: ShippingRatesResult;
+    let component: CartComponent;
+    let fixture: ComponentFixture<CartComponent>;
+    let mockCartService;
+    let mockNgbModal;
+    let mockNgbModalConfig;
+    let mockActivatedRoute;
+    let mockShippingRateService;
+    let mockNotificationService;
+    let ITEMS: ICartItem[];
+    let RESOLVEDDATA: ShippingRatesResult;
 
     const SHIPPINGRATES: IShipping[] = [
       {
@@ -1237,8 +1243,13 @@ describe('CartComponent w/ template', () => {
             id: 1,
             name: 'Ideapad L340',
             brandId: 1,
-            description:
-              "With the Lenovo Idea Pad L340 gaming Laptop, you know you've made the right decision with one serious laptop. Equipped with the latest Intel Core i5 processor, next-gen NVIDIA GeForce graphics, and jaw-dropping Dolby Audio, you'll experience first-hand real power and seamless play. You'll stay focused on the task at hand, concentrating on beating Your opponents and confident that your sleek, stylish computer will keep up with the competition.",
+            description: `With the Lenovo Idea Pad L340 gaming Laptop, you know
+            you've made the right decision with one serious laptop. Equipped
+            with the latest Intel Core i5 processor, next-gen NVIDIA GeForce
+            graphics, and jaw-dropping Dolby Audio, you'll experience first-hand
+            real power and seamless play. You'll stay focused on the task at
+            hand, concentrating on beating Your opponents and confident that
+            your sleek, stylish computer will keep up with the competition.`,
             price: 855.67,
             imageUrl: 'assets/images/ideapadL340.jpg',
             code: 'LDN-1',
@@ -1262,6 +1273,8 @@ describe('CartComponent w/ template', () => {
             },
           },
         });
+        mockNgbModal = jasmine.createSpyObj(['']);
+        mockNotificationService = jasmine.createSpyObj(['']);
         mockNgbModalConfig = jasmine.createSpyObj([], {
           centered: false,
           backdrop: true,
@@ -1451,12 +1464,12 @@ describe('CartComponent w/ template', () => {
   });
 
   describe('w/o SHIPPINGRATES', () => {
-    let component: CartComponent,
-      fixture: ComponentFixture<CartComponent>,
-      mockCartService,
-      mockActivatedRoute,
-      ITEMS: ICartItem[],
-      RESOLVEDDATA: ShippingRatesResult;
+    let component: CartComponent;
+    let fixture: ComponentFixture<CartComponent>;
+    let mockCartService;
+    let mockActivatedRoute;
+    let ITEMS: ICartItem[];
+    let RESOLVEDDATA: ShippingRatesResult;
 
     const SHIPPINGRATES = null;
     const ERRORMESSAGE = 'Error!';
@@ -1581,8 +1594,13 @@ describe('CartComponent w/ template', () => {
             id: 1,
             name: 'Ideapad L340',
             brandId: 1,
-            description:
-              "With the Lenovo Idea Pad L340 gaming Laptop, you know you've made the right decision with one serious laptop. Equipped with the latest Intel Core i5 processor, next-gen NVIDIA GeForce graphics, and jaw-dropping Dolby Audio, you'll experience first-hand real power and seamless play. You'll stay focused on the task at hand, concentrating on beating Your opponents and confident that your sleek, stylish computer will keep up with the competition.",
+            description: `With the Lenovo Idea Pad L340 gaming Laptop, you know
+            you've made the right decision with one serious laptop. Equipped
+            with the latest Intel Core i5 processor, next-gen NVIDIA GeForce
+            graphics, and jaw-dropping Dolby Audio, you'll experience first-hand
+            real power and seamless play. You'll stay focused on the task at
+            hand, concentrating on beating Your opponents and confident that
+            your sleek, stylish computer will keep up with the competition.`,
             price: 855.67,
             imageUrl: 'assets/images/ideapadL340.jpg',
             code: 'LDN-1',

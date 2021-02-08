@@ -29,14 +29,14 @@ export class ContactFormComponent implements OnInit, OnDestroy {
   @Input() pageTitle: string;
   @Input() emailTakenMessage: string;
 
-  @Output() onValueChange = new EventEmitter<string>();
+  @Output() valueChange = new EventEmitter<string>();
 
   private readonly phoneValidationMessages = {
     required: 'Please enter a phone number.',
     pattern: 'Please enter a valid phone number.',
   };
   private readonly phoneMessageSubject = new BehaviorSubject<string>(
-    this.phoneValidationMessages['required']
+    this.phoneValidationMessages.required
   );
   readonly phoneMessage$ = this.phoneMessageSubject.asObservable();
 
@@ -45,7 +45,7 @@ export class ContactFormComponent implements OnInit, OnDestroy {
     email: 'Please enter a valid email address. ie. fake@1234.com',
   };
   private readonly emailMessageSubject = new BehaviorSubject<string>(
-    this.emailValidationMessages['required']
+    this.emailValidationMessages.required
   );
   readonly emailMessage$ = this.emailMessageSubject.asObservable();
 
@@ -53,7 +53,7 @@ export class ContactFormComponent implements OnInit, OnDestroy {
     required: 'Please confirm the email address.',
   };
   private readonly confirmEmailMessageSubject = new BehaviorSubject<string>(
-    this.confirmEmailValidationMessages['required']
+    this.confirmEmailValidationMessages.required
   );
   readonly confirmEmailMessage$ = this.confirmEmailMessageSubject.asObservable();
 
@@ -61,7 +61,7 @@ export class ContactFormComponent implements OnInit, OnDestroy {
     match: 'The confirmation does not match the email address.',
   };
   private readonly contactGroupMessageSubject = new BehaviorSubject<string>(
-    this.contactGroupValidationMessages['match']
+    this.contactGroupValidationMessages.match
   );
   readonly contactGroupMessage$ = this.contactGroupMessageSubject.asObservable();
 
@@ -86,7 +86,7 @@ export class ContactFormComponent implements OnInit, OnDestroy {
     const emailControl = this.parentForm.get('contactGroup.email');
     this.subscriptions.push(
       emailControl.valueChanges.pipe(debounceTime(1000)).subscribe(() => {
-        this.onValueChange.emit('');
+        this.valueChange.emit('');
         this.setMessage(emailControl, 'email');
       })
     );

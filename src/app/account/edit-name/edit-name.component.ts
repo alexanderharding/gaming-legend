@@ -42,7 +42,7 @@ export class EditNameComponent implements OnInit, OnDestroy {
   @Input() user: IUser;
   @Input() loading: boolean;
 
-  @Output() onLoadingChange = new EventEmitter<boolean>();
+  @Output() loadingChange = new EventEmitter<boolean>();
 
   readonly nameMinLength = +this.formValidationRuleService.nameMinLength;
   readonly nameMaxLength = +this.formValidationRuleService.nameMaxLength;
@@ -92,7 +92,7 @@ export class EditNameComponent implements OnInit, OnDestroy {
       this.submitted = true;
     }
     if (form.valid) {
-      this.onLoadingChange.emit(true);
+      this.loadingChange.emit(true);
       this.saveUser(form);
     }
   }
@@ -148,11 +148,11 @@ export class EditNameComponent implements OnInit, OnDestroy {
         this.showSuccess();
         this.user = user as IUser;
         this.resetForm(form, user);
-        this.onLoadingChange.emit(false);
+        this.loadingChange.emit(false);
       },
       (error) => {
         this.showDanger();
-        this.onLoadingChange.emit(false);
+        this.loadingChange.emit(false);
       }
     );
   }

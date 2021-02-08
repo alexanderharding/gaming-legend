@@ -1,9 +1,7 @@
 import { ConvertToSpacesPipe } from './convert-to-spaces.pipe';
 
 describe('ConvertToSpacesPipe', () => {
-
   describe('transform', () => {
-
     it('should convert the value to spaces', () => {
       const pipe = new ConvertToSpacesPipe();
 
@@ -13,27 +11,25 @@ describe('ConvertToSpacesPipe', () => {
     });
 
     it('should not break when the string is empty', () => {
-			// Arrange
-			const pipe = new ConvertToSpacesPipe();
+      // Arrange
+      const pipe = new ConvertToSpacesPipe();
 
-			// Act
-			const result = pipe.transform('', '');
+      // Act
+      const result = pipe.transform('', '');
 
-			// Assert
-			expect(result).toBe('');
+      // Assert
+      expect(result).toBe('');
     });
 
     it('should not break when the string is null', () => {
-			// Arrange
-			const pipe = new ConvertToSpacesPipe();
+      // Arrange
+      const pipe = new ConvertToSpacesPipe();
 
-			// Act
-			const result = pipe.transform(null, null);
+      // Act
+      const result = pipe.transform(null, null);
 
-			// Assert
-			expect(result).toBe(null);
+      // Assert
+      expect(result).toBe(null);
     });
-
   });
-
 });
