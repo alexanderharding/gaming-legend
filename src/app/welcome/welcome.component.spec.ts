@@ -56,8 +56,7 @@ describe('WelcomeComponent w/ template', () => {
     const elements = fixture.debugElement.queryAll(By.css('p'));
 
     expect(elements.length).toBe(2);
-    for (let i = 0; i < elements.length; i++) {
-      const element = elements[i];
+    for (const element of elements) {
       expect(element.nativeElement.textContent).toContain(component.pageTitle);
     }
   });

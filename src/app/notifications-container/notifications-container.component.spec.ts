@@ -83,7 +83,7 @@ describe('NotificationsContainerComponent', () => {
   });
 });
 
-describe('NotificationsContainerComponent', () => {
+describe('NotificationsContainerComponent w/ template', () => {
   let component: NotificationsContainerComponent;
   let fixture: ComponentFixture<NotificationsContainerComponent>;
   let mockNotificationService;
@@ -143,25 +143,27 @@ describe('NotificationsContainerComponent', () => {
 
   it(`should call remove method with correct value when ngb-toast is
     clicked`, () => {
+    const index = 0;
     spyOn(component, 'remove');
     fixture.detectChanges();
 
     const toastElements = fixture.debugElement.queryAll(By.css('ngb-toast'));
-    toastElements[0].triggerEventHandler('click', null);
+    toastElements[index].triggerEventHandler('click', null);
 
     expect(component.remove).toHaveBeenCalledTimes(1);
-    expect(component.remove).toHaveBeenCalledWith(NOTIFICATIONS[0]);
+    expect(component.remove).toHaveBeenCalledWith(NOTIFICATIONS[index]);
   });
 
   it(`should call remove method with correct value when ngb-toast is
     hidden`, () => {
+    const index = 0;
     spyOn(component, 'remove');
     fixture.detectChanges();
 
     const toastElements = fixture.debugElement.queryAll(By.css('ngb-toast'));
-    toastElements[0].triggerEventHandler('hidden', null);
+    toastElements[index].triggerEventHandler('hidden', null);
 
     expect(component.remove).toHaveBeenCalledTimes(1);
-    expect(component.remove).toHaveBeenCalledWith(NOTIFICATIONS[0]);
+    expect(component.remove).toHaveBeenCalledWith(NOTIFICATIONS[index]);
   });
 });
