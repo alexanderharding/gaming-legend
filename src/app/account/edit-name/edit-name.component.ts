@@ -106,7 +106,7 @@ export class EditNameComponent implements OnInit, OnDestroy {
       firstName: name.firstName,
       lastName: name.lastName,
     });
-    passwordGroupControl.patchValue({
+    passwordGroupControl.setValue({
       currentPassword: '',
     });
   }

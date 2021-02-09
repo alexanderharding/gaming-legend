@@ -136,35 +136,52 @@ describe('EditNameComponent', () => {
     expect(component.nameMaxLength).toBe(NAMEMAXLENGTH);
   });
 
-  it('should set editForm correctly', () => {
+  it('should set editForm value correctly to start', () => {
     fixture.detectChanges();
 
-    expect(component.editForm).toBeTruthy();
-    expect(component.editForm.controls.nameGroup).toBeTruthy();
-    expect(component.editForm.controls.passwordGroup).toBeTruthy();
+    expect(component.editForm.value).toEqual({
+      nameGroup: {
+        firstName: '',
+        lastName: '',
+      },
+      passwordGroup: {
+        currentPassword: '',
+      },
+    });
   });
 
   describe('editForm', () => {
-    it('should be invalid when empty', () => {
+    it('should not be valid when control values are empty empty', () => {
       fixture.detectChanges();
 
-      expect(component.editForm.valid).toBeFalsy();
+      component.editForm.setValue({
+        nameGroup: {
+          firstName: '',
+          lastName: '',
+        },
+        passwordGroup: {
+          currentPassword: '',
+        },
+      });
+
+      expect(component.editForm.valid).toBeFalse();
     });
 
-    it('should be valid when set correctly', () => {
+    it('should be valid when value is set correctly', () => {
       fixture.detectChanges();
 
-      const nameGroupControl = component.editForm.controls.nameGroup;
-      const passwordGroupControl = component.editForm.controls.passwordGroup;
-      nameGroupControl.setValue({
-        firstName: 'John',
-        lastName: 'Doe',
-      });
-      passwordGroupControl.setValue({
-        currentPassword: USER.password,
+      component.editForm.setValue({
+        nameGroup: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+        passwordGroup: {
+          currentPassword: USER.password,
+        },
       });
 
-      expect(component.editForm.valid).toBeTruthy();
+      expect(component.editForm.errors).toBeNull();
+      expect(component.editForm.valid).toBeTrue();
     });
 
     describe('nameGroup', () => {
@@ -177,316 +194,193 @@ describe('EditNameComponent', () => {
           lastName: 'Bobby',
         });
 
-        expect(component.hasValueChanged).toBeTruthy();
+        expect(component.hasValueChanged).toBeTrue();
 
         nameGroupControl.setValue({
           firstName: USER.name.firstName,
           lastName: USER.name.lastName,
         });
-        expect(component.hasValueChanged).toBeFalsy();
+        expect(component.hasValueChanged).toBeFalse();
       });
 
       describe('firstName control', () => {
-        it('should be set to an empty string to start', () => {
+        it('should not be valid when value is empty', () => {
           fixture.detectChanges();
-
           const firstNameControl = component.editForm.get(
             'nameGroup.firstName'
           );
 
-          expect(firstNameControl.value).toEqual('');
+          firstNameControl.setValue('');
+
+          expect(firstNameControl.value.length).toBe(0);
+          expect(firstNameControl.valid).toBeFalse();
+          expect(firstNameControl.hasError('minlength')).toBeFalse();
+          expect(firstNameControl.hasError('maxlength')).toBeFalse();
+          expect(firstNameControl.hasError('required')).toBeTrue();
         });
 
-        it('should be invalid when empty', () => {
-          let errors = {};
-          let key: string;
-          fixture.detectChanges();
-
-          const firstNameControl = component.editForm.get(
-            'nameGroup.firstName'
-          );
-          errors = firstNameControl.errors || {};
-
-          expect(firstNameControl.valid).toBeFalsy();
-          key = 'required';
-          expect(errors[key]).toBeTruthy();
-        });
-
-        it('should not be required when there is a value', () => {
-          let errors = {};
-          let name: string;
-          let key: string;
-          fixture.detectChanges();
-
-          const firstNameControl = component.editForm.get(
-            'nameGroup.firstName'
-          );
-          name = 'J';
-          expect(name.length).toBeGreaterThanOrEqual(1);
-          firstNameControl.setValue(name);
-          errors = firstNameControl.errors || {};
-
-          key = 'required';
-          expect(errors[key]).toBeFalsy();
-        });
-
-        it(`should be invalid when value.length is less than
+        it(`should not be valid when value.length is less than
           NAMEMINLENGTH`, () => {
-          let errors = {};
-          let name: string;
-          let key: string;
           fixture.detectChanges();
-
           const firstNameControl = component.editForm.get(
             'nameGroup.firstName'
           );
-          name = 'Jo';
-          expect(name.length).toBeLessThan(NAMEMINLENGTH);
-          firstNameControl.setValue(name);
-          errors = firstNameControl.errors || {};
 
-          expect(firstNameControl.valid).toBeFalsy();
-          key = 'minlength';
-          expect(errors[key]).toBeTruthy();
+          firstNameControl.setValue('Jo');
+
+          expect(firstNameControl.value.length).toBeLessThan(NAMEMINLENGTH);
+          expect(firstNameControl.value.length).toBeGreaterThan(0);
+          expect(firstNameControl.valid).toBeFalse();
+          expect(firstNameControl.hasError('maxlength')).toBeFalse();
+          expect(firstNameControl.hasError('required')).toBeFalse();
+          expect(firstNameControl.hasError('minlength')).toBeTrue();
         });
 
         it(`should be valid when value.length is greater than or equal to
-         NAMEMINLENGTH`, () => {
-          let errors = {};
-          let name: string;
-          let key: string;
+          NAMEMINLENGTH and less than or equal to NAMMAXLENGTH`, () => {
           fixture.detectChanges();
-
           const firstNameControl = component.editForm.get(
             'nameGroup.firstName'
           );
 
-          name = 'Joe';
-          expect(name.length).toBeGreaterThanOrEqual(NAMEMINLENGTH);
-          firstNameControl.setValue(name);
-          errors = firstNameControl.errors || {};
-          expect(firstNameControl.valid).toBeTruthy();
-          key = 'minlength';
-          expect(errors[key]).toBeFalsy();
+          firstNameControl.setValue('Joe');
+
+          expect(firstNameControl.value.length).toBeGreaterThanOrEqual(
+            NAMEMINLENGTH
+          );
+          expect(firstNameControl.value.length).toBeLessThanOrEqual(
+            NAMEMAXLENGTH
+          );
+          expect(firstNameControl.errors).toBeNull();
+          expect(firstNameControl.valid).toBeTrue();
         });
 
-        it(`should be invalid when value.length is greater than
+        it(`should not be valid when value.length is greater than
           NAMEMAXLENGTH`, () => {
-          let errors = {};
-          let name: string;
-          let key: string;
-          fixture.detectChanges();
-
-          const firstNameControl = component.editForm.get(
-            'nameGroup.firstName'
-          );
-          name = 'Hardndeisnckdslfsalwf';
-          expect(name.length).toBeGreaterThan(NAMEMAXLENGTH);
-          firstNameControl.setValue(name);
-          errors = firstNameControl.errors || {};
-
-          expect(firstNameControl.valid).toBeFalsy();
-          key = 'maxlength';
-          expect(errors[key]).toBeTruthy();
-        });
-
-        it(`should be valid when value.length is less than or equal to
-          NAMEMAXLENGTH`, () => {
-          let errors = {};
-          let name: string;
-          let key: string;
           fixture.detectChanges();
           const firstNameControl = component.editForm.get(
             'nameGroup.firstName'
           );
 
-          name = 'Hardndeisnckdslfsalw';
-          expect(name.length).toBeLessThanOrEqual(NAMEMAXLENGTH);
-          firstNameControl.setValue(name);
-          errors = firstNameControl.errors || {};
+          firstNameControl.setValue('Hardndeisnckdslfsalwf');
 
-          expect(firstNameControl.valid).toBeTruthy();
-          key = 'maxlength';
-          expect(errors[key]).toBeFalsy();
+          expect(firstNameControl.value.length).toBeGreaterThan(NAMEMAXLENGTH);
+          expect(firstNameControl.valid).toBeFalse();
+          expect(firstNameControl.hasError('required')).toBeFalse();
+          expect(firstNameControl.hasError('minlength')).toBeFalse();
+          expect(firstNameControl.hasError('maxlength')).toBeTrue();
         });
       });
 
       describe('lastName control', () => {
-        it('should be set to an empty string to start', () => {
+        it('should not be valid when value is empty', () => {
           fixture.detectChanges();
-
           const lastNameControl = component.editForm.get('nameGroup.lastName');
 
-          expect(lastNameControl.value).toEqual('');
+          lastNameControl.setValue('');
+
+          expect(lastNameControl.value.length).toBe(0);
+          expect(lastNameControl.valid).toBeFalse();
+          expect(lastNameControl.hasError('minlength')).toBeFalse();
+          expect(lastNameControl.hasError('maxlength')).toBeFalse();
+          expect(lastNameControl.hasError('required')).toBeTrue();
         });
 
-        it('should be invalid when empty', () => {
-          let errors = {};
-          let key: string;
-          fixture.detectChanges();
-
-          const lastNameControl = component.editForm.get('nameGroup.lastName');
-          errors = lastNameControl.errors || {};
-
-          expect(lastNameControl.valid).toBeFalsy();
-          key = 'required';
-          expect(errors[key]).toBeTruthy();
-        });
-
-        it('should not be required when there is a value', () => {
-          let errors = {};
-          let name: string;
-          let key: string;
-          fixture.detectChanges();
-
-          const lastNameControl = component.editForm.get('nameGroup.lastName');
-          name = 'J';
-          expect(name.length).toBeGreaterThanOrEqual(1);
-          lastNameControl.setValue(name);
-          errors = lastNameControl.errors || {};
-
-          key = 'required';
-          expect(errors[key]).toBeFalsy();
-        });
-
-        it(`should be invalid when value.length is less than
+        it(`should not be valid when value.length is less than
           NAMEMINLENGTH`, () => {
-          let errors = {};
           let name: string;
-          let key: string;
           fixture.detectChanges();
 
           const lastNameControl = component.editForm.get('nameGroup.lastName');
           name = 'Jo';
-          expect(name.length).toBeLessThan(NAMEMINLENGTH);
           lastNameControl.setValue(name);
-          errors = lastNameControl.errors || {};
 
-          expect(lastNameControl.valid).toBeFalsy();
-          key = 'minlength';
-          expect(errors[key]).toBeTruthy();
+          expect(lastNameControl.value.length).toBeLessThan(NAMEMINLENGTH);
+          expect(lastNameControl.value.length).toBeGreaterThan(0);
+          expect(lastNameControl.valid).toBeFalse();
+          expect(lastNameControl.hasError('maxlength')).toBeFalse();
+          expect(lastNameControl.hasError('required')).toBeFalse();
+          expect(lastNameControl.hasError('minlength')).toBeTrue();
         });
 
         it(`should be valid when value.length is greater than or equal to
-          NAMEMINLENGTH`, () => {
-          let errors = {};
-          let name: string;
-          let key: string;
+          NAMEMINLENGTH and less than or equal to NAMMAXLENGTH`, () => {
           fixture.detectChanges();
 
           const lastNameControl = component.editForm.get('nameGroup.lastName');
 
-          name = 'Joe';
-          expect(name.length).toBeGreaterThanOrEqual(NAMEMINLENGTH);
-          lastNameControl.setValue(name);
-          errors = lastNameControl.errors || {};
-          expect(lastNameControl.valid).toBeTruthy();
-          key = 'minlength';
-          expect(errors[key]).toBeFalsy();
+          lastNameControl.setValue('Joe');
+
+          expect(lastNameControl.value.length).toBeGreaterThanOrEqual(
+            NAMEMINLENGTH
+          );
+          expect(lastNameControl.value.length).toBeLessThanOrEqual(
+            NAMEMAXLENGTH
+          );
+          expect(lastNameControl.hasError('maxlength')).toBeFalse();
+          expect(lastNameControl.hasError('required')).toBeFalse();
+          expect(lastNameControl.hasError('minlength')).toBeFalse();
+          expect(lastNameControl.errors).toBeNull();
+          expect(lastNameControl.valid).toBeTrue();
         });
 
-        it(`should be invalid when value.length is greater than
+        it(`should not be valid when value.length is greater than
           NAMEMAXLENGTH`, () => {
-          let errors = {};
-          let name: string;
-          let key: string;
-          fixture.detectChanges();
-
-          const lastNameControl = component.editForm.get('nameGroup.lastName');
-          name = 'Hardndeisnckdslfsalwf';
-          expect(name.length).toBeGreaterThan(NAMEMAXLENGTH);
-          lastNameControl.setValue(name);
-          errors = lastNameControl.errors || {};
-
-          expect(lastNameControl.valid).toBeFalsy();
-          key = 'maxlength';
-          expect(errors[key]).toBeTruthy();
-        });
-
-        it(`should be valid when value.length is less than or equal to
-          NAMEMAXLENGTH`, () => {
-          let errors = {};
-          let name: string;
-          let key: string;
           fixture.detectChanges();
           const lastNameControl = component.editForm.get('nameGroup.lastName');
 
-          name = 'Hardndeisnckdslfsalw';
-          expect(name.length).toBeLessThanOrEqual(NAMEMAXLENGTH);
-          lastNameControl.setValue(name);
-          errors = lastNameControl.errors || {};
+          lastNameControl.setValue('Hardndeisnckdslfsalwf');
 
-          expect(lastNameControl.valid).toBeTruthy();
-          key = 'maxlength';
-          expect(errors[key]).toBeFalsy();
+          expect(lastNameControl.value.length).toBeGreaterThan(NAMEMAXLENGTH);
+          expect(lastNameControl.valid).toBeFalse();
+          expect(lastNameControl.hasError('minlength')).toBeFalse();
+          expect(lastNameControl.hasError('required')).toBeFalse();
+          expect(lastNameControl.hasError('maxlength')).toBeTrue();
         });
       });
     });
 
     describe('passwordGroup', () => {
       describe('currentPassword control', () => {
-        it('should be set to an empty string to start', () => {
+        it('should not be valid when the value is empty', () => {
           fixture.detectChanges();
-
           const currentPasswordControl = component.editForm.get(
             'passwordGroup.currentPassword'
           );
 
-          expect(currentPasswordControl.value).toEqual('');
+          currentPasswordControl.setValue('');
+
+          expect(currentPasswordControl.value.length).toBe(0);
+          expect(currentPasswordControl.valid).toBeFalse();
+          expect(currentPasswordControl.hasError('invalid')).toBeFalse();
+          expect(currentPasswordControl.hasError('required')).toBeTrue();
         });
 
-        it('should be invalid when empty', () => {
-          let errors = {};
-          let key: string;
+        it(`should not be valid when the value doesn't match the
+          USER.password`, () => {
           fixture.detectChanges();
-
-          const currentPasswordControl = component.editForm.get(
-            'passwordGroup.currentPassword'
-          );
-          errors = currentPasswordControl.errors || {};
-
-          expect(currentPasswordControl.valid).toBeFalsy();
-          key = 'required';
-          expect(errors[key]).toBeTruthy();
-          key = 'invalid';
-          expect(errors[key]).toBeFalsy();
-        });
-
-        it(`should be invalid when value doesn't match the USER.password`, () => {
-          let errors = {};
-          let key: string;
-          fixture.detectChanges();
-
           const currentPasswordControl = component.editForm.get(
             'passwordGroup.currentPassword'
           );
 
           currentPasswordControl.setValue('testPassword42');
-          errors = currentPasswordControl.errors || {};
 
-          expect(currentPasswordControl.valid).toBeFalsy();
-          key = 'invalid';
-          expect(errors[key]).toBeTruthy();
-          key = 'required';
-          expect(errors[key]).toBeFalsy();
+          expect(currentPasswordControl.value !== USER.password).toBeTruthy();
+          expect(currentPasswordControl.valid).toBeFalse();
+          expect(currentPasswordControl.hasError('required')).toBeFalse();
+          expect(currentPasswordControl.hasError('invalid')).toBeTrue();
         });
 
         it('should be valid when set correctly', () => {
-          let errors = {};
-          let key: string;
           fixture.detectChanges();
           const currentPasswordControl = component.editForm.get(
             'passwordGroup.currentPassword'
           );
 
           currentPasswordControl.setValue(USER.password);
-          errors = currentPasswordControl.errors || {};
 
-          key = 'required';
-          expect(errors[key]).toBeFalsy();
-          key = 'invalid';
-          expect(errors[key]).toBeFalsy();
-          expect(currentPasswordControl.valid).toBeTruthy();
+          expect(currentPasswordControl.errors).toBeNull();
+          expect(currentPasswordControl.valid).toBeTrue();
         });
       });
     });
@@ -498,16 +392,14 @@ describe('EditNameComponent', () => {
 
       component.onSubmit(component.editForm);
 
-      expect(component.submitted).toBeTruthy();
+      expect(component.submitted).toBeTrue();
     });
 
     it(`should call loadingChange.emit with correct value`, () => {
-      fixture.detectChanges();
       spyOn(component.loadingChange, 'emit');
       spyOn(component, 'resetForm');
-
       mockAuthService.saveUser.and.returnValue(of(true));
-
+      fixture.detectChanges();
       const nameGroupControl = component.editForm.controls.nameGroup;
       const passwordGroupControl = component.editForm.controls.passwordGroup;
       nameGroupControl.setValue({
@@ -517,7 +409,8 @@ describe('EditNameComponent', () => {
       passwordGroupControl.setValue({
         currentPassword: USER.password,
       });
-      expect(component.editForm.valid).toBeTruthy();
+      expect(component.editForm.valid).toBeTrue();
+
       component.onSubmit(component.editForm);
 
       expect(component.loadingChange.emit).toHaveBeenCalledWith(true);
@@ -529,37 +422,64 @@ describe('EditNameComponent', () => {
       valid`, () => {
       fixture.detectChanges();
       spyOn(component.loadingChange, 'emit');
+      component.editForm.setValue({
+        nameGroup: {
+          firstName: '',
+          lastName: '',
+        },
+        passwordGroup: {
+          currentPassword: '',
+        },
+      });
+      expect(component.editForm.value).toEqual({
+        nameGroup: {
+          firstName: '',
+          lastName: '',
+        },
+        passwordGroup: {
+          currentPassword: '',
+        },
+      });
+      expect(component.editForm.valid).toBeFalse();
 
       component.onSubmit(component.editForm);
 
       expect(component.loadingChange.emit).toHaveBeenCalledTimes(0);
     });
 
-    it(`should call saveUser method on AuthService with correct value`, () => {
+    it(`should call saveUser method on AuthService with correct value when
+      editForm is valid`, () => {
       let updatedUser: User;
       spyOn(component.loadingChange, 'emit');
       fixture.detectChanges();
-      const nameGroupControl = component.editForm.controls.nameGroup;
-      const passwordGroupControl = component.editForm.controls.passwordGroup;
-      nameGroupControl.setValue({
-        firstName: 'John',
-        lastName: 'Doe',
+      component.editForm.setValue({
+        nameGroup: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+        passwordGroup: {
+          currentPassword: USER.password,
+        },
       });
-      passwordGroupControl.setValue({
-        currentPassword: USER.password,
+      expect(component.editForm.value).toEqual({
+        nameGroup: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+        passwordGroup: {
+          currentPassword: USER.password,
+        },
       });
+      expect(component.editForm.valid).toBeTrue();
+
       updatedUser = {
         ...USER,
-        name: {
-          firstName: nameGroupControl.get('firstName').value as string,
-          lastName: nameGroupControl.get('lastName').value as string,
-        },
+        name: component.editForm.controls.nameGroup.value,
       };
-      mockAuthService.saveUser.and.returnValue(of(updatedUser as IUser));
-      expect(component.editForm.valid).toBeTruthy();
-
+      mockAuthService.saveUser.and.returnValue(of(updatedUser));
       component.onSubmit(component.editForm);
 
+      expect(mockAuthService.saveUser).toHaveBeenCalledTimes(1);
       expect(mockAuthService.saveUser).toHaveBeenCalledWith(updatedUser);
       expect(component.user).toEqual(updatedUser as IUser);
     });
@@ -567,37 +487,64 @@ describe('EditNameComponent', () => {
     it(`should not call saveUser method on AuthService when editForm is not
       valid`, () => {
       fixture.detectChanges();
+      component.editForm.setValue({
+        nameGroup: {
+          firstName: '',
+          lastName: '',
+        },
+        passwordGroup: {
+          currentPassword: '',
+        },
+      });
+      expect(component.editForm.value).toEqual({
+        nameGroup: {
+          firstName: '',
+          lastName: '',
+        },
+        passwordGroup: {
+          currentPassword: '',
+        },
+      });
+      expect(component.editForm.valid).toBeFalse();
 
       component.onSubmit(component.editForm);
 
       expect(mockAuthService.saveUser).toHaveBeenCalledTimes(0);
     });
 
-    it(`should call resetForm method with correct value`, () => {
+    it(`should call resetForm method with correct value when edit form is
+      valid`, () => {
       let updatedUser: User;
       spyOn(component, 'resetForm');
       fixture.detectChanges();
-      const nameGroupControl = component.editForm.controls.nameGroup;
-      const passwordGroupControl = component.editForm.controls.passwordGroup;
-      nameGroupControl.setValue({
-        firstName: 'John',
-        lastName: 'Doe',
+      component.editForm.setValue({
+        nameGroup: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+        passwordGroup: {
+          currentPassword: USER.password,
+        },
       });
-      passwordGroupControl.setValue({
-        currentPassword: USER.password,
+      expect(component.editForm.value).toEqual({
+        nameGroup: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+        passwordGroup: {
+          currentPassword: USER.password,
+        },
       });
+      expect(component.editForm.valid).toBeTrue();
       updatedUser = {
         ...USER,
-        name: {
-          firstName: nameGroupControl.get('firstName').value as string,
-          lastName: nameGroupControl.get('lastName').value as string,
-        },
+        name: component.editForm.controls.nameGroup.value,
       };
       mockAuthService.saveUser.and.returnValue(of(updatedUser as IUser));
-      expect(component.editForm.valid).toBeTruthy();
 
       component.onSubmit(component.editForm);
 
+      expect(component.resetForm).toHaveBeenCalledTimes(1);
       expect(component.resetForm).toHaveBeenCalledWith(
         component.editForm,
         updatedUser as IUser
@@ -605,8 +552,27 @@ describe('EditNameComponent', () => {
     });
 
     it(`should not call resetForm method when editForm is not valid`, () => {
-      fixture.detectChanges();
       spyOn(component, 'resetForm');
+      fixture.detectChanges();
+      component.editForm.setValue({
+        nameGroup: {
+          firstName: '',
+          lastName: '',
+        },
+        passwordGroup: {
+          currentPassword: '',
+        },
+      });
+      expect(component.editForm.value).toEqual({
+        nameGroup: {
+          firstName: '',
+          lastName: '',
+        },
+        passwordGroup: {
+          currentPassword: '',
+        },
+      });
+      expect(component.editForm.valid).toBeFalse();
 
       component.onSubmit(component.editForm);
 
@@ -615,29 +581,58 @@ describe('EditNameComponent', () => {
 
     it(`should not call resetForm method when saveUser on AuthService throws an
       error`, () => {
-      fixture.detectChanges();
-      mockAuthService.saveUser.and.returnValue(throwError(''));
       spyOn(component, 'resetForm');
+      mockAuthService.saveUser.and.returnValue(throwError(''));
+      fixture.detectChanges();
+      component.editForm.setValue({
+        nameGroup: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+        passwordGroup: {
+          currentPassword: USER.password,
+        },
+      });
+      expect(component.editForm.value).toEqual({
+        nameGroup: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+        passwordGroup: {
+          currentPassword: USER.password,
+        },
+      });
+      expect(component.editForm.valid).toBeTrue();
 
       component.onSubmit(component.editForm);
 
       expect(component.resetForm).toHaveBeenCalledTimes(0);
     });
 
-    it(`should call show method on Notification service`, () => {
+    it(`should call show method on Notification service when editForm is
+      valid`, () => {
       mockAuthService.saveUser.and.returnValue(of(true));
       spyOn(component, 'resetForm');
       fixture.detectChanges();
-      const nameGroupControl = component.editForm.controls.nameGroup;
-      const passwordGroupControl = component.editForm.controls.passwordGroup;
-      nameGroupControl.setValue({
-        firstName: 'John',
-        lastName: 'Doe',
+      component.editForm.setValue({
+        nameGroup: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+        passwordGroup: {
+          currentPassword: USER.password,
+        },
       });
-      passwordGroupControl.setValue({
-        currentPassword: USER.password,
+      expect(component.editForm.value).toEqual({
+        nameGroup: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+        passwordGroup: {
+          currentPassword: USER.password,
+        },
       });
-      expect(component.editForm.valid).toBeTruthy();
+      expect(component.editForm.valid).toBeTrue();
 
       component.onSubmit(component.editForm);
 
@@ -648,16 +643,25 @@ describe('EditNameComponent', () => {
       AuthService throws an error`, () => {
       mockAuthService.saveUser.and.returnValue(throwError(''));
       fixture.detectChanges();
-      const nameGroupControl = component.editForm.controls.nameGroup;
-      const passwordGroupControl = component.editForm.controls.passwordGroup;
-      nameGroupControl.setValue({
-        firstName: 'John',
-        lastName: 'Doe',
+      component.editForm.setValue({
+        nameGroup: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+        passwordGroup: {
+          currentPassword: USER.password,
+        },
       });
-      passwordGroupControl.setValue({
-        currentPassword: USER.password,
+      expect(component.editForm.value).toEqual({
+        nameGroup: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+        passwordGroup: {
+          currentPassword: USER.password,
+        },
       });
-      expect(component.editForm.valid).toBeTruthy();
+      expect(component.editForm.valid).toBeTrue();
 
       component.onSubmit(component.editForm);
 
@@ -667,6 +671,25 @@ describe('EditNameComponent', () => {
     it(`should not call show method on Notification service when editForm is not
       valid`, () => {
       fixture.detectChanges();
+      component.editForm.setValue({
+        nameGroup: {
+          firstName: '',
+          lastName: '',
+        },
+        passwordGroup: {
+          currentPassword: '',
+        },
+      });
+      expect(component.editForm.value).toEqual({
+        nameGroup: {
+          firstName: '',
+          lastName: '',
+        },
+        passwordGroup: {
+          currentPassword: '',
+        },
+      });
+      expect(component.editForm.valid).toBeFalse();
 
       component.onSubmit(component.editForm);
 
@@ -676,37 +699,49 @@ describe('EditNameComponent', () => {
 
   describe('resetForm', () => {
     it('should set submitted correctly', () => {
-      fixture.detectChanges();
       component.submitted = true;
+      fixture.detectChanges();
 
       component.resetForm(component.editForm, USER);
 
-      expect(component.submitted).toBeFalsy();
+      expect(component.submitted).toBeFalse();
     });
 
-    it('should set nameGroup control correctly', () => {
+    it('should set nameGroup control value correctly', () => {
       fixture.detectChanges();
       const nameGroupControl = component.editForm.controls.nameGroup;
-      const updatedUser = {
-        ...USER,
-        name: {
-          firstName: 'Ricky',
-          lastName: 'Bobby',
-        },
-      };
-      component.resetForm(component.editForm, updatedUser);
-
-      expect(nameGroupControl.get('firstName').value).toEqual('Ricky');
-      expect(nameGroupControl.get('lastName').value).toEqual('Bobby');
-    });
-
-    it('should set passwordGroup control correctly', () => {
-      fixture.detectChanges();
-      const passwordGroupControl = component.editForm.controls.passwordGroup;
+      nameGroupControl.setValue({
+        firstName: '',
+        lastName: '',
+      });
+      expect(nameGroupControl.value).toEqual({
+        firstName: '',
+        lastName: '',
+      });
 
       component.resetForm(component.editForm, USER);
 
-      expect(passwordGroupControl.get('currentPassword').value).toEqual('');
+      expect(nameGroupControl.value).toEqual({
+        firstName: USER.name.firstName,
+        lastName: USER.name.lastName,
+      });
+    });
+
+    it('should set passwordGroup control value correctly', () => {
+      fixture.detectChanges();
+      const passwordGroupControl = component.editForm.get('passwordGroup');
+      passwordGroupControl.setValue({
+        currentPassword: 'password',
+      });
+      expect(passwordGroupControl.value).toEqual({
+        currentPassword: 'password',
+      });
+
+      component.resetForm(component.editForm, USER);
+
+      expect(passwordGroupControl.value).toEqual({
+        currentPassword: '',
+      });
     });
   });
 });
@@ -762,7 +797,7 @@ describe('EditNameComponent w/ template', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should set NameFormComponent in the template', fakeAsync(() => {
+  it('should set NameFormComponent correctly in the template', fakeAsync(() => {
     fixture.detectChanges();
     tick(1000);
     const firstNameControl = component.editForm.get('nameGroup.firstName');
@@ -791,12 +826,13 @@ describe('EditNameComponent w/ template', () => {
     );
   }));
 
-  it('should set CurrentPasswordFormComponent in the template', () => {
+  it(`should set CurrentPasswordFormComponent correctly in the
+    template`, () => {
     fixture.detectChanges();
+
     const CurrentPasswordFormComponentDEs = fixture.debugElement.queryAll(
       By.directive(CurrentPasswordFormComponent)
     );
-
     expect(CurrentPasswordFormComponentDEs.length).toBe(1);
     expect(CurrentPasswordFormComponentDEs[0].componentInstance.submitted).toBe(
       component.submitted
@@ -814,170 +850,232 @@ describe('EditNameComponent w/ template', () => {
 
     form.triggerEventHandler('ngSubmit', null);
 
+    expect(component.onSubmit).toHaveBeenCalledTimes(1);
     expect(component.onSubmit).toHaveBeenCalledWith(component.editForm);
   });
 
-  it(`should call resetForm method with correct value when cancel input is
-    clicked`, () => {
+  it(`should call resetForm method with correct value when cancel input button
+    is clicked`, () => {
     spyOn(component, 'resetForm');
     fixture.detectChanges();
-    const input = fixture.debugElement.query(By.css('#cancel'));
+    const buttons = fixture.debugElement.queryAll(By.css('#cancel'));
 
-    input.triggerEventHandler('click', null);
+    buttons[0].triggerEventHandler('click', null);
 
+    expect(buttons.length).toBe(1);
     expect(component.resetForm).toHaveBeenCalledWith(
       component.editForm,
       component.user
     );
   });
 
-  it(`should disable submit input when loading`, () => {
-    const input = fixture.debugElement.query(By.css('#submit'));
+  it(`should disable submit input button when loading is true`, () => {
     component.loading = true;
+    component.submitted = false;
     fixture.detectChanges();
+    component.editForm.setValue({
+      nameGroup: {
+        firstName: '',
+        lastName: '',
+      },
+      passwordGroup: {
+        currentPassword: '',
+      },
+    });
 
-    expect(input.nativeElement.disabled).toBeTruthy();
+    const buttons = fixture.debugElement.queryAll(By.css('#submit'));
+    expect(buttons.length).toBe(1);
+    expect(component.editForm.value).toEqual({
+      nameGroup: {
+        firstName: '',
+        lastName: '',
+      },
+      passwordGroup: {
+        currentPassword: '',
+      },
+    });
+    expect(component.editForm.valid).toBeFalse();
+    expect(component.submitted).toBeFalse();
+    expect(component.loading).toBeTrue();
+    expect(buttons[0].nativeElement.disabled).toBeTrue();
   });
 
-  it(`should set submit input classes correctly when editForm is
-    valid`, fakeAsync(() => {
-    const input = fixture.debugElement.query(By.css('#submit'));
+  it(`should disable submit input button when editForm is not valid and
+    submitted is true`, () => {
+    component.loading = false;
+    component.submitted = true;
     fixture.detectChanges();
-    const nameGroupControl = component.editForm.controls.nameGroup;
-    const passwordGroupControl = component.editForm.controls.passwordGroup;
-
-    nameGroupControl.setValue({
-      firstName: 'John',
-      lastName: 'Doe',
+    component.editForm.setValue({
+      nameGroup: {
+        firstName: '',
+        lastName: '',
+      },
+      passwordGroup: {
+        currentPassword: '',
+      },
     });
-    passwordGroupControl.setValue({
-      currentPassword: USER.password,
+
+    const buttons = fixture.debugElement.queryAll(By.css('#submit'));
+    expect(buttons.length).toBe(1);
+    expect(component.editForm.valid).toBeFalse();
+    expect(component.loading).toBeFalse();
+    expect(component.submitted).toBeTrue();
+    expect(buttons[0].nativeElement.disabled).toBeTrue();
+  });
+
+  it(`should not disable submit input button when submitted is false`, () => {
+    component.loading = false;
+    component.submitted = false;
+    fixture.detectChanges();
+    component.editForm.setValue({
+      nameGroup: {
+        firstName: '',
+        lastName: '',
+      },
+      passwordGroup: {
+        currentPassword: '',
+      },
+    });
+
+    const buttons = fixture.debugElement.queryAll(By.css('#submit'));
+    expect(buttons.length).toBe(1);
+    expect(component.editForm.valid).toBeFalse();
+    expect(component.loading).toBeFalse();
+    expect(component.submitted).toBeFalse();
+    expect(buttons[0].nativeElement.disabled).toBeFalse();
+  });
+
+  it(`should not disable submit input button when editForm is valid and
+    submitted is true`, fakeAsync(() => {
+    component.loading = false;
+    component.submitted = true;
+    fixture.detectChanges();
+    component.editForm.setValue({
+      nameGroup: {
+        firstName: 'John',
+        lastName: 'Doe',
+      },
+      passwordGroup: {
+        currentPassword: USER.password,
+      },
+    });
+
+    tick(1000);
+    fixture.detectChanges();
+
+    const buttons = fixture.debugElement.queryAll(By.css('#submit'));
+    expect(buttons.length).toBe(1);
+    expect(component.editForm.valid).toBeTrue();
+    expect(component.loading).toBeFalse();
+    expect(component.submitted).toBeTrue();
+    expect(buttons[0].nativeElement.disabled).toBeFalsy();
+  }));
+
+  it(`should set submit input button classes correctly when editForm is
+    valid`, fakeAsync(() => {
+    fixture.detectChanges();
+
+    component.editForm.setValue({
+      nameGroup: {
+        firstName: 'John',
+        lastName: 'Doe',
+      },
+      passwordGroup: {
+        currentPassword: USER.password,
+      },
     });
     tick(1000);
     fixture.detectChanges();
 
-    expect(component.editForm.valid).toBeTruthy();
-    expect(input.classes).toEqual({
+    const buttons = fixture.debugElement.queryAll(By.css('#submit'));
+    expect(buttons.length).toBe(1);
+    expect(component.editForm.valid).toBeTrue();
+    expect(buttons[0].classes).toEqual({
       btn: true,
       'btn-sm': true,
       'btn-success': true,
     });
   }));
 
-  it(`should set submit input classes correctly when not submitted`, () => {
-    const input = fixture.debugElement.query(By.css('#submit'));
+  it(`should set submit button input classes correctly when not
+    submitted`, () => {
     component.submitted = false;
     fixture.detectChanges();
 
-    expect(component.editForm.valid).toBeFalsy();
-    expect(input.classes).toEqual({
+    const buttons = fixture.debugElement.queryAll(By.css('#submit'));
+    expect(component.submitted).toBeFalse();
+    expect(buttons.length).toBe(1);
+    expect(component.editForm.valid).toBeFalse();
+    expect(buttons[0].classes).toEqual({
       btn: true,
       'btn-sm': true,
       'btn-success': true,
     });
   });
 
-  it(`should set submit input classes correctly when
+  it(`should set submit input button classes correctly when
     submitted`, fakeAsync(() => {
-    const input = fixture.debugElement.query(By.css('#submit'));
     component.submitted = true;
     fixture.detectChanges();
-    const nameGroupControl = component.editForm.controls.nameGroup;
-    const passwordGroupControl = component.editForm.controls.passwordGroup;
+    const buttons = fixture.debugElement.queryAll(By.css('#submit'));
 
-    expect(component.editForm.valid).toBeFalsy();
-    expect(input.classes).toEqual({
+    component.editForm.setValue({
+      nameGroup: {
+        firstName: 'John',
+        lastName: 'Doe',
+      },
+      passwordGroup: {
+        currentPassword: '',
+      },
+    });
+    tick(1000);
+    fixture.detectChanges();
+
+    expect(component.editForm.valid).toBeFalse();
+    expect(buttons.length).toBe(1);
+    expect(buttons[0].classes).toEqual({
       btn: true,
       'btn-sm': true,
       'btn-outline-danger': true,
     });
 
-    nameGroupControl.setValue({
-      firstName: 'John',
-      lastName: 'Doe',
-    });
-    passwordGroupControl.setValue({
-      currentPassword: USER.password,
+    component.editForm.setValue({
+      nameGroup: {
+        firstName: 'John',
+        lastName: 'Doe',
+      },
+      passwordGroup: {
+        currentPassword: USER.password,
+      },
     });
     tick(1000);
     fixture.detectChanges();
 
-    expect(component.editForm.valid).toBeTruthy();
-    expect(input.classes).toEqual({
+    expect(component.editForm.valid).toBeTrue();
+    expect(buttons[0].classes).toEqual({
       btn: true,
       'btn-sm': true,
       'btn-success': true,
     });
   }));
 
-  it(`should disable submit input when editForm is not valid`, fakeAsync(() => {
-    const input = fixture.debugElement.query(By.css('#submit'));
-    component.submitted = true;
-    fixture.detectChanges();
-    tick(1000);
-
-    expect(component.editForm.valid).toBeFalsy();
-    expect(input.nativeElement.disabled).toBeTruthy();
-  }));
-
-  it(`should not disable submit input when editForm is valid`, fakeAsync(() => {
-    const input = fixture.debugElement.query(By.css('#submit'));
-    component.submitted = true;
-    fixture.detectChanges();
-    const nameGroupControl = component.editForm.controls.nameGroup;
-    const passwordGroupControl = component.editForm.controls.passwordGroup;
-
-    nameGroupControl.setValue({
-      firstName: 'John',
-      lastName: 'Doe',
-    });
-    passwordGroupControl.setValue({
-      currentPassword: USER.password,
-    });
-    tick(1000);
-    fixture.detectChanges();
-
-    expect(component.editForm.valid).toBeTruthy();
-    expect(input.nativeElement.disabled).toBeFalsy();
-  }));
-
-  it(`should not disable submit input when not submitted`, fakeAsync(() => {
-    const input = fixture.debugElement.query(By.css('#submit'));
-    component.submitted = false;
-    fixture.detectChanges();
-    const nameGroupControl = component.editForm.controls.nameGroup;
-    const passwordGroupControl = component.editForm.controls.passwordGroup;
-
-    expect(component.editForm.valid).toBeFalsy();
-    expect(input.nativeElement.disabled).toBeFalsy();
-
-    nameGroupControl.setValue({
-      firstName: 'John',
-      lastName: 'Doe',
-    });
-    passwordGroupControl.setValue({
-      currentPassword: USER.password,
-    });
-    tick(1000);
-    fixture.detectChanges();
-
-    expect(component.editForm.valid).toBeTruthy();
-    expect(input.nativeElement.disabled).toBeFalsy();
-  }));
-
-  it(`should disable cancel input when loading`, () => {
-    const input = fixture.debugElement.query(By.css('#cancel'));
+  it(`should disable cancel input button when loading`, () => {
     component.loading = true;
     fixture.detectChanges();
 
-    expect(input.nativeElement.disabled).toBeTruthy();
+    const buttons = fixture.debugElement.queryAll(By.css('#cancel'));
+    expect(buttons.length).toBe(1);
+    expect(component.loading).toBeTrue();
+    expect(buttons[0].nativeElement.disabled).toBeTrue();
   });
 
-  it(`should not disable cancel input when not loading`, () => {
-    const input = fixture.debugElement.query(By.css('#cancel'));
+  it(`should not disable cancel input button when not loading`, () => {
     component.loading = false;
     fixture.detectChanges();
 
-    expect(input.nativeElement.disabled).toBeFalsy();
+    const buttons = fixture.debugElement.queryAll(By.css('#cancel'));
+    expect(buttons.length).toBe(1);
+    expect(component.loading).toBeFalse();
+    expect(buttons[0].nativeElement.disabled).toBeFalse();
   });
 });
