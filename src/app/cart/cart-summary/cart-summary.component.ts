@@ -1,10 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Output,
-} from '@angular/core';
-import { tap } from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
 import { CartService } from 'src/app/services/cart.service';
 import { ShippingRateService } from 'src/app/services/shipping-rate.service';
 
