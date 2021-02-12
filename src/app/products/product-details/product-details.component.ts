@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CartService } from '../../services/cart.service';
-import { first, map, tap } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
 import { IProduct } from 'src/app/types/product';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ICartItem } from 'src/app/types/cart-item';
@@ -63,21 +63,30 @@ export class ProductDetailsComponent implements OnInit {
     this.config.backdrop = 'static';
   }
 
-  buyNow(product: IProduct, items: ICartItem[]): void {
+  saveItem(product: IProduct, items: ICartItem[], navigate?: boolean): void {
+    const index = this.getIndex(product, items);
+    const item = this.getUpdatedItem(product, items, index);
     this.setLoading(true);
-    this.saveItem(product, items, true);
-  }
-
-  addItem(product: IProduct, items: ICartItem[]): void {
-    this.setLoading(true);
-    this.saveItem(product, items);
+    this.cartService.saveItem(item, index).subscribe({
+      error: () => {
+        this.setLoading(false);
+        this.showDanger(this.dangerTpl);
+      },
+      complete: () => {
+        this.showSuccess();
+        this.getCartItems(navigate);
+        if (!navigate) {
+          this.openModal(product);
+        }
+      },
+    });
   }
 
   updateIndex(urls: string[], productUrl: string): void {
     const index = urls.findIndex(
       (url) => url.toLowerCase() === productUrl.toLowerCase()
     );
-    if (index < 0 || index === (null || undefined)) {
+    if (index < 0 || index) {
       return;
     }
     this.imageIndex = +index;
@@ -91,28 +100,6 @@ export class ProductDetailsComponent implements OnInit {
         queryParamsHandling: 'preserve',
       });
     }
-  }
-
-  private saveItem(
-    product: IProduct,
-    items: ICartItem[],
-    buyNow?: boolean
-  ): void {
-    const index = this.getIndex(product, items);
-    const item = this.getUpdatedItem(product, items, index);
-    this.cartService.saveItem(item, index).subscribe({
-      error: () => {
-        this.setLoading(false);
-        this.showDanger(this.dangerTpl);
-      },
-      complete: () => {
-        this.showSuccess();
-        this.getCartItems(buyNow);
-        if (!buyNow) {
-          this.openModal(product);
-        }
-      },
-    });
   }
 
   private openModal(product: IProduct): void {
@@ -167,7 +154,7 @@ export class ProductDetailsComponent implements OnInit {
     this.notificationService.show(notification);
   }
 
-  private getCartItems(buyNow?: boolean): void {
+  private getCartItems(navigate?: boolean): void {
     this.cartService.getCartItems().subscribe({
       error: () => {
         this.showDanger(this.getCartErrTpl);
@@ -175,7 +162,7 @@ export class ProductDetailsComponent implements OnInit {
       },
       complete: () => {
         this.setLoading(false);
-        if (buyNow) {
+        if (navigate) {
           this.router.navigate(['/cart']);
         }
       },
