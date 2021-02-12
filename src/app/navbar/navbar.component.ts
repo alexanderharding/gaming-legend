@@ -6,6 +6,8 @@ import {
 } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { CartService } from '../services/cart.service';
+import { NotificationService } from '../services/notification.service';
+import { INotification } from '../types/notification';
 
 @Component({
   selector: 'ctacu-navbar',
@@ -15,7 +17,6 @@ import { CartService } from '../services/cart.service';
 })
 export class NavbarComponent implements OnInit {
   @Input() pageTitle: string;
-  errorMessage: string;
   isMenuCollapsed = true;
 
   /* Get cartQuantity$ from CartService */
@@ -26,12 +27,24 @@ export class NavbarComponent implements OnInit {
 
   constructor(
     private readonly cartService: CartService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly notifcationService: NotificationService
   ) {}
 
   ngOnInit(): void {
     this.cartService.getCartItems().subscribe({
-      error: (err) => (this.errorMessage = `Retrieval error: ${err}.`),
+      error: () => {
+        const notification = {
+          textOrTpl: 'Cart Retrieval Error !',
+          className: 'bg-danger text-light',
+          delay: 15000,
+        } as INotification;
+        this.show(notification);
+      },
     });
+  }
+
+  private show(notification: INotification): void {
+    this.notifcationService.show(notification);
   }
 }
