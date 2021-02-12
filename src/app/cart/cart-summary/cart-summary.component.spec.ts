@@ -143,8 +143,7 @@ describe('CartSummaryComponent', () => {
           id: 1,
           name: 'Ideapad L340',
           brandId: 1,
-          description:
-            'With the Lenovo Idea Pad L340 gaming Laptop, you know you\'ve made the right decision with one serious laptop. Equipped with the latest Intel Core i5 processor, next-gen NVIDIA GeForce graphics, and jaw-dropping Dolby Audio, you\'ll experience first-hand real power and seamless play. You\'ll stay focused on the task at hand, concentrating on beating Your opponents and confident that your sleek, stylish computer will keep up with the competition.',
+          description: `With the Lenovo Idea Pad L340 gaming Laptop, you know you've made the right decision with one serious laptop. Equipped with the latest Intel Core i5 processor, next-gen NVIDIA GeForce graphics, and jaw-dropping Dolby Audio, you'll experience first-hand real power and seamless play. You'll stay focused on the task at hand, concentrating on beating Your opponents and confident that your sleek, stylish computer will keep up with the competition.`,
           price: 855.67,
           imageUrl: 'assets/images/ideapadL340.jpg',
           code: 'LDN-1',
@@ -196,13 +195,13 @@ describe('CartSummaryComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should set tax correctly from CartService', () => {
+  it('should have set tax correctly', () => {
     fixture.detectChanges();
 
     expect(component.tax).toBe(TAX);
   });
 
-  it('should set items$ correctly from CartService', () => {
+  it('should have set items$ correctly', () => {
     let items: ICartItem[];
     fixture.detectChanges();
 
@@ -212,7 +211,7 @@ describe('CartSummaryComponent', () => {
     expect(items).toBe(ITEMS);
   });
 
-  it('should set quantity$ correctly from CartService', () => {
+  it('should have set quantity$ correctly', () => {
     let quantity: number;
     fixture.detectChanges();
 
@@ -221,7 +220,7 @@ describe('CartSummaryComponent', () => {
     expect(quantity).toBe(QUANTITY);
   });
 
-  it('should set subtotal$ correctly from CartService', () => {
+  it('should have set subtotal$ correctly', () => {
     let subtotal: number;
     fixture.detectChanges();
 
@@ -230,7 +229,7 @@ describe('CartSummaryComponent', () => {
     expect(subtotal).toBe(SUBTOTAL);
   });
 
-  it('should set totalTax$ correctly from CartService', () => {
+  it('should have set totalTax$ correctly', () => {
     let totalTax: number;
     fixture.detectChanges();
 
@@ -239,7 +238,7 @@ describe('CartSummaryComponent', () => {
     expect(totalTax).toBe(TOTALTAX);
   });
 
-  it('should set total$ correctly from CartService', () => {
+  it('should have set total$ correctly', () => {
     let total: number;
     fixture.detectChanges();
 
@@ -248,7 +247,7 @@ describe('CartSummaryComponent', () => {
     expect(total).toBe(TOTAL);
   });
 
-  it('should set shippingPrice$ correctly from ShippingRateService', () => {
+  it('should have set shippingPrice$ correctly', () => {
     let shippingPrice: number;
     fixture.detectChanges();
 
@@ -391,8 +390,7 @@ describe('CartSummaryComponent w/ template', () => {
           id: 1,
           name: 'Ideapad L340',
           brandId: 1,
-          description:
-            'With the Lenovo Idea Pad L340 gaming Laptop, you know you\'ve made the right decision with one serious laptop. Equipped with the latest Intel Core i5 processor, next-gen NVIDIA GeForce graphics, and jaw-dropping Dolby Audio, you\'ll experience first-hand real power and seamless play. You\'ll stay focused on the task at hand, concentrating on beating Your opponents and confident that your sleek, stylish computer will keep up with the competition.',
+          description: `With the Lenovo Idea Pad L340 gaming Laptop, you know you've made the right decision with one serious laptop. Equipped with the latest Intel Core i5 processor, next-gen NVIDIA GeForce graphics, and jaw-dropping Dolby Audio, you'll experience first-hand real power and seamless play. You'll stay focused on the task at hand, concentrating on beating Your opponents and confident that your sleek, stylish computer will keep up with the competition.`,
           price: 855.67,
           imageUrl: 'assets/images/ideapadL340.jpg',
           code: 'LDN-1',
@@ -444,7 +442,7 @@ describe('CartSummaryComponent w/ template', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should set the subtotal$ in the template', () => {
+  it('should set subtotal$ in the template', () => {
     // Arrange
     let subtotal: number;
 
@@ -454,12 +452,12 @@ describe('CartSummaryComponent w/ template', () => {
 
     // Assert
     const elements = fixture.debugElement.queryAll(By.css('div span'));
-    expect(elements[1].nativeElement.textContent).toContain(
+    expect(elements[1].nativeElement.textContent).toBe(
       formatCurrency(subtotal, 'en-US', '$')
     );
   });
 
-  it('should set the tax in the template', () => {
+  it('should set tax in the template', () => {
     // Arrange
 
     // Act
@@ -467,10 +465,10 @@ describe('CartSummaryComponent w/ template', () => {
 
     // Assert
     const elements = fixture.debugElement.queryAll(By.css('div span'));
-    expect(elements[2].nativeElement.textContent).toContain(TAX * 100);
+    expect(elements[2].nativeElement.textContent).toBe(`Tax(${TAX * 100}%)`);
   });
 
-  it('should set the totalTax$ in the template', () => {
+  it('should set totalTax$ in the template', () => {
     // Arrange
     let totalTax: number;
 
@@ -480,12 +478,12 @@ describe('CartSummaryComponent w/ template', () => {
 
     // Assert
     const elements = fixture.debugElement.queryAll(By.css('div span'));
-    expect(elements[3].nativeElement.textContent).toContain(
+    expect(elements[3].nativeElement.textContent).toBe(
       formatCurrency(totalTax, 'en-US', '$')
     );
   });
 
-  it('should set the shippingPrice$ in the template', () => {
+  it('should set shippingPrice$ in the template', () => {
     // Arrange
     let shippingPrice: number;
 
@@ -495,12 +493,12 @@ describe('CartSummaryComponent w/ template', () => {
 
     // Assert
     const elements = fixture.debugElement.queryAll(By.css('div span'));
-    expect(elements[5].nativeElement.textContent).toContain(
+    expect(elements[5].nativeElement.textContent).toBe(
       formatCurrency(shippingPrice, 'en-US', '$')
     );
   });
 
-  it('should set the total$ in the template', () => {
+  it('should set total$ in the template', () => {
     // Arrange
     let total: number;
 
@@ -510,7 +508,7 @@ describe('CartSummaryComponent w/ template', () => {
 
     // Assert
     const elements = fixture.debugElement.queryAll(By.css('h5 span'));
-    expect(elements[1].nativeElement.textContent).toContain(
+    expect(elements[1].nativeElement.textContent).toBe(
       formatCurrency(total, 'en-US', '$')
     );
   });
