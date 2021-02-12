@@ -2,10 +2,12 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { AppRoutingModule } from '../app-routing.module';
 import { AuthService } from '../services/auth.service';
 import { CartService } from '../services/cart.service';
+import { NotificationService } from '../services/notification.service';
+import { INotification } from '../types/notification';
 import { IUser } from '../types/user';
 
 import { NavbarComponent } from './navbar.component';
@@ -14,6 +16,7 @@ describe('NavbarComponent', () => {
   let component: NavbarComponent;
   let fixture: ComponentFixture<NavbarComponent>;
   let mockCartService;
+  let mockNotificationService;
   let mockAuthService;
   let USER: IUser;
   let CARTQUANTITY: number;
@@ -44,6 +47,7 @@ describe('NavbarComponent', () => {
       mockCartService = jasmine.createSpyObj(['getCartItems'], {
         cartQuantity$: of(CARTQUANTITY),
       });
+      mockNotificationService = jasmine.createSpyObj(['show']);
       mockAuthService = jasmine.createSpyObj([''], { currentUser$: of(USER) });
       TestBed.configureTestingModule({
         imports: [HttpClientTestingModule, NgbModule, AppRoutingModule],
@@ -51,6 +55,7 @@ describe('NavbarComponent', () => {
         providers: [
           { provide: CartService, useValue: mockCartService },
           { provide: AuthService, useValue: mockAuthService },
+          { provide: NotificationService, useValue: mockNotificationService },
         ],
       }).compileComponents();
     })
@@ -67,14 +72,6 @@ describe('NavbarComponent', () => {
     fixture.detectChanges();
 
     expect(component).toBeTruthy();
-  });
-
-  it('should have no errorMessage to start', () => {
-    mockCartService.getCartItems.and.returnValue(of(true));
-
-    fixture.detectChanges();
-
-    expect(component.errorMessage).toBeFalsy();
   });
 
   it('should have set cartQuantity$ correctly', () => {
@@ -97,7 +94,7 @@ describe('NavbarComponent', () => {
     expect(user).toBe(USER);
   });
 
-  it('should have isMenuCollapsed as true to start', () => {
+  it('should have set isMenuCollapsed correctly', () => {
     mockCartService.getCartItems.and.returnValue(of(true));
 
     fixture.detectChanges();
@@ -105,7 +102,7 @@ describe('NavbarComponent', () => {
     expect(component.isMenuCollapsed).toBeTruthy();
   });
 
-  it(`should retrieve call the getCartItems method on the
+  it(`should have retrieve called getCartItems method on the
     CartService`, () => {
     // Arrange
     mockCartService.getCartItems.and.returnValue(of(true));
@@ -114,7 +111,37 @@ describe('NavbarComponent', () => {
     fixture.detectChanges();
 
     // Assert
-    expect(mockCartService.getCartItems).toHaveBeenCalled();
+    expect(mockCartService.getCartItems).toHaveBeenCalledTimes(1);
+  });
+
+  it(`should have not called show method on the NotificationService`, () => {
+    // Arrange
+    mockCartService.getCartItems.and.returnValue(of(true));
+
+    // Act
+    fixture.detectChanges();
+
+    // Assert
+    expect(mockNotificationService.show).toHaveBeenCalledTimes(0);
+  });
+
+  it(`should have called show method on the NotificationService with correct
+    value when getCartItems method on the CartService throws an error`, () => {
+    // Arrange
+    let notification: INotification;
+    mockCartService.getCartItems.and.returnValue(throwError(''));
+
+    // Act
+    fixture.detectChanges();
+    notification = {
+      textOrTpl: 'Cart Retrieval Error !',
+      className: 'bg-danger text-light',
+      delay: 15000,
+    };
+
+    // Assert
+    expect(mockNotificationService.show).toHaveBeenCalledTimes(1);
+    expect(mockNotificationService.show).toHaveBeenCalledWith(notification);
   });
 });
 
@@ -177,21 +204,6 @@ describe('NavbarComponent w/ template', () => {
     fixture.detectChanges();
 
     expect(component).toBeTruthy();
-  });
-
-  it('should set the errorMessage in the template', () => {
-    // Arrange
-    mockCartService.getCartItems.and.returnValue(of(true));
-    component.errorMessage = 'Error message!';
-
-    // Act
-    fixture.detectChanges();
-
-    // Assert
-    const elements = fixture.debugElement.queryAll(By.css('ngb-alert span'));
-    expect(elements[0].nativeElement.textContent).toContain(
-      component.errorMessage
-    );
   });
 
   it('should set the pageTitle in the template', () => {
