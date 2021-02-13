@@ -1,11 +1,16 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   templateUrl: './success.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SuccessComponent {
+export class SuccessComponent implements OnInit {
   readonly pageTitle = 'Order Placed';
 
-  constructor() {}
+  constructor(private readonly title: Title) {}
+
+  ngOnInit(): void {
+    this.title.setTitle(`Gaming Legend | ${this.pageTitle}`);
+  }
 }

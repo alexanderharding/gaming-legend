@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
+import { By, Title } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { SuccessComponent } from './success.component';
@@ -8,12 +8,15 @@ import { SuccessComponent } from './success.component';
 describe('SuccessComponent', () => {
   let component: SuccessComponent;
   let fixture: ComponentFixture<SuccessComponent>;
+  let mockTitle: Title;
 
   beforeEach(
     waitForAsync(() => {
+      mockTitle = jasmine.createSpyObj(['setTitle']);
       TestBed.configureTestingModule({
         imports: [NgbModule],
         declarations: [SuccessComponent],
+        providers: [{ provide: Title, useValue: mockTitle }],
       }).compileComponents();
     })
   );
@@ -25,22 +28,35 @@ describe('SuccessComponent', () => {
 
   it('should create', () => {
     // Arrange
-    fixture.detectChanges();
 
     // Act
+    fixture.detectChanges();
 
     // Assert
     expect(component).toBeTruthy();
   });
 
-  it('should set the pageTitle correctly', () => {
+  it('should have set pageTitle correctly', () => {
     // Arrange
-    fixture.detectChanges();
 
     // Act
+    fixture.detectChanges();
 
     // Assert
     expect(component.pageTitle).toBe('Order Placed');
+  });
+
+  it('should have called setTitle method on Title with correct value', () => {
+    // Arrange
+
+    // Act
+    fixture.detectChanges();
+
+    // Assert
+    expect(mockTitle.setTitle).toHaveBeenCalledTimes(1);
+    expect(mockTitle.setTitle).toHaveBeenCalledWith(
+      `Gaming Legend | ${component.pageTitle}`
+    );
   });
 });
 
