@@ -16,6 +16,7 @@ import { ProductResult } from 'src/app/types/product-result';
 import { NotificationService } from 'src/app/services/notification.service';
 import { INotification } from 'src/app/types/notification';
 import { BehaviorSubject } from 'rxjs';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   templateUrl: './product-details.component.html',
@@ -40,7 +41,14 @@ export class ProductDetailsComponent implements OnInit {
   readonly items$ = this.cartService.cartItems$;
 
   private readonly resolvedData$ = this.route.data.pipe(
-    map((d) => d.resolvedData as ProductResult)
+    map((d) => {
+      const resolvedData = d.resolvedData as ProductResult;
+      const title = resolvedData.product
+        ? `${resolvedData.product.name}`
+        : 'Retrieval Error';
+      this.title.setTitle(`Gaming Legend | ${title}`);
+      return resolvedData;
+    })
   );
 
   readonly product$ = this.resolvedData$.pipe(
@@ -55,7 +63,8 @@ export class ProductDetailsComponent implements OnInit {
     private readonly router: Router,
     private readonly modalService: NgbModal,
     private readonly config: NgbModalConfig,
-    private readonly notificationService: NotificationService
+    private readonly notificationService: NotificationService,
+    private readonly title: Title
   ) {}
 
   ngOnInit(): void {

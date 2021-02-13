@@ -1,12 +1,17 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   templateUrl: './not-found.component.html',
   styleUrls: ['./not-found.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NotFoundComponent {
+export class NotFoundComponent implements OnInit {
   readonly pageTitle = 'Page Not Found';
 
-  constructor() {}
+  constructor(private readonly title: Title) {}
+
+  ngOnInit(): void {
+    this.title.setTitle(`Gaming Legend | ${this.pageTitle}`);
+  }
 }

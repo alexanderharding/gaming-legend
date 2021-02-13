@@ -12,6 +12,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   NgbAccordionConfig,
@@ -184,7 +185,8 @@ export class CheckOutComponent implements OnInit, OnDestroy {
     private readonly authService: AuthService,
     private readonly formValidationRuleService: FormValidationRuleService,
     private readonly shippingRateService: ShippingRateService,
-    private readonly notificationService: NotificationService
+    private readonly notificationService: NotificationService,
+    private readonly title: Title
   ) {
     accordionConfig.closeOthers = true;
     progressBarConfig.striped = true;
@@ -192,6 +194,7 @@ export class CheckOutComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.title.setTitle(`Gaming Legend | ${this.pageTitle}`);
     // Build check out form
     this.checkOutForm = this.fb.group({
       nameGroup: this.fb.group({

@@ -1,17 +1,20 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
+import { By, Title } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NotFoundComponent } from './not-found.component';
 
 describe('NotFoundComponent', () => {
   let component: NotFoundComponent;
   let fixture: ComponentFixture<NotFoundComponent>;
+  let mockTitle: Title;
 
   beforeEach(
     waitForAsync(() => {
+      mockTitle = jasmine.createSpyObj(['setTitle']);
       TestBed.configureTestingModule({
         imports: [NgbModule],
         declarations: [NotFoundComponent],
+        providers: [{ provide: Title, useValue: mockTitle }],
       }).compileComponents();
     })
   );
@@ -28,6 +31,19 @@ describe('NotFoundComponent', () => {
 
   it('should have set pageTitle correctly', () => {
     expect(component.pageTitle).toBe('Page Not Found');
+  });
+
+  it('should have called setTitle method on Title with correct value', () => {
+    // Arrange
+
+    // Act
+    fixture.detectChanges();
+
+    // Assert
+    expect(mockTitle.setTitle).toHaveBeenCalledTimes(1);
+    expect(mockTitle.setTitle).toHaveBeenCalledWith(
+      `Gaming Legend | ${component.pageTitle}`
+    );
   });
 });
 
