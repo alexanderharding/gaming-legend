@@ -18,7 +18,7 @@ import {
   NgbModule,
 } from '@ng-bootstrap/ng-bootstrap';
 import { ShippingRatesResult } from '../../types/shipping-rates-result';
-import { ConfirmModalComponent } from '../../confirm-modal/confirm-modal.component';
+import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.component';
 import { NotificationService } from '../../services/notification.service';
 import { formatCurrency, formatDate } from '@angular/common';
 import { AppRoutingModule } from '../../app-routing.module';

@@ -12,7 +12,7 @@ import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { BehaviorSubject } from 'rxjs';
 import { first } from 'rxjs/operators';
 
-import { ConfirmModalComponent } from '../../confirm-modal/confirm-modal.component';
+import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.component';
 
 import { CartService } from '../../services/cart.service';
 import { NotificationService } from '../../services/notification.service';

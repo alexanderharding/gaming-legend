@@ -11,7 +11,7 @@ import { first, map } from 'rxjs/operators';
 import { IProduct } from 'src/app/types/product';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ICartItem } from 'src/app/types/cart-item';
-import { ConfirmModalComponent } from 'src/app/confirm-modal/confirm-modal.component';
+import { ConfirmModalComponent } from 'src/app/shared/confirm-modal/confirm-modal.component';
 import { ProductResult } from 'src/app/types/product-result';
 import { NotificationService } from 'src/app/services/notification.service';
 import { INotification } from 'src/app/types/notification';

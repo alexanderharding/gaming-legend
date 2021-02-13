@@ -10,7 +10,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { ConfirmModalComponent } from 'src/app/confirm-modal/confirm-modal.component';
+import { ConfirmModalComponent } from 'src/app/shared/confirm-modal/confirm-modal.component';
 import { CartService } from 'src/app/services/cart.service';
 import { CheckoutComponent } from './checkout.component';
 

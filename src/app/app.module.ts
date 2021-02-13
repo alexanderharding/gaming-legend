@@ -11,7 +11,6 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { FooterComponent } from './footer/footer.component';
 import { NotFoundComponent } from './not-found/not-found.component';
-import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
 
 /* Guards */
 import { AuthGuard } from './account/auth.guard';
@@ -32,7 +31,6 @@ import { NotificationsContainerComponent } from './notifications-container/notif
     FooterComponent,
     WelcomeComponent,
     NotFoundComponent,
-    ConfirmModalComponent,
     NotificationsContainerComponent,
   ],
   providers: [AuthGuard, UserGuard],

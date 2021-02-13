@@ -10,6 +10,7 @@ import { PaymentFormComponent } from './payment-form/payment-form.component';
 import { AddressFormComponent } from './address-form/address-form.component';
 import { CurrentPasswordFormComponent } from './current-password-form/current-password-form.component';
 import { ConvertToSpacesPipe } from '../pipes/convert-to-spaces.pipe';
+import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
@@ -20,6 +21,7 @@ import { ConvertToSpacesPipe } from '../pipes/convert-to-spaces.pipe';
     PaymentFormComponent,
     AddressFormComponent,
     CurrentPasswordFormComponent,
+    ConfirmModalComponent,
     ConvertToSpacesPipe,
     CommonModule,
     FormsModule,
@@ -33,6 +35,7 @@ import { ConvertToSpacesPipe } from '../pipes/convert-to-spaces.pipe';
     PaymentFormComponent,
     AddressFormComponent,
     CurrentPasswordFormComponent,
+    ConfirmModalComponent,
     ConvertToSpacesPipe,
   ],
   providers: [ConvertToSpacesPipe],
