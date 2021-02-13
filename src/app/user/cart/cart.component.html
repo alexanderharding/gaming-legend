@@ -1,0 +1,339 @@
+<div class="container-xl py-3">
+  <div
+    *ngIf="loading$ | async"
+    class="spinner-border loadingSpinner text-danger"
+    role="status"
+  >
+    <span class="sr-only">Loading...</span>
+  </div>
+  <ng-container *ngIf="shippingRates && items$ | async as items; else error">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="row justify-content-between mb-3">
+          <div class="col-auto">
+            <input
+              type="button"
+              value="Keep Shopping"
+              class="btn btn-sm btn-info text-capitalize"
+              routerLink="/products"
+              queryParamsHandling="preserve"
+            />
+          </div>
+          <div *ngIf="items && items.length" class="col-auto">
+            <input
+              type="button"
+              value="Empty Cart"
+              class="btn btn-sm btn-danger text-capitalize"
+              (click)="openRemoveAllModal(items)"
+              [disabled]="loading$ | async"
+            />
+          </div>
+        </div>
+        <ng-container *ngIf="items.length; else noItems">
+          <div class="table-responsive mb-3">
+            <table class="table">
+              <tbody>
+                <tr *ngFor="let item of items">
+                  <td id="itemImage" scope="row">
+                    <img
+                      [src]="item.imageUrl"
+                      [title]="item.name"
+                      class="img-fluid"
+                      [routerLink]="['/products', item.type, item.id]"
+                      [queryParams]="{
+                        returnLink: '/user/cart'
+                      }"
+                    />
+                  </td>
+                  <td scope="row">
+                    <a
+                      [routerLink]="['/products', item.type, item.id]"
+                      [queryParams]="{
+                        returnLink: '/user/cart'
+                      }"
+                      >{{ item.name }}</a
+                    >
+                  </td>
+                  <!-- <td scope="row">{{ item.brand }}</td> -->
+                  <td scope="row">
+                    <span>{{ item.price | currency }}</span>
+                  </td>
+                  <td scope="row">
+                    <div class="input-group mb-1">
+                      <div class="input-group-prepend">
+                        <input
+                          name="decrease"
+                          type="button"
+                          value="-"
+                          (click)="saveItem(item, -1)"
+                          class="btn btn-sm btn-secondary"
+                          [disabled]="loading$ | async"
+                        />
+                      </div>
+                      <input
+                        name="quantity"
+                        type="button"
+                        [value]="item.quantity"
+                        class="form-control form-control-sm"
+                        [attr.disabled]="true"
+                      />
+                      <div class="input-group-append">
+                        <input
+                          name="increase"
+                          type="button"
+                          value="+"
+                          (click)="saveItem(item, 1)"
+                          class="btn btn-sm btn-info"
+                          [disabled]="loading$ | async"
+                        />
+                      </div>
+                    </div>
+                    <input
+                      name="remove"
+                      type="button"
+                      value="remove"
+                      class="btn btn-sm btn-block btn-outline-danger text-capitalize"
+                      (click)="openRemoveModal(item)"
+                      [disabled]="loading$ | async"
+                    />
+                  </td>
+                  <!-- <td scope="row">
+                  <input
+                    name="remove"
+                    type="button"
+                    value="x"
+                    class="btn btn-sm btn-danger text-uppercase"
+                    (click)="open(item)"
+                  />
+                </td> -->
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-primary">
+            <svg
+              width="1.35em"
+              height="1.35em"
+              viewBox="0 0 16 16"
+              class="bi bi-info-circle-fill"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"
+              />
+            </svg>
+            <span>
+              Do not delay the purchase, adding items to your cart does not mean
+              booking them.
+            </span>
+          </p>
+          <div class="mb-3">
+            <div class="pt-2">
+              <h5 class="font-weight-bold mb-3">Expected shipping delivery</h5>
+
+              <p id="expectedArrival" class="mb-0">
+                {{ earliestArrival | date: "longDate" }} -
+                {{ latestArrival | date: "longDate" }}
+              </p>
+              <small>Shipping options available at checkout</small>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #noItems>
+          <ngb-alert
+            class="mt-0 text-center"
+            [dismissible]="false"
+            type="danger"
+          >
+            <svg
+              width="1em"
+              height="1em"
+              viewBox="0 0 16 16"
+              class="bi bi-exclamation-circle"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+              />
+              <path
+                d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"
+              />
+            </svg>
+            <span class="ml-1"
+              >No items in your cart! Click
+              <a routerLink="/products">here</a> to see our gaming
+              products.</span
+            >
+          </ngb-alert>
+        </ng-template>
+      </div>
+      <div class="col-md">
+        <h4 class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-muted text-capitalize font-weight-bold">{{
+            pageTitle
+          }}</span>
+          <span class="badge badge-dark badge-pill ml-2">{{
+            quantity$ | async | number
+          }}</span>
+        </h4>
+        <ctacu-cart-summary></ctacu-cart-summary>
+        <input
+          type="button"
+          value="checkout"
+          routerLink="../checkout"
+          class="btn btn-block btn-success text-capitalize"
+          [disabled]="!items.length || (loading$ | async) === true"
+        />
+        <div *ngIf="!items.length" class="text-center text-danger">
+          <svg
+            width="1em"
+            height="1em"
+            viewBox="0 0 16 16"
+            class="bi bi-exclamation-circle"
+            fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+            />
+            <path
+              d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"
+            />
+          </svg>
+          <small class="text-danger font-weight-bold ml-1"
+            >Put at least one item in your cart to checkout</small
+          >
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #error>
+    <input
+      type="button"
+      value="Keep Shopping"
+      class="btn btn-sm btn-info text-capitalize mb-3"
+      routerLink="/products"
+      queryParamsHandling="preserve"
+    />
+    <h1 class="text-center text-danger mb-3">
+      <span>{{ pageTitle }}</span>
+    </h1>
+    <ngb-alert class="text-center" [dismissible]="false" type="danger">
+      <span class="ml-1">{{ errorMessage }}</span>
+    </ngb-alert>
+  </ng-template>
+</div>
+
+<ng-template #updateErrTpl>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    fill="currentColor"
+    class="bi bi-exclamation-octagon-fill mr-1"
+    viewBox="0 0 16 16"
+  >
+    <path
+      d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146zM8 4c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995A.905.905 0 0 1 8 4zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
+    />
+  </svg>
+  Error updating item !
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    fill="currentColor"
+    class="bi bi-x pointer"
+    viewBox="0 0 16 16"
+  >
+    <path
+      d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"
+    />
+  </svg>
+</ng-template>
+<ng-template #removeErrTpl>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    fill="currentColor"
+    class="bi bi-exclamation-octagon-fill mr-1"
+    viewBox="0 0 16 16"
+  >
+    <path
+      d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146zM8 4c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995A.905.905 0 0 1 8 4zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
+    />
+  </svg>
+  Error removing item !
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    fill="currentColor"
+    class="bi bi-x pointer"
+    viewBox="0 0 16 16"
+  >
+    <path
+      d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"
+    />
+  </svg>
+</ng-template>
+`<ng-template #getCartErrTpl>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    fill="currentColor"
+    class="bi bi-exclamation-octagon-fill mr-1"
+    viewBox="0 0 16 16"
+  >
+    <path
+      d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146zM8 4c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995A.905.905 0 0 1 8 4zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
+    />
+  </svg>
+  Error getting cart !
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    fill="currentColor"
+    class="bi bi-x pointer"
+    viewBox="0 0 16 16"
+  >
+    <path
+      d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"
+    />
+  </svg>
+</ng-template>
+<ng-template #clearDangerTpl>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    fill="currentColor"
+    class="bi bi-exclamation-octagon-fill mr-1"
+    viewBox="0 0 16 16"
+  >
+    <path
+      d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146zM8 4c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995A.905.905 0 0 1 8 4zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
+    />
+  </svg>
+  Error emptying cart !
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    fill="currentColor"
+    class="bi bi-x pointer"
+    viewBox="0 0 16 16"
+  >
+    <path
+      d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"
+    />
+  </svg>
+</ng-template>
