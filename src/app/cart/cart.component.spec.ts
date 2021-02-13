@@ -10,7 +10,7 @@ import { ShippingRateService } from '../services/shipping-rate.service';
 import { ICartItem } from '../types/cart-item';
 import { IShipping } from '../types/shipping';
 
-import { By } from '@angular/platform-browser';
+import { By, Title } from '@angular/platform-browser';
 import { CartSummaryComponent } from './cart-summary/cart-summary.component';
 import {
   NgbModal,
@@ -43,6 +43,7 @@ describe('CartComponent', () => {
     let RESOLVEDDATA: ShippingRatesResult;
     let mockModalRef: MockNgbModalRef;
     let mockErrorModalRef: MockErrorNgbModalRef;
+    let mockTitle: Title;
 
     const SHIPPINGRATES: IShipping[] = [
       {
@@ -249,6 +250,7 @@ describe('CartComponent', () => {
             },
           },
         });
+        mockTitle = jasmine.createSpyObj(['setTitle']);
         mockNotificationService = jasmine.createSpyObj(['show']);
         mockNgbModal = jasmine.createSpyObj(['open']);
         mockNgbModalConfig = jasmine.createSpyObj([], {
@@ -277,6 +279,7 @@ describe('CartComponent', () => {
               provide: NotificationService,
               useValue: mockNotificationService,
             },
+            { provide: Title, useValue: mockTitle },
           ],
           // schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
@@ -294,14 +297,14 @@ describe('CartComponent', () => {
       expect(component).toBeTruthy();
     });
 
-    it('should set shippingRates correctly', () => {
+    it('should have set shippingRates correctly', () => {
       fixture.detectChanges();
 
       expect(component.shippingRates.length).toBe(SHIPPINGRATES.length);
       expect(component.shippingRates).toBe(SHIPPINGRATES);
     });
 
-    it('should set items$ correctly', () => {
+    it('should have set items$ correctly', () => {
       let items: ICartItem[];
       fixture.detectChanges();
 
@@ -311,7 +314,7 @@ describe('CartComponent', () => {
       expect(items).toBe(ITEMS);
     });
 
-    it('should set loading$ correctly to start', () => {
+    it('should have set loading$ correctly to start', () => {
       let loading: boolean;
       fixture.detectChanges();
 
@@ -320,7 +323,7 @@ describe('CartComponent', () => {
       expect(loading).toBeFalsy();
     });
 
-    it('should set quantity$ correctly', () => {
+    it('should have set quantity$ correctly', () => {
       let quantity: number;
       fixture.detectChanges();
 
@@ -329,20 +332,20 @@ describe('CartComponent', () => {
       expect(quantity).toBe(getQuantity(ITEMS));
     });
 
-    it('should errorMessage correctly', () => {
+    it('should have set errorMessage correctly', () => {
       fixture.detectChanges();
 
       expect(component.errorMessage).toBeUndefined();
     });
 
-    it(`should set pageTitle correctly`, () => {
+    it(`should have set pageTitle correctly`, () => {
       fixture.detectChanges();
 
       expect(component.pageTitle).toBe('Cart');
     });
 
-    it(`should retrieve call getDeliveryDate method on ShippingRateService with
-    correct values`, () => {
+    it(`should have retrieve called getDeliveryDate method on
+      ShippingRateService with correct values`, () => {
       fixture.detectChanges();
 
       expect(mockShippingRateService.getDeliveryDate).toHaveBeenCalledTimes(2);
@@ -354,7 +357,7 @@ describe('CartComponent', () => {
       );
     });
 
-    it(`should set earliestArrival correctly`, () => {
+    it(`should have set earliestArrival correctly`, () => {
       const date = new Date();
       mockShippingRateService.getDeliveryDate.and.returnValue(date);
 
@@ -363,7 +366,7 @@ describe('CartComponent', () => {
       expect(component.earliestArrival).toBe(date);
     });
 
-    it(`should set latestArrival correctly`, () => {
+    it(`should have set latestArrival correctly`, () => {
       const date = new Date();
       mockShippingRateService.getDeliveryDate.and.returnValue(date);
 
@@ -372,13 +375,26 @@ describe('CartComponent', () => {
       expect(component.latestArrival).toBe(date);
     });
 
-    it(`should call setShipping method on ShippingRateService with correct
-    value`, () => {
+    it(`should have called setShipping method on ShippingRateService with
+      correct value`, () => {
       fixture.detectChanges();
 
       expect(mockShippingRateService.setShipping).toHaveBeenCalledTimes(1);
       expect(mockShippingRateService.setShipping).toHaveBeenCalledWith(
         SHIPPINGRATES[0].price
+      );
+    });
+
+    it('should have called setTitle method on Title with correct value', () => {
+      // Arrange
+
+      // Act
+      fixture.detectChanges();
+
+      // Assert
+      expect(mockTitle.setTitle).toHaveBeenCalledTimes(1);
+      expect(mockTitle.setTitle).toHaveBeenCalledWith(
+        `Gaming Legend | ${component.pageTitle}`
       );
     });
 
@@ -861,6 +877,7 @@ describe('CartComponent', () => {
     let mockActivatedRoute;
     let ITEMS: ICartItem[];
     let RESOLVEDDATA: ShippingRatesResult;
+    let mockTitle: Title;
 
     const SHIPPINGRATES = null;
     const ERRORMESSAGE = 'Error!';
@@ -1007,7 +1024,7 @@ describe('CartComponent', () => {
             },
           },
         });
-
+        mockTitle = jasmine.createSpyObj(['setTitle']);
         TestBed.configureTestingModule({
           imports: [HttpClientTestingModule, NgbModule],
 
@@ -1020,6 +1037,7 @@ describe('CartComponent', () => {
               useValue: mockShippingRateService,
             },
             { provide: ActivatedRoute, useValue: mockActivatedRoute },
+            { provide: Title, useValue: mockTitle },
           ],
         }).compileComponents();
       })
@@ -1036,13 +1054,13 @@ describe('CartComponent', () => {
       expect(component).toBeTruthy();
     });
 
-    it('should set shippingRates correctly', () => {
+    it('should have set shippingRates correctly', () => {
       fixture.detectChanges();
 
       expect(component.shippingRates).toBeNull();
     });
 
-    it('should set items$ correctly', () => {
+    it('should have set items$ correctly', () => {
       let items: ICartItem[];
       fixture.detectChanges();
 
@@ -1052,38 +1070,51 @@ describe('CartComponent', () => {
       expect(items).toBe(ITEMS);
     });
 
-    it('should set errorMessage correctly', () => {
+    it('should have set errorMessage correctly', () => {
       fixture.detectChanges();
 
       expect(component.errorMessage).toBe(ERRORMESSAGE);
     });
 
-    it('should set earliestArrival correctly', () => {
+    it('should have set earliestArrival correctly', () => {
       fixture.detectChanges();
 
       expect(component.earliestArrival).toBeUndefined();
     });
 
-    it('should set latestArrival correctly', () => {
+    it('should have set latestArrival correctly', () => {
       fixture.detectChanges();
 
       expect(component.latestArrival).toBeUndefined();
     });
 
-    it('should set pageTitle correctly', () => {
+    it('should have set pageTitle correctly', () => {
       fixture.detectChanges();
 
       expect(component.pageTitle).toBe('Retrieval Error');
     });
 
-    it(`should not retrieve call getDeliveryDate method on
+    it('should have called setTitle method on Title with correct value', () => {
+      // Arrange
+
+      // Act
+      fixture.detectChanges();
+
+      // Assert
+      expect(mockTitle.setTitle).toHaveBeenCalledTimes(1);
+      expect(mockTitle.setTitle).toHaveBeenCalledWith(
+        `Gaming Legend | ${component.pageTitle}`
+      );
+    });
+
+    it(`should have not retrieve called getDeliveryDate method on
       ShippingRateService`, () => {
       fixture.detectChanges();
 
       expect(mockShippingRateService.getDeliveryDate).toHaveBeenCalledTimes(0);
     });
 
-    it(`should not retrieve call setShipping method on
+    it(`should have not retrieve called setShipping method on
       ShippingRateService`, () => {
       fixture.detectChanges();
 

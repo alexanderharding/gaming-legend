@@ -5,6 +5,7 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -59,7 +60,8 @@ export class CartComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly modalService: NgbModal,
     private readonly config: NgbModalConfig,
-    private readonly notificationService: NotificationService
+    private readonly notificationService: NotificationService,
+    private readonly title: Title
   ) {}
 
   ngOnInit(): void {
@@ -80,6 +82,7 @@ export class CartComponent implements OnInit {
     } else {
       this.pageTitle = 'Retrieval Error';
     }
+    this.title.setTitle(`Gaming Legend | ${this.pageTitle}`);
   }
 
   saveItem(item: ICartItem, amount: number): void {
