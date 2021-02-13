@@ -29,7 +29,6 @@ describe('SignInComponent', () => {
     required: 'Please enter your email address.',
     email: 'Please enter a valid email address',
   };
-
   const PASSWORDVALIDATIONMESSAGES = {
     required: 'Please enter your password.',
   };
@@ -70,7 +69,7 @@ describe('SignInComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should set signInForm value correctly', () => {
+  it('should have set signInForm value correctly', () => {
     fixture.detectChanges();
 
     expect(component.signInForm.value).toEqual({
@@ -81,25 +80,25 @@ describe('SignInComponent', () => {
     });
   });
 
-  it('should set pageTitle correctly', () => {
+  it('should have set pageTitle correctly', () => {
     fixture.detectChanges();
 
     expect(component.pageTitle).toBe('sign in');
   });
 
-  it('should set submitted correctly to start', () => {
+  it('should have set submitted correctly', () => {
     fixture.detectChanges();
 
     expect(component.submitted).toBeFalse();
   });
 
-  it('should set signInMessage correctly to start', () => {
+  it('should have set signInMessage correctly', () => {
     fixture.detectChanges();
 
     expect(component.signInMessage).toBe('');
   });
 
-  it('should set loading$ correctly to start', () => {
+  it('should have set loading$ correctly', () => {
     let loading: boolean;
     fixture.detectChanges();
 
@@ -108,7 +107,7 @@ describe('SignInComponent', () => {
     expect(loading).toBeFalse();
   });
 
-  it('should set emailMessage$ correctly to start', () => {
+  it('should have set emailMessage$ correctly', () => {
     let message: string;
     fixture.detectChanges();
 
@@ -117,7 +116,7 @@ describe('SignInComponent', () => {
     expect(message).toBe(EMAILVALIDATIONMESSAGES.required);
   });
 
-  it('should set passwordMessage$ correctly to start', () => {
+  it('should have set passwordMessage$ correctly', () => {
     let message: string;
     fixture.detectChanges();
 
@@ -127,7 +126,7 @@ describe('SignInComponent', () => {
   });
 
   describe('signInForm', () => {
-    it('should not be valid when value is empty', () => {
+    it('should not be valid when control values are empty', () => {
       fixture.detectChanges();
 
       component.signInForm.patchValue({
@@ -152,24 +151,39 @@ describe('SignInComponent', () => {
 
     describe('email control', () => {
       it('should not be valid when value is empty', () => {
-        let errors: object;
-        let key: string;
         fixture.detectChanges();
         const emailControl = component.signInForm.controls.email;
 
         emailControl.setValue('');
-        errors = emailControl.errors || {};
 
-        key = 'email';
-        expect(errors[key]).toBeFalsy();
-        key = 'required';
-        expect(errors[key]).toBeTruthy();
+        expect(emailControl.hasError('email')).toBeFalse();
+        expect(emailControl.hasError('required')).toBeTrue();
         expect(emailControl.valid).toBeFalse();
+      });
+
+      it(`should not be valid when value isn't a valid email`, () => {
+        fixture.detectChanges();
+        const emailControl = component.signInForm.controls.email;
+
+        emailControl.setValue('invalidEmail');
+
+        expect(emailControl.hasError('required')).toBeFalse();
+        expect(emailControl.hasError('email')).toBeTrue();
+        expect(emailControl.valid).toBeFalse();
+      });
+
+      it(`should be valid when value is a valid email`, () => {
+        fixture.detectChanges();
+        const emailControl = component.signInForm.controls.email;
+
+        emailControl.setValue('validEmail@test.com');
+
+        expect(emailControl.errors).toBeNull();
+        expect(emailControl.valid).toBeTrue();
       });
 
       it(`should set emailMessage$ correctly when value is
         empty`, fakeAsync(() => {
-        let errorKey: string;
         let message: string;
         fixture.detectChanges();
         const emailControl = component.signInForm.controls.email;
@@ -178,26 +192,8 @@ describe('SignInComponent', () => {
         tick(1000);
         component.emailMessage$.subscribe((m) => (message = m));
 
-        errorKey = 'required';
-        expect(emailControl.hasError(errorKey)).toBeTrue();
-        expect(message).toBe(EMAILVALIDATIONMESSAGES[errorKey]);
+        expect(message).toBe(EMAILVALIDATIONMESSAGES.required);
       }));
-
-      it(`should not be valid when value isn't a valid email`, () => {
-        let errors: object;
-        let key: string;
-        fixture.detectChanges();
-        const emailControl = component.signInForm.controls.email;
-
-        emailControl.setValue('invalidEmail');
-        errors = emailControl.errors || {};
-
-        key = 'required';
-        expect(errors[key]).toBeFalsy();
-        key = 'email';
-        expect(errors[key]).toBeTruthy();
-        expect(emailControl.valid).toBeFalse();
-      });
 
       it(`should set emailMessage$ correctly when value isn't a valid
         email`, fakeAsync(() => {
@@ -212,16 +208,6 @@ describe('SignInComponent', () => {
         expect(message).toBe(EMAILVALIDATIONMESSAGES.email);
       }));
 
-      it(`should be valid when value is set correctly`, () => {
-        fixture.detectChanges();
-        const emailControl = component.signInForm.controls.email;
-
-        emailControl.setValue('validEmail@test.com');
-
-        expect(emailControl.errors).toBeNull();
-        expect(emailControl.valid).toBeTrue();
-      });
-
       it(`should set emailMessage$ correctly when valid`, fakeAsync(() => {
         let message: string;
         fixture.detectChanges();
@@ -231,8 +217,6 @@ describe('SignInComponent', () => {
         tick(1000);
         component.emailMessage$.subscribe((m) => (message = m));
 
-        expect(emailControl.errors).toBeNull();
-        expect(emailControl.valid).toBeTrue();
         expect(message).toBe('');
       }));
     });
@@ -248,9 +232,18 @@ describe('SignInComponent', () => {
         expect(passwordControl.valid).toBeFalse();
       });
 
-      it(`should set passwordMessage$ correctly when
-        required`, fakeAsync(() => {
-        let errorKey: string;
+      it('should be valid when value is not empty', () => {
+        fixture.detectChanges();
+        const passwordControl = component.signInForm.controls.password;
+
+        passwordControl.setValue('t');
+
+        expect(passwordControl.errors).toBeNull();
+        expect(passwordControl.valid).toBeTrue();
+      });
+
+      it(`should set passwordMessage$ correctly when not
+        valid`, fakeAsync(() => {
         let message: string;
         fixture.detectChanges();
         const passwordControl = component.signInForm.controls.password;
@@ -259,37 +252,19 @@ describe('SignInComponent', () => {
         tick(1000);
         component.passwordMessage$.subscribe((m) => (message = m));
 
-        errorKey = 'required';
-        expect(passwordControl.hasError(errorKey)).toBeTrue();
-        expect(message).toBe(PASSWORDVALIDATIONMESSAGES[errorKey]);
+        expect(passwordControl.valid).toBeFalse();
+        expect(message).toBe(PASSWORDVALIDATIONMESSAGES.required);
       }));
-
-      it('should be valid when there is a value', () => {
-        let value: string;
-        fixture.detectChanges();
-        const passwordControl = component.signInForm.controls.password;
-
-        value = 't';
-        expect(value.length).toBeGreaterThan(0);
-        passwordControl.setValue(value);
-
-        expect(passwordControl.errors).toBeNull();
-        expect(passwordControl.valid).toBeTrue();
-      });
 
       it(`should set passwordMessage$ correctly when valid`, fakeAsync(() => {
         let message: string;
-        let value: string;
         fixture.detectChanges();
         const passwordControl = component.signInForm.controls.password;
 
-        value = 't';
-        expect(value.length).toBeGreaterThan(0);
-        passwordControl.setValue(value);
+        passwordControl.setValue('t');
         tick(1000);
         component.passwordMessage$.subscribe((m) => (message = m));
 
-        expect(passwordControl.errors).toBeNull();
         expect(passwordControl.valid).toBeTrue();
         expect(message).toBe('');
       }));
@@ -308,7 +283,6 @@ describe('SignInComponent', () => {
     it('should set signInMessage correctly', () => {
       component.signInMessage = 'message!';
       fixture.detectChanges();
-      expect(component.signInMessage).toBe('message!');
 
       component.onSubmit(component.signInForm);
 
@@ -318,47 +292,49 @@ describe('SignInComponent', () => {
     it(`should call signIn method with correct value when signInForm is
       valid`, () => {
       spyOn(component, 'signIn');
-      const email = 'validEmail@test.com';
-      const password = 'password';
       fixture.detectChanges();
-      const form = component.signInForm;
 
-      form.patchValue({
-        email,
-        password,
+      component.signInForm.patchValue({
+        email: 'validEmail@test.com',
+        password: 'password',
       });
-      component.onSubmit(form);
+      component.onSubmit(component.signInForm);
 
-      expect(form.valid).toBeTruthy();
-      expect(component.signIn).toHaveBeenCalledWith(email, password);
+      expect(component.signInForm.valid).toBeTruthy();
+      expect(component.signIn).toHaveBeenCalledWith(
+        component.signInForm.controls.email.value,
+        component.signInForm.controls.password.value
+      );
     });
 
     it(`should not call signIn method with when signInForm is not
-      valid`, fakeAsync(() => {
+      valid`, () => {
       spyOn(component, 'signIn');
       fixture.detectChanges();
 
+      component.signInForm.patchValue({
+        email: '',
+        password: '',
+      });
       component.onSubmit(component.signInForm);
 
       expect(component.signInForm.valid).toBeFalsy();
       expect(component.signIn).toHaveBeenCalledTimes(0);
-    }));
+    });
 
     it(`should call setLoading method with correct value when signInForm is
       valid`, () => {
       mockAuthService.signIn.and.returnValue(of(true));
       spyOn(component, 'setLoading');
-      const email = 'validEmail@test.com';
-      const password = 'password';
       fixture.detectChanges();
-      const form = component.signInForm;
 
-      form.patchValue({
-        email,
-        password,
+      component.signInForm.patchValue({
+        email: 'validEmail@test.com',
+        password: 'password',
       });
-      component.onSubmit(form);
+      component.onSubmit(component.signInForm);
 
+      expect(component.signInForm.valid).toBeTrue();
       expect(component.setLoading).toHaveBeenCalledWith(true);
     });
 
@@ -367,8 +343,13 @@ describe('SignInComponent', () => {
       spyOn(component, 'setLoading');
       fixture.detectChanges();
 
+      component.signInForm.patchValue({
+        email: '',
+        password: '',
+      });
       component.onSubmit(component.signInForm);
 
+      expect(component.signInForm.valid).toBeFalse();
       expect(component.setLoading).toHaveBeenCalledTimes(0);
     });
   });
@@ -390,24 +371,20 @@ describe('SignInComponent', () => {
       AuthService returns of(true)`, () => {
       mockAuthService.signIn.and.returnValue(of(true));
       spyOn(component, 'setLoading');
-      const email = 'validEmail@test.com';
-      const password = 'password';
       fixture.detectChanges();
 
-      component.signIn(email, password);
+      component.signIn('validEmail@test.com', 'password');
 
       expect(component.setLoading).toHaveBeenCalledWith(false);
     });
 
     it(`should call setLoading method with correct value when signIn method on
-      AuthService returns throwError('')`, () => {
+      AuthService throws an error`, () => {
       mockAuthService.signIn.and.returnValue(throwError(''));
       spyOn(component, 'setLoading');
-      const email = 'validEmail@test.com';
-      const password = 'password';
       fixture.detectChanges();
 
-      component.signIn(email, password);
+      component.signIn('validEmail@test.com', 'password');
 
       expect(component.setLoading).toHaveBeenCalledWith(false);
     });
@@ -416,23 +393,19 @@ describe('SignInComponent', () => {
       returns of(false)`, () => {
       mockAuthService.signIn.and.returnValue(of(false));
       spyOn(component, 'setLoading');
-      const email = 'validEmail@test.com';
-      const password = 'password';
       fixture.detectChanges();
 
-      component.signIn(email, password);
+      component.signIn('validEmail@test.com', 'password');
 
       expect(component.setLoading).toHaveBeenCalledTimes(0);
     });
 
-    it(`should set signInMessage when signIn method on AuthService returns
-      of(false)`, () => {
+    it(`should set signInMessage correctly when signIn method on AuthService
+      returns of(false)`, () => {
       mockAuthService.signIn.and.returnValue(of(false));
-      const email = 'validEmail@test.com';
-      const password = 'password';
       fixture.detectChanges();
 
-      component.signIn(email, password);
+      component.signIn('validEmail@test.com', 'password');
 
       expect(component.signInMessage).toBe('Invalid email or password.');
     });
@@ -440,35 +413,29 @@ describe('SignInComponent', () => {
     it(`should not set signInMessage when signIn method on AuthService returns
       of(true)`, () => {
       mockAuthService.signIn.and.returnValue(of(true));
-      const email = 'validEmail@test.com';
-      const password = 'password';
       fixture.detectChanges();
 
-      component.signIn(email, password);
+      component.signIn('validEmail@test.com', 'password');
 
       expect(component.signInMessage).toBe('');
     });
 
-    it(`should call navigate method on Router when sign method on AuthService
+    it(`should call navigate method on Router when signIn method on AuthService
       returns of(true)`, () => {
       mockAuthService.signIn.and.returnValue(of(true));
-      const email = 'validEmail@test.com';
-      const password = 'password';
       fixture.detectChanges();
 
-      component.signIn(email, password);
+      component.signIn('validEmail@test.com', 'password');
 
       expect(mockRouter.navigate).toHaveBeenCalledWith(['/account']);
     });
 
     it(`should not call navigate method on Router when sign method on AuthService
-      returns throwError('')`, () => {
+      returns throws an error`, () => {
       mockAuthService.signIn.and.returnValue(throwError(''));
-      const email = 'validEmail@test.com';
-      const password = 'password';
       fixture.detectChanges();
 
-      component.signIn(email, password);
+      component.signIn('validEmail@test.com', 'password');
 
       expect(mockRouter.navigate).toHaveBeenCalledTimes(0);
     });
@@ -476,37 +443,31 @@ describe('SignInComponent', () => {
     it(`should call show method on NotificationService when sign method on
       AuthService returns of(true)`, () => {
       mockAuthService.signIn.and.returnValue(of(true));
-      const email = 'validEmail@test.com';
-      const password = 'password';
       fixture.detectChanges();
 
-      component.signIn(email, password);
+      component.signIn('validEmail@test.com', 'password');
 
-      expect(mockNotificationService.show).toHaveBeenCalled();
+      expect(mockNotificationService.show).toHaveBeenCalledTimes(1);
     });
 
     it(`should not call show method on NotificationService when sign method on
       AuthService returns of(false)`, () => {
       mockAuthService.signIn.and.returnValue(of(false));
-      const email = 'validEmail@test.com';
-      const password = 'password';
       fixture.detectChanges();
 
-      component.signIn(email, password);
+      component.signIn('validEmail@test.com', 'password');
 
       expect(mockNotificationService.show).toHaveBeenCalledTimes(0);
     });
 
     it(`should call show method on NotificationService when sign method on
-      AuthService returns throwError('')`, () => {
+      AuthService throws an error`, () => {
       mockAuthService.signIn.and.returnValue(throwError(''));
-      const email = 'validEmail@test.com';
-      const password = 'password';
       fixture.detectChanges();
 
-      component.signIn(email, password);
+      component.signIn('validEmail@test.com', 'password');
 
-      expect(mockNotificationService.show).toHaveBeenCalled();
+      expect(mockNotificationService.show).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -518,12 +479,12 @@ describe('SignInComponent', () => {
       component.setLoading(true);
       component.loading$.subscribe((l) => (loading = l));
 
-      expect(loading).toBeTruthy();
+      expect(loading).toBeTrue();
 
       component.setLoading(false);
       component.loading$.subscribe((l) => (loading = l));
 
-      expect(loading).toBeFalsy();
+      expect(loading).toBeFalse();
     });
   });
 });
