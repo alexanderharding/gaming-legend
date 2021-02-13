@@ -7,8 +7,8 @@ import {
 } from '@angular/router';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 import { ConfirmModalComponent } from 'src/app/shared/confirm-modal/confirm-modal.component';
 import { CartService } from 'src/app/services/cart.service';
@@ -40,7 +40,7 @@ export class CheckoutGuard
   canDeactivate(
     component: CheckoutComponent,
     currentRoute: ActivatedRouteSnapshot
-  ): Promise<boolean> | boolean {
+  ): Observable<boolean> | boolean {
     const orderPlaced = component.orderPlaced;
     const retrievalError = currentRoute.data.resolvedData.error;
 
@@ -51,8 +51,8 @@ export class CheckoutGuard
         backdrop: 'static',
         centered: true,
       });
-
       const instance = modalRef.componentInstance;
+
       instance.title = 'Cancel';
       instance.message = 'Are you sure you want to cancel the checkout?';
       instance.warningMessage = 'You may lose some progress!';
@@ -60,15 +60,10 @@ export class CheckoutGuard
       instance.closeMessage = 'ok, cancel';
       instance.dismissMessage = 'Checkout';
 
-      const confirmModal = modalRef.result.then(
-        (result) => {
-          return true;
-        },
-        (reason) => {
-          return false;
-        }
+      return modalRef.closed.pipe(
+        map(() => true),
+        catchError(() => of(false))
       );
-      return confirmModal;
     }
   }
 }
