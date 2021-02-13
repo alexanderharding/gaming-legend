@@ -25,19 +25,14 @@ import { INotification } from 'src/app/types/notification';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignInComponent implements OnInit, OnDestroy {
-  @ViewChild('successTpl') private successTpl: TemplateRef<any>;
-  @ViewChild('dangerTpl') private dangerTpl: TemplateRef<any>;
-
-  users$ = this.authService.users$;
-
   pageTitle = 'sign in';
-
-  private readonly subscriptions: Subscription[] = [];
-
+  users$ = this.authService.users$;
   submitted = false;
   signInForm: FormGroup;
   signInMessage = '';
-
+  @ViewChild('successTpl') private successTpl: TemplateRef<any>;
+  @ViewChild('dangerTpl') private dangerTpl: TemplateRef<any>;
+  private readonly subscriptions: Subscription[] = [];
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
   readonly loading$ = this.loadingSubject.asObservable();
 
@@ -109,7 +104,7 @@ export class SignInComponent implements OnInit, OnDestroy {
     this.authService.signIn(email, password).subscribe(
       (result) => {
         if (result) {
-          this.showSuccess();
+          this.show(this.successTpl, 'bg-success text-light', 10000);
           this.setLoading(false);
           this.router.navigate(['/account']);
           return;
@@ -117,7 +112,7 @@ export class SignInComponent implements OnInit, OnDestroy {
         this.signInMessage = 'Invalid email or password.';
       },
       (error) => {
-        this.showDanger();
+        this.show(this.dangerTpl, 'bg-danger text-light', 10000);
         this.setLoading(false);
       }
     );
@@ -127,20 +122,15 @@ export class SignInComponent implements OnInit, OnDestroy {
     this.loadingSubject.next(value);
   }
 
-  private showSuccess(): void {
+  private show(
+    textOrTpl: string | TemplateRef<any>,
+    className: string,
+    delay?: number
+  ) {
     const notification = {
-      textOrTpl: this.successTpl,
-      className: 'bg-success text-light',
-      delay: 10000,
-    } as INotification;
-    this.notificationService.show(notification);
-  }
-
-  private showDanger(): void {
-    const notification = {
-      textOrTpl: this.dangerTpl,
-      className: 'bg-danger text-light',
-      delay: 15000,
+      textOrTpl,
+      className,
+      delay,
     } as INotification;
     this.notificationService.show(notification);
   }
