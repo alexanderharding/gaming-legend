@@ -5,7 +5,6 @@ import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { AuthGuard } from './account/auth.guard';
-import { UserGuard } from './user/user.guard';
 
 const ROUTES: Routes = [
   { path: 'welcome', component: WelcomeComponent },
@@ -15,13 +14,8 @@ const ROUTES: Routes = [
       import('./products/product.module').then((m) => m.ProductModule),
   },
   {
-    path: 'cart',
-    loadChildren: () => import('./cart/cart.module').then((m) => m.CartModule),
-  },
-  {
     path: 'user',
     loadChildren: () => import('./user/user.module').then((m) => m.UserModule),
-    // canActivate: [UserGuard],
   },
   {
     path: 'account',
@@ -43,5 +37,6 @@ const ROUTES: Routes = [
     }),
   ],
   exports: [RouterModule],
+  providers: [AuthGuard],
 })
 export class AppRoutingModule {}
