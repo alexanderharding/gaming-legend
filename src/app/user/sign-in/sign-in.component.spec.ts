@@ -269,6 +269,28 @@ describe('SignInComponent', () => {
         expect(message).toBe('');
       }));
     });
+
+    describe('showPassword control', () => {
+      it(`should be valid when value is true`, () => {
+        fixture.detectChanges();
+        const showPasswordControl = component.signInForm.controls.showPassword;
+
+        showPasswordControl.setValue(true);
+
+        expect(showPasswordControl.errors).toBeNull();
+        expect(showPasswordControl.valid).toBeTrue();
+      });
+
+      it(`should be valid when value is false`, () => {
+        fixture.detectChanges();
+        const showPasswordControl = component.signInForm.controls.showPassword;
+
+        showPasswordControl.setValue(false);
+
+        expect(showPasswordControl.errors).toBeNull();
+        expect(showPasswordControl.valid).toBeTrue();
+      });
+    });
   });
 
   describe('onSubmit', () => {
@@ -555,7 +577,7 @@ describe('SignInComponent w/ template', () => {
     expect(SignUpComponentDEs[0].componentInstance.loading).toBe(loading);
   });
 
-  it(`should set email field classes correctly in the template when
+  it(`should set email input classes correctly in the template when
     submitted is false`, fakeAsync(() => {
     const input = fixture.debugElement.query(By.css('#userEmail'));
     fixture.detectChanges();
@@ -582,7 +604,7 @@ describe('SignInComponent w/ template', () => {
     });
   }));
 
-  it(`should set email field classes correctly in the template when
+  it(`should set email input classes correctly in the template when
     submitted is true`, fakeAsync(() => {
     component.submitted = true;
     fixture.detectChanges();
@@ -612,7 +634,7 @@ describe('SignInComponent w/ template', () => {
     });
   }));
 
-  it(`should set password field classes correctly in the template when
+  it(`should set password input classes correctly in the template when
     submitted is false`, fakeAsync(() => {
     const input = fixture.debugElement.query(By.css('#userPassword'));
     fixture.detectChanges();
@@ -639,15 +661,16 @@ describe('SignInComponent w/ template', () => {
     });
   }));
 
-  it(`should set password field classes correctly in the template when
+  it(`should set password input classes correctly in the template when
     submitted is true`, fakeAsync(() => {
-    const input = fixture.debugElement.query(By.css('#userPassword'));
     component.submitted = true;
     fixture.detectChanges();
     const passwordControl = component.signInForm.get('password');
 
+    const inputs = fixture.debugElement.queryAll(By.css('#userPassword'));
+    expect(inputs.length).toBe(1);
     expect(passwordControl.valid).toBeFalsy();
-    expect(input.classes).toEqual({
+    expect(inputs[0].classes).toEqual({
       'form-control': true,
       'ng-untouched': true,
       'ng-pristine': true,
@@ -660,7 +683,7 @@ describe('SignInComponent w/ template', () => {
     fixture.detectChanges();
 
     expect(passwordControl.valid).toBeTruthy();
-    expect(input.classes).toEqual({
+    expect(inputs[0].classes).toEqual({
       'form-control': true,
       'is-valid': true,
       'ng-valid': true,
@@ -669,19 +692,20 @@ describe('SignInComponent w/ template', () => {
     });
   }));
 
-  it(`should set password field type correctly in the template`, () => {
-    const input = fixture.debugElement.query(By.css('#userPassword'));
+  it(`should set password input type correctly in the template`, () => {
     fixture.detectChanges();
 
+    const inputs = fixture.debugElement.queryAll(By.css('#userPassword'));
+    expect(inputs.length).toBe(1);
     component.signInForm.get('showPassword').setValue(false);
     fixture.detectChanges();
 
-    expect(input.nativeElement.type).toBe('password');
+    expect(inputs[0].nativeElement.type).toBe('password');
 
     component.signInForm.get('showPassword').setValue(true);
     fixture.detectChanges();
 
-    expect(input.nativeElement.type).toBe('text');
+    expect(inputs[0].nativeElement.type).toBe('text');
   });
 
   it(`should set emailMessage$ correctly in the template`, () => {
