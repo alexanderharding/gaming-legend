@@ -99,7 +99,7 @@ export class CartComponent implements OnInit {
       error: (err) => {
         this.setLoading(false);
         console.error(err);
-        this.showDanger(this.updateErrTpl);
+        this.show(this.updateErrTpl);
       },
       complete: () => this.getCartItems(),
     });
@@ -140,7 +140,7 @@ export class CartComponent implements OnInit {
     this.setLoading(true);
     this.cartService.removeItem(item).subscribe({
       error: () => {
-        this.showDanger(this.removeErrTpl);
+        this.show(this.removeErrTpl);
         this.setLoading(false);
       },
       complete: () => this.getCartItems(),
@@ -150,14 +150,14 @@ export class CartComponent implements OnInit {
   private removeAllItems(items: ICartItem[]): void {
     this.cartService.removeAllItems(items).subscribe({
       error: () => {
-        this.showDanger(this.clearDangerTpl);
+        this.show(this.clearDangerTpl);
         this.setLoading(false);
       },
       complete: () => this.getCartItems(),
     });
   }
 
-  private showDanger(templateRef: TemplateRef<any>): void {
+  private show(templateRef: TemplateRef<any>): void {
     const notification = {
       textOrTpl: templateRef,
       className: 'bg-danger text-light',
@@ -173,7 +173,7 @@ export class CartComponent implements OnInit {
   private getCartItems(): void {
     this.cartService.getCartItems().subscribe({
       error: () => {
-        this.showDanger(this.getCartErrTpl);
+        this.show(this.getCartErrTpl);
         this.setLoading(false);
       },
       complete: () => this.setLoading(false),
