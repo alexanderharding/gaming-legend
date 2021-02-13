@@ -71,7 +71,7 @@
         <li class="nav-item">
           <a
             class="nav-link"
-            routerLink="/cart"
+            routerLink="/user/cart"
             routerLinkActive="active"
             [routerLinkActiveOptions]="{ exact: true }"
             (click)="isMenuCollapsed = true"
@@ -98,8 +98,9 @@
           <li class="nav-item">
             <a
               class="nav-link"
-              routerLink="/user"
+              routerLink="/user/sign-in"
               routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
               (click)="isMenuCollapsed = true"
               >Sign In</a
             >

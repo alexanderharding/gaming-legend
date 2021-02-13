@@ -121,7 +121,7 @@ export class ProductDetailsComponent implements OnInit {
     instance.dismissMessage = 'keep shopping';
     modalRef.closed.pipe(first()).subscribe({
       error: () => {},
-      complete: () => this.router.navigate(['/cart']),
+      complete: () => this.router.navigate(['/user', 'cart']),
     });
   }
 
@@ -172,7 +172,7 @@ export class ProductDetailsComponent implements OnInit {
       complete: () => {
         this.setLoading(false);
         if (navigate) {
-          this.router.navigate(['/cart']);
+          this.router.navigate(['/user', 'cart']);
         }
       },
     });
