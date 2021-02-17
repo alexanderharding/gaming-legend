@@ -6,20 +6,6 @@
   >
     <span class="sr-only">Loading...</span>
   </div>
-  <div class="mb-3">
-    <input
-      type="button"
-      value="cancel"
-      class="btn btn-danger text-capitalize d-none d-sm-block"
-      routerLink="../cart"
-    />
-    <input
-      type="button"
-      value="cancel"
-      class="btn btn-block btn-danger text-capitalize d-sm-none"
-      routerLink="../cart"
-    />
-  </div>
   <ng-container *ngIf="shippingRates && items$ | async as items; else error">
     <div class="row">
       <div class="col-md order-md-last">
@@ -104,7 +90,13 @@
                       [submitted]="submitted"
                     ></ctacu-name-form>
                   </div>
-                  <div class="d-none d-sm-flex justify-content-end">
+                  <div class="d-none d-sm-flex justify-content-between">
+                    <input
+                      type="button"
+                      value="cancel"
+                      class="btn btn-danger text-capitalize"
+                      routerLink="../cart"
+                    />
                     <input
                       type="button"
                       value="next"
@@ -112,6 +104,12 @@
                       class="btn btn-success text-capitalize"
                     />
                   </div>
+                  <input
+                    type="button"
+                    value="cancel"
+                    class="btn btn-block btn-danger text-capitalize mb-2 d-sm-none"
+                    routerLink="../cart"
+                  />
                   <input
                     type="button"
                     value="next"
@@ -521,16 +519,25 @@
                     <input
                       type="submit"
                       [value]="
-                        checkOutForm.invalid && submitted
+                        (checkOutForm.invalid || emailTakenMessage) && submitted
                           ? '! place order'
                           : 'place order'
                       "
                       class="btn btn-block btn-success text-capitalize"
-                      *ngIf="
-                        (loading$ | async) === (false || null || undefined);
-                        else loading
+                      [disabled]="
+                        ((checkOutForm.invalid || emailTakenMessage) &&
+                          submitted) ||
+                        (loading$ | async) ||
+                        orderPlaced
                       "
-                      [disabled]="checkOutForm.invalid && submitted"
+                      [ngClass]="{
+                        'btn-success':
+                          (checkOutForm.valid && !emailTakenMessage) ||
+                          !submitted,
+                        'btn-outline-danger':
+                          (checkOutForm.invalid || emailTakenMessage) &&
+                          submitted
+                      }"
                     />
                     <ng-template #loading>
                       <div class="d-flex w-100 ml-2 justify-content-center">
@@ -549,6 +556,20 @@
     </div>
   </ng-container>
   <ng-template #error>
+    <div class="mb-3">
+      <input
+        type="button"
+        value="cancel"
+        class="btn btn-danger text-capitalize d-none d-sm-block"
+        routerLink="../cart"
+      />
+      <input
+        type="button"
+        value="cancel"
+        class="btn btn-block btn-danger text-capitalize d-sm-none"
+        routerLink="../cart"
+      />
+    </div>
     <h1 class="text-center text-danger mb-3">{{ pageTitle }}</h1>
     <ngb-alert class="text-center" [dismissible]="false" type="danger">
       <span class="ml-1">{{ errorMessage }}</span>
@@ -666,6 +687,7 @@
     />
   </svg>
 </ng-template>
+
 <!-- <div class="container" [style.min-width.px]="500">
   <div class="card">
     <div class="card-body">
