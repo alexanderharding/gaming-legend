@@ -38,7 +38,7 @@
             formControlName="expiringMonth"
             autocomplete="cc-exp-month"
             class="custom-select"
-            id="inputGroupSelect01"
+            id="monthSelect"
             [ngClass]="{
               'is-invalid':
                 ((monthMessage$ | async) || (paymentGroupMessage$ | async)) &&
@@ -68,6 +68,7 @@
           <select
             formControlName="expiringYear"
             class="custom-select"
+            id="yearSelect"
             [ngClass]="{
               'is-invalid': (yearMessage$ | async) && submitted,
               'is-valid': (yearMessage$ | async) === ''
