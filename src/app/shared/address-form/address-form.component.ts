@@ -9,7 +9,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
-import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
+import { FormService } from 'src/app/services/form.service';
 import { IUser } from 'src/app/types/user';
 
 import { UserAddress } from 'src/app/types/user-address';
@@ -22,21 +22,77 @@ import { UserAddress } from 'src/app/types/user-address';
 })
 export class AddressFormComponent implements OnInit, OnDestroy {
   readonly defaultPageTitle = 'Address';
-  readonly states = this.formValidationRuleService.states;
+  readonly stateOptions = [
+    'Alabama',
+    'Alaska',
+    'American Samoa',
+    'Arizona',
+    'Arkansas',
+    'California',
+    'Colorado',
+    'Connecticut',
+    'Delaware',
+    'District of Columbia',
+    'Federated States of Micronesia',
+    'Florida',
+    'Georgia',
+    'Guam',
+    'Hawaii',
+    'Idaho',
+    'Illinois',
+    'Indiana',
+    'Iowa',
+    'Kansas',
+    'Kentucky',
+    'Louisiana',
+    'Maine',
+    'Marshall Islands',
+    'Maryland',
+    'Massachusetts',
+    'Michigan',
+    'Minnesota',
+    'Mississippi',
+    'Missouri',
+    'Montana',
+    'Nebraska',
+    'Nevada',
+    'New Hampshire',
+    'New Jersey',
+    'New Mexico',
+    'New York',
+    'North Carolina',
+    'North Dakota',
+    'Northern Mariana Islands',
+    'Ohio',
+    'Oklahoma',
+    'Oregon',
+    'Palau',
+    'Pennsylvania',
+    'Puerto Rico',
+    'Rhode Island',
+    'South Carolina',
+    'South Dakota',
+    'Tennessee',
+    'Texas',
+    'Utah',
+    'Vermont',
+    'Virgin Island',
+    'Virginia',
+    'Washington',
+    'West Virginia',
+    'Wisconsin',
+    'Wyoming',
+  ];
 
   @Input() parentForm: FormGroup;
   @Input() submitted: boolean;
   @Input() pageTitle: string;
   @Input() user: IUser;
 
-  private readonly streetMinLength = +this.formValidationRuleService
-    .streetMinLength;
-  private readonly streetMaxLength = +this.formValidationRuleService
-    .streetMaxLength;
-  private readonly cityMinLength = +this.formValidationRuleService
-    .cityMinLength;
-  private readonly cityMaxLength = +this.formValidationRuleService
-    .cityMaxLength;
+  private readonly streetMinLength = +this.formService.streetMinLength;
+  private readonly streetMaxLength = +this.formService.streetMaxLength;
+  private readonly cityMinLength = +this.formService.cityMinLength;
+  private readonly cityMaxLength = +this.formService.cityMaxLength;
 
   private readonly streetValidationMessages = {
     required: 'Please enter your street address.',
@@ -81,9 +137,7 @@ export class AddressFormComponent implements OnInit, OnDestroy {
 
   private readonly subscriptions: Subscription[] = [];
 
-  constructor(
-    private readonly formValidationRuleService: FormValidationRuleService
-  ) {}
+  constructor(private readonly formService: FormService) {}
 
   ngOnInit(): void {
     this.subscribeToControls();

@@ -12,20 +12,20 @@ import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { of, throwError } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
-import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { IUser, User } from 'src/app/types/user';
 
 import { EditNameComponent } from './edit-name.component';
 import { NameFormComponent } from 'src/app/shared/name-form/name-form.component';
 import { CurrentPasswordFormComponent } from 'src/app/shared/current-password-form/current-password-form.component';
+import { FormService } from 'src/app/services/form.service';
 
 describe('EditNameComponent', () => {
   let component: EditNameComponent;
   let fixture: ComponentFixture<EditNameComponent>;
   let mockAuthService;
   let mockNotificationService;
-  let mockFormValidationRuleService: FormValidationRuleService;
+  let mockFormService: FormService;
   let NAMEMINLENGTH: number;
   let NAMEMAXLENGTH: number;
 
@@ -76,7 +76,7 @@ describe('EditNameComponent', () => {
       NAMEMAXLENGTH = 20;
       mockAuthService = jasmine.createSpyObj(['saveUser']);
       mockNotificationService = jasmine.createSpyObj(['show']);
-      mockFormValidationRuleService = jasmine.createSpyObj([''], {
+      mockFormService = jasmine.createSpyObj([''], {
         nameMinLength: NAMEMINLENGTH,
         nameMaxLength: NAMEMAXLENGTH,
       });
@@ -91,8 +91,8 @@ describe('EditNameComponent', () => {
           { provide: AuthService, useValue: mockAuthService },
           { provide: NotificationService, useValue: mockNotificationService },
           {
-            provide: FormValidationRuleService,
-            useValue: mockFormValidationRuleService,
+            provide: FormService,
+            useValue: mockFormService,
           },
         ],
       }).compileComponents();

@@ -19,7 +19,7 @@ import { Subscription } from 'rxjs';
 import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordChecker } from 'src/app/functions/password-checker';
 import { AuthService } from 'src/app/services/auth.service';
-import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
+import { FormService } from 'src/app/services/form.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { INotification } from 'src/app/types/notification';
 import { User } from 'src/app/types/user';
@@ -33,26 +33,25 @@ import { User } from 'src/app/types/user';
 export class EditContactComponent implements OnInit, OnDestroy {
   @ViewChild('successTpl') private successTpl: TemplateRef<any>;
   @ViewChild('dangerTpl') private dangerTpl: TemplateRef<any>;
+
   submitted = false;
   editForm: FormGroup;
   emailTakenMessage: string;
   hasValueChanged = false;
   hasEmailChanged = false;
 
-  private subscription: Subscription;
-
   @Input() user: User;
   @Input() loading: boolean;
 
   @Output() loadingChange = new EventEmitter<boolean>();
 
-  private readonly phonePattern = this.formValidationRuleService
-    .phonePattern as RegExp;
+  private subscription: Subscription;
+  private readonly phonePattern = this.formService.phonePattern as RegExp;
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly authService: AuthService,
-    private readonly formValidationRuleService: FormValidationRuleService,
+    private readonly formService: FormService,
     private readonly notificationService: NotificationService
   ) {}
 

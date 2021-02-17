@@ -19,7 +19,7 @@ import { Subscription } from 'rxjs';
 import { passwordChecker } from 'src/app/functions/password-checker';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
 import { AuthService } from 'src/app/services/auth.service';
-import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
+import { FormService } from 'src/app/services/form.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { INotification } from 'src/app/types/notification';
 import { IUser } from 'src/app/types/user';
@@ -45,13 +45,12 @@ export class EditPasswordComponent implements OnInit, OnDestroy {
 
   hasValue = false;
 
-  private readonly passwordPattern = this.formValidationRuleService
-    .passwordPattern as RegExp;
+  private readonly passwordPattern = this.formService.passwordPattern as RegExp;
 
   constructor(
     private readonly authService: AuthService,
     private readonly fb: FormBuilder,
-    private readonly formValidationRuleService: FormValidationRuleService,
+    private readonly formService: FormService,
     private readonly notificationService: NotificationService
   ) {}
 

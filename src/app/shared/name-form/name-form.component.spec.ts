@@ -9,7 +9,7 @@ import {
 } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
-import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
+import { FormService } from 'src/app/services/form.service';
 import { IUser } from 'src/app/types/user';
 
 import { NameFormComponent } from './name-form.component';
@@ -17,7 +17,7 @@ import { NameFormComponent } from './name-form.component';
 describe('NameFormComponent', () => {
   let component: NameFormComponent;
   let fixture: ComponentFixture<NameFormComponent>;
-  let mockFormValidationRuleService: FormValidationRuleService;
+  let mockFormService: FormService;
   let NAMEMINLENGTH: number;
   let NAMEMAXLENGTH: number;
   let USER: IUser;
@@ -46,7 +46,7 @@ describe('NameFormComponent', () => {
       };
       NAMEMINLENGTH = 3;
       NAMEMAXLENGTH = 20;
-      mockFormValidationRuleService = jasmine.createSpyObj([''], {
+      mockFormService = jasmine.createSpyObj([''], {
         nameMinLength: NAMEMINLENGTH,
         nameMaxLength: NAMEMAXLENGTH,
       });
@@ -55,8 +55,8 @@ describe('NameFormComponent', () => {
         declarations: [NameFormComponent],
         providers: [
           {
-            provide: FormValidationRuleService,
-            useValue: mockFormValidationRuleService,
+            provide: FormService,
+            useValue: mockFormService,
           },
         ],
       }).compileComponents();
@@ -349,7 +349,7 @@ describe('NameFormComponent', () => {
 describe('NameFormComponent w/ template', () => {
   let component: NameFormComponent;
   let fixture: ComponentFixture<NameFormComponent>;
-  let mockFormValidationRuleService: FormValidationRuleService;
+  let mockFormService: FormService;
   let USER: IUser;
 
   const NAMEMINLENGTH = 3;
@@ -393,7 +393,7 @@ describe('NameFormComponent w/ template', () => {
         id: 121014,
       };
 
-      mockFormValidationRuleService = jasmine.createSpyObj([''], {
+      mockFormService = jasmine.createSpyObj([''], {
         nameMinLength: NAMEMINLENGTH,
         nameMaxLength: NAMEMAXLENGTH,
       });
@@ -402,8 +402,8 @@ describe('NameFormComponent w/ template', () => {
         declarations: [NameFormComponent],
         providers: [
           {
-            provide: FormValidationRuleService,
-            useValue: mockFormValidationRuleService,
+            provide: FormService,
+            useValue: mockFormService,
           },
         ],
         schemas: [NO_ERRORS_SCHEMA],

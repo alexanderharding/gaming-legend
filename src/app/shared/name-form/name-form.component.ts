@@ -8,7 +8,7 @@ import {
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
+import { FormService } from 'src/app/services/form.service';
 import { IUser } from 'src/app/types/user';
 
 import { UserName } from 'src/app/types/user-name';
@@ -30,8 +30,8 @@ export class NameFormComponent implements OnInit, OnDestroy {
 
   private readonly subscriptions: Subscription[] = [];
 
-  private readonly nameMinLength = this.formValidationRuleService.nameMinLength;
-  private readonly nameMaxLength = this.formValidationRuleService.nameMaxLength;
+  private readonly nameMinLength = this.formService.nameMinLength;
+  private readonly nameMaxLength = this.formService.nameMaxLength;
 
   private readonly firstNameValidationMessages = {
     required: 'Please enter a first name.',
@@ -57,9 +57,7 @@ export class NameFormComponent implements OnInit, OnDestroy {
   );
   readonly lastNameMessage$ = this.lastNameMessageSubject.asObservable();
 
-  constructor(
-    private readonly formValidationRuleService: FormValidationRuleService
-  ) {}
+  constructor(private readonly formService: FormService) {}
 
   ngOnInit(): void {
     this.subscribeToControls();

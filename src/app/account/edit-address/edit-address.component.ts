@@ -18,7 +18,7 @@ import {
 import { Subscription } from 'rxjs';
 import { passwordChecker } from 'src/app/functions/password-checker';
 import { AuthService } from 'src/app/services/auth.service';
-import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
+import { FormService } from 'src/app/services/form.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { INotification } from 'src/app/types/notification';
 import { IUser } from 'src/app/types/user';
@@ -44,17 +44,17 @@ export class EditAddressComponent implements OnInit, OnDestroy {
 
   @Output() loadingChange = new EventEmitter<boolean>();
 
-  readonly streetMinLength = +this.formValidationRuleService.streetMinLength;
-  readonly streetMaxLength = +this.formValidationRuleService.streetMaxLength;
-  readonly cityMinLength = +this.formValidationRuleService.cityMinLength;
-  readonly cityMaxLength = +this.formValidationRuleService.cityMaxLength;
-  private readonly zipPattern = this.formValidationRuleService
-    .zipPattern as RegExp;
+  readonly streetMinLength = +this.formService.streetMinLength;
+  readonly streetMaxLength = +this.formService.streetMaxLength;
+  readonly cityMinLength = +this.formService.cityMinLength;
+  readonly cityMaxLength = +this.formService.cityMaxLength;
+  private readonly zipPattern = this.formService.zipPattern as RegExp;
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly authService: AuthService,
-    private readonly formValidationRuleService: FormValidationRuleService,
+    private readonly formService: FormService,
+
     private readonly notificationService: NotificationService
   ) {}
 

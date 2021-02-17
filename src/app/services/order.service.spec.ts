@@ -140,8 +140,7 @@ describe('OrderService', () => {
           id: 1,
           name: 'Ideapad L340',
           brandId: 1,
-          description:
-            'With the Lenovo Idea Pad L340 gaming Laptop, you know you\'ve made the right decision with one serious laptop. Equipped with the latest Intel Core i5 processor, next-gen NVIDIA GeForce graphics, and jaw-dropping Dolby Audio, you\'ll experience first-hand real power and seamless play. You\'ll stay focused on the task at hand, concentrating on beating Your opponents and confident that your sleek, stylish computer will keep up with the competition.',
+          description: `With the Lenovo Idea Pad L340 gaming Laptop, you know you've made the right decision with one serious laptop. Equipped with the latest Intel Core i5 processor, next-gen NVIDIA GeForce graphics, and jaw-dropping Dolby Audio, you'll experience first-hand real power and seamless play. You'll stay focused on the task at hand, concentrating on beating Your opponents and confident that your sleek, stylish computer will keep up with the competition.`,
           price: 855.67,
           imageUrl: 'assets/images/ideapadL340.jpg',
           code: 'LDN-1',
@@ -154,8 +153,7 @@ describe('OrderService', () => {
       payment: {
         cardNumber: 4123147523147547,
         cvv: 123,
-        expiringMonth: 7,
-        expiringYear: 2021,
+        expiration: '2023-05',
         subtotal: 3805.65,
         tax: 261.45,
         shipping: 6.99,

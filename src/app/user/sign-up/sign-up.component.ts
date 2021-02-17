@@ -17,10 +17,10 @@ import {
 import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
 import { AuthService } from 'src/app/services/auth.service';
-import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
+import { FormService } from 'src/app/services/form.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { INotification } from 'src/app/types/notification';
-import { IUser, User, UserMaker } from 'src/app/types/user';
+import { User, UserMaker } from 'src/app/types/user';
 import { UserContact, UserContactMaker } from 'src/app/types/user-contact';
 import { UserName, UserNameMaker } from 'src/app/types/user-name';
 
@@ -33,31 +33,25 @@ import { UserName, UserNameMaker } from 'src/app/types/user-name';
 export class SignUpComponent implements OnInit {
   @ViewChild('signUpErrTpl') private signUpErrTpl: TemplateRef<any>;
 
-  private readonly states = this.formValidationRuleService.states;
   signUpForm: FormGroup;
   submitted = false;
   emailTakenMessage: string;
 
   @Input() loading: boolean;
-
   @Output() loadingChange = new EventEmitter<boolean>();
 
-  private readonly nameMinLength = +this.formValidationRuleService
-    .nameMinLength;
-  private readonly nameMaxLength = +this.formValidationRuleService
-    .nameMaxLength;
-  private readonly phonePattern = this.formValidationRuleService
-    .phonePattern as RegExp;
-  private readonly passwordPattern = this.formValidationRuleService
-    .passwordPattern as RegExp;
+  private readonly nameMinLength = +this.formService.nameMinLength;
+  private readonly nameMaxLength = +this.formService.nameMaxLength;
+  private readonly phonePattern = this.formService.phonePattern as RegExp;
+  private readonly passwordPattern = this.formService.passwordPattern as RegExp;
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly accordionConfig: NgbAccordionConfig,
-    private readonly formValidationRuleService: FormValidationRuleService,
+    private readonly progressBarConfig: NgbProgressbarConfig,
+    private readonly formService: FormService,
     private readonly authService: AuthService,
     private readonly router: Router,
-    private readonly progressBarConfig: NgbProgressbarConfig,
     private readonly notificationService: NotificationService
   ) {
     accordionConfig.closeOthers = true;
