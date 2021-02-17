@@ -42,26 +42,26 @@ import { UserAddressMaker, UserAddress } from 'src/app/types/user-address';
 import { UserContactMaker, UserContact } from 'src/app/types/user-contact';
 import { UserName, UserNameMaker } from 'src/app/types/user-name';
 
-function dateChecker(c: AbstractControl): { [key: string]: boolean } | null {
-  const monthControl = c.get('expiringMonth');
-  const yearControl = c.get('expiringYear');
-  const currentMonth = new Date().getMonth();
-  const currentYear = new Date().getFullYear();
+// function dateChecker(c: AbstractControl): { [key: string]: boolean } | null {
+//   const monthControl = c.get('expiringMonth');
+//   const yearControl = c.get('expiringYear');
+//   const currentMonth = new Date().getMonth();
+//   const currentYear = new Date().getFullYear();
 
-  if (monthControl.pristine || yearControl.pristine) {
-    return null;
-  }
+//   if (monthControl.pristine || yearControl.pristine) {
+//     return null;
+//   }
 
-  if (+yearControl.value > currentYear) {
-    return null;
-  }
+//   if (+yearControl.value > currentYear) {
+//     return null;
+//   }
 
-  if (+monthControl.value >= currentMonth) {
-    return null;
-  }
+//   if (+monthControl.value >= currentMonth) {
+//     return null;
+//   }
 
-  return { expired: true };
-}
+//   return { expired: true };
+// }
 
 function cardNumberChecker(
   c: AbstractControl
