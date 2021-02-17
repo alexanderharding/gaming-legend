@@ -8,7 +8,6 @@ import {
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
 
 @Component({
   selector: 'ctacu-payment-form',
@@ -17,10 +16,12 @@ import { FormValidationRuleService } from 'src/app/services/form-validation-rule
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaymentFormComponent implements OnInit, OnDestroy {
+  private readonly date = new Date();
+  private readonly month = this.date.getMonth();
+  private readonly fullYear = this.date.getFullYear();
+  readonly cardMinExpiration = `${this.fullYear}-0${this.month + 1}`;
+  readonly cardMaxExpiration = `${this.fullYear + 8}-0${this.month + 1}`;
   readonly pageTitle = 'Payment';
-  /* Get data from FormValidationRuleService */
-  readonly monthOptions = this.formValidationRuleService.monthOptions;
-  readonly yearOptions = this.formValidationRuleService.getYearOptions();
 
   @Input() parentForm: FormGroup;
   @Input() submitted: boolean;
@@ -28,7 +29,7 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
   private readonly subscriptions: Subscription[] = [];
 
   private readonly cardNumberValidationMessages = {
-    required: 'Please enter your card number.',
+    required: 'Please enter a card number.',
     cardNumber: 'Please enter a valid card number with no hyphens.',
   };
   private readonly cardNumberMessageSubject = new BehaviorSubject<string>(
@@ -36,21 +37,13 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
   );
   readonly cardNumberMessage$ = this.cardNumberMessageSubject.asObservable();
 
-  private readonly monthValidationMessages = {
-    required: 'Please select the month your card expires.',
+  private readonly expirationValidationMessages = {
+    required: 'Please enter an expiration date.',
   };
-  private readonly monthMessageSubject = new BehaviorSubject<string>(
-    this.monthValidationMessages.required
+  private readonly expirationMessageSubject = new BehaviorSubject<string>(
+    this.expirationValidationMessages.required
   );
-  readonly monthMessage$ = this.monthMessageSubject.asObservable();
-
-  private readonly yearValidationMessages = {
-    required: 'Please select the year your card expires.',
-  };
-  private readonly yearMessageSubject = new BehaviorSubject<string>(
-    this.yearValidationMessages.required
-  );
-  readonly yearMessage$ = this.yearMessageSubject.asObservable();
+  readonly expirationMessage$ = this.expirationMessageSubject.asObservable();
 
   private readonly cvvValidationMessages = {
     required: 'Please enter the security code on the back of your card.',
@@ -61,20 +54,20 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
   );
   readonly cvvMessage$ = this.cvvMessageSubject.asObservable();
 
-  private readonly paymentGroupValidationMessages = {
-    expired: 'Please select a valid expiration date.',
-  };
-  private readonly paymentGroupMessageSubject = new BehaviorSubject<string>(
-    this.paymentGroupValidationMessages.expired
-  );
-  readonly paymentGroupMessage$ = this.paymentGroupMessageSubject.asObservable();
-
-  constructor(
-    private readonly formValidationRuleService: FormValidationRuleService
-  ) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.subscribeToControls();
+  }
+
+  populateTestData(): void {
+    this.parentForm.patchValue({
+      paymentGroup: {
+        cardNumber: 4123147523147547,
+        cvv: 123,
+        expiration: this.cardMinExpiration,
+      },
+    });
   }
 
   private subscribeToControls(): void {
@@ -84,27 +77,11 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
         .pipe(debounceTime(1000))
         .subscribe(() => this.setMessage(cardNumberControl, 'cardNumber'))
     );
-    const paymentGroupControl = this.parentForm.get('paymentGroup');
+    const expirationControl = this.parentForm.get('paymentGroup.expiration');
     this.subscriptions.push(
-      paymentGroupControl.valueChanges
+      expirationControl.valueChanges
         .pipe(debounceTime(1000))
-        .subscribe(() => this.setMessage(paymentGroupControl, 'paymentGroup'))
-    );
-    const expiringMonthControl = this.parentForm.get(
-      'paymentGroup.expiringMonth'
-    );
-    this.subscriptions.push(
-      expiringMonthControl.valueChanges
-        .pipe(debounceTime(1000))
-        .subscribe(() => this.setMessage(expiringMonthControl, 'month'))
-    );
-    const expiringYearControl = this.parentForm.get(
-      'paymentGroup.expiringYear'
-    );
-    this.subscriptions.push(
-      expiringYearControl.valueChanges
-        .pipe(debounceTime(1000))
-        .subscribe(() => this.setMessage(expiringYearControl, 'year'))
+        .subscribe(() => this.setMessage(expirationControl, 'expiration'))
     );
     const cvvControl = this.parentForm.get('paymentGroup.cvv');
     this.subscriptions.push(
@@ -114,16 +91,6 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
     );
   }
 
-  populateTestData(): void {
-    this.parentForm.patchValue({
-      paymentGroup: {
-        cardNumber: 4123147523147547,
-        cvv: 123,
-        expiringMonth: 7,
-        expiringYear: 2021,
-      },
-    });
-  }
   private setMessage(c: AbstractControl, name: string): void {
     let message = '';
     switch (name) {
@@ -135,21 +102,13 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
         }
         this.cardNumberMessageSubject.next(message);
         break;
-      case 'month':
+      case 'expiration':
         if (c.errors) {
           message = Object.keys(c.errors)
-            .map((key) => this.monthValidationMessages[key])
+            .map((key) => this.expirationValidationMessages[key])
             .join(' ');
         }
-        this.monthMessageSubject.next(message);
-        break;
-      case 'year':
-        if (c.errors) {
-          message = Object.keys(c.errors)
-            .map((key) => this.yearValidationMessages[key])
-            .join(' ');
-        }
-        this.yearMessageSubject.next(message);
+        this.expirationMessageSubject.next(message);
         break;
       case 'cvv':
         if (c.errors) {
@@ -158,14 +117,6 @@ export class PaymentFormComponent implements OnInit, OnDestroy {
             .join(' ');
         }
         this.cvvMessageSubject.next(message);
-        break;
-      case 'paymentGroup':
-        if (c.errors) {
-          message = Object.keys(c.errors)
-            .map((key) => this.paymentGroupValidationMessages[key])
-            .join(' ');
-        }
-        this.paymentGroupMessageSubject.next(message);
         break;
       default:
         console.error(`${name} did not match any names.`);

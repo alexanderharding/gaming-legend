@@ -34,53 +34,20 @@
           <div class="input-group-prepend">
             <span class="input-group-text bg-info text-white">Expires</span>
           </div>
-          <select
-            formControlName="expiringMonth"
-            autocomplete="cc-exp-month"
-            class="custom-select"
-            id="monthSelect"
+          <input
+            type="month"
+            id="expiration"
+            formControlName="expiration"
+            class="form-control"
+            [min]="[cardMinExpiration]"
+            [max]="[cardMaxExpiration]"
             [ngClass]="{
-              'is-invalid':
-                ((monthMessage$ | async) || (paymentGroupMessage$ | async)) &&
-                submitted,
-              'is-valid':
-                (monthMessage$ | async) === '' &&
-                (paymentGroupMessage$ | async) === ''
+              'is-invalid': (expirationMessage$ | async) && submitted,
+              'is-valid': (expirationMessage$ | async) === ''
             }"
-          >
-            <option [value]="0" hidden [attr.disabled]="true">- Month -</option>
-            <option
-              *ngFor="let m of monthOptions"
-              [value]="m.value"
-              class="text-capitalize"
-            >
-              {{ m.name }}
-            </option>
-          </select>
+          />
           <div class="invalid-tooltip">
-            <span>
-              {{ monthMessage$ | async }}
-            </span>
-            <span *ngIf="(monthMessage$ | async) === ''">
-              {{ paymentGroupMessage$ | async }}
-            </span>
-          </div>
-          <select
-            formControlName="expiringYear"
-            class="custom-select"
-            id="yearSelect"
-            [ngClass]="{
-              'is-invalid': (yearMessage$ | async) && submitted,
-              'is-valid': (yearMessage$ | async) === ''
-            }"
-          >
-            <option [value]="0" hidden [attr.disabled]="true">- Year -</option>
-            <option *ngFor="let y of yearOptions" [value]="y">
-              {{ y }}
-            </option>
-          </select>
-          <div *ngIf="(monthMessage$ | async) === ''" class="invalid-tooltip">
-            <span>{{ yearMessage$ | async }}</span>
+            <span>{{ expirationMessage$ | async }}</span>
           </div>
         </div>
       </div>
