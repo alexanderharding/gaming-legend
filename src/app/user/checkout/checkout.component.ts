@@ -26,7 +26,7 @@ import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
 import { AuthService } from 'src/app/services/auth.service';
 import { CartService } from 'src/app/services/cart.service';
-import { FormValidationRuleService } from 'src/app/services/form-validation-rule.service';
+import { FormService } from 'src/app/services/form.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { OrderService } from 'src/app/services/order.service';
 import { ShippingRateService } from 'src/app/services/shipping-rate.service';
@@ -119,9 +119,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   readonly cartQuantity$ = this.cartService.cartQuantity$;
   readonly subtotal$ = this.cartService.subtotal$;
 
-  /* Get data from CheckOutService */
-  readonly states = this.formValidationRuleService.states;
-
   /* Get data from resolver */
   private readonly resolvedData = this.route.snapshot.data
     .resolvedData as ShippingRatesResult;
@@ -130,7 +127,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
   /* Set pageTitle */
   readonly pageTitle = this.shippingRates
-    ? ('Check Out' as string)
+    ? ('Checkout' as string)
     : ('Retrieval Error' as string);
 
   /* NgbCollapse for showing and hiding the signUpCheck and passwordGroup in
@@ -158,20 +155,16 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   checkOutForm: FormGroup;
 
   /* Get form control validation rules from FormValidationService*/
-  readonly nameMinLength = +this.formValidationRuleService.nameMinLength;
-  readonly nameMaxLength = +this.formValidationRuleService.nameMaxLength;
-  readonly streetMinLength = +this.formValidationRuleService.streetMinLength;
-  readonly streetMaxLength = +this.formValidationRuleService.streetMaxLength;
-  readonly cityMinLength = +this.formValidationRuleService.cityMinLength;
-  readonly cityMaxLength = +this.formValidationRuleService.cityMaxLength;
-  private readonly zipPattern = this.formValidationRuleService
-    .zipPattern as RegExp;
-  private readonly cvvPattern = this.formValidationRuleService
-    .cvvPattern as RegExp;
-  private readonly phonePattern = this.formValidationRuleService
-    .phonePattern as RegExp;
-  private readonly passwordPattern = this.formValidationRuleService
-    .passwordPattern as RegExp;
+  readonly nameMinLength = +this.formService.nameMinLength;
+  readonly nameMaxLength = +this.formService.nameMaxLength;
+  readonly streetMinLength = +this.formService.streetMinLength;
+  readonly streetMaxLength = +this.formService.streetMaxLength;
+  readonly cityMinLength = +this.formService.cityMinLength;
+  readonly cityMaxLength = +this.formService.cityMaxLength;
+  private readonly zipPattern = this.formService.zipPattern as RegExp;
+  private readonly cvvPattern = /^[0-9]{3,4}$/;
+  private readonly phonePattern = this.formService.phonePattern as RegExp;
+  private readonly passwordPattern = this.formService.passwordPattern as RegExp;
 
   constructor(
     private readonly accordionConfig: NgbAccordionConfig,
@@ -182,7 +175,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     private readonly fb: FormBuilder,
     private readonly route: ActivatedRoute,
     private readonly authService: AuthService,
-    private readonly formValidationRuleService: FormValidationRuleService,
+    private readonly formService: FormService,
     private readonly shippingRateService: ShippingRateService,
     private readonly notificationService: NotificationService,
     private readonly title: Title
@@ -247,18 +240,11 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         country: ['USA', [Validators.required]],
       }),
       shippingRate: null,
-      paymentGroup: this.fb.group(
-        {
-          cardNumber: [null, [Validators.required, cardNumberChecker]],
-          cvv: [
-            null,
-            [Validators.required, Validators.pattern(this.cvvPattern)],
-          ],
-          expiringMonth: [0, [Validators.required]],
-          expiringYear: [0, [Validators.required]],
-        },
-        { validators: dateChecker }
-      ),
+      paymentGroup: this.fb.group({
+        cardNumber: [null, [Validators.required, cardNumberChecker]],
+        cvv: [null, [Validators.required, Validators.pattern(this.cvvPattern)]],
+        expiration: ['', [Validators.required]],
+      }),
       signUpCheck: true,
       passwordGroup: this.fb.group(
         {
@@ -267,7 +253,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
             [Validators.required, Validators.pattern(this.passwordPattern)],
           ],
           confirmPassword: ['', [Validators.required]],
-          // showPassword: false,
         },
         { validator: passwordMatcher }
       ),
@@ -457,8 +442,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         const payment = PaymentMaker.create({
           cardNumber: +form.get('paymentGroup.cardNumber').value,
           cvv: +form.get('paymentGroup.cvv').value,
-          expiringMonth: +form.get('paymentGroup.expiringMonth').value,
-          expiringYear: +form.get('paymentGroup.expiringYear').value,
+          expiration: form.get('paymentGroup.expiration').value as string,
           subtotal: +subtotal,
           tax: +totalTax,
           shipping: +shipping,
