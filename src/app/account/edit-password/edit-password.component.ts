@@ -40,7 +40,7 @@ export class EditPasswordComponent implements OnInit, OnDestroy {
   @Output() loadingChange = new EventEmitter<boolean>();
 
   submitted = false;
-  editPasswordForm: FormGroup;
+  editForm: FormGroup;
   private subscription: Subscription;
 
   hasValue = false;
@@ -55,7 +55,7 @@ export class EditPasswordComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.editPasswordForm = this.fb.group({
+    this.editForm = this.fb.group({
       passwordGroup: this.fb.group(
         {
           password: [
@@ -71,7 +71,7 @@ export class EditPasswordComponent implements OnInit, OnDestroy {
         { validator: passwordMatcher }
       ),
     });
-    const passwordGroupControl = this.editPasswordForm.get('passwordGroup');
+    const passwordGroupControl = this.editForm.get('passwordGroup');
     this.subscription = passwordGroupControl.valueChanges.subscribe(() =>
       this.setHasValueChanged(passwordGroupControl)
     );
@@ -99,7 +99,7 @@ export class EditPasswordComponent implements OnInit, OnDestroy {
     this.hasValue =
       passwordControl.value || confirmPasswordControl.value ? true : false;
     if (hadValue && !this.hasValue) {
-      this.resetForm(this.editPasswordForm);
+      this.resetForm(this.editForm);
     }
   }
 
