@@ -11,6 +11,7 @@ import { AddressFormComponent } from './address-form/address-form.component';
 import { CurrentPasswordFormComponent } from './current-password-form/current-password-form.component';
 import { ConvertToSpacesPipe } from '../pipes/convert-to-spaces.pipe';
 import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
+import { CapitalizePipe } from '../pipes/capitalize.pipe';
 
 @NgModule({
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
@@ -22,6 +23,7 @@ import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
     AddressFormComponent,
     CurrentPasswordFormComponent,
     ConfirmModalComponent,
+    CapitalizePipe,
     ConvertToSpacesPipe,
     CommonModule,
     FormsModule,
@@ -36,8 +38,9 @@ import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
     AddressFormComponent,
     CurrentPasswordFormComponent,
     ConfirmModalComponent,
+    CapitalizePipe,
     ConvertToSpacesPipe,
   ],
-  providers: [ConvertToSpacesPipe],
+  providers: [ConvertToSpacesPipe, CapitalizePipe],
 })
 export class SharedModule {}
