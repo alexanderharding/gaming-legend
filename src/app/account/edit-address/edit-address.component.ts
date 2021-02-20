@@ -113,15 +113,14 @@ export class EditAddressComponent implements OnInit, OnDestroy {
     const passwordGroupControl = form.get('passwordGroup');
     this.submitted = false;
     if (address) {
-      addressControl.patchValue({
+      addressControl.setValue({
         street: address.street as string,
         city: address.city as string,
         state: address.state as string,
         zip: address.zip as string,
+        country: address.country as string,
       });
-      passwordGroupControl.patchValue({
-        currentPassword: '',
-      });
+      passwordGroupControl.reset();
     } else {
       form.reset();
       addressControl.patchValue({
