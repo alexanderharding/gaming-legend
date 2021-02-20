@@ -6,7 +6,12 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, combineLatest, EMPTY, Subscription } from 'rxjs';
 import { catchError, debounceTime, first, map } from 'rxjs/operators';
@@ -126,10 +131,8 @@ export class AccountComponent implements OnInit, OnDestroy {
     this.subscribeToControls();
   }
 
-  clearSearch(): void {
-    this.filterForm.patchValue({
-      search: '',
-    });
+  resetControl(c: AbstractControl): void {
+    c.reset();
   }
 
   setLoading(value: boolean): void {
