@@ -13,6 +13,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { IProduct } from 'src/app/types/product';
 import { IProductBrand } from 'src/app/types/product-brand';
 import { ProductListResult } from 'src/app/types/products-result';
+import { Title } from '@angular/platform-browser';
+import { CapitalizePipe } from 'src/app/pipes/capitalize.pipe';
 
 @Component({
   templateUrl: './product-list.component.html',
@@ -31,7 +33,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
   readonly sort = +this.queryParamMap.get('sort') || 0;
 
   filterForm: FormGroup;
-  // isFiltering = false;
 
   private readonly isFilteringSubject = new BehaviorSubject<boolean>(false);
   readonly isFiltering$ = this.isFilteringSubject.asObservable();
@@ -39,7 +40,16 @@ export class ProductListComponent implements OnInit, OnDestroy {
   readonly productType$ = this.route.paramMap.pipe(map((p) => p.get('type')));
 
   private readonly resolvedData$ = this.route.data.pipe(
-    map((d) => d.resolvedData as ProductListResult)
+    map((d) => {
+      const resolvedData = d.resolvedData as ProductListResult;
+      const title = resolvedData.products
+        ? `${resolvedData.products[0].type}`
+        : 'Retrieval Error';
+      this.title.setTitle(
+        `Gaming Legend | ${this.capitalizePipe.transform(title)}`
+      );
+      return resolvedData;
+    })
   );
   private readonly products$ = this.resolvedData$.pipe(
     map((r) => r.products as IProduct[])
@@ -168,7 +178,9 @@ export class ProductListComponent implements OnInit, OnDestroy {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly formBuilder: FormBuilder,
-    private readonly convertToSpacesPipe: ConvertToSpacesPipe
+    private readonly convertToSpacesPipe: ConvertToSpacesPipe,
+    private readonly capitalizePipe: CapitalizePipe,
+    private readonly title: Title
   ) {}
 
   ngOnInit(): void {
