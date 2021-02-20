@@ -854,15 +854,15 @@ describe('EditNameComponent w/ template', () => {
     expect(component.onSubmit).toHaveBeenCalledWith(component.editForm);
   });
 
-  it(`should call resetForm method with correct value when reset input button
-    is clicked`, () => {
+  it(`should call resetForm method with correct value when editForm is
+    reset`, () => {
     spyOn(component, 'resetForm');
     fixture.detectChanges();
-    const buttons = fixture.debugElement.queryAll(By.css('#reset'));
+    const form = fixture.debugElement.query(By.css('form'));
 
-    buttons[0].triggerEventHandler('click', null);
+    form.triggerEventHandler('reset', null);
 
-    expect(buttons.length).toBe(1);
+    expect(component.resetForm).toHaveBeenCalledTimes(1);
     expect(component.resetForm).toHaveBeenCalledWith(
       component.editForm,
       component.user
@@ -1059,21 +1059,21 @@ describe('EditNameComponent w/ template', () => {
     });
   }));
 
-  it(`should disable cancel input button when loading`, () => {
+  it(`should disable reset input button when loading`, () => {
     component.loading = true;
     fixture.detectChanges();
 
-    const buttons = fixture.debugElement.queryAll(By.css('#cancel'));
+    const buttons = fixture.debugElement.queryAll(By.css('#reset'));
     expect(buttons.length).toBe(1);
     expect(component.loading).toBeTrue();
     expect(buttons[0].nativeElement.disabled).toBeTrue();
   });
 
-  it(`should not disable cancel input button when not loading`, () => {
+  it(`should not disable reset input button when not loading`, () => {
     component.loading = false;
     fixture.detectChanges();
 
-    const buttons = fixture.debugElement.queryAll(By.css('#cancel'));
+    const buttons = fixture.debugElement.queryAll(By.css('#reset'));
     expect(buttons.length).toBe(1);
     expect(component.loading).toBeFalse();
     expect(buttons[0].nativeElement.disabled).toBeFalse();
