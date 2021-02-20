@@ -854,11 +854,11 @@ describe('EditNameComponent w/ template', () => {
     expect(component.onSubmit).toHaveBeenCalledWith(component.editForm);
   });
 
-  it(`should call resetForm method with correct value when cancel input button
+  it(`should call resetForm method with correct value when reset input button
     is clicked`, () => {
     spyOn(component, 'resetForm');
     fixture.detectChanges();
-    const buttons = fixture.debugElement.queryAll(By.css('#cancel'));
+    const buttons = fixture.debugElement.queryAll(By.css('#reset'));
 
     buttons[0].triggerEventHandler('click', null);
 

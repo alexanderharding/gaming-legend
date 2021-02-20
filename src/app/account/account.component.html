@@ -85,6 +85,7 @@
             class="mb-2"
             novalidate
             [formGroup]="filterForm"
+            (reset)="resetControl(filterForm.controls.search)"
             autocomplete="off"
           >
             <div class="form-row">
@@ -114,10 +115,9 @@
                     class="input-group-append"
                   >
                     <input
-                      type="button"
+                      type="reset"
                       value="X"
                       class="btn btn-sm btn-outline-danger"
-                      (click)="clearSearch()"
                     />
                   </div>
                 </div>
@@ -125,9 +125,7 @@
               <div class="col-sm order-sm-12">
                 <div class="input-group input-group-sm">
                   <div class="input-group-prepend">
-                    <span
-                      class="input-group-text bg-info text-white"
-                      id="basic-addon1"
+                    <span class="input-group-text bg-info text-white"
                       >Sort</span
                     >
                   </div>
