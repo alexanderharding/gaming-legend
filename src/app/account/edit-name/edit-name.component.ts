@@ -93,7 +93,14 @@ export class EditNameComponent implements OnInit, OnDestroy {
     }
     if (form.valid) {
       this.loadingChange.emit(true);
-      this.saveUser(form);
+      const updatedUser = {
+        ...this.user,
+        name: {
+          firstName: form.get('nameGroup.firstName').value as string,
+          lastName: form.get('nameGroup.lastName').value as string,
+        },
+      } as User;
+      this.saveUser(updatedUser, form);
     }
   }
 
@@ -117,41 +124,29 @@ export class EditNameComponent implements OnInit, OnDestroy {
     this.hasValueChanged = controlValue === userNameValue ? false : true;
   }
 
-  private showSuccess(): void {
+  private show(
+    textOrTpl: string | TemplateRef<any>,
+    className: string,
+    delay?: number
+  ) {
     const notification = {
-      textOrTpl: this.successTpl,
-      className: 'bg-success text-light',
-      delay: 10000,
+      textOrTpl,
+      className,
+      delay,
     } as INotification;
     this.notificationService.show(notification);
   }
 
-  private showDanger(): void {
-    const notification = {
-      textOrTpl: this.dangerTpl,
-      className: 'bg-danger text-light',
-      delay: 15000,
-    } as INotification;
-    this.notificationService.show(notification);
-  }
-
-  private saveUser(form: FormGroup): void {
-    const updatedUser = {
-      ...this.user,
-      name: {
-        firstName: form.get('nameGroup.firstName').value as string,
-        lastName: form.get('nameGroup.lastName').value as string,
-      },
-    } as User;
-    this.authService.saveUser(updatedUser).subscribe(
+  private saveUser(user: User, form: FormGroup): void {
+    this.authService.saveUser(user).subscribe(
       (user) => {
-        this.showSuccess();
         this.user = user as IUser;
+        this.show(this.successTpl, 'bg-success text-light', 10000);
         this.resetForm(form, user);
         this.loadingChange.emit(false);
       },
       (error) => {
-        this.showDanger();
+        this.show(this.dangerTpl, 'bg-danger text-light', 15000);
         this.loadingChange.emit(false);
       }
     );
