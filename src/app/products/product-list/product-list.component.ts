@@ -5,10 +5,9 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ConvertToSpacesPipe } from '../../pipes/convert-to-spaces.pipe';
 
 import { EMPTY, combineLatest, BehaviorSubject, Subscription } from 'rxjs';
-import { catchError, map, debounceTime, tap } from 'rxjs/operators';
+import { catchError, map, debounceTime } from 'rxjs/operators';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IProduct } from 'src/app/types/product';
 import { IProductBrand } from 'src/app/types/product-brand';
@@ -23,7 +22,6 @@ import { CapitalizePipe } from 'src/app/pipes/capitalize.pipe';
 })
 export class ProductListComponent implements OnInit, OnDestroy {
   readonly pageSize = 6;
-
   private isFirstSort = true;
   private readonly queryParamMap = this.route.snapshot.queryParamMap;
   readonly pageTitle = this.route.snapshot.paramMap.get('type') || 'products';
@@ -89,17 +87,11 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.productsWithSelectedBrand$,
     this.productsFilteredAction$,
   ]).pipe(
-    // debounceTime(1000),
     map(
       ([products, searchFilter]) =>
         products.filter((product) =>
           searchFilter
-            ? product.name.toLowerCase().indexOf(searchFilter) > -1 ||
-              product.brand.toLowerCase().indexOf(searchFilter) > -1 ||
-              this.convertToSpacesPipe
-                .transform(product.code, '-')
-                .toLowerCase()
-                .indexOf(searchFilter) > -1
+            ? product.name.toLowerCase().indexOf(searchFilter) > -1
             : true
         ) as IProduct[]
     ),
@@ -149,18 +141,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
           ) as IProduct[];
           this.setFiltering(false);
           return sortedProducts;
-        case 5:
-          sortedProducts = products.sort(
-            (low, high) => high.starRating - low.starRating
-          ) as IProduct[];
-          this.setFiltering(false);
-          return sortedProducts;
-        case 6:
-          sortedProducts = products.sort(
-            (low, high) => low.starRating - high.starRating
-          ) as IProduct[];
-          this.setFiltering(false);
-          return sortedProducts;
         default:
           sortedProducts = products.sort(
             (low, high) => low.id - high.id
@@ -178,7 +158,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly formBuilder: FormBuilder,
-    private readonly convertToSpacesPipe: ConvertToSpacesPipe,
     private readonly capitalizePipe: CapitalizePipe,
     private readonly title: Title
   ) {}
