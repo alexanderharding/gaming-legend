@@ -23,9 +23,11 @@ import { CapitalizePipe } from 'src/app/pipes/capitalize.pipe';
 export class ProductListComponent implements OnInit, OnDestroy {
   readonly pageSize = 9;
   private isFirstSort = true;
-  private readonly queryParamMap = this.route.snapshot.queryParamMap;
   pageTitle = '';
+  private readonly queryParamMap = this.route.snapshot.queryParamMap;
   page = +this.queryParamMap.get('p') || 1;
+  isCollapsed =
+    this.queryParamMap.get('isCollapsed') === 'false' ? false : true;
   readonly productFilter = this.queryParamMap.get('search') || '';
   readonly brandId = +this.queryParamMap.get('id') || 0;
   readonly sort = +this.queryParamMap.get('sort') || 0;
@@ -163,7 +165,13 @@ export class ProductListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.buildForm();
+    this.filterForm = this.getForm();
+    this.subToValueChanges(this.filterForm);
+    this.filterForm.setValue({
+      search: this.productFilter,
+      brand: this.brandId,
+      sort: this.sort,
+    });
   }
 
   clearFilters(): void {
@@ -186,23 +194,17 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.isFilteringSubject.next(value);
   }
 
-  private buildForm(): void {
-    this.filterForm = this.formBuilder.group({
+  private getForm(): FormGroup {
+    return this.formBuilder.group({
       search: '',
       brand: null,
       sort: null,
     });
-    this.subToValueChanges();
-    this.filterForm.setValue({
-      search: this.productFilter,
-      brand: this.brandId,
-      sort: this.sort,
-    });
   }
 
-  private subToValueChanges() {
+  private subToValueChanges(form: FormGroup): void {
     this.subscriptions.push(
-      this.filterForm
+      form
         .get('search')
         .valueChanges.pipe(debounceTime(1000))
         .subscribe((value: string) => {
@@ -210,16 +212,14 @@ export class ProductListComponent implements OnInit, OnDestroy {
           this.productFilteredSubject.next(value.trim().toLowerCase());
         })
     );
-
     this.subscriptions.push(
-      this.filterForm.get('brand').valueChanges.subscribe((value: number) => {
+      form.get('brand').valueChanges.subscribe((value: number) => {
         this.setFiltering(true);
         this.brandSelectedSubject.next(+value);
       })
     );
-
     this.subscriptions.push(
-      this.filterForm.get('sort').valueChanges.subscribe((value: number) => {
+      form.get('sort').valueChanges.subscribe((value: number) => {
         this.setFiltering(true);
         this.sortSelectedSubject.next(+value);
       })
