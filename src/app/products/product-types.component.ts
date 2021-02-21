@@ -21,7 +21,7 @@ export class ProductTypesComponent implements OnInit {
 
   /* Set pageTitle */
   readonly pageTitle = this.productTypes
-    ? ('Products' as string)
+    ? ('All Products' as string)
     : ('Retrieval Error' as string);
 
   constructor(
