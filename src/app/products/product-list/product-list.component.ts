@@ -21,7 +21,7 @@ import { CapitalizePipe } from 'src/app/pipes/capitalize.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductListComponent implements OnInit, OnDestroy {
-  readonly pageSize = 6;
+  readonly pageSize = 9;
   private isFirstSort = true;
   private readonly queryParamMap = this.route.snapshot.queryParamMap;
   readonly pageTitle = this.route.snapshot.paramMap.get('type') || 'products';
