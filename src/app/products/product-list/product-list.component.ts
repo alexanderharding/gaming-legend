@@ -24,7 +24,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   readonly pageSize = 9;
   private isFirstSort = true;
   private readonly queryParamMap = this.route.snapshot.queryParamMap;
-  readonly pageTitle = this.route.snapshot.paramMap.get('type') || 'products';
+  pageTitle = '';
   page = +this.queryParamMap.get('p') || 1;
   readonly productFilter = this.queryParamMap.get('search') || '';
   readonly brandId = +this.queryParamMap.get('id') || 0;
@@ -40,11 +40,11 @@ export class ProductListComponent implements OnInit, OnDestroy {
   private readonly resolvedData$ = this.route.data.pipe(
     map((d) => {
       const resolvedData = d.resolvedData as ProductListResult;
-      const title = resolvedData.products
+      this.pageTitle = resolvedData.products
         ? `${resolvedData.products[0].type}`
         : 'Retrieval Error';
       this.title.setTitle(
-        `Gaming Legend | ${this.capitalizePipe.transform(title)}`
+        `Gaming Legend | ${this.capitalizePipe.transform(this.pageTitle)}`
       );
       return resolvedData;
     })

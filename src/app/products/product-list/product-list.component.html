@@ -28,16 +28,9 @@
         </button>
       </div>
       <div class="col">
-        <ng-container *ngIf="productType$ | async as type; else defaultTitle">
-          <h1 class="text-center text-capitalize text-secondary m-0">
-            {{ type }}
-          </h1>
-        </ng-container>
-        <ng-template #defaultTitle>
-          <h1 class="font-weight-bold text-center text-capitalize">
-            {{ pageTitle }}
-          </h1>
-        </ng-template>
+        <h1 class="text-center m-0">
+          {{ pageTitle | capitalize }}
+        </h1>
       </div>
       <div class="col"></div>
     </div>
@@ -226,8 +219,8 @@
           </button>
         </div>
         <div class="col">
-          <h1 class="text-danger text-center text-capitalize m-0">
-            Retrievel Error
+          <h1 class="text-center text-danger m-0">
+            {{ pageTitle | capitalize }}
           </h1>
         </div>
         <div class="col"></div>
