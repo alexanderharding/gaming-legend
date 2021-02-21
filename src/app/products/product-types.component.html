@@ -51,27 +51,19 @@
           />
         </div>
         <div class="col-md d-flex flex-column justify-content-center">
-          <h2>
+          <h2 class="text-info">
             {{ t.title | lowercase | capitalize }}
           </h2>
           <p>
             {{ t.body }}
           </p>
-          <button
+          <input
             type="button"
+            class="btn btn-block btn-outline-primary shadow-sm"
+            value="{{ t.title | capitalize }}"
             [routerLink]="[t.title]"
             (click)="scrollToTop()"
-            class="btn btn-block btn-info"
-          >
-            Learn more
-          </button>
-          <button
-            type="button"
-            (click)="scrollToTop()"
-            class="btn btn-sm btn-block btn-outline-secondary"
-          >
-            Back to top
-          </button>
+          />
         </div>
       </div>
     </div>
