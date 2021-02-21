@@ -7,10 +7,21 @@ describe('CapitalizePipe', () => {
       const pipe = new CapitalizePipe();
 
       // Act
-      const result = pipe.transform('alex');
+      const result = pipe.transform('john');
 
       // Assert
-      expect(result).toBe('Alex');
+      expect(result).toBe('John');
+    });
+
+    it('should lowercase every character except the first', () => {
+      // Arrange
+      const pipe = new CapitalizePipe();
+
+      // Act
+      const result = pipe.transform('JOHN');
+
+      // Assert
+      expect(result).toBe('John');
     });
 
     it('should capitalize a sentence of words', () => {
@@ -18,10 +29,10 @@ describe('CapitalizePipe', () => {
       const pipe = new CapitalizePipe();
 
       // Act
-      const result = pipe.transform('alex harding is the best');
+      const result = pipe.transform('john DOE is the best');
 
       // Assert
-      expect(result).toBe('Alex Harding Is The Best');
+      expect(result).toBe('John Doe Is The Best');
     });
 
     it('should not break when the string is empty', () => {
@@ -43,10 +54,10 @@ describe('CapitalizePipe', () => {
       const result = pipe.transform(null);
 
       // Assert
-      expect(result).toBe(null);
+      expect(result).toBeNull();
     });
 
-    it('should capitalize a sinlge letter word', () => {
+    it('should capitalize a single letter word', () => {
       // Arrange
       const pipe = new CapitalizePipe();
 
@@ -57,7 +68,7 @@ describe('CapitalizePipe', () => {
       expect(result).toBe('A');
     });
 
-    it('should capitalize a single letter words', () => {
+    it('should capitalize single letter words', () => {
       // Arrange
       const pipe = new CapitalizePipe();
 

@@ -5,9 +5,9 @@ describe('ConvertToSpacesPipe', () => {
     it('should convert the value to spaces', () => {
       const pipe = new ConvertToSpacesPipe();
 
-      const result = pipe.transform('alex', 'e');
+      const result = pipe.transform('john', 'o');
 
-      expect(result).toBe('al x');
+      expect(result).toBe('j hn');
     });
 
     it('should not break when the string is empty', () => {
@@ -15,7 +15,7 @@ describe('ConvertToSpacesPipe', () => {
       const pipe = new ConvertToSpacesPipe();
 
       // Act
-      const result = pipe.transform('', '');
+      const result = pipe.transform('', '-');
 
       // Assert
       expect(result).toBe('');
@@ -26,10 +26,32 @@ describe('ConvertToSpacesPipe', () => {
       const pipe = new ConvertToSpacesPipe();
 
       // Act
-      const result = pipe.transform(null, null);
+      const result = pipe.transform(null, '-');
 
       // Assert
-      expect(result).toBe(null);
+      expect(result).toBeNull();
+    });
+
+    it('should not break when the character is empty', () => {
+      // Arrange
+      const pipe = new ConvertToSpacesPipe();
+
+      // Act
+      const result = pipe.transform('john', '');
+
+      // Assert
+      expect(result).toBe('john');
+    });
+
+    it('should not break when the character is null', () => {
+      // Arrange
+      const pipe = new ConvertToSpacesPipe();
+
+      // Act
+      const result = pipe.transform('', null);
+
+      // Assert
+      expect(result).toBe('');
     });
   });
 });
