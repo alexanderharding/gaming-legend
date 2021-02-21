@@ -1,4 +1,4 @@
-<div class="container-xl py-3">
+<div class="container-xl pt-3">
   <ng-container *ngIf="sortedProducts$ | async as products; else notSubscribed">
     <div
       *ngIf="isFiltering$ | async"
@@ -143,7 +143,7 @@
       </div>
     </form>
     <ng-container *ngIf="products.length; else noProducts">
-      <div class="row py-3">
+      <div class="row pt-3">
         <div
           *ngFor="
             let p of products
@@ -165,7 +165,7 @@
             <img
               class="card-img-top pt-3 px-3"
               [src]="p.imageUrl"
-              alt="Card image cap"
+              alt="{{ p.name }}"
             />
             <div class="card-body">
               <h5 class="card-title panel">
@@ -191,17 +191,14 @@
         />
       </ngb-alert>
     </ng-template>
-    <div *ngIf="products.length > 5" class="d-flex justify-content-between">
-      <div>
-        <button class="btn btn-outline-primary" (click)="scrollToTop()">
-          Back to top
-        </button>
-      </div>
+    <div *ngIf="products.length > pageSize">
       <ngb-pagination
+        class="d-flex justify-content-end"
         *ngIf="products.length > pageSize"
         [collectionSize]="products.length"
         [(page)]="page"
         [pageSize]="pageSize"
+        (pageChange)="scrollToTop()"
       >
       </ngb-pagination>
     </div>
@@ -243,6 +240,23 @@
     </ng-container>
 
     <ng-template #loading>
+      <button
+        routerLink="/products"
+        class="btn btn-lg btn-link text-danger px-0"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="35"
+          height="35"
+          fill="currentColor"
+          class="bi bi-arrow-left-circle-fill"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"
+          />
+        </svg>
+      </button>
       <div class="d-flex justify-content-center m-3">
         <div class="spinner-border text-info" id="filterSpinner" role="status">
           <span class="sr-only">Loading... </span>
