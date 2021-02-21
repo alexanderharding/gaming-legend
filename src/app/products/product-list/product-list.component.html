@@ -28,9 +28,12 @@
         </button>
       </div>
       <div class="col">
-        <h1 class="text-center m-0">
+        <h1 class="text-center m-0 d-none d-sm-block">
           {{ pageTitle | capitalize }}
         </h1>
+        <h4 class="text-center m-0 d-sm-none">
+          {{ pageTitle | capitalize }}
+        </h4>
       </div>
       <div class="col-auto align-self-end">
         <button
@@ -244,8 +247,8 @@
   </ng-container>
   <ng-template #notSubscribed>
     <ng-container *ngIf="error$ | async as error; else loading">
-      <div class="row justify-content-between align-items-center">
-        <div class="col">
+      <div class="row justify-content-center align-items-center">
+        <div class="col-auto align-self-start">
           <button
             routerLink="/products"
             class="btn btn-lg btn-link text-danger px-0"
@@ -265,11 +268,14 @@
           </button>
         </div>
         <div class="col">
-          <h1 class="text-center text-danger m-0">
+          <h1 class="text-center text-danger m-0 d-none d-sm-block">
             {{ pageTitle | capitalize }}
           </h1>
+          <h4 class="text-center text-danger m-0 d-sm-none">
+            {{ pageTitle | capitalize }}
+          </h4>
         </div>
-        <div class="col"></div>
+        <div class="col-auto align-self-end"></div>
       </div>
       <hr />
 
