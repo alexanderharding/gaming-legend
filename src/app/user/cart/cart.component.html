@@ -125,8 +125,8 @@
                   [src]="i.imageUrl"
                   alt="{{ i.name }}"
                 />
-                <div class="card-body">
-                  <h5 class="card-title panel">
+                <div class="card-body pb-0">
+                  <h5 class="card-title">
                     {{ i.name | lowercase | capitalize }}
                   </h5>
                   <p class="card-text">
@@ -160,9 +160,9 @@
                     </button>
                   </div>
                   <div class="col">
-                    <h3 class="text-center m-0 font-weight-bold">
+                    <h4 class="text-center m-0 font-weight-bold">
                       {{ i.quantity }}
-                    </h3>
+                    </h4>
                   </div>
                   <div class="col-auto">
                     <button
