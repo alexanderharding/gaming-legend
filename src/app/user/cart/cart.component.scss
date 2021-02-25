@@ -1,6 +1,17 @@
-#itemImage {
-  // width: 100%;
-  max-width: 250px;
-  min-width: 75px;
-  // height: 150px;
+.card {
+  position: relative;
+
+  #viewBtn,
+  #removeBtn {
+    position: absolute;
+    top: 0;
+  }
+
+  #viewBtn {
+    left: 0;
+  }
+
+  #removeBtn {
+    right: 0;
+  }
 }
