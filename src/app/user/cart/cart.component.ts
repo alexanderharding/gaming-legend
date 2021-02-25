@@ -8,7 +8,11 @@ import {
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbModal,
+  NgbModalConfig,
+  NgbTooltipConfig,
+} from '@ng-bootstrap/ng-bootstrap';
 import { BehaviorSubject } from 'rxjs';
 import { first } from 'rxjs/operators';
 
@@ -61,10 +65,14 @@ export class CartComponent implements OnInit {
     private readonly modalService: NgbModal,
     private readonly config: NgbModalConfig,
     private readonly notificationService: NotificationService,
-    private readonly title: Title
+    private readonly title: Title,
+    private readonly ngbTooltipConfig: NgbTooltipConfig
   ) {}
 
   ngOnInit(): void {
+    this.ngbTooltipConfig.openDelay = 300;
+    this.ngbTooltipConfig.container = 'body';
+    this.ngbTooltipConfig.placement = 'bottom';
     if (this.shippingRates) {
       this.shippingRateService.setShipping(this.shippingRates[0].price);
       const length = this.shippingRates.length;
