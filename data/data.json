@@ -136,18 +136,21 @@
   "shipping": [
     {
       "id": 1,
-      "rate": 7,
-      "price": 6.99
+      "days": 7,
+      "price": 6.99,
+      "title": "Standard"
     },
     {
       "id": 2,
-      "rate": 3,
-      "price": 14.99
+      "days": 3,
+      "price": 14.99,
+      "title": "Fast"
     },
     {
       "id": 3,
-      "rate": 1,
-      "price": 19.99
+      "days": 1,
+      "price": 19.99,
+      "title": "Insanely Fast"
     }
   ],
   "laptops": [

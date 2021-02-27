@@ -241,7 +241,7 @@
                           [value]="s.price"
                           class="text-capitalize"
                         >
-                          {{ s.rate === 1 ? "next" : s.rate }} Business Day{{
+                          {{ s.days === 1 ? "next" : s.days }} Business Day{{
                             s.price === 19.99 ? "" : "s"
                           }}:
                           {{ s.price | currency }}

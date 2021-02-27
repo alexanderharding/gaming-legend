@@ -19,7 +19,7 @@ export class ShippingRateService {
   readonly shippingDeadline: number = 23;
 
   private readonly shippingPriceSelectedSubject = new BehaviorSubject<number>(
-    0
+    null
   );
   readonly shippingPriceSelectedAction$ = this.shippingPriceSelectedSubject.asObservable();
 

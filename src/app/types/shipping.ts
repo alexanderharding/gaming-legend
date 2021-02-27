@@ -1,5 +1,6 @@
 export interface IShipping {
   id: number;
-  rate: number;
+  days: number;
   price: number;
+  title: string;
 }

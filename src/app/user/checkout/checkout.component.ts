@@ -477,7 +477,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   private setDeliveryDate(selectedPrice: number): void {
     const totalDays = this.shippingRates.find(
       ({ price }) => price === +selectedPrice
-    ).rate;
+    ).days;
     this.deliveryDate = this.shippingRateService.getDeliveryDate(totalDays);
   }
 
