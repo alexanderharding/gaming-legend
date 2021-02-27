@@ -16,7 +16,7 @@
     <input
       type="button"
       value="more products"
-      class="btn btn-outline-secondary btn-block text-capitalize"
+      class="btn btn-outline-light btn-block text-capitalize"
       routerLink="/products"
     />
   </div>
@@ -31,7 +31,7 @@
     <input
       type="button"
       value="more products"
-      class="btn btn-outline-secondary text-capitalize"
+      class="btn btn-outline-light text-capitalize"
       routerLink="/products"
     />
   </div>
@@ -67,19 +67,17 @@
         </div>
         <div class="col-lg-6">
           <h2>{{ product.brand }}: {{ product.name }}</h2>
-          <p class="text-muted mb-2 text-uppercase small">{{ product.type }}</p>
+          <small class="text-light mb-2">{{ product.type | uppercase }}</small>
           <div>
             <ngb-rating
-              class="star mb-3"
+              class="star mb-2"
               [(rate)]="product.starRating"
               [readonly]="true"
               [max]="5"
             ></ngb-rating>
           </div>
-          <p>
-            <span class="mr-1">
-              <strong>{{ product.price | currency }}</strong>
-            </span>
+          <p class="h5">
+            {{ product.price | currency }}
           </p>
           <p>{{ product.description }}</p>
           <div class="form-row mb-3">
@@ -95,7 +93,7 @@
             <div class="col-md-6">
               <input
                 type="button"
-                class="btn btn-block btn-outline-secondary text-uppercase mt-2 mt-md-0"
+                class="btn btn-block btn-outline-light text-uppercase mt-2 mt-md-0"
                 (click)="saveItem(product, items)"
                 value="Add to Cart"
                 [disabled]="this.loading$ | async"
@@ -109,7 +107,7 @@
             </span>
           </p>
           <div *ngIf="product.features">
-            <hr class="my-3" />
+            <hr class="my-3 border-light" />
             <h4 class="mb-3">Features</h4>
 
             <div *ngFor="let f of product.features">
