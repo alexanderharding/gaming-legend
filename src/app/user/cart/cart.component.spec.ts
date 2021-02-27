@@ -1,4 +1,11 @@
-import { Component, DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
+import {
+  Component,
+  DebugElement,
+  Input,
+  NO_ERRORS_SCHEMA,
+  Pipe,
+  PipeTransform,
+} from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -20,8 +27,9 @@ import {
 import { ShippingRatesResult } from '../../types/shipping-rates-result';
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.component';
 import { NotificationService } from '../../services/notification.service';
-import { formatCurrency, formatDate } from '@angular/common';
+import { formatCurrency } from '@angular/common';
 import { AppRoutingModule } from '../../app-routing.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 function getQuantity(items: ICartItem[]): number {
   return items.reduce((prev, current) => {
@@ -29,7 +37,58 @@ function getQuantity(items: ICartItem[]): number {
   }, 0);
 }
 
+@Pipe({
+  name: 'capitalize',
+})
+class MockCapitalizePipe implements PipeTransform {
+  transform(value: string): string {
+    if (value === undefined || value === null || value.length === 0) {
+      return value;
+    }
+    const words = value.split(' ');
+    const capitalizedWords = [];
+    words.forEach((w) =>
+      capitalizedWords.push(
+        w[0].toUpperCase() + w.slice(1, w.length).toLowerCase()
+      )
+    );
+    return capitalizedWords.join(' ');
+  }
+}
+
 describe('CartComponent', () => {
+  @Component({
+    selector: 'ctacu-cart-summary',
+    template: '<div></div>',
+  })
+  class FakeCartSummaryComponent {
+    @Input() shippingRates: IShipping[];
+  }
+  class MockNgbModalRef {
+    componentInstance = {
+      title: undefined,
+      message: undefined,
+      warningMessage: undefined,
+      infoMessage: undefined,
+      type: undefined,
+      closeMessage: undefined,
+      dismissMessage: undefined,
+    };
+    closed: Observable<any> = of(true);
+  }
+  class MockErrorNgbModalRef {
+    componentInstance = {
+      title: undefined,
+      message: undefined,
+      warningMessage: undefined,
+      infoMessage: undefined,
+      type: undefined,
+      closeMessage: undefined,
+      dismissMessage: undefined,
+    };
+    closed: Observable<never> = throwError('error');
+  }
+
   describe('w/ SHIPPINGRATES', () => {
     let component: CartComponent;
     let fixture: ComponentFixture<CartComponent>;
@@ -48,52 +107,23 @@ describe('CartComponent', () => {
     const SHIPPINGRATES: IShipping[] = [
       {
         id: 1,
-        rate: 7,
+        days: 7,
         price: 6.99,
+        title: 'Standard',
       },
       {
         id: 2,
-        rate: 3,
+        days: 3,
         price: 14.99,
+        title: 'Fast',
       },
       {
         id: 3,
-        rate: 1,
+        days: 1,
         price: 19.99,
+        title: 'Insanely Fast',
       },
     ];
-
-    @Component({
-      selector: 'ctacu-cart-summary',
-      template: '<div></div>',
-    })
-    class FakeCartSummaryComponent {}
-
-    class MockNgbModalRef {
-      componentInstance = {
-        title: undefined,
-        message: undefined,
-        warningMessage: undefined,
-        infoMessage: undefined,
-        type: undefined,
-        closeMessage: undefined,
-        dismissMessage: undefined,
-      };
-      closed: Observable<any> = of(true);
-    }
-
-    class MockErrorNgbModalRef {
-      componentInstance = {
-        title: undefined,
-        message: undefined,
-        warningMessage: undefined,
-        infoMessage: undefined,
-        type: undefined,
-        closeMessage: undefined,
-        dismissMessage: undefined,
-      };
-      closed: Observable<never> = throwError('error');
-    }
 
     beforeEach(
       waitForAsync(() => {
@@ -261,9 +291,13 @@ describe('CartComponent', () => {
         mockErrorModalRef = new MockErrorNgbModalRef();
 
         TestBed.configureTestingModule({
-          imports: [HttpClientTestingModule, AppRoutingModule],
+          imports: [HttpClientTestingModule, AppRoutingModule, NgbModule],
 
-          declarations: [CartComponent, FakeCartSummaryComponent],
+          declarations: [
+            CartComponent,
+            FakeCartSummaryComponent,
+            MockCapitalizePipe,
+          ],
 
           providers: [
             { provide: CartService, useValue: mockCartService },
@@ -323,15 +357,6 @@ describe('CartComponent', () => {
       expect(loading).toBeFalsy();
     });
 
-    it('should have set quantity$ correctly', () => {
-      let quantity: number;
-      fixture.detectChanges();
-
-      component.quantity$.subscribe((q) => (quantity = q));
-
-      expect(quantity).toBe(getQuantity(ITEMS));
-    });
-
     it('should have set errorMessage correctly', () => {
       fixture.detectChanges();
 
@@ -341,48 +366,7 @@ describe('CartComponent', () => {
     it(`should have set pageTitle correctly`, () => {
       fixture.detectChanges();
 
-      expect(component.pageTitle).toBe('Cart');
-    });
-
-    it(`should have retrieve called getDeliveryDate method on
-      ShippingRateService with correct values`, () => {
-      fixture.detectChanges();
-
-      expect(mockShippingRateService.getDeliveryDate).toHaveBeenCalledTimes(2);
-      expect(mockShippingRateService.getDeliveryDate).toHaveBeenCalledWith(
-        SHIPPINGRATES[0].rate
-      );
-      expect(mockShippingRateService.getDeliveryDate).toHaveBeenCalledWith(
-        SHIPPINGRATES[2].rate
-      );
-    });
-
-    it(`should have set earliestArrival correctly`, () => {
-      const date = new Date();
-      mockShippingRateService.getDeliveryDate.and.returnValue(date);
-
-      fixture.detectChanges();
-
-      expect(component.earliestArrival).toBe(date);
-    });
-
-    it(`should have set latestArrival correctly`, () => {
-      const date = new Date();
-      mockShippingRateService.getDeliveryDate.and.returnValue(date);
-
-      fixture.detectChanges();
-
-      expect(component.latestArrival).toBe(date);
-    });
-
-    it(`should have called setShipping method on ShippingRateService with
-      correct value`, () => {
-      fixture.detectChanges();
-
-      expect(mockShippingRateService.setShipping).toHaveBeenCalledTimes(1);
-      expect(mockShippingRateService.setShipping).toHaveBeenCalledWith(
-        SHIPPINGRATES[0].price
-      );
+      expect(component.pageTitle).toBe('Review Cart');
     });
 
     it('should have called setTitle method on Title with correct value', () => {
@@ -399,8 +383,8 @@ describe('CartComponent', () => {
     });
 
     describe('saveItem', () => {
-      it(`should call saveItem method on CartService with correct value when item
-      quantity is greater than 1`, () => {
+      it(`should call saveItem method on CartService with correct value when
+        item quantity is greater than 1`, () => {
         let item: ICartItem;
         let amount: number;
         mockCartService.saveItem.and.returnValue(of(true));
@@ -423,7 +407,7 @@ describe('CartComponent', () => {
       });
 
       it(`should call saveItem method on CartService with correct value when
-      amount is greater than -1`, () => {
+        amount is greater than -1`, () => {
         let item: ICartItem;
         let amount: number;
         mockCartService.saveItem.and.returnValue(of(true));
@@ -498,8 +482,8 @@ describe('CartComponent', () => {
         expect(mockCartService.getCartItems).toHaveBeenCalledTimes(1);
       });
 
-      it(`should not call getCartItems method on CartService when item quantity is
-      less than or equal to 1 and amount equals -1`, () => {
+      it(`should not call getCartItems method on CartService when item quantity
+        is less than or equal to 1 and amount equals -1`, () => {
         let item: ICartItem;
         let amount: number;
         spyOn(component, 'openRemoveModal');
@@ -632,8 +616,8 @@ describe('CartComponent', () => {
         expect(mockNotificationService.show).toHaveBeenCalledTimes(1);
       });
 
-      it(`should call show method on NotificationService when getCartItems method
-      on CartService returns an error`, () => {
+      it(`should call show method on NotificationService when getCartItems
+        method on CartService returns an error`, () => {
         let item: ICartItem;
         let amount: number;
         mockCartService.saveItem.and.returnValue(of(ITEMS[2]));
@@ -882,12 +866,6 @@ describe('CartComponent', () => {
     const SHIPPINGRATES = null;
     const ERRORMESSAGE = 'Error!';
 
-    @Component({
-      selector: 'ctacu-cart-summary',
-      template: '<div></div>',
-    })
-    class FakeCartSummaryComponent {}
-
     beforeEach(
       waitForAsync(() => {
         ITEMS = [
@@ -1028,7 +1006,11 @@ describe('CartComponent', () => {
         TestBed.configureTestingModule({
           imports: [HttpClientTestingModule, NgbModule],
 
-          declarations: [CartComponent, FakeCartSummaryComponent],
+          declarations: [
+            CartComponent,
+            FakeCartSummaryComponent,
+            MockCapitalizePipe,
+          ],
 
           providers: [
             { provide: CartService, useValue: mockCartService },
@@ -1076,18 +1058,6 @@ describe('CartComponent', () => {
       expect(component.errorMessage).toBe(ERRORMESSAGE);
     });
 
-    it('should have set earliestArrival correctly', () => {
-      fixture.detectChanges();
-
-      expect(component.earliestArrival).toBeUndefined();
-    });
-
-    it('should have set latestArrival correctly', () => {
-      fixture.detectChanges();
-
-      expect(component.latestArrival).toBeUndefined();
-    });
-
     it('should have set pageTitle correctly', () => {
       fixture.detectChanges();
 
@@ -1105,20 +1075,6 @@ describe('CartComponent', () => {
       expect(mockTitle.setTitle).toHaveBeenCalledWith(
         `Gaming Legend | ${component.pageTitle}`
       );
-    });
-
-    it(`should have not retrieve called getDeliveryDate method on
-      ShippingRateService`, () => {
-      fixture.detectChanges();
-
-      expect(mockShippingRateService.getDeliveryDate).toHaveBeenCalledTimes(0);
-    });
-
-    it(`should have not retrieve called setShipping method on
-      ShippingRateService`, () => {
-      fixture.detectChanges();
-
-      expect(mockShippingRateService.setShipping).toHaveBeenCalledTimes(0);
     });
   });
 });
@@ -1139,18 +1095,21 @@ describe('CartComponent w/ template', () => {
     const SHIPPINGRATES: IShipping[] = [
       {
         id: 1,
-        rate: 7,
+        days: 7,
         price: 6.99,
+        title: 'Standard',
       },
       {
         id: 2,
-        rate: 3,
+        days: 3,
         price: 14.99,
+        title: 'Fast',
       },
       {
         id: 3,
-        rate: 1,
+        days: 1,
         price: 19.99,
+        title: 'Insanely Fast',
       },
     ];
 
@@ -1315,9 +1274,13 @@ describe('CartComponent w/ template', () => {
           'getDeliveryDate',
         ]);
         TestBed.configureTestingModule({
-          imports: [HttpClientTestingModule],
+          imports: [HttpClientTestingModule, ReactiveFormsModule],
 
-          declarations: [CartComponent, CartSummaryComponent],
+          declarations: [
+            CartComponent,
+            CartSummaryComponent,
+            MockCapitalizePipe,
+          ],
 
           providers: [
             { provide: CartService, useValue: mockCartService },
@@ -1354,7 +1317,11 @@ describe('CartComponent w/ template', () => {
       // run ngOnInit
       fixture.detectChanges();
 
-      const elements = fixture.debugElement.queryAll(By.css('h4 span'));
+      const elements = fixture.debugElement.queryAll(By.css('h2'));
+      expect(elements.length).toBe(1);
+      expect(elements[0].classes).toEqual({
+        'font-weight-bold': true,
+      });
       expect(elements[0].nativeElement.textContent).toBe(component.pageTitle);
     });
 
@@ -1385,13 +1352,13 @@ describe('CartComponent w/ template', () => {
         element = tableCellElements[1].query(By.css('a'));
         expect(element.nativeElement.textContent).toBe(ITEMS[i].name);
 
-        element = tableCellElements[2].query(By.css('span'));
+        element = tableCellElements[2].query(By.css('h4'));
+        expect(+element.nativeElement.textContent).toBe(ITEMS[i].quantity);
+
+        element = tableCellElements[3].query(By.css('span'));
         expect(element.nativeElement.textContent).toBe(
           formatCurrency(ITEMS[i].price, 'en-US', '$')
         );
-
-        element = tableCellElements[3].queryAll(By.css('input'))[1];
-        expect(+element.nativeElement.value).toBe(ITEMS[i].quantity);
       }
     });
 
@@ -1403,33 +1370,12 @@ describe('CartComponent w/ template', () => {
         By.directive(CartSummaryComponent)
       );
       expect(CartSummaryComponentDEs.length).toBe(1);
-    });
-
-    it('should set quantity$ in the template', () => {
-      // run ngOnInit
-      fixture.detectChanges();
-
-      const elements = fixture.debugElement.queryAll(By.css('h4 span'));
-      expect(+elements[1].nativeElement.textContent).toBe(getQuantity(ITEMS));
-    });
-
-    it('should set earliestArrival and latestArrival in the template', () => {
-      let date: string;
-      mockShippingRateService.getDeliveryDate.and.returnValue(new Date());
-
-      fixture.detectChanges();
-
-      const elements = fixture.debugElement.queryAll(
-        By.css('#expectedArrival')
+      expect(CartSummaryComponentDEs[0].componentInstance.shippingRates).toBe(
+        component.shippingRates
       );
-      expect(elements.length).toBe(1);
-      date = formatDate(component.earliestArrival, 'longDate', 'en-US');
-      expect(elements[0].nativeElement.textContent).toContain(date);
-      date = formatDate(component.earliestArrival, 'longDate', 'en-US');
-      expect(elements[0].nativeElement.textContent).toContain(date);
     });
 
-    it(`should call openRemoveModal method with correct value when remove input
+    xit(`should call openRemoveModal method with correct value when remove input
       button is clicked`, () => {
       // Arrange
       spyOn(component, 'openRemoveModal');
@@ -1449,48 +1395,49 @@ describe('CartComponent w/ template', () => {
       // Arrange
       spyOn(component, 'openRemoveAllModal');
       fixture.detectChanges();
-      const input = fixture.debugElement.queryAll(By.css('input'))[1];
+      const input = fixture.debugElement.queryAll(By.css('#removeAllBtn'));
 
       // Act
-      input.triggerEventHandler('click', null);
+      input[0].triggerEventHandler('click', null);
 
       // Assert
+      expect(input.length).toBe(1);
       expect(component.openRemoveAllModal).toHaveBeenCalledTimes(1);
       expect(component.openRemoveAllModal).toHaveBeenCalledWith(ITEMS);
     });
 
-    it(`should call saveItem method with correct value when decrease input button
-      is clicked`, () => {
+    it(`should call saveItem method with correct value when decrease input
+      button is clicked`, () => {
       // Arrange
+      const index = 1;
       spyOn(component, 'saveItem');
       fixture.detectChanges();
-      const input = fixture.debugElement.queryAll(
-        By.css('tbody tr td input')
-      )[0];
+      const input = fixture.debugElement.queryAll(By.css('#decreaseBtn'));
 
       // Act
-      input.triggerEventHandler('click', null);
+      input[index].triggerEventHandler('click', null);
 
       // Assert
+      expect(input.length).toBe(ITEMS.length);
       expect(component.saveItem).toHaveBeenCalledTimes(1);
-      expect(component.saveItem).toHaveBeenCalledWith(ITEMS[0], -1);
+      expect(component.saveItem).toHaveBeenCalledWith(ITEMS[index], -1);
     });
 
-    it(`should call saveItem method with correct value when increase input button
-      is clicked`, () => {
+    it(`should call saveItem method with correct value when increase input
+      button is clicked`, () => {
       // Arrange
+      const index = 1;
       spyOn(component, 'saveItem');
       fixture.detectChanges();
-      const input = fixture.debugElement.queryAll(
-        By.css('tbody tr td input')
-      )[2];
+      const input = fixture.debugElement.queryAll(By.css('#increaseBtn'));
 
       // Act
-      input.triggerEventHandler('click', null);
+      input[index].triggerEventHandler('click', null);
 
       // Assert
+      expect(input.length).toBe(ITEMS.length);
       expect(component.saveItem).toHaveBeenCalledTimes(1);
-      expect(component.saveItem).toHaveBeenCalledWith(ITEMS[0], 1);
+      expect(component.saveItem).toHaveBeenCalledWith(ITEMS[index], 1);
     });
   });
 
@@ -1660,7 +1607,11 @@ describe('CartComponent w/ template', () => {
         TestBed.configureTestingModule({
           imports: [HttpClientTestingModule],
 
-          declarations: [CartComponent, CartSummaryComponent],
+          declarations: [
+            CartComponent,
+            CartSummaryComponent,
+            MockCapitalizePipe,
+          ],
 
           providers: [
             { provide: CartService, useValue: mockCartService },
@@ -1686,7 +1637,7 @@ describe('CartComponent w/ template', () => {
       // run ngOnInit
       fixture.detectChanges();
 
-      const elements = fixture.debugElement.queryAll(By.css('h1 span'));
+      const elements = fixture.debugElement.queryAll(By.css('h2 span'));
       expect(elements.length).toBe(1);
       expect(elements[0].nativeElement.textContent).toBe(component.pageTitle);
     });
@@ -1721,24 +1672,6 @@ describe('CartComponent w/ template', () => {
         By.directive(CartSummaryComponent)
       );
       expect(CartSummaryComponentDEs.length).toBe(0);
-    });
-
-    it('should not set quantity$ in the template', () => {
-      // run ngOnInit
-      fixture.detectChanges();
-
-      const elements = fixture.debugElement.queryAll(By.css('h4 span'));
-      expect(elements.length).toBe(0);
-    });
-
-    it(`should not set earliestArrival or latestArrival in the
-      template`, () => {
-      fixture.detectChanges();
-
-      const elements = fixture.debugElement.queryAll(
-        By.css('#expectedArrival')
-      );
-      expect(elements.length).toBe(0);
     });
   });
 });

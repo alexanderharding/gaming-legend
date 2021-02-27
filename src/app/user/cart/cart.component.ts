@@ -47,47 +47,33 @@ export class CartComponent implements OnInit {
   readonly shippingRates = this.resolvedData.shippingRates as IShipping[];
   readonly errorMessage = this.resolvedData.error as string;
 
-  /* Latest and earliest arrival date */
-  earliestArrival: Date;
-  latestArrival: Date;
-
   /* Page title */
-  pageTitle = 'Cart';
+  pageTitle = 'Review Cart';
 
-  /* Get data from CartService */
+  /* Get items$ from CartService */
   readonly items$ = this.cartService.cartItems$;
-  readonly quantity$ = this.cartService.cartQuantity$;
 
   constructor(
     private readonly cartService: CartService,
-    private readonly shippingRateService: ShippingRateService,
     private readonly route: ActivatedRoute,
     private readonly modalService: NgbModal,
-    private readonly config: NgbModalConfig,
     private readonly notificationService: NotificationService,
     private readonly title: Title,
+    private readonly ngbModalConfig: NgbModalConfig,
     private readonly ngbTooltipConfig: NgbTooltipConfig
   ) {}
 
   ngOnInit(): void {
+    /* Config NgbModal settings */
+    this.ngbModalConfig.centered = true;
+    this.ngbModalConfig.backdrop = 'static';
+
+    /* Config NgbTooltip settings */
     this.ngbTooltipConfig.openDelay = 300;
     this.ngbTooltipConfig.container = 'body';
     this.ngbTooltipConfig.placement = 'bottom';
-    if (this.shippingRates) {
-      this.shippingRateService.setShipping(this.shippingRates[0].price);
-      const length = this.shippingRates.length;
-      const fastestRate = this.shippingRates[length - 1].rate;
-      const slowestRate = this.shippingRates[0].rate;
-      this.earliestArrival = this.shippingRateService.getDeliveryDate(
-        +fastestRate
-      );
-      this.latestArrival = this.shippingRateService.getDeliveryDate(
-        +slowestRate
-      );
-      /* Config NgbModal settings */
-      this.config.centered = true;
-      this.config.backdrop = 'static';
-    } else {
+
+    if (!this.shippingRates) {
       this.pageTitle = 'Retrieval Error';
     }
     this.title.setTitle(`Gaming Legend | ${this.pageTitle}`);
