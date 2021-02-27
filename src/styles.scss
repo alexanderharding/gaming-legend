@@ -25,8 +25,16 @@ body {
   padding-bottom: 40px;
 }
 
-title {
-  text-transform: capitalize;
+/* Spinner */
+#filterSpinner {
+  font-size: 200%;
+  width: 5rem;
+  height: 5rem;
+  position: absolute;
+  top: auto;
+  left: 50%;
+  margin-left: -2.5rem;
+  z-index: 10;
 }
 
 .loadingSpinner {
@@ -40,16 +48,6 @@ title {
   margin-left: -2.5rem;
   z-index: 10;
 }
-
-// h1,
-// h2,
-// h3,
-// h4,
-// h5,
-// h6 {
-//   font-family: "Playfair Display", serif;
-//   // font-weight: bolder;
-// }
 
 .star {
   font-size: 1.5rem;
@@ -77,25 +75,10 @@ title {
   background: #b30000;
 }
 
-/* Spinner */
-#filterSpinner {
-  font-size: 200%;
-  width: 5rem;
-  height: 5rem;
-  position: absolute;
-  top: auto;
-  left: 50%;
-  // margin-top: -2.5rem;
-  margin-left: -2.5rem;
-  z-index: 10;
-}
-
-.table-hover > tbody > tr:hover,
 .pointer:hover {
   cursor: pointer;
 }
 
-.table-hover > tbody > tr:hover {
-  background-color: white;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+.btn {
+  border-radius: 30px;
 }
