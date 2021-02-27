@@ -1,4 +1,65 @@
-<div>
+<div class="card shadow">
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">
+      <div class="form-row justify-content-between">
+        <span class="col-auto">Subtotal:</span>
+        <span class="col-auto font-weight-bold">{{
+          subtotal$ | async | currency
+        }}</span>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="form-row justify-content-between">
+        <span class="col-auto">Tax:</span>
+        <span class="col-auto font-weight-bold">{{
+          totalTax$ | async | currency
+        }}</span>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="form-row justify-content-between mb-3">
+        <span class="col-auto">Shipping:</span>
+        <span class="col-auto font-weight-bold">{{
+          shippingPrice$ | async | currency
+        }}</span>
+      </div>
+
+      <form [formGroup]="shippingForm" novalidate>
+        <div
+          *ngFor="let s of shippingRates; index as i"
+          class="custom-control custom-radio mb-2"
+        >
+          <input
+            id="price{{ i }}"
+            formControlName="price"
+            type="radio"
+            class="custom-control-input"
+            [value]="s.price"
+          />
+          <label class="custom-control-label pointer" for="price{{ i }}"
+            ><div class="row">
+              <span class="col">
+                {{ s.title | capitalize }} {{ s.price | currency }}
+              </span>
+            </div>
+            <div class="row">
+              <small class="col">
+                {{ getDeliveryDate(s.days) | date }}
+              </small>
+            </div></label
+          >
+        </div>
+      </form>
+    </li>
+  </ul>
+  <div class="card-footer">
+    <div class="form-row justify-content-between font-weight-bold">
+      <span class="col-auto">Total:</span>
+      <span class="col-auto">{{ total$ | async | currency }}</span>
+    </div>
+  </div>
+</div>
+<!-- <div>
   <p class="form-row justify-content-between h6">
     <span class="col-auto">Quantity</span>
     <span class="col-auto">{{ quantity$ | async }}</span>
@@ -11,7 +72,7 @@
     <span class="col-auto">Tax({{ tax * 100 }}%)</span>
     <span class="col-auto">{{ totalTax$ | async | currency }}</span>
   </p>
-  <!-- <div class="input-group input-group-sm mb-2">
+  <div class="input-group input-group-sm mb-2">
     <div class="input-group-prepend">
       <span class="input-group-text bg-info text-white">Shipping</span>
     </div>
@@ -24,10 +85,10 @@
   <p class="form-row justify-content-between h6 mb-0">
     <span class="col-auto">Delivery Date</span>
     <span class="col-auto">March 5, 2021</span>
-  </p> -->
+  </p>
   <hr />
   <p class="form-row justify-content-between h4">
     <span class="col-auto">Total</span>
     <span class="col-auto">{{ total$ | async | currency }}</span>
   </p>
-</div>
+</div> -->
