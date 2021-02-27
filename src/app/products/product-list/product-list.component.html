@@ -210,12 +210,12 @@
               alt="{{ p.name }}"
             />
             <div class="card-body">
-              <h5 class="card-title panel">
-                {{ p.name | lowercase | capitalize }}
+              <h5 class="card-title">
+                {{ p.name | capitalize }}
               </h5>
-              <p class="card-text">
+              <h6 class="card-subtitle">
                 {{ p.price | currency }}
-              </p>
+              </h6>
             </div>
           </div>
         </div>
