@@ -1,5 +1,5 @@
 <div class="sticky-top">
-  <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+  <nav class="navbar navbar-expand-sm navbar-dark bg-dark container-xl">
     <a class="navbar-brand text-capitalize" routerLink="/welcome">{{
       pageTitle
     }}</a>
@@ -82,7 +82,7 @@
             </ng-container>
           </a>
         </li>
-        <ng-container *ngIf="currentUser$ | async as user; else noUser">
+        <!-- <ng-container *ngIf="currentUser$ | async as user; else noUser">
           <li class="nav-item">
             <a
               class="nav-link text-capitalize"
@@ -105,7 +105,7 @@
               >Sign In</a
             >
           </li>
-        </ng-template>
+        </ng-template> -->
       </ul>
     </div>
   </nav>
