@@ -1,5 +1,14 @@
 <div class="container-xl pt-3">
-  <h1 class="text-center text-capitalize">{{ pageTitle }}</h1>
+  <section>
+    <h1 class="display-4 d-none d-sm-block">
+      <span>
+        {{ pageTitle | capitalize }}
+      </span>
+    </h1>
+    <h2 class="d-sm-none">
+      <span>{{ pageTitle | capitalize }}</span>
+    </h2>
+  </section>
   <ngb-alert type="success" class="text-center" [dismissible]="false">
     <strong>Success!</strong
     ><span>
