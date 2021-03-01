@@ -21,18 +21,18 @@ import { ErrorService } from './error.service';
 export class OrderService {
   private readonly baseUrl: string = 'http://localhost:3000';
 
-  private readonly user$ = this.authService.currentUser$;
+  // private readonly user$ = this.authService.currentUser$;
 
   constructor(
     private readonly http: HttpClient,
-    private readonly authService: AuthService,
+    // private readonly authService: AuthService,
     private readonly errorService: ErrorService
   ) {}
 
-  orders$ = this.user$.pipe(
-    first(),
-    switchMap((user) => this.getOrders(user.id))
-  );
+  // orders$ = this.user$.pipe(
+  //   first(),
+  //   switchMap((user) => this.getOrders(user.id))
+  // );
 
   getOrder(id: number): Observable<IOrder[]> {
     return this.http

@@ -8,18 +8,18 @@ import { OrdersResult } from '../types/orders-result';
 @Injectable({
   providedIn: 'root',
 })
-export class OrdersResolverService implements Resolve<OrdersResult> {
+export class OrdersResolverService {
   constructor(private readonly orderService: OrderService) {}
 
-  resolve(): Observable<OrdersResult> {
-    return this.orderService.orders$.pipe(
-      map((orders) => ({ orders } as OrdersResult)),
-      catchError((error) =>
-        of({
-          orders: null,
-          error: `Retrieval error: ${error}.`,
-        } as OrdersResult)
-      )
-    );
-  }
+  // resolve(): Observable<OrdersResult> {
+  //   return this.orderService.orders$.pipe(
+  //     map((orders) => ({ orders } as OrdersResult)),
+  //     catchError((error) =>
+  //       of({
+  //         orders: null,
+  //         error: `Retrieval error: ${error}.`,
+  //       } as OrdersResult)
+  //     )
+  //   );
+  // }
 }

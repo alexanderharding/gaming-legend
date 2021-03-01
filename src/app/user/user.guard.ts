@@ -14,19 +14,22 @@ import { AuthService } from '../services/auth.service';
   providedIn: 'root',
 })
 export class UserGuard implements CanActivate {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly router: Router
-  ) {}
-  canActivate(): Observable<boolean> {
-    return this.authService.currentUser$.pipe(
-      map((user) => {
-        if (!user) {
-          return true;
-        }
-        this.router.navigate(['/account']);
-        return false;
-      })
-    );
+  constructor() // private readonly authService: AuthService,
+  // private readonly router: Router
+  {}
+
+  canActivate(): boolean {
+    return true;
   }
+  // canActivate(): Observable<boolean> {
+  //   return this.authService.currentUser$.pipe(
+  //     map((user) => {
+  //       if (!user) {
+  //         return true;
+  //       }
+  //       this.router.navigate(['/account']);
+  //       return false;
+  //     })
+  //   );
+  // }
 }

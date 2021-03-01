@@ -117,7 +117,7 @@ export class CartComponent implements OnInit {
     });
   }
 
-  private openRemoveModal(item: ICartItem): void {
+  openRemoveModal(item: ICartItem): void {
     const modalRef = this.modalService.open(ConfirmModalComponent);
     const instance = modalRef.componentInstance;
     instance.title = 'Remove Item';

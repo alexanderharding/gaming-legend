@@ -1,23 +1,4 @@
-<div>
-  <!-- <div class="row align-items-center">
-    <div class="col">
-      <h1 class="text-primary mb-3">Sign Up</h1>
-    </div>
-    <div class="col-auto">
-      <input
-        type="button"
-        value="Create User"
-        class="btn btn-sm btn-link text-dark"
-        (click)="saveTestUser(false)"
-      />
-      <input
-        type="button"
-        value="Create Admin"
-        class="btn btn-sm btn-link text-dark"
-        (click)="saveTestUser(true)"
-      />
-    </div>
-  </div> -->
+<!-- <div>
   <h1 class="text-primary mb-3">Sign Up</h1>
   <div class="shadow-lg">
     <ngb-accordion [destroyOnHide]="false" activeIds="name" #acc="ngbAccordion">
@@ -228,92 +209,6 @@
           </form>
         </ng-template>
       </ngb-panel>
-      <!-- <ngb-panel
-              type="{{
-                this.signUpForm.get('addressGroup').invalid && submitted
-                  ? 'danger'
-                  : 'secondary'
-              }}"
-              id="shipping"
-              title="shipping"
-            >
-              <ng-template ngbPanelHeader let-opened="opened">
-                <div class="py-1">
-                  <button
-                    ngbPanelToggle
-                    class="btn btn-lg btn-link p-0 text-light"
-                  >
-                    {{
-                      this.checkOutForm.get("addressGroup").invalid && submitted
-                        ? "!"
-                        : ""
-                    }}
-                    Shipping
-                  </button>
-                </div>
-              </ng-template>
-              <ng-template ngbPanelContent>
-                <ctacu-shipping-panel-content
-                  [checkOutForm]="checkOutForm"
-                  [submitted]="submitted"
-                  [shippingRates]="shippingRates"
-                  [user]="user"
-                  [streetMinLength]="streetMinLength"
-                  [streetMaxLength]="streetMaxLength"
-                  [cityMinLength]="cityMinLength"
-                  [cityMaxLength]="cityMaxLength"
-                  [states]="states"
-                  (toggleChange)="acc.toggle($event)"
-                  (newSubscription)="pushSubscription($event)"
-                ></ctacu-shipping-panel-content>
-              </ng-template>
-            </ngb-panel>
-            <ngb-panel
-              type="{{
-                (this.checkOutForm.get('paymentGroup').invalid ||
-                  this.checkOutForm.get('signUpGroup').invalid) &&
-                submitted
-                  ? 'danger'
-                  : 'secondary'
-              }}"
-              id="finalize"
-              title="finalize"
-            >
-              <ng-template ngbPanelHeader let-opened="opened">
-                <div class="py-1">
-                  <button
-                    ngbPanelToggle
-                    class="btn btn-lg btn-link p-0 text-light text-capitalize"
-                  >
-                    {{
-                      (this.checkOutForm.get("paymentGroup").invalid ||
-                        this.checkOutForm.get("signUpGroup").invalid) &&
-                      submitted
-                        ? "!"
-                        : ""
-                    }}
-                    Finalize
-                  </button>
-                </div>
-              </ng-template>
-              <ng-template ngbPanelContent>
-                <ctacu-finalize-panel-content
-                  [checkOutForm]="checkOutForm"
-                  [user]="user"
-                  [submitted]="submitted"
-                  [errorMessage]="errorMessage"
-                  [signUpError]="signUpError"
-                  [isLoading]="isLoading"
-                  [subtotal$]="subtotal$"
-                  (toggleChange)="acc.toggle($event)"
-                  (checkChange)="setPasswordValidation($event)"
-                  (onSubmit)="onSubmit($event, items)"
-                  (totalChange)="setTotal($event)"
-                  (newSubscription)="pushSubscription($event)"
-                >
-                </ctacu-finalize-panel-content>
-              </ng-template>
-            </ngb-panel> -->
     </ngb-accordion>
   </div>
 </div>
@@ -343,4 +238,4 @@
       d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"
     />
   </svg>
-</ng-template>
+</ng-template> -->

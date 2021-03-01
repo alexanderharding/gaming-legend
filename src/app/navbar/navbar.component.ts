@@ -4,7 +4,7 @@ import {
   Input,
   OnInit,
 } from '@angular/core';
-import { AuthService } from '../services/auth.service';
+// import { AuthService } from '../services/auth.service';
 import { CartService } from '../services/cart.service';
 import { NotificationService } from '../services/notification.service';
 import { INotification } from '../types/notification';
@@ -23,11 +23,11 @@ export class NavbarComponent implements OnInit {
   cartQuantity$ = this.cartService.cartQuantity$;
 
   /* Get currentUser$ from AuthService */
-  currentUser$ = this.authService.currentUser$;
+  // currentUser$ = this.authService.currentUser$;
 
   constructor(
     private readonly cartService: CartService,
-    private readonly authService: AuthService,
+    // private readonly authService: AuthService,
     private readonly notifcationService: NotificationService
   ) {}
 
@@ -39,12 +39,8 @@ export class NavbarComponent implements OnInit {
           className: 'bg-danger text-light',
           delay: 15000,
         } as INotification;
-        this.show(notification);
+        this.notifcationService.show(notification);
       },
     });
-  }
-
-  private show(notification: INotification): void {
-    this.notifcationService.show(notification);
   }
 }

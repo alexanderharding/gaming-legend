@@ -1,26 +1,26 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+// import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { SignUpComponent } from './sign-up.component';
+// import { SignUpComponent } from './sign-up.component';
 
-xdescribe('SignUpComponent', () => {
-  let component: SignUpComponent;
-  let fixture: ComponentFixture<SignUpComponent>;
+// xdescribe('SignUpComponent', () => {
+//   let component: SignUpComponent;
+//   let fixture: ComponentFixture<SignUpComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [SignUpComponent],
-      }).compileComponents();
-    })
-  );
+//   beforeEach(
+//     waitForAsync(() => {
+//       TestBed.configureTestingModule({
+//         declarations: [SignUpComponent],
+//       }).compileComponents();
+//     })
+//   );
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(SignUpComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+//   beforeEach(() => {
+//     fixture = TestBed.createComponent(SignUpComponent);
+//     component = fixture.componentInstance;
+//     fixture.detectChanges();
+//   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+//   it('should create', () => {
+//     expect(component).toBeTruthy();
+//   });
+// });

@@ -84,15 +84,15 @@ describe('NavbarComponent', () => {
     expect(quantity).toBe(CARTQUANTITY);
   });
 
-  it('should have set currentUser$ correctly', () => {
-    let user: IUser;
-    mockCartService.getCartItems.and.returnValue(of(true));
-    fixture.detectChanges();
+  // it('should have set currentUser$ correctly', () => {
+  //   let user: IUser;
+  //   mockCartService.getCartItems.and.returnValue(of(true));
+  //   fixture.detectChanges();
 
-    component.currentUser$.subscribe((u) => (user = u));
+  //   component.currentUser$.subscribe((u) => (user = u));
 
-    expect(user).toBe(USER);
-  });
+  //   expect(user).toBe(USER);
+  // });
 
   it('should have set isMenuCollapsed correctly', () => {
     mockCartService.getCartItems.and.returnValue(of(true));
