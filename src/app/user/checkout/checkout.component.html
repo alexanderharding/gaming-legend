@@ -1,4 +1,4 @@
-<div class="container-xl py-3">
+<div class="container-xl py-3 text-dark">
   <div
     *ngIf="loading$ | async"
     class="spinner-border loadingSpinner text-info"
@@ -6,97 +6,82 @@
   >
     <span class="sr-only">Loading...</span>
   </div>
-  <ng-container *ngIf="shippingRates && items$ | async as items; else error">
+  <h1
+    [ngClass]="{ 'text-danger': errorMessage, 'text-light': !errorMessage }"
+    class="display-4 d-none d-sm-block"
+  >
+    <span>{{ pageTitle | capitalize }}</span>
+  </h1>
+  <h2
+    [ngClass]="{ 'text-danger': errorMessage, 'text-light': !errorMessage }"
+    class="d-sm-none"
+  >
+    <span>{{ pageTitle | capitalize }}</span>
+  </h2>
+  <ng-container *ngIf="shippingRates; else error">
     <div class="row">
-      <div class="col-md order-md-last">
-        <h1 class="text-info text-capitalize font-weight-bold">
-          {{ pageTitle }}
-        </h1>
-        <ul class="list-group shadow-sm mb-3">
-          <li
-            *ngFor="let i of items"
-            class="list-group-item d-flex justify-content-between align-items-center"
-          >
-            <span class="text-capitalize">{{ i.name }}</span>
-            <div class="d-flex align-items-center">
-              <span>{{ i.price | currency }}</span>
-              <span class="badge badge-info badge-pill ml-2">{{
-                i.quantity
-              }}</span>
-            </div>
-          </li>
-        </ul>
-        <div
-          class="d-flex justify-content-between align-items-center mb-3 text-muted text-capitalize font-weight-bold"
-        >
-          <h5>
-            <span>Subtotal</span>
-          </h5>
-          <h5 class="ml-2 d-flex align-items-center">
-            <span>{{ subtotal$ | async | currency }}</span>
-            <span class="badge badge-pill badge-secondary ml-1">{{
-              cartQuantity$ | async
-            }}</span>
-          </h5>
-        </div>
-        <hr class="d-md-none" />
+      <div class="col-md order-md-last mb-3 mb-md-0">
+        <ctacu-cart-summary
+          [shippingRates]="shippingRates"
+        ></ctacu-cart-summary>
       </div>
       <div class="col-md-8">
-        <div class="shadow">
-          <form
-            [formGroup]="checkOutForm"
-            (ngSubmit)="onSubmit(checkOutForm, items)"
-            novalidate
+        <form
+          [formGroup]="checkOutForm"
+          (ngSubmit)="onSubmit(checkOutForm)"
+          novalidate
+        >
+          <ngb-accordion
+            [destroyOnHide]="false"
+            activeIds="name"
+            #acc="ngbAccordion"
           >
-            <ngb-accordion
-              [destroyOnHide]="false"
-              [activeIds]="getActiveIdsString(user)"
-              #acc="ngbAccordion"
+            <ngb-panel
+              type="{{
+                this.checkOutForm.get('nameGroup').invalid && submitted
+                  ? 'danger'
+                  : 'secondary'
+              }}"
+              id="name"
+              title="name"
             >
-              <ngb-panel
-                type="{{
-                  this.checkOutForm.get('nameGroup').invalid && submitted
-                    ? 'danger'
-                    : 'secondary'
-                }}"
-                id="name"
-                title="name"
-              >
-                <ng-template ngbPanelHeader let-opened="opened">
-                  <div class="py-1">
-                    <button
-                      ngbPanelToggle
-                      class="btn btn-lg btn-link p-0 text-light"
-                    >
-                      {{
-                        this.checkOutForm.get("nameGroup").invalid && submitted
-                          ? "!"
-                          : ""
-                      }}
-                      Name
-                    </button>
-                  </div>
-                </ng-template>
-                <ng-template ngbPanelContent>
-                  <p>
-                    <ngb-progressbar type="primary" [value]="25"
-                      ><i>25%</i></ngb-progressbar
-                    >
-                  </p>
-                  <div class="mb-3">
-                    <ctacu-name-form
-                      [parentForm]="checkOutForm"
-                      [user]="user"
-                      [submitted]="submitted"
-                    ></ctacu-name-form>
-                  </div>
-                  <div class="d-none d-sm-flex justify-content-between">
+              <ng-template ngbPanelHeader let-opened="opened">
+                <div class="py-1">
+                  <button
+                    ngbPanelToggle
+                    class="btn btn-lg btn-link p-0 text-light"
+                  >
+                    {{
+                      this.checkOutForm.get("nameGroup").invalid && submitted
+                        ? "!"
+                        : ""
+                    }}
+                    Name
+                  </button>
+                </div>
+              </ng-template>
+              <ng-template ngbPanelContent>
+                <p>
+                  <ngb-progressbar type="primary" [value]="25"
+                    ><i>25%</i></ngb-progressbar
+                  >
+                </p>
+                <div class="mb-3">
+                  <ctacu-name-form
+                    [parentForm]="checkOutForm"
+                    [submitted]="submitted"
+                  ></ctacu-name-form>
+                </div>
+                <div class="form-row justify-content-between">
+                  <div class="col-auto">
                     <input
                       type="button"
                       value="cancel"
                       class="btn btn-danger text-capitalize"
                       routerLink="../cart"
                     />
+                  </div>
+                  <div class="col-auto">
                     <input
                       type="button"
                       value="next"
@@ -104,70 +89,55 @@
                       class="btn btn-success text-capitalize"
                     />
                   </div>
-                  <input
-                    type="button"
-                    value="cancel"
-                    class="btn btn-block btn-danger text-capitalize mb-2 d-sm-none"
-                    routerLink="../cart"
-                  />
-                  <input
-                    type="button"
-                    value="next"
-                    (click)="acc.toggle('contact')"
-                    class="btn btn-block btn-success text-capitalize d-sm-none"
-                  />
-                </ng-template>
-              </ngb-panel>
-              <ngb-panel
-                type="{{
-                  (this.checkOutForm.get('contactGroup').invalid ||
-                    emailTakenMessage) &&
-                  submitted
-                    ? 'danger'
-                    : 'secondary'
-                }}"
-                id="contact"
-                title="contact"
-              >
-                <ng-template ngbPanelHeader let-opened="opened">
-                  <div class="py-1">
-                    <button
-                      ngbPanelToggle
-                      class="btn btn-lg btn-link p-0 text-light"
-                    >
-                      {{
-                        (this.checkOutForm.get("contactGroup").invalid ||
-                          emailTakenMessage) &&
-                        submitted
-                          ? "!"
-                          : ""
-                      }}
-                      Contact Details
-                    </button>
-                  </div>
-                </ng-template>
-                <ng-template ngbPanelContent>
-                  <p>
-                    <ngb-progressbar type="primary" [value]="50"
-                      ><i>50%</i></ngb-progressbar
-                    >
-                  </p>
-                  <div class="mb-3">
-                    <ctacu-contact-form
-                      [parentForm]="checkOutForm"
-                      [submitted]="submitted"
-                      [user]="user"
-                      [emailTakenMessage]="emailTakenMessage"
-                      (valueChange)="setEmailTakenMessage($event)"
-                    ></ctacu-contact-form>
-                  </div>
-                  <div class="d-none d-sm-flex justify-content-between">
+                </div>
+              </ng-template>
+            </ngb-panel>
+            <ngb-panel
+              type="{{
+                this.checkOutForm.get('contactGroup').invalid && submitted
+                  ? 'danger'
+                  : 'secondary'
+              }}"
+              id="contact"
+              title="contact"
+            >
+              <ng-template ngbPanelHeader let-opened="opened">
+                <div class="py-1">
+                  <button
+                    ngbPanelToggle
+                    class="btn btn-lg btn-link p-0 text-light"
+                  >
+                    {{
+                      this.checkOutForm.get("contactGroup").invalid && submitted
+                        ? "!"
+                        : ""
+                    }}
+                    Contact Details
+                  </button>
+                </div>
+              </ng-template>
+              <ng-template ngbPanelContent>
+                <p>
+                  <ngb-progressbar type="primary" [value]="50"
+                    ><i>50%</i></ngb-progressbar
+                  >
+                </p>
+                <div class="mb-3">
+                  <ctacu-contact-form
+                    [parentForm]="checkOutForm"
+                    [submitted]="submitted"
+                  ></ctacu-contact-form>
+                </div>
+                <div class="form-row justify-content-between">
+                  <div class="col-auto">
                     <input
                       type="button"
                       value="back"
                       (click)="acc.toggle('name')"
                       class="btn btn-primary text-capitalize"
                     />
+                  </div>
+                  <div class="col-auto">
                     <input
                       type="button"
                       value="next"
@@ -175,88 +145,55 @@
                       class="btn btn-success text-capitalize"
                     />
                   </div>
-                  <input
-                    type="button"
-                    value="back"
-                    (click)="acc.toggle('name')"
-                    class="btn btn-block btn-primary text-capitalize d-sm-none"
-                  />
-                  <input
-                    type="button"
-                    value="next"
-                    (click)="acc.toggle('shipping')"
-                    class="btn btn-block btn-success text-capitalize d-sm-none"
-                  />
-                </ng-template>
-              </ngb-panel>
-              <ngb-panel
-                type="{{
-                  this.checkOutForm.get('addressGroup').invalid && submitted
-                    ? 'danger'
-                    : 'secondary'
-                }}"
-                id="shipping"
-                title="shipping"
-              >
-                <ng-template ngbPanelHeader let-opened="opened">
-                  <div class="py-1">
-                    <button
-                      ngbPanelToggle
-                      class="btn btn-lg btn-link p-0 text-light"
-                    >
-                      {{
-                        this.checkOutForm.get("addressGroup").invalid &&
-                        submitted
-                          ? "!"
-                          : ""
-                      }}
-                      Shipping
-                    </button>
-                  </div>
-                </ng-template>
-                <ng-template ngbPanelContent>
-                  <p>
-                    <ngb-progressbar type="primary" [value]="75"
-                      ><i>75%</i></ngb-progressbar
-                    >
-                  </p>
-                  <div class="mb-3">
-                    <ctacu-address-form
-                      [parentForm]="checkOutForm"
-                      [submitted]="submitted"
-                      [user]="user"
-                    ></ctacu-address-form>
-                  </div>
-                  <fieldset>
-                    <legend class="text-primary">
-                      Est. {{ deliveryDate | date }}
-                    </legend>
-                    <div class="form-group">
-                      <select
-                        formControlName="shippingRate"
-                        class="custom-select text-capitalize"
-                      >
-                        <option
-                          *ngFor="let s of shippingRates"
-                          [value]="s.price"
-                          class="text-capitalize"
-                        >
-                          {{ s.days === 1 ? "next" : s.days }} Business Day{{
-                            s.price === 19.99 ? "" : "s"
-                          }}:
-                          {{ s.price | currency }}
-                        </option>
-                      </select>
-                    </div>
-                  </fieldset>
-
-                  <div class="d-none d-sm-flex justify-content-between">
+                </div>
+              </ng-template>
+            </ngb-panel>
+            <ngb-panel
+              type="{{
+                this.checkOutForm.get('addressGroup').invalid && submitted
+                  ? 'danger'
+                  : 'secondary'
+              }}"
+              id="shipping"
+              title="shipping"
+            >
+              <ng-template ngbPanelHeader let-opened="opened">
+                <div class="py-1">
+                  <button
+                    ngbPanelToggle
+                    class="btn btn-lg btn-link p-0 text-light"
+                  >
+                    {{
+                      this.checkOutForm.get("addressGroup").invalid && submitted
+                        ? "!"
+                        : ""
+                    }}
+                    Shipping
+                  </button>
+                </div>
+              </ng-template>
+              <ng-template ngbPanelContent>
+                <p>
+                  <ngb-progressbar type="primary" [value]="75"
+                    ><i>75%</i></ngb-progressbar
+                  >
+                </p>
+                <div class="mb-3">
+                  <ctacu-address-form
+                    [parentForm]="checkOutForm"
+                    [submitted]="submitted"
+                  ></ctacu-address-form>
+                </div>
+                <div class="form-row justify-content-between">
+                  <div class="col-auto">
                     <input
                       type="button"
                       value="back"
                       (click)="acc.toggle('contact')"
                       class="btn btn-primary text-capitalize"
                     />
+                  </div>
+                  <div class="col-auto">
                     <input
                       type="button"
                       value="next"
@@ -264,294 +201,78 @@
                       class="btn btn-success text-capitalize"
                     />
                   </div>
-                  <input
-                    type="button"
-                    value="back"
-                    (click)="acc.toggle('contact')"
-                    class="btn btn-block btn-primary text-capitalize d-sm-none"
-                  />
-                  <input
-                    type="button"
-                    value="next"
-                    (click)="acc.toggle('finalize')"
-                    class="btn btn-block btn-success text-capitalize d-sm-none"
-                  />
-                </ng-template>
-              </ngb-panel>
-              <ngb-panel
-                type="{{
-                  (this.checkOutForm.get('paymentGroup').invalid ||
-                    this.checkOutForm.get('passwordGroup').invalid) &&
-                  submitted
-                    ? 'danger'
-                    : 'secondary'
-                }}"
-                id="finalize"
-                title="finalize"
-              >
-                <ng-template ngbPanelHeader let-opened="opened">
-                  <div class="py-1">
-                    <button
-                      ngbPanelToggle
-                      class="btn btn-lg btn-link p-0 text-light text-capitalize"
-                    >
-                      {{
-                        (this.checkOutForm.get("paymentGroup").invalid ||
-                          this.checkOutForm.get("passwordGroup").invalid) &&
-                        submitted
-                          ? "!"
-                          : ""
-                      }}
-                      Finalize
-                    </button>
-                  </div>
-                </ng-template>
-                <ng-template ngbPanelContent>
-                  <p>
-                    <ngb-progressbar type="success" [value]="100"
-                      ><i>100%</i></ngb-progressbar
-                    >
-                  </p>
-                  <ctacu-payment-form
-                    [parentForm]="checkOutForm"
-                    [submitted]="submitted"
-                  ></ctacu-payment-form>
-                  <hr />
-                  <div class="form-row">
-                    <div class="col-sm-7">
-                      <input
-                        type="button"
-                        value="{{
-                          checkOutForm.get('nameGroup').invalid && submitted
-                            ? '! '
-                            : ''
-                        }}Add Name"
-                        (click)="acc.toggle('name')"
-                        class="btn btn-sm btn-block text-capitalize mb-2"
-                        *ngIf="checkOutForm.get('nameGroup').invalid"
-                        [ngClass]="{
-                          'btn-danger':
-                            checkOutForm.get('nameGroup').invalid && submitted,
-                          'btn-primary':
-                            checkOutForm.get('nameGroup').valid || !submitted
-                        }"
-                      />
-                      <div
-                        *ngIf="checkOutForm.get('nameGroup').valid"
-                        (click)="acc.toggle('name')"
-                        class="card mb-2 pointer"
-                      >
-                        <div class="card-body py-2 text-capitalize">
-                          {{
-                            checkOutForm.get("nameGroup.firstName").value
-                              | lowercase
-                          }}
-                          {{
-                            checkOutForm.get("nameGroup.lastName").value
-                              | lowercase
-                          }}
-                        </div>
-                      </div>
-                      <input
-                        type="button"
-                        value="{{
-                          checkOutForm.get('contactGroup').invalid && submitted
-                            ? '! '
-                            : ''
-                        }}Add Contact Details"
-                        (click)="acc.toggle('contact')"
-                        class="btn btn-sm btn-block text-capitalize mb-2"
-                        *ngIf="checkOutForm.get('contactGroup').invalid"
-                        [ngClass]="{
-                          'btn-danger':
-                            checkOutForm.get('contactGroup').invalid &&
-                            submitted,
-                          'btn-primary':
-                            checkOutForm.get('contactGroup').valid || !submitted
-                        }"
-                      />
-                      <div
-                        *ngIf="checkOutForm.get('contactGroup').valid"
-                        (click)="acc.toggle('contact')"
-                        class="card mb-2 pointer"
-                      >
-                        <div class="card-body py-2">
-                          <div>
-                            {{ checkOutForm.get("contactGroup.phone").value }}
-                          </div>
-                          <div>
-                            {{
-                              checkOutForm.get("contactGroup.email").value
-                                | lowercase
-                            }}
-                          </div>
-                        </div>
-                      </div>
-                      <input
-                        type="button"
-                        value="{{
-                          checkOutForm.get('addressGroup').invalid && submitted
-                            ? '! '
-                            : ''
-                        }}Add Shipping Address"
-                        (click)="acc.toggle('shipping')"
-                        class="btn btn-sm btn-block text-capitalize"
-                        *ngIf="checkOutForm.get('addressGroup').invalid"
-                        [ngClass]="{
-                          'btn-danger':
-                            checkOutForm.get('addressGroup').invalid &&
-                            submitted,
-                          'btn-primary':
-                            checkOutForm.get('addressGroup').valid || !submitted
-                        }"
-                      />
-                      <div
-                        *ngIf="checkOutForm.get('addressGroup').valid"
-                        (click)="acc.toggle('shipping')"
-                        class="card pointer"
-                      >
-                        <div class="card-body py-2 text-capitalize">
-                          <div>
-                            {{ checkOutForm.get("addressGroup.street").value }}
-                          </div>
-                          <div>
-                            {{
-                              checkOutForm.get("addressGroup.city").value
-                                | lowercase
-                            }},
-                            {{
-                              checkOutForm.get("addressGroup.state").value
-                                | lowercase
-                            }}
-                            {{ checkOutForm.get("addressGroup.zip").value }}
-                          </div>
-                          <div>
-                            {{
-                              checkOutForm.get("addressGroup.country").value
-                                | lowercase
-                            }}
-                          </div>
-                        </div>
-                      </div>
-                      <hr class="d-sm-none" />
-                    </div>
-                    <div class="col-sm">
-                      <ctacu-cart-summary></ctacu-cart-summary>
-                    </div>
-                  </div>
-                  <hr />
-
-                  <div
-                    [hidden]="user"
-                    class="custom-control custom-checkbox mb-3"
+                </div>
+              </ng-template>
+            </ngb-panel>
+            <ngb-panel
+              type="{{
+                this.checkOutForm.get('paymentGroup').invalid && submitted
+                  ? 'danger'
+                  : 'secondary'
+              }}"
+              id="finalize"
+              title="finalize"
+            >
+              <ng-template ngbPanelHeader let-opened="opened">
+                <div class="py-1">
+                  <button
+                    ngbPanelToggle
+                    class="btn btn-lg btn-link p-0 text-light text-capitalize"
                   >
-                    <input
-                      type="checkbox"
-                      class="custom-control-input"
-                      formControlName="signUpCheck"
-                      id="signUpCheck"
-                      [ngClass]="{
-                        'is-invalid':
-                          emailTakenMessage &&
-                          checkOutForm.get('signUpCheck').value &&
-                          submitted
-                      }"
-                    />
-                    <label class="custom-control-label" for="signUpCheck"
-                      >Sign up for a <strong>Gaming Legend</strong> account for
-                      a faster checkout on your next purchase!</label
-                    >
-                    <div class="invalid-tooltip">
-                      {{ emailTakenMessage }}
-                    </div>
-                  </div>
-                  <div
-                    *ngIf="!user"
-                    #collapse="ngbCollapse"
-                    [(ngbCollapse)]="isCollapsed"
+                    {{
+                      this.checkOutForm.get("paymentGroup").invalid && submitted
+                        ? "!"
+                        : ""
+                    }}
+                    Finalize
+                  </button>
+                </div>
+              </ng-template>
+              <ng-template ngbPanelContent>
+                <p>
+                  <ngb-progressbar type="success" [value]="100"
+                    ><i>100%</i></ngb-progressbar
                   >
-                    <div class="mb-3">
-                      <ctacu-password-form
-                        [parentForm]="checkOutForm"
-                        [submitted]="submitted"
-                        pageTitle="Sign Up"
-                      ></ctacu-password-form>
-                    </div>
-                  </div>
-                  <div class="d-none d-sm-flex">
+                </p>
+                <ctacu-payment-form
+                  [parentForm]="checkOutForm"
+                  [submitted]="submitted"
+                ></ctacu-payment-form>
+                <hr />
+                <div class="form-row">
+                  <div class="col-auto">
                     <input
                       type="button"
                       value="back"
                       (click)="acc.toggle('shipping')"
                       class="btn btn-primary text-capitalize"
                     />
-                    <input
-                      type="submit"
-                      [value]="
-                        (checkOutForm.invalid || emailTakenMessage) && submitted
-                          ? '! place order'
-                          : 'place order'
-                      "
-                      class="btn btn-block btn-success text-capitalize ml-2"
-                      [disabled]="
-                        ((checkOutForm.invalid || emailTakenMessage) &&
-                          submitted) ||
-                        (loading$ | async) ||
-                        orderPlaced
-                      "
-                      [ngClass]="{
-                        'btn-success':
-                          (checkOutForm.valid && !emailTakenMessage) ||
-                          !submitted,
-                        'btn-outline-danger':
-                          (checkOutForm.invalid || emailTakenMessage) &&
-                          submitted
-                      }"
-                    />
                   </div>
-                  <div class="d-sm-none">
-                    <input
-                      type="button"
-                      value="back"
-                      (click)="acc.toggle('shipping')"
-                      class="btn btn-block btn-primary text-capitalize mb-2"
-                    />
+                  <div class="col">
                     <input
                       type="submit"
                       [value]="
-                        (checkOutForm.invalid || emailTakenMessage) && submitted
+                        checkOutForm.invalid && submitted
                           ? '! place order'
                           : 'place order'
                       "
                       class="btn btn-block btn-success text-capitalize"
                       [disabled]="
-                        ((checkOutForm.invalid || emailTakenMessage) &&
-                          submitted) ||
+                        (checkOutForm.invalid && submitted) ||
                         (loading$ | async) ||
                         orderPlaced
                       "
                       [ngClass]="{
-                        'btn-success':
-                          (checkOutForm.valid && !emailTakenMessage) ||
-                          !submitted,
-                        'btn-outline-danger':
-                          (checkOutForm.invalid || emailTakenMessage) &&
-                          submitted
+                        'btn-success': checkOutForm.valid || !submitted,
+                        'btn-outline-danger': checkOutForm.invalid && submitted
                       }"
                     />
-                    <ng-template #loading>
-                      <div class="d-flex w-100 ml-2 justify-content-center">
-                        <div class="spinner-border text-info" role="status">
-                          <span class="sr-only">Loading...</span>
-                        </div>
-                      </div>
-                    </ng-template>
                   </div>
-                </ng-template>
-              </ngb-panel>
-            </ngb-accordion>
-          </form>
-        </div>
+                </div>
+              </ng-template>
+            </ngb-panel>
+          </ngb-accordion>
+        </form>
       </div>
     </div>
   </ng-container>

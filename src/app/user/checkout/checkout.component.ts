@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  OnDestroy,
   OnInit,
   TemplateRef,
   ViewChild,
@@ -16,14 +15,12 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   NgbAccordionConfig,
-  NgbCollapse,
   NgbProgressbarConfig,
 } from '@ng-bootstrap/ng-bootstrap';
-import { BehaviorSubject, combineLatest, EMPTY, Subscription } from 'rxjs';
-import { catchError, debounceTime, first, map } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, EMPTY, Observable } from 'rxjs';
+import { catchError, first, map } from 'rxjs/operators';
 
 import { emailMatcher } from 'src/app/functions/email-matcher';
-import { passwordMatcher } from 'src/app/functions/password-matcher';
 import { AuthService } from 'src/app/services/auth.service';
 import { CartService } from 'src/app/services/cart.service';
 import { FormService } from 'src/app/services/form.service';
@@ -37,10 +34,6 @@ import { Order, OrderMaker } from 'src/app/types/order';
 import { Payment, PaymentMaker } from 'src/app/types/payment';
 import { IShipping } from 'src/app/types/shipping';
 import { ShippingRatesResult } from 'src/app/types/shipping-rates-result';
-import { IUser, User, UserMaker } from 'src/app/types/user';
-import { UserAddressMaker, UserAddress } from 'src/app/types/user-address';
-import { UserContactMaker, UserContact } from 'src/app/types/user-contact';
-import { UserName, UserNameMaker } from 'src/app/types/user-name';
 
 // function dateChecker(c: AbstractControl): { [key: string]: boolean } | null {
 //   const monthControl = c.get('expiringMonth');
@@ -113,12 +106,7 @@ function cardNumberChecker(
   providers: [NgbAccordionConfig],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CheckoutComponent implements OnInit, OnDestroy {
-  /* Get data from CartService */
-  readonly items$ = this.cartService.cartItems$;
-  readonly cartQuantity$ = this.cartService.cartQuantity$;
-  readonly subtotal$ = this.cartService.subtotal$;
-
+export class CheckoutComponent implements OnInit {
   /* Get data from resolver */
   private readonly resolvedData = this.route.snapshot.data
     .resolvedData as ShippingRatesResult;
@@ -132,8 +120,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
   /* NgbCollapse for showing and hiding the signUpCheck and passwordGroup in
   the view */
-  @ViewChild('collapse') private collapse: NgbCollapse;
-  isCollapsed = false;
+  // @ViewChild('collapse') private collapse: NgbCollapse;
+  // isCollapsed = false;
 
   /* Notification templateRef's */
   @ViewChild('orderSuccessTpl') private orderSuccessTpl: TemplateRef<any>;
@@ -141,10 +129,9 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   @ViewChild('saveUserDangerTpl') private saveUserDangerTpl: TemplateRef<any>;
   @ViewChild('clearCartDangerTpl') private clearCartDangerTpl: TemplateRef<any>;
 
-  private readonly subscriptions: Subscription[] = [];
-  deliveryDate: Date;
-  user: IUser;
-  emailTakenMessage: string;
+  // private readonly subscriptions: Subscription[] = [];
+  // user: IUser;
+  // emailTakenMessage: string;
   submitted = false;
   orderPlaced = false;
 
@@ -164,7 +151,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   private readonly zipPattern = this.formService.zipPattern as RegExp;
   private readonly cvvPattern = /^[0-9]{3,4}$/;
   private readonly phonePattern = this.formService.phonePattern as RegExp;
-  private readonly passwordPattern = this.formService.passwordPattern as RegExp;
+  // private readonly passwordPattern = this.formService.passwordPattern as RegExp;
 
   constructor(
     private readonly accordionConfig: NgbAccordionConfig,
@@ -174,7 +161,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly fb: FormBuilder,
     private readonly route: ActivatedRoute,
-    private readonly authService: AuthService,
+    // private readonly authService: AuthService,
     private readonly formService: FormService,
     private readonly shippingRateService: ShippingRateService,
     private readonly notificationService: NotificationService,
@@ -239,34 +226,33 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         zip: ['', [Validators.required, Validators.pattern(this.zipPattern)]],
         country: ['USA', [Validators.required]],
       }),
-      shippingRate: null,
       paymentGroup: this.fb.group({
         cardNumber: [null, [Validators.required, cardNumberChecker]],
         cvv: [null, [Validators.required, Validators.pattern(this.cvvPattern)]],
         expiration: ['', [Validators.required]],
       }),
-      signUpCheck: true,
-      passwordGroup: this.fb.group(
-        {
-          password: [
-            '',
-            [Validators.required, Validators.pattern(this.passwordPattern)],
-          ],
-          confirmPassword: ['', [Validators.required]],
-        },
-        { validator: passwordMatcher }
-      ),
+      // signUpCheck: true,
+      // passwordGroup: this.fb.group(
+      //   {
+      //     password: [
+      //       '',
+      //       [Validators.required, Validators.pattern(this.passwordPattern)],
+      //     ],
+      //     confirmPassword: ['', [Validators.required]],
+      //   },
+      //   { validator: passwordMatcher }
+      // ),
     });
 
-    this.subscribeToValueChanges();
-    this.authService.currentUser$.pipe(first()).subscribe((user) => {
-      if (user) {
-        this.user = user as IUser;
-        this.checkOutForm.patchValue({
-          signUpCheck: false,
-        });
-      }
-    });
+    // this.subscribeToValueChanges();
+    // this.authService.currentUser$.pipe(first()).subscribe((user) => {
+    //   if (user) {
+    //     this.user = user as IUser;
+    //     this.checkOutForm.patchValue({
+    //       signUpCheck: false,
+    //     });
+    //   }
+    // });
     if (this.shippingRates) {
       this.checkOutForm.patchValue({
         shippingRate: +this.shippingRates[0].price,
@@ -274,160 +260,149 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSubmit(form: FormGroup, items: ICartItem[]): void {
+  onSubmit(form: FormGroup): void {
     if (!this.submitted) {
       this.submitted = true;
     }
     this.errorMessage = '';
     if (form.valid) {
       this.setLoading(true);
-      const signUpCheck = this.checkOutForm.get('signUpCheck').value as boolean;
-      if (signUpCheck) {
-        this.checkForUser(form, items);
-      } else {
-        this.createOrder(form, items);
-      }
-    }
-  }
-
-  setPasswordValidation(value: boolean): void {
-    const passwordGroupControl = this.checkOutForm.get('passwordGroup');
-    const passwordControl = this.checkOutForm.get('passwordGroup.password');
-    const confirmPasswordControl = this.checkOutForm.get(
-      'passwordGroup.confirmPassword'
-    );
-    if (value) {
-      passwordGroupControl.setValidators(passwordMatcher);
-      passwordControl.setValidators([
-        Validators.required,
-        Validators.pattern(this.passwordPattern),
-      ]);
-      confirmPasswordControl.setValidators([Validators.required]);
-    } else {
-      passwordGroupControl.clearValidators();
-      passwordControl.clearValidators();
-      confirmPasswordControl.clearValidators();
-    }
-    passwordGroupControl.updateValueAndValidity();
-    passwordControl.updateValueAndValidity();
-    confirmPasswordControl.updateValueAndValidity();
-  }
-
-  setEmailTakenMessage(message: string): void {
-    this.emailTakenMessage = message;
-  }
-
-  getActiveIdsString(user: User): string {
-    if (!user) {
-      return 'name';
-    }
-    if (!user.address) {
-      return 'shipping';
-    }
-    return 'finalize';
-  }
-
-  private subscribeToValueChanges(): void {
-    const shippingRateControl = this.checkOutForm.get('shippingRate');
-    this.subscriptions.push(
-      shippingRateControl.valueChanges
-        .pipe(debounceTime(500))
-        .subscribe((price: number) => {
-          this.setDeliveryDate(+price);
-          this.shippingRateService.setShipping(+price);
-        })
-    );
-    const signUpCheckControl = this.checkOutForm.get('signUpCheck');
-    this.subscriptions.push(
-      signUpCheckControl.valueChanges.subscribe((check: boolean) => {
-        this.emailTakenMessage = '';
-        this.setPasswordValidation(check);
-        if (this.collapse) {
-          this.collapse.toggle(check);
+      this.getOrder(form).subscribe(
+        (order) => this.saveOrder(order, order.items),
+        (error) => {
+          const notification = {
+            textOrTpl: this.orderDangerTpl,
+            className: 'bg-danger text-light',
+            delay: 15000,
+          } as INotification;
+          this.show(notification);
         }
-      })
-    );
+      );
+      // const signUpCheck = this.checkOutForm.get('signUpCheck').value as boolean;
+      // if (signUpCheck) {
+      //   this.checkForUser(form, items);
+      // } else {
+      //   this.getOrder(form, items);
+      // }
+    }
   }
+
+  // setPasswordValidation(value: boolean): void {
+  //   const passwordGroupControl = this.checkOutForm.get('passwordGroup');
+  //   const passwordControl = this.checkOutForm.get('passwordGroup.password');
+  //   const confirmPasswordControl = this.checkOutForm.get(
+  //     'passwordGroup.confirmPassword'
+  //   );
+  //   if (value) {
+  //     passwordGroupControl.setValidators(passwordMatcher);
+  //     passwordControl.setValidators([
+  //       Validators.required,
+  //       Validators.pattern(this.passwordPattern),
+  //     ]);
+  //     confirmPasswordControl.setValidators([Validators.required]);
+  //   } else {
+  //     passwordGroupControl.clearValidators();
+  //     passwordControl.clearValidators();
+  //     confirmPasswordControl.clearValidators();
+  //   }
+  //   passwordGroupControl.updateValueAndValidity();
+  //   passwordControl.updateValueAndValidity();
+  //   confirmPasswordControl.updateValueAndValidity();
+  // }
+
+  // setEmailTakenMessage(message: string): void {
+  //   this.emailTakenMessage = message;
+  // }
+
+  // getActiveIdsString(user: User): string {
+  //   if (!user) {
+  //     return 'name';
+  //   }
+  //   if (!user.address) {
+  //     return 'shipping';
+  //   }
+  //   return 'finalize';
+  // }
+
+  // private subscribeToValueChanges(): void {
+  //   const signUpCheckControl = this.checkOutForm.get('signUpCheck');
+  //   this.subscriptions.push(
+  //     signUpCheckControl.valueChanges.subscribe((check: boolean) => {
+  //       this.emailTakenMessage = '';
+  //       this.setPasswordValidation(check);
+  //       if (this.collapse) {
+  //         this.collapse.toggle(check);
+  //       }
+  //     })
+  //   );
+  // }
 
   private setLoading(value: boolean): void {
     this.loadingSubject.next(value);
   }
 
-  private showSuccess(templateRef: TemplateRef<any>): void {
-    const notification = {
-      textOrTpl: templateRef,
-      className: 'bg-success text-light',
-      delay: 15000,
-    } as INotification;
+  private show(notification: INotification): void {
     this.notificationService.show(notification);
   }
 
-  private showDanger(templateRef: TemplateRef<any>): void {
-    const notification = {
-      textOrTpl: templateRef,
-      className: 'bg-danger text-light',
-      delay: 15000,
-    } as INotification;
-    this.notificationService.show(notification);
-  }
+  // private checkForUser(form: FormGroup, items: ICartItem[]): void {
+  //   const email = this.checkOutForm.get('contactGroup.email').value as string;
+  //   this.authService.checkForUser(email).subscribe(
+  //     (result) => {
+  //       if (result) {
+  //         this.setLoading(false);
+  //         this.emailTakenMessage = `${email} is already registered to an
+  //         account. Please sign in to continue.`;
+  //       } else {
+  //         this.saveUser(form, items);
+  //       }
+  //     },
+  //     (error) => {
+  //       this.setLoading(false);
+  //       this.showDanger(this.saveUserDangerTpl);
+  //     }
+  //   );
+  // }
 
-  private checkForUser(form: FormGroup, items: ICartItem[]): void {
-    const email = this.checkOutForm.get('contactGroup.email').value as string;
-    this.authService.checkForUser(email).subscribe(
-      (result) => {
-        if (result) {
-          this.setLoading(false);
-          this.emailTakenMessage = `${email} is already registered to an
-          account. Please sign in to continue.`;
-        } else {
-          this.saveUser(form, items);
-        }
-      },
-      (error) => {
-        this.setLoading(false);
-        this.showDanger(this.saveUserDangerTpl);
-      }
-    );
-  }
+  // private saveUser(form: FormGroup, items: ICartItem[]): void {
+  //   const user = UserMaker.create({
+  //     name: UserNameMaker.create({
+  //       firstName: form.get('nameGroup.firstName').value as string,
+  //       lastName: form.get('nameGroup.lastName').value as string,
+  //     } as UserName),
+  //     contact: UserContactMaker.create({
+  //       phone: form.get('contactGroup.phone').value as string,
+  //       email: form.get('contactGroup.email').value as string,
+  //     } as UserContact),
+  //     address: UserAddressMaker.create({
+  //       street: form.get('addressGroup.street').value as string,
+  //       city: form.get('addressGroup.city').value as string,
+  //       state: form.get('addressGroup.state').value as string,
+  //       zip: form.get('addressGroup.zip').value as string,
+  //       country: form.get('addressGroup.country').value as string,
+  //     } as UserAddress),
+  //     password: form.get('passwordGroup.password').value as string,
+  //     isAdmin: false,
+  //   }) as User;
+  //   this.authService.saveUser(user).subscribe(
+  //     (result) => this.getOrder(form, items),
+  //     (error) => {
+  //       this.setLoading(false);
+  //       this.showDanger(this.saveUserDangerTpl);
+  //     }
+  //   );
+  // }
 
-  private saveUser(form: FormGroup, items: ICartItem[]): void {
-    const user = UserMaker.create({
-      name: UserNameMaker.create({
-        firstName: form.get('nameGroup.firstName').value as string,
-        lastName: form.get('nameGroup.lastName').value as string,
-      } as UserName),
-      contact: UserContactMaker.create({
-        phone: form.get('contactGroup.phone').value as string,
-        email: form.get('contactGroup.email').value as string,
-      } as UserContact),
-      address: UserAddressMaker.create({
-        street: form.get('addressGroup.street').value as string,
-        city: form.get('addressGroup.city').value as string,
-        state: form.get('addressGroup.state').value as string,
-        zip: form.get('addressGroup.zip').value as string,
-        country: form.get('addressGroup.country').value as string,
-      } as UserAddress),
-      password: form.get('passwordGroup.password').value as string,
-      isAdmin: false,
-    }) as User;
-    this.authService.saveUser(user).subscribe(
-      (result) => this.createOrder(form, items),
-      (error) => {
-        this.setLoading(false);
-        this.showDanger(this.saveUserDangerTpl);
-      }
-    );
-  }
-
-  private createOrder(form: FormGroup, items: ICartItem[]): void {
-    const order$ = combineLatest([
-      this.subtotal$,
+  private getOrder(form: FormGroup): Observable<Order> {
+    return combineLatest([
+      this.cartService.subtotal$,
       this.shippingRateService.shippingPriceSelectedAction$,
       this.cartService.totalTax$,
       this.cartService.total$,
+      this.cartService.cartItems$,
     ]).pipe(
       first(),
-      map(([subtotal, shipping, totalTax, total]) => {
+      map(([subtotal, shipping, totalTax, total, items]) => {
         const customer = CustomerMaker.create({
           firstName: form.get('nameGroup.firstName').value as string,
           lastName: form.get('nameGroup.lastName').value as string,
@@ -448,49 +423,46 @@ export class CheckoutComponent implements OnInit, OnDestroy {
           shipping: +shipping,
           total: +total,
         }) as Payment;
-        let order = OrderMaker.create({
+        return OrderMaker.create({
           customer,
           items,
           payment,
           date: new Date().toString(),
           status: 'pending',
         }) as Order;
-        if (this.user) {
-          order = {
-            ...order,
-            userId: +this.user.id,
-          } as Order;
-        }
-        return order;
       }),
       catchError(() => {
-        this.showDanger(this.orderDangerTpl);
+        const notification = {
+          textOrTpl: this.orderDangerTpl,
+          className: 'bg-danger text-light',
+          delay: 15000,
+        } as INotification;
+        this.show(notification);
         return EMPTY;
       })
     );
-    order$.subscribe(
-      (order) => this.saveOrder(order, items),
-      (error) => this.showDanger(this.orderDangerTpl)
-    );
-  }
-
-  private setDeliveryDate(selectedPrice: number): void {
-    const totalDays = this.shippingRates.find(
-      ({ price }) => price === +selectedPrice
-    ).days;
-    this.deliveryDate = this.shippingRateService.getDeliveryDate(totalDays);
   }
 
   private saveOrder(order: Order, items: ICartItem[]): void {
     this.orderService.saveOrder(order).subscribe(
       (result) => {
+        const notification = {
+          textOrTpl: this.orderSuccessTpl,
+          className: 'bg-success text-light',
+          delay: 15000,
+        } as INotification;
+        this.show(notification);
         this.orderPlaced = true;
-        this.showSuccess(this.orderSuccessTpl);
         this.removeAllItems(items);
       },
       (error) => {
         this.setLoading(false);
-        this.showDanger(this.orderDangerTpl);
+        const notification = {
+          textOrTpl: this.orderDangerTpl,
+          className: 'bg-danger text-light',
+          delay: 15000,
+        } as INotification;
+        this.show(notification);
       }
     );
   }
@@ -499,7 +471,12 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     this.cartService.removeAllItems(items).subscribe({
       error: (err) => {
         console.error(err);
-        this.showDanger(this.clearCartDangerTpl);
+        const notification = {
+          textOrTpl: this.clearCartDangerTpl,
+          className: 'bg-danger text-light',
+          delay: 15000,
+        } as INotification;
+        this.show(notification);
       },
       complete: () => {
         this.getCartItems();
@@ -514,9 +491,5 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       error: (error) => console.error(error),
       complete: () => this.setLoading(false),
     });
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
