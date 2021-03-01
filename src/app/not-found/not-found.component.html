@@ -1,8 +1,20 @@
 <div class="container-xl py-3">
-  <h1 class="text-danger text-center text-capitalize mb-3">{{ pageTitle }}</h1>
+  <section class="text-danger text-capitalize">
+    <h1 class="display-4 d-none d-sm-block">
+      <span>{{ pageTitle | lowercase }}</span>
+    </h1>
+    <h2 class="d-sm-none">
+      <span>{{ pageTitle | lowercase }}</span>
+    </h2>
+  </section>
+  <hr class="border-danger" />
   <ngb-alert [dismissible]="false" type="danger" class="text-center">
-    <strong class="mr-1">Oops!</strong>
-    <span>Something went wrong. Please check the URL and try again.</span>
-    <button class="btn btn-info ml-2" routerLink="/products">Products</button>
+    <span>{{ erroMessage }}</span>
+    <input
+      type="button"
+      value="Home"
+      class="btn btn-link text-danger"
+      routerLink="/"
+    />
   </ngb-alert>
 </div>

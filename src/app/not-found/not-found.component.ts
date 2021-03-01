@@ -8,6 +8,8 @@ import { Title } from '@angular/platform-browser';
 })
 export class NotFoundComponent implements OnInit {
   readonly pageTitle = 'Page Not Found';
+  readonly erroMessage =
+    'Oops! Something went wrong. Please check the URL and try again.';
 
   constructor(private readonly title: Title) {}
 
