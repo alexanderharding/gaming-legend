@@ -74,18 +74,15 @@ export class CartComponent implements OnInit {
     this.title.setTitle(`Gaming Legend | ${this.pageTitle}`);
   }
 
-  saveItem(item: ICartItem, amount: number): void {
-    /* Call openRemoveModal method if item.quantity is less than or equal to 1
-    and amount equals -1 */
-    if (item.quantity <= 1 && amount === -1) {
+  saveItem(item: ICartItem, quantity: number): void {
+    if (quantity <= 0) {
       this.openRemoveModal(item);
       return;
     }
-
     this.setLoading(true);
     const updatedItem = {
       ...item,
-      quantity: item.quantity + amount,
+      quantity,
     } as ICartItem;
     this.cartService.saveItem(updatedItem, 0).subscribe({
       error: () => {
