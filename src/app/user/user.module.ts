@@ -12,7 +12,7 @@ import { OrderPlacedComponent } from './order-placed/order-placed.component';
 
 /* Guards */
 import { CheckoutGuard } from './checkout/checkout.guard';
-import { SignInGuard } from './sign-in/sign-in.guard';
+// import { SignInGuard } from './sign-in/sign-in.guard';
 
 /* Services */
 import { ShippingRatesResolverService } from '../router/shipping-rates-resolver.service';
@@ -21,19 +21,19 @@ import { ShippingRatesResolverService } from '../router/shipping-rates-resolver.
 const ROUTES: Routes = [
   {
     path: '',
-    redirectTo: 'sign-in',
+    redirectTo: 'cart',
     pathMatch: 'full',
   },
-  {
-    path: 'sign-in',
-    component: SignInComponent,
-    canActivate: [SignInGuard],
-  },
-  {
-    path: 'sign-up',
-    component: SignUpComponent,
-    canActivate: [SignInGuard],
-  },
+  // {
+  //   path: 'sign-in',
+  //   component: SignInComponent,
+  //   canActivate: [SignInGuard],
+  // },
+  // {
+  //   path: 'sign-up',
+  //   component: SignUpComponent,
+  //   canActivate: [SignInGuard],
+  // },
   {
     path: 'cart',
     component: CartComponent,
@@ -66,6 +66,6 @@ const ROUTES: Routes = [
     OrderPlacedComponent,
   ],
   imports: [SharedModule, RouterModule.forChild(ROUTES)],
-  providers: [SignInGuard, CheckoutGuard, ShippingRatesResolverService],
+  providers: [CheckoutGuard, ShippingRatesResolverService],
 })
 export class UserModule {}
