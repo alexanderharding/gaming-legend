@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -17,11 +11,10 @@ import {
   NgbAccordionConfig,
   NgbProgressbarConfig,
 } from '@ng-bootstrap/ng-bootstrap';
-import { BehaviorSubject, combineLatest, EMPTY, Observable } from 'rxjs';
-import { catchError, first, map } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { first, map } from 'rxjs/operators';
 
 import { emailMatcher } from 'src/app/functions/email-matcher';
-import { AuthService } from 'src/app/services/auth.service';
 import { CartService } from 'src/app/services/cart.service';
 import { FormService } from 'src/app/services/form.service';
 import { NotificationService } from 'src/app/services/notification.service';
@@ -122,12 +115,6 @@ export class CheckoutComponent implements OnInit {
   the view */
   // @ViewChild('collapse') private collapse: NgbCollapse;
   // isCollapsed = false;
-
-  /* Notification templateRef's */
-  @ViewChild('orderSuccessTpl') private orderSuccessTpl: TemplateRef<any>;
-  @ViewChild('orderDangerTpl') private orderDangerTpl: TemplateRef<any>;
-  @ViewChild('saveUserDangerTpl') private saveUserDangerTpl: TemplateRef<any>;
-  @ViewChild('clearCartDangerTpl') private clearCartDangerTpl: TemplateRef<any>;
 
   // private readonly subscriptions: Subscription[] = [];
   // user: IUser;
@@ -264,20 +251,12 @@ export class CheckoutComponent implements OnInit {
     if (!this.submitted) {
       this.submitted = true;
     }
-    this.errorMessage = '';
     if (form.valid) {
       this.setLoading(true);
-      this.getOrder(form).subscribe(
-        (order) => this.saveOrder(order, order.items),
-        (error) => {
-          const notification = {
-            textOrTpl: this.orderDangerTpl,
-            className: 'bg-danger text-light',
-            delay: 15000,
-          } as INotification;
-          this.show(notification);
-        }
-      );
+      this.getOrder(form).subscribe({
+        next: (order) => this.saveOrder(order, order.items),
+        error: () => this.show('Error placing order !', true),
+      });
       // const signUpCheck = this.checkOutForm.get('signUpCheck').value as boolean;
       // if (signUpCheck) {
       //   this.checkForUser(form, items);
@@ -341,7 +320,12 @@ export class CheckoutComponent implements OnInit {
     this.loadingSubject.next(value);
   }
 
-  private show(notification: INotification): void {
+  private show(text: string, danger: boolean): void {
+    const notification = {
+      textOrTpl: text,
+      className: danger ? 'bg-danger text-light' : 'bg-success text-light',
+      delay: danger ? 15000 : 10000,
+    } as INotification;
     this.notificationService.show(notification);
   }
 
@@ -418,10 +402,10 @@ export class CheckoutComponent implements OnInit {
           cardNumber: +form.get('paymentGroup.cardNumber').value,
           cvv: +form.get('paymentGroup.cvv').value,
           expiration: form.get('paymentGroup.expiration').value as string,
-          subtotal: +subtotal,
+          subtotal,
           tax: +totalTax,
-          shipping: +shipping,
-          total: +total,
+          shipping,
+          total,
         }) as Payment;
         return OrderMaker.create({
           customer,
@@ -430,54 +414,27 @@ export class CheckoutComponent implements OnInit {
           date: new Date().toString(),
           status: 'pending',
         }) as Order;
-      }),
-      catchError(() => {
-        const notification = {
-          textOrTpl: this.orderDangerTpl,
-          className: 'bg-danger text-light',
-          delay: 15000,
-        } as INotification;
-        this.show(notification);
-        return EMPTY;
       })
     );
   }
 
   private saveOrder(order: Order, items: ICartItem[]): void {
-    this.orderService.saveOrder(order).subscribe(
-      (result) => {
-        const notification = {
-          textOrTpl: this.orderSuccessTpl,
-          className: 'bg-success text-light',
-          delay: 15000,
-        } as INotification;
-        this.show(notification);
+    this.orderService.saveOrder(order).subscribe({
+      error: () => {
+        this.setLoading(false);
+        this.show(`Error placing order !`, true);
+      },
+      complete: () => {
         this.orderPlaced = true;
+        this.show(`Order placed !`, false);
         this.removeAllItems(items);
       },
-      (error) => {
-        this.setLoading(false);
-        const notification = {
-          textOrTpl: this.orderDangerTpl,
-          className: 'bg-danger text-light',
-          delay: 15000,
-        } as INotification;
-        this.show(notification);
-      }
-    );
+    });
   }
 
   private removeAllItems(items: ICartItem[]): void {
     this.cartService.removeAllItems(items).subscribe({
-      error: (err) => {
-        console.error(err);
-        const notification = {
-          textOrTpl: this.clearCartDangerTpl,
-          className: 'bg-danger text-light',
-          delay: 15000,
-        } as INotification;
-        this.show(notification);
-      },
+      error: () => this.show(`Error emptying cart !`, true),
       complete: () => {
         this.getCartItems();
         this.setLoading(false);
@@ -488,7 +445,7 @@ export class CheckoutComponent implements OnInit {
 
   private getCartItems(): void {
     this.cartService.getCartItems().subscribe({
-      error: (error) => console.error(error),
+      error: () => this.show(`Error retrieving cart !`, true),
       complete: () => this.setLoading(false),
     });
   }
