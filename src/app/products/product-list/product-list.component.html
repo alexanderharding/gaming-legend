@@ -1,4 +1,21 @@
 <div class="container-xl pt-3">
+  <section class="row justify-content-between align-items-center">
+    <div class="col-auto">
+      <h1 class="display-4 m-0 d-none d-sm-block">
+        {{ pageTitle | capitalize }}
+      </h1>
+      <h2 class="m-0 d-sm-none">{{ pageTitle | capitalize }}</h2>
+    </div>
+    <div class="col-auto">
+      <input
+        type="button"
+        value="More"
+        routerLink="/products"
+        class="btn btn-outline-light"
+      />
+    </div>
+  </section>
+  <hr class="border-light" />
   <ng-container *ngIf="sortedProducts$ | async as products; else notSubscribed">
     <div
       *ngIf="isFiltering$ | async"
@@ -7,147 +24,39 @@
     >
       <span class="sr-only">Loading...</span>
     </div>
-    <div class="row justify-content-center align-items-center">
-      <div class="col-auto align-self-start">
-        <button
-          routerLink="/products"
-          class="btn btn-lg btn-link text-danger px-0"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="35"
-            height="35"
-            fill="currentColor"
-            class="bi bi-arrow-left-circle-fill"
-            viewBox="0 0 16 16"
-          >
-            <path
-              d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"
-            />
-          </svg>
-        </button>
-      </div>
-      <div class="col">
-        <h1 class="text-center m-0 d-none d-sm-block">
-          {{ pageTitle | capitalize }}
-        </h1>
-        <h4 class="text-center m-0 d-sm-none">
-          {{ pageTitle | capitalize }}
-        </h4>
-      </div>
-      <div class="col-auto align-self-end">
-        <button
-          type="button"
-          class="btn btn-lg btn-link text-info px-0"
-          (click)="collapse.toggle()"
-          [openDelay]="300"
-          placement="bottom"
-          ngbTooltip="{{ isCollapsed ? 'Filters' : 'Close' }}"
-        >
-          <svg
-            *ngIf="isCollapsed"
-            xmlns="http://www.w3.org/2000/svg"
-            width="35"
-            height="35"
-            fill="currentColor"
-            class="bi bi-search"
-            viewBox="0 0 16 16"
-          >
-            <path
-              d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
-            />
-          </svg>
-          <svg
-            *ngIf="!isCollapsed"
-            xmlns="http://www.w3.org/2000/svg"
-            width="35"
-            height="35"
-            fill="currentColor"
-            class="bi bi-x-circle"
-            viewBox="0 0 16 16"
-          >
-            <path
-              d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
-            />
-            <path
-              d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"
-            />
-          </svg>
-        </button>
-      </div>
-    </div>
-    <hr />
-    <form
-      [formGroup]="filterForm"
-      autocomplete="off"
-      novalidate
-      #collapse="ngbCollapse"
-      [(ngbCollapse)]="isCollapsed"
-    >
-      <div class="form-row align-content-center">
-        <div class="col-md mb-2 mb-md-0">
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text bg-secondary text-white"
-                ><svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  fill="currentColor"
-                  class="bi bi-search"
-                  viewBox="0 0 16 16"
-                >
-                  <path
-                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
-                  />
-                </svg>
-              </span>
-            </div>
-            <input
-              type="text"
-              id="search"
-              formControlName="search"
-              class="form-control"
-              placeholder="Find product"
-            />
-          </div>
-        </div>
-        <div class="col-md">
-          <div class="form-row">
-            <div class="col-sm mb-2 mb-sm-0">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text bg-secondary text-white"
-                    ><svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      fill="currentColor"
-                      class="bi bi-filter-left"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        d="M2 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"
-                      />
-                    </svg>
-                  </span>
-                </div>
-                <select
-                  class="form-control custom-select"
-                  formControlName="sort"
-                >
-                  <optgroup label="Sort by">
-                    <option [value]="0">- None -</option>
-                    <option [value]="1">Name: A - Z</option>
-                    <option [value]="2">Name: Z - A</option>
-                    <option [value]="3">Price: Low - High</option>
-                    <option [value]="4">Price: High - Low</option>
-                  </optgroup>
-                </select>
+    <section class="text-dark">
+      <form [formGroup]="filterForm" autocomplete="off" novalidate class="mb-3">
+        <div class="form-row">
+          <div class="col-md mb-2 mb-md-0">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text bg-secondary text-white"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    fill="currentColor"
+                    class="bi bi-search"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
+                    />
+                  </svg>
+                </span>
               </div>
+              <input
+                type="text"
+                id="search"
+                formControlName="search"
+                class="form-control"
+                placeholder="Find product"
+              />
             </div>
-            <ng-container *ngIf="brands$ | async as brands">
-              <div class="col-sm">
+          </div>
+          <div class="col-md">
+            <div class="form-row">
+              <div class="col-sm mb-2 mb-sm-0">
                 <div class="input-group">
                   <div class="input-group-prepend">
                     <span class="input-group-text bg-secondary text-white"
@@ -156,154 +65,138 @@
                         width="24"
                         height="24"
                         fill="currentColor"
-                        class="bi bi-funnel"
+                        class="bi bi-filter-left"
                         viewBox="0 0 16 16"
                       >
                         <path
-                          d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z"
+                          d="M2 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"
                         />
                       </svg>
                     </span>
                   </div>
                   <select
                     class="form-control custom-select"
-                    formControlName="brand"
+                    formControlName="sort"
                   >
-                    <optgroup label="Filter by brand">
-                      <option [value]="0">- All -</option>
-                      <option *ngFor="let b of brands" [value]="b.id">
-                        {{ b.name }}
-                      </option>
+                    <optgroup label="Sort by">
+                      <option [value]="0">- None -</option>
+                      <option [value]="1">Name: A - Z</option>
+                      <option [value]="2">Name: Z - A</option>
+                      <option [value]="3">Price: Low - High</option>
+                      <option [value]="4">Price: High - Low</option>
                     </optgroup>
                   </select>
                 </div>
               </div>
-            </ng-container>
-          </div>
-        </div>
-      </div>
-    </form>
-    <ng-container *ngIf="products.length; else noProducts">
-      <div class="row pt-2">
-        <div
-          *ngFor="
-            let p of products
-              | slice: (page - 1) * pageSize:(page - 1) * pageSize + pageSize
-          "
-          class="col-12 col-sm-6 col-md-4 mb-3"
-        >
-          <div
-            class="card h-100 shadow-sm"
-            (click)="scrollToTop()"
-            [routerLink]="['../', p.type, p.id]"
-            [queryParams]="{
-              id: filterForm.get('brand').value,
-              p: page,
-              sort: filterForm.get('sort').value,
-              search: filterForm.get('search').value,
-              isCollapsed: isCollapsed
-            }"
-          >
-            <img
-              class="card-img-top pt-3 px-3"
-              [src]="p.imageUrl"
-              alt="{{ p.name }}"
-            />
-            <div class="card-body">
-              <h5 class="card-title">
-                {{ p.name | capitalize }}
-              </h5>
-              <h6 class="card-subtitle">
-                {{ p.price | currency }}
-              </h6>
+              <ng-container *ngIf="brands$ | async as brands">
+                <div class="col-sm">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text bg-secondary text-white"
+                        ><svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          fill="currentColor"
+                          class="bi bi-funnel"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z"
+                          />
+                        </svg>
+                      </span>
+                    </div>
+                    <select
+                      class="form-control custom-select"
+                      formControlName="brand"
+                    >
+                      <optgroup label="Filter by brand">
+                        <option [value]="0">- All -</option>
+                        <option *ngFor="let b of brands" [value]="b.id">
+                          {{ b.name }}
+                        </option>
+                      </optgroup>
+                    </select>
+                  </div>
+                </div>
+              </ng-container>
             </div>
           </div>
         </div>
+      </form>
+      <ng-container *ngIf="products.length; else noProducts">
+        <div class="row">
+          <div
+            *ngFor="
+              let p of products
+                | slice: (page - 1) * pageSize:(page - 1) * pageSize + pageSize
+            "
+            class="col-12 col-sm-6 col-md-4 mb-3"
+          >
+            <div
+              class="card h-100 shadow-sm"
+              (click)="scrollToTop()"
+              [routerLink]="['../', p.type, p.id]"
+              [queryParams]="{
+                id: filterForm.get('brand').value,
+                p: page,
+                sort: filterForm.get('sort').value,
+                search: filterForm.get('search').value
+              }"
+            >
+              <img
+                class="card-img-top pt-3 px-3"
+                [src]="p.imageUrl"
+                alt="{{ p.name }}"
+              />
+              <div class="card-body">
+                <h5 class="card-title">
+                  {{ p.name | capitalize }}
+                </h5>
+                <h6 class="card-subtitle">
+                  {{ p.price | currency }}
+                </h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #noProducts>
+        <ngb-alert [dismissible]="false" type="warning" class="text-center">
+          <span>No products found!</span>
+          <input
+            type="button"
+            value="clear filters"
+            role="alert"
+            class="btn btn-sm btn-link text-capitalize"
+            (click)="clearFilters()"
+          />
+        </ngb-alert>
+      </ng-template>
+      <div *ngIf="products.length > pageSize">
+        <ngb-pagination
+          class="d-flex justify-content-end"
+          *ngIf="products.length > pageSize"
+          [collectionSize]="products.length"
+          [(page)]="page"
+          [pageSize]="pageSize"
+          (pageChange)="scrollToTop()"
+        >
+        </ngb-pagination>
       </div>
-    </ng-container>
-    <ng-template #noProducts>
-      <ngb-alert [dismissible]="false" type="danger" class="text-center">
-        <span class="mr-1">No products found!</span>
-        <input
-          type="button"
-          value="clear filters"
-          role="alert"
-          class="btn btn-secondary btn-sm text-capitalize"
-          (click)="clearFilters()"
-        />
-      </ngb-alert>
-    </ng-template>
-    <div *ngIf="products.length > pageSize">
-      <ngb-pagination
-        class="d-flex justify-content-end"
-        *ngIf="products.length > pageSize"
-        [collectionSize]="products.length"
-        [(page)]="page"
-        [pageSize]="pageSize"
-        (pageChange)="scrollToTop()"
-      >
-      </ngb-pagination>
-    </div>
+    </section>
   </ng-container>
   <ng-template #notSubscribed>
     <ng-container *ngIf="error$ | async as error; else loading">
-      <div class="row justify-content-center align-items-center">
-        <div class="col-auto align-self-start">
-          <button
-            routerLink="/products"
-            class="btn btn-lg btn-link text-danger px-0"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="35"
-              height="35"
-              fill="currentColor"
-              class="bi bi-arrow-left-circle-fill"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"
-              />
-            </svg>
-          </button>
-        </div>
-        <div class="col">
-          <h1 class="text-center text-danger m-0 d-none d-sm-block">
-            {{ pageTitle | capitalize }}
-          </h1>
-          <h4 class="text-center text-danger m-0 d-sm-none">
-            {{ pageTitle | capitalize }}
-          </h4>
-        </div>
-        <div class="col-auto align-self-end"></div>
-      </div>
-      <hr />
-
       <ngb-alert [dismissible]="false" type="danger" class="text-center">
         <span>{{ error }}</span>
       </ngb-alert>
     </ng-container>
 
     <ng-template #loading>
-      <button
-        routerLink="/products"
-        class="btn btn-lg btn-link text-danger px-0"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="35"
-          height="35"
-          fill="currentColor"
-          class="bi bi-arrow-left-circle-fill"
-          viewBox="0 0 16 16"
-        >
-          <path
-            d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"
-          />
-        </svg>
-      </button>
       <div class="d-flex justify-content-center m-3">
-        <div class="spinner-border text-info" id="filterSpinner" role="status">
+        <div class="spinner-border text-light" id="filterSpinner" role="status">
           <span class="sr-only">Loading... </span>
         </div>
       </div>

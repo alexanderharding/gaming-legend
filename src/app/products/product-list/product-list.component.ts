@@ -26,8 +26,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
   pageTitle = '';
   private readonly queryParamMap = this.route.snapshot.queryParamMap;
   page = +this.queryParamMap.get('p') || 1;
-  isCollapsed =
-    this.queryParamMap.get('isCollapsed') === 'false' ? false : true;
   readonly productFilter = this.queryParamMap.get('search') || '';
   readonly brandId = +this.queryParamMap.get('id') || 0;
   readonly sort = +this.queryParamMap.get('sort') || 0;

@@ -11,20 +11,31 @@
   >
     <span class="sr-only">Loading...</span>
   </div>
-  <h2 [ngClass]="{ 'text-danger': errorMessage }" class="font-weight-bold">
-    <span>{{ pageTitle | capitalize }}</span>
-  </h2>
+  <section>
+    <h1
+      [ngClass]="{ 'text-danger': errorMessage, 'text-light': !errorMessage }"
+      class="display-4 d-none d-sm-block"
+    >
+      <span>{{ pageTitle | capitalize }}</span>
+    </h1>
+    <h2
+      [ngClass]="{ 'text-danger': errorMessage, 'text-light': !errorMessage }"
+      class="d-sm-none"
+    >
+      <span>{{ pageTitle | capitalize }}</span>
+    </h2>
+  </section>
   <ng-container *ngIf="shippingRates && items$ | async as items; else error">
     <div class="row">
       <div class="col-md mb-3 mb-md-0">
         <ng-container *ngIf="items.length; else noItems">
           <div class="card shadow">
             <div class="card-body">
-              <div class="table-responsive">
-                <table class="table mb-0">
+              <div>
+                <table class="table">
                   <tbody>
-                    <tr *ngFor="let item of items">
-                      <td class="border-0" scope="row">
+                    <tr *ngFor="let item of items; index as i">
+                      <td scope="row" [ngClass]="{ 'border-0': i === 0 }">
                         <img
                           [src]="item.imageUrl"
                           [title]="item.name"
@@ -36,7 +47,11 @@
                           [ngbTooltip]="item.name"
                         />
                       </td>
-                      <td class="d-none d-sm-table-cell border-0" scope="row">
+                      <td
+                        scope="row"
+                        [ngClass]="{ 'border-0': i === 0 }"
+                        class="d-none d-sm-table-cell"
+                      >
                         <a
                           [routerLink]="['/products', item.type, item.id]"
                           [queryParams]="{
@@ -45,7 +60,7 @@
                           >{{ item.name }}</a
                         >
                       </td>
-                      <td scope="row" class="border-0">
+                      <td scope="row" [ngClass]="{ 'border-0': i === 0 }">
                         <div class="form-row align-items-center">
                           <div class="col-auto">
                             <button
@@ -131,25 +146,25 @@
                           item.price | currency
                         }}</span>
                       </td>
-                      <td scope="row" class="border-0 d-none d-sm-table-cell">
+                      <td
+                        scope="row"
+                        [ngClass]="{ 'border-0': i === 0 }"
+                        class="d-none d-sm-table-cell"
+                      >
                         <span>{{ item.price | currency }}</span>
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-              <div class="row justify-content-end">
-                <div class="col-auto">
-                  <input
-                    id="removeAllBtn"
-                    type="button"
-                    (click)="openRemoveAllModal(items)"
-                    class="btn btn-sm btn-outline-danger shadow-sm"
-                    [disabled]="loading$ | async"
-                    value="Empty Cart"
-                  />
-                </div>
-              </div>
+              <input
+                id="removeAllBtn"
+                type="button"
+                (click)="openRemoveAllModal(items)"
+                class="btn btn-sm btn-danger"
+                [disabled]="loading$ | async"
+                value="Empty Cart"
+              />
             </div>
           </div>
         </ng-container>

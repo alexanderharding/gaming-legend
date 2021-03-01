@@ -6,66 +6,44 @@
   >
     <span class="sr-only">Loading...</span>
   </div>
-  <div class="d-md-none mb-3">
-    <input
-      type="button"
-      value="back"
-      class="btn btn-info btn-block text-capitalize mb-3"
-      (click)="onBack()"
-    />
-    <input
-      type="button"
-      value="more products"
-      class="btn btn-outline-light btn-block text-capitalize"
-      routerLink="/products"
-    />
+  <div class="row justify-content-end">
+    <div class="col-auto">
+      <input
+        type="button"
+        value="back"
+        class="btn btn-outline-light text-capitalize"
+        (click)="onBack()"
+      />
+    </div>
   </div>
-  <div class="justify-content-between mb-3 d-none d-md-flex">
-    <input
-      type="button"
-      value="back"
-      class="btn btn-info text-capitalize"
-      (click)="onBack()"
-      queryParamsHandling="preserve"
-    />
-    <input
-      type="button"
-      value="more products"
-      class="btn btn-outline-light text-capitalize"
-      routerLink="/products"
-    />
-  </div>
+  <hr class="border-light" />
   <ng-container *ngIf="product$ | async as product; else noProduct">
     <ng-container *ngIf="items$ | async as items">
       <div class="row">
-        <div class="col-lg-6">
+        <div class="col-md">
           <div class="row">
             <div class="col-12">
               <div class="d-flex justify-content-center">
                 <img
-                  class="img-fluid mb-3 shadow"
-                  [src]="
-                    product.imageUrls
-                      ? product.imageUrls[imageIndex]
-                      : product.imageUrl
-                  "
+                  class="img-thumbnail mb-3"
+                  [src]="product.imageUrl"
                   [title]="product.name"
                 />
               </div>
             </div>
           </div>
-          <div *ngIf="product.imageUrls" class="row mb-3">
+          <!-- <div *ngIf="product.imageUrls" class="row mb-3">
             <div *ngFor="let url of product.imageUrls" class="col">
               <img
-                class="img-fluid img-options shadow-sm"
+                class="img-thumbnail"
                 [src]="url"
                 [title]="product.name"
                 (click)="updateIndex(product.imageUrls, url)"
               />
             </div>
-          </div>
+          </div> -->
         </div>
-        <div class="col-lg-6">
+        <div class="col-md">
           <h2>{{ product.brand }}: {{ product.name }}</h2>
           <small class="text-light mb-2">{{ product.type | uppercase }}</small>
           <div>
@@ -81,19 +59,19 @@
           </p>
           <p>{{ product.description }}</p>
           <div class="form-row mb-3">
-            <div class="col-md-6">
+            <div class="col-sm">
               <input
                 type="button"
-                class="btn btn-block btn-success text-uppercase"
+                class="btn btn-block btn-success text-uppercase mb-2 mb-sm-0"
                 (click)="saveItem(product, items, true)"
                 value="Buy now"
                 [disabled]="this.loading$ | async"
               />
             </div>
-            <div class="col-md-6">
+            <div class="col-sm">
               <input
                 type="button"
-                class="btn btn-block btn-outline-light text-uppercase mt-2 mt-md-0"
+                class="btn btn-block btn-outline-light text-uppercase"
                 (click)="saveItem(product, items)"
                 value="Add to Cart"
                 [disabled]="this.loading$ | async"
