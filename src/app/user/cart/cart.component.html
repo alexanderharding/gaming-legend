@@ -11,25 +11,23 @@
   >
     <span class="sr-only">Loading...</span>
   </div>
-  <section>
-    <h1
-      [ngClass]="{ 'text-danger': errorMessage, 'text-light': !errorMessage }"
-      class="display-4 d-none d-sm-block"
-    >
-      <span>{{ pageTitle | capitalize }}</span>
-    </h1>
-    <h2
-      [ngClass]="{ 'text-danger': errorMessage, 'text-light': !errorMessage }"
-      class="d-sm-none"
-    >
-      <span>{{ pageTitle | capitalize }}</span>
-    </h2>
-  </section>
+  <h1
+    [ngClass]="{ 'text-danger': errorMessage, 'text-light': !errorMessage }"
+    class="display-4 d-none d-sm-block"
+  >
+    <span>{{ pageTitle | capitalize }}</span>
+  </h1>
+  <h2
+    [ngClass]="{ 'text-danger': errorMessage, 'text-light': !errorMessage }"
+    class="d-sm-none"
+  >
+    <span>{{ pageTitle | capitalize }}</span>
+  </h2>
   <ng-container *ngIf="shippingRates && items$ | async as items; else error">
     <div class="row">
       <div class="col-md mb-3 mb-md-0">
         <ng-container *ngIf="items.length; else noItems">
-          <div class="card shadow">
+          <div class="card">
             <div class="card-body">
               <div>
                 <table class="table">
@@ -118,29 +116,6 @@
                               </svg>
                             </button>
                           </div>
-                          <!-- <div class="col-auto">
-                            <button
-                              id="removeBtn"
-                              (click)="openRemoveModal(item)"
-                              type="button"
-                              class="btn btn-lg btn-link text-danger p-0"
-                              [disabled]="loading$ | async"
-                              ngbTooltip="Remove product"
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="22"
-                                height="22"
-                                fill="currentColor"
-                                class="bi bi-trash-fill"
-                                viewBox="0 0 16 16"
-                              >
-                                <path
-                                  d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"
-                                />
-                              </svg>
-                            </button>
-                          </div> -->
                         </div>
                         <span class="d-sm-none">{{
                           item.price | currency
@@ -208,7 +183,7 @@
           type="button"
           value="Checkout"
           routerLink="../checkout"
-          class="btn btn-lg btn-block btn-success text-capitalize shadow-sm"
+          class="btn btn-lg btn-block btn-success text-capitalize"
           [disabled]="!items.length || (loading$ | async) === true"
         />
         <div *ngIf="!items.length" class="text-center text-danger">
@@ -241,112 +216,3 @@
     </ngb-alert>
   </ng-template>
 </div>
-
-<ng-template #updateErrTpl>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    fill="currentColor"
-    class="bi bi-exclamation-octagon-fill mr-1"
-    viewBox="0 0 16 16"
-  >
-    <path
-      d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146zM8 4c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995A.905.905 0 0 1 8 4zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
-    />
-  </svg>
-  Error updating item !
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    fill="currentColor"
-    class="bi bi-x pointer"
-    viewBox="0 0 16 16"
-  >
-    <path
-      d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"
-    />
-  </svg>
-</ng-template>
-<ng-template #removeErrTpl>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    fill="currentColor"
-    class="bi bi-exclamation-octagon-fill mr-1"
-    viewBox="0 0 16 16"
-  >
-    <path
-      d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146zM8 4c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995A.905.905 0 0 1 8 4zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
-    />
-  </svg>
-  Error removing item !
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    fill="currentColor"
-    class="bi bi-x pointer"
-    viewBox="0 0 16 16"
-  >
-    <path
-      d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"
-    />
-  </svg>
-</ng-template>
-`<ng-template #getCartErrTpl>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    fill="currentColor"
-    class="bi bi-exclamation-octagon-fill mr-1"
-    viewBox="0 0 16 16"
-  >
-    <path
-      d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146zM8 4c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995A.905.905 0 0 1 8 4zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
-    />
-  </svg>
-  Error getting cart !
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    fill="currentColor"
-    class="bi bi-x pointer"
-    viewBox="0 0 16 16"
-  >
-    <path
-      d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"
-    />
-  </svg>
-</ng-template>
-<ng-template #clearDangerTpl>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    fill="currentColor"
-    class="bi bi-exclamation-octagon-fill mr-1"
-    viewBox="0 0 16 16"
-  >
-    <path
-      d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146zM8 4c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995A.905.905 0 0 1 8 4zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
-    />
-  </svg>
-  Error emptying cart !
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    fill="currentColor"
-    class="bi bi-x pointer"
-    viewBox="0 0 16 16"
-  >
-    <path
-      d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"
-    />
-  </svg>
-</ng-template>
