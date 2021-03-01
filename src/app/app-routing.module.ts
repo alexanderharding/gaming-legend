@@ -4,7 +4,7 @@ import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 
 import { WelcomeComponent } from './welcome/welcome.component';
 import { NotFoundComponent } from './not-found/not-found.component';
-import { AuthGuard } from './account/auth.guard';
+// import { AuthGuard } from './account/auth.guard';
 
 const ROUTES: Routes = [
   { path: 'welcome', component: WelcomeComponent },
@@ -17,13 +17,13 @@ const ROUTES: Routes = [
     path: 'user',
     loadChildren: () => import('./user/user.module').then((m) => m.UserModule),
   },
-  {
-    path: 'account',
-    loadChildren: () =>
-      import('./account/account.module').then((m) => m.AccountModule),
-    canLoad: [AuthGuard],
-    canActivate: [AuthGuard],
-  },
+  // {
+  //   path: 'account',
+  //   loadChildren: () =>
+  //     import('./account/account.module').then((m) => m.AccountModule),
+  //   canLoad: [AuthGuard],
+  //   canActivate: [AuthGuard],
+  // },
   { path: '', redirectTo: 'welcome', pathMatch: 'full' },
   { path: '**', component: NotFoundComponent },
 ];
@@ -37,6 +37,5 @@ const ROUTES: Routes = [
     }),
   ],
   exports: [RouterModule],
-  providers: [AuthGuard],
 })
 export class AppRoutingModule {}
