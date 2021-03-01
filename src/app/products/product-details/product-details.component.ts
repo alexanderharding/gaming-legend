@@ -36,7 +36,7 @@ export class ProductDetailsComponent implements OnInit {
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
   readonly loading$ = this.loadingSubject.asObservable();
 
-  imageIndex = 0;
+  // imageIndex = 0;
 
   readonly items$ = this.cartService.cartItems$;
 
@@ -91,15 +91,16 @@ export class ProductDetailsComponent implements OnInit {
     });
   }
 
-  updateIndex(urls: string[], productUrl: string): void {
-    const index = urls.findIndex(
-      (url) => url.toLowerCase() === productUrl.toLowerCase()
-    );
-    if (index < 0 || index) {
-      return;
-    }
-    this.imageIndex = +index;
-  }
+  // updateIndex(urls: string[], productUrl: string): void {
+  //   const index = urls.findIndex(
+  //     (url) => url.toLowerCase() === productUrl.toLowerCase()
+  //   );
+  //   console.log(index);
+  //   if (index < 0 || index) {
+  //     return;
+  //   }
+  //   this.imageIndex = +index;
+  // }
 
   onBack(): void {
     if (this.returnLink) {
