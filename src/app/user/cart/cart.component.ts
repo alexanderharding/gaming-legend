@@ -3,7 +3,6 @@ import {
   Component,
   OnInit,
   TemplateRef,
-  ViewChild,
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
@@ -20,7 +19,6 @@ import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.
 
 import { CartService } from '../../services/cart.service';
 import { NotificationService } from '../../services/notification.service';
-import { ShippingRateService } from '../../services/shipping-rate.service';
 
 import { ICartItem } from '../../types/cart-item';
 import { INotification } from '../../types/notification';
@@ -33,11 +31,10 @@ import { ShippingRatesResult } from '../../types/shipping-rates-result';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartComponent implements OnInit {
-  @ViewChild('updateErrTpl') private updateErrTpl: TemplateRef<any>;
-  @ViewChild('removeErrTpl') private removeErrTpl: TemplateRef<any>;
-  @ViewChild('clearDangerTpl') private clearDangerTpl: TemplateRef<any>;
-  @ViewChild('getCartErrTpl') private getCartErrTpl: TemplateRef<any>;
+  /* Page title */
+  pageTitle = 'Review Cart';
 
+  /* BehaviorSubject for displaying loading spinner */
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
   readonly loading$ = this.loadingSubject.asObservable();
 
@@ -47,18 +44,15 @@ export class CartComponent implements OnInit {
   readonly shippingRates = this.resolvedData.shippingRates as IShipping[];
   readonly errorMessage = this.resolvedData.error as string;
 
-  /* Page title */
-  pageTitle = 'Review Cart';
-
   /* Get items$ from CartService */
   readonly items$ = this.cartService.cartItems$;
 
   constructor(
-    private readonly cartService: CartService,
     private readonly route: ActivatedRoute,
-    private readonly modalService: NgbModal,
-    private readonly notificationService: NotificationService,
     private readonly title: Title,
+    private readonly cartService: CartService,
+    private readonly notificationService: NotificationService,
+    private readonly modalService: NgbModal,
     private readonly ngbModalConfig: NgbModalConfig,
     private readonly ngbTooltipConfig: NgbTooltipConfig
   ) {}
@@ -73,43 +67,36 @@ export class CartComponent implements OnInit {
     this.ngbTooltipConfig.container = 'body';
     this.ngbTooltipConfig.placement = 'bottom';
 
-    if (!this.shippingRates) {
+    /* Set index.html title */
+    if (this.errorMessage) {
       this.pageTitle = 'Retrieval Error';
     }
     this.title.setTitle(`Gaming Legend | ${this.pageTitle}`);
   }
 
   saveItem(item: ICartItem, amount: number): void {
+    /* Call openRemoveModal method if item.quantity is less than or equal to 1
+    and amount equals -1 */
     if (item.quantity <= 1 && amount === -1) {
       this.openRemoveModal(item);
       return;
     }
+
     this.setLoading(true);
     const updatedItem = {
       ...item,
       quantity: item.quantity + amount,
     } as ICartItem;
     this.cartService.saveItem(updatedItem, 0).subscribe({
-      error: (err) => {
+      error: () => {
         this.setLoading(false);
-        console.error(err);
-        this.show(this.updateErrTpl);
+        this.show(
+          `Error updating ${updatedItem.name} !`,
+          'bg-danger text-light',
+          15000
+        );
       },
       complete: () => this.getCartItems(),
-    });
-  }
-
-  openRemoveModal(item: ICartItem): void {
-    const modalRef = this.modalService.open(ConfirmModalComponent);
-    const instance = modalRef.componentInstance;
-    instance.title = 'Remove Item';
-    instance.message = `Are you sure you want to remove "${item.name}"?`;
-    instance.warningMessage = 'This operation can not be undone.';
-    instance.type = 'bg-danger';
-    instance.closeMessage = 'remove';
-    modalRef.closed.pipe(first()).subscribe({
-      error: () => {},
-      complete: () => this.removeItem(item),
     });
   }
 
@@ -130,11 +117,42 @@ export class CartComponent implements OnInit {
     });
   }
 
+  private openRemoveModal(item: ICartItem): void {
+    const modalRef = this.modalService.open(ConfirmModalComponent);
+    const instance = modalRef.componentInstance;
+    instance.title = 'Remove Item';
+    instance.message = `Are you sure you want to remove "${item.name}"?`;
+    instance.warningMessage = 'This operation can not be undone.';
+    instance.type = 'bg-danger';
+    instance.closeMessage = 'remove';
+    modalRef.closed.pipe(first()).subscribe({
+      error: () => {},
+      complete: () => this.removeItem(item),
+    });
+  }
+
+  private show(
+    textOrTpl: string | TemplateRef<any>,
+    className: string,
+    delay?: number
+  ): void {
+    const notification = {
+      textOrTpl,
+      className,
+      delay,
+    } as INotification;
+    this.notificationService.show(notification);
+  }
+
   private removeItem(item: ICartItem): void {
     this.setLoading(true);
     this.cartService.removeItem(item).subscribe({
       error: () => {
-        this.show(this.removeErrTpl);
+        this.show(
+          `Error removing ${item.name} !`,
+          'bg-danger text-light',
+          15000
+        );
         this.setLoading(false);
       },
       complete: () => this.getCartItems(),
@@ -144,20 +162,11 @@ export class CartComponent implements OnInit {
   private removeAllItems(items: ICartItem[]): void {
     this.cartService.removeAllItems(items).subscribe({
       error: () => {
-        this.show(this.clearDangerTpl);
+        this.show(`Error emptying cart !`, 'bg-danger text-light', 15000);
         this.setLoading(false);
       },
       complete: () => this.getCartItems(),
     });
-  }
-
-  private show(templateRef: TemplateRef<any>): void {
-    const notification = {
-      textOrTpl: templateRef,
-      className: 'bg-danger text-light',
-      delay: 15000,
-    } as INotification;
-    this.notificationService.show(notification);
   }
 
   private setLoading(value: boolean): void {
@@ -167,7 +176,7 @@ export class CartComponent implements OnInit {
   private getCartItems(): void {
     this.cartService.getCartItems().subscribe({
       error: () => {
-        this.show(this.getCartErrTpl);
+        this.show(`Error retrieving cart !`, 'bg-danger text-light', 15000);
         this.setLoading(false);
       },
       complete: () => this.setLoading(false),
