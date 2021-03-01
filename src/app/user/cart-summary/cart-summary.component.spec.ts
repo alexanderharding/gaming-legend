@@ -9,6 +9,7 @@ import { ICartItem } from 'src/app/types/cart-item';
 import { CartSummaryComponent } from './cart-summary.component';
 import { By } from '@angular/platform-browser';
 import { formatCurrency } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 
 describe('CartSummaryComponent', () => {
   let component: CartSummaryComponent;
@@ -174,7 +175,7 @@ describe('CartSummaryComponent', () => {
         shippingPriceSelectedAction$: of(SHIPPINGPRICESELECTED),
       });
       TestBed.configureTestingModule({
-        imports: [HttpClientTestingModule],
+        imports: [HttpClientTestingModule, ReactiveFormsModule],
         declarations: [CartSummaryComponent],
         providers: [
           { provide: CartService, useValue: mockCartService },
@@ -195,12 +196,6 @@ describe('CartSummaryComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have set tax correctly', () => {
-    fixture.detectChanges();
-
-    expect(component.tax).toBe(TAX);
-  });
-
   it('should have set items$ correctly', () => {
     let items: ICartItem[];
     fixture.detectChanges();
@@ -209,15 +204,6 @@ describe('CartSummaryComponent', () => {
 
     expect(items.length).toEqual(3);
     expect(items).toBe(ITEMS);
-  });
-
-  it('should have set quantity$ correctly', () => {
-    let quantity: number;
-    fixture.detectChanges();
-
-    component.quantity$.subscribe((q) => (quantity = q));
-
-    expect(quantity).toBe(QUANTITY);
   });
 
   it('should have set subtotal$ correctly', () => {
