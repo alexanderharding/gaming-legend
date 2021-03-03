@@ -4,10 +4,11 @@ import {
   Input,
   OnDestroy,
   OnInit,
+  Output,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { first } from 'rxjs/operators';
+import { debounceTime, first } from 'rxjs/operators';
 
 import { CartService } from 'src/app/services/cart.service';
 import { ShippingRateService } from 'src/app/services/shipping-rate.service';
@@ -43,9 +44,9 @@ export class CartSummaryComponent implements OnInit, OnDestroy {
 
     const priceControl = this.shippingForm.controls.price;
     this.subscriptions.push(
-      priceControl.valueChanges.subscribe((price) =>
-        this.shippingRateService.setShipping(+price)
-      )
+      priceControl.valueChanges
+        .pipe(debounceTime(500))
+        .subscribe((price) => this.shippingRateService.setShipping(+price))
     );
 
     this.shippingPrice$
