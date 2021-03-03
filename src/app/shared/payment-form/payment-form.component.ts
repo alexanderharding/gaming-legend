@@ -16,12 +16,12 @@ import { debounceTime } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaymentFormComponent implements OnInit, OnDestroy {
+  readonly pageTitle = 'Payment';
   private readonly date = new Date();
   private readonly month = this.date.getMonth();
   private readonly fullYear = this.date.getFullYear();
   readonly cardMinExpiration = `${this.fullYear}-0${this.month + 1}`;
   readonly cardMaxExpiration = `${this.fullYear + 8}-0${this.month + 1}`;
-  readonly pageTitle = 'Payment';
 
   @Input() parentForm: FormGroup;
   @Input() submitted: boolean;
