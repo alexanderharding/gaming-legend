@@ -1,7 +1,27 @@
+import { Pipe, PipeTransform } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By, Title } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { OrderPlacedComponent } from './order-placed.component';
+
+@Pipe({
+  name: 'capitalize',
+})
+class MockCapitalizePipe implements PipeTransform {
+  transform(value: string): string {
+    if (value === undefined || value === null || value.length === 0) {
+      return value;
+    }
+    const words = value.split(' ');
+    const capitalizedWords = [];
+    words.forEach((w) =>
+      capitalizedWords.push(
+        w[0].toUpperCase() + w.slice(1, w.length).toLowerCase()
+      )
+    );
+    return capitalizedWords.join(' ');
+  }
+}
 
 describe('OrderPlacedComponent', () => {
   let component: OrderPlacedComponent;
@@ -13,7 +33,7 @@ describe('OrderPlacedComponent', () => {
       mockTitle = jasmine.createSpyObj(['setTitle']);
       TestBed.configureTestingModule({
         imports: [NgbModule],
-        declarations: [OrderPlacedComponent],
+        declarations: [OrderPlacedComponent, MockCapitalizePipe],
         providers: [{ provide: Title, useValue: mockTitle }],
       }).compileComponents();
     })
@@ -51,8 +71,7 @@ describe('OrderPlacedComponent', () => {
     fixture.detectChanges();
 
     // Assert
-    expect(mockTitle.setTitle).toHaveBeenCalledTimes(1);
-    expect(mockTitle.setTitle).toHaveBeenCalledWith(
+    expect(mockTitle.setTitle).toHaveBeenCalledOnceWith(
       `Gaming Legend | ${component.pageTitle}`
     );
   });
@@ -66,7 +85,7 @@ describe('OrderPlacedComponent w/ template', () => {
     waitForAsync(() => {
       TestBed.configureTestingModule({
         imports: [NgbModule],
-        declarations: [OrderPlacedComponent],
+        declarations: [OrderPlacedComponent, MockCapitalizePipe],
       }).compileComponents();
     })
   );
