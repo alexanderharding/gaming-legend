@@ -24,20 +24,12 @@ import { Title } from '@angular/platform-browser';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductDetailsComponent implements OnInit {
-  @ViewChild('successTpl') private successTpl: TemplateRef<any>;
-  @ViewChild('dangerTpl') private dangerTpl: TemplateRef<any>;
-  @ViewChild('getCartErrTpl') private getCartErrTpl: TemplateRef<any>;
-
   private readonly productType = this.route.snapshot.paramMap.get('type');
   private readonly returnLink = this.route.snapshot.queryParamMap.get(
     'returnLink'
   );
-
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
   readonly loading$ = this.loadingSubject.asObservable();
-
-  // imageIndex = 0;
-
   readonly items$ = this.cartService.cartItems$;
 
   private readonly resolvedData$ = this.route.data.pipe(
@@ -50,11 +42,9 @@ export class ProductDetailsComponent implements OnInit {
       return resolvedData;
     })
   );
-
   readonly product$ = this.resolvedData$.pipe(
     map((r) => r.product as IProduct)
   );
-
   readonly error$ = this.resolvedData$.pipe(map((r) => r.error as string));
 
   constructor(
@@ -79,10 +69,14 @@ export class ProductDetailsComponent implements OnInit {
     this.cartService.saveItem(item, index).subscribe({
       error: () => {
         this.setLoading(false);
-        this.showDanger(this.dangerTpl);
+        this.show(
+          `Error adding "${product.name}" !`,
+          'bg-danger text-light',
+          15000
+        );
       },
       complete: () => {
-        this.showSuccess();
+        this.show(`${product.name} to cart !`, 'bg-success text-light', 10000);
         this.getCartItems(navigate);
         if (!navigate) {
           this.openModal(product);
@@ -145,21 +139,15 @@ export class ProductDetailsComponent implements OnInit {
     this.loadingSubject.next(value);
   }
 
-  private showSuccess(): void {
+  private show(
+    textOrTpl: string | TemplateRef<any>,
+    className: string,
+    delay?: number
+  ): void {
     const notification = {
-      textOrTpl: this.successTpl,
-
-      className: 'bg-success text-light',
-      delay: 10000,
-    } as INotification;
-    this.notificationService.show(notification);
-  }
-
-  private showDanger(templateRef: TemplateRef<any>): void {
-    const notification = {
-      textOrTpl: templateRef,
-      className: 'bg-danger text-light',
-      delay: 15000,
+      textOrTpl,
+      className,
+      delay,
     } as INotification;
     this.notificationService.show(notification);
   }
@@ -167,7 +155,7 @@ export class ProductDetailsComponent implements OnInit {
   private getCartItems(navigate?: boolean): void {
     this.cartService.getCartItems().subscribe({
       error: () => {
-        this.showDanger(this.getCartErrTpl);
+        this.show(`Error retrieving cart !`, 'bg-danger text-light', 15000);
         this.setLoading(false);
       },
       complete: () => {
