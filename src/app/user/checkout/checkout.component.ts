@@ -54,7 +54,7 @@ function cardNumberChecker(
 ): { [key: string]: boolean } | null {
   const value = c.value?.toString() as string;
 
-  if (c.pristine || !value) {
+  if (!value) {
     return null;
   }
 
