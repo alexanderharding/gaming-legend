@@ -22,7 +22,7 @@ function cardNumberChecker(
 ): { [key: string]: boolean } | null {
   const value = c.value?.toString() as string;
 
-  if (c.pristine || !value) {
+  if (!value) {
     return null;
   }
 
@@ -180,20 +180,20 @@ describe('PaymentFormComponent', () => {
     expect(message).toBe(CARDNUMBERVALIDATIONMESSAGES.required);
   }));
 
-  xit(`should set cardNumberMessage$ correctly when cardNumber control value is
-    an invalid card number`, fakeAsync(() => {
+  it(`should set cardNumberMessage$ correctly when cardNumber control on the
+    parentForm has a cardNumber error`, fakeAsync(() => {
     let message: string;
     const cardNumberControl = component.parentForm.get(
       'paymentGroup.cardNumber'
     );
     fixture.detectChanges();
 
-    cardNumberControl.setValue(12);
+    cardNumberControl.setValue('12');
     tick(1000);
     component.cardNumberMessage$.subscribe((m) => (message = m));
 
     expect(cardNumberControl.hasError('cardNumber')).toBeTrue();
-    // expect(cardNumberControl.hasError('required')).toBeFalse();
+    expect(cardNumberControl.hasError('required')).toBeFalse();
     expect(message).toBe(CARDNUMBERVALIDATIONMESSAGES.cardNumber);
   }));
 
@@ -205,7 +205,7 @@ describe('PaymentFormComponent', () => {
     );
     fixture.detectChanges();
 
-    cardNumberControl.setValue(4154514587412547);
+    cardNumberControl.setValue('4154514587412547');
     tick(1000);
     component.cardNumberMessage$.subscribe((m) => (message = m));
 
@@ -448,7 +448,7 @@ describe('PaymentFormComponent w/ template', () => {
     );
   }));
 
-  xit(`should set cardNumberMessage$ correctly in the template when cardNumber
+  it(`should set cardNumberMessage$ correctly in the template when cardNumber
     control on parentForm has cardNumber error`, fakeAsync(() => {
     const cardNumberControl = component.parentForm.get(
       'paymentGroup.cardNumber'
