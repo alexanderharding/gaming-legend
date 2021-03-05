@@ -33,16 +33,17 @@
                 <tbody>
                   <tr *ngFor="let item of items; index as i">
                     <td scope="row" [ngClass]="{ 'border-0': i === 0 }">
-                      <img
-                        [src]="item.imageUrl"
-                        [title]="item.name"
-                        class="pointer"
+                      <a
                         [routerLink]="['/products', item.type, item.id]"
                         [queryParams]="{
                           returnLink: '/user/cart'
                         }"
-                        [ngbTooltip]="item.name"
-                      />
+                      >
+                        <img
+                          src="{{ item.imageUrl }}"
+                          title="{{ item.name }}"
+                        />
+                      </a>
                     </td>
                     <td
                       scope="row"
@@ -176,6 +177,7 @@
           ></ctacu-cart-summary>
         </div>
         <input
+          id="checkoutBtn"
           type="button"
           value="Checkout"
           routerLink="../checkout"
