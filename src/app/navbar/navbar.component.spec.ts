@@ -1,9 +1,9 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { RouterTestingModule } from '@angular/router/testing';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { of, throwError } from 'rxjs';
-import { AppRoutingModule } from '../app-routing.module';
 import { AuthService } from '../services/auth.service';
 import { CartService } from '../services/cart.service';
 import { NotificationService } from '../services/notification.service';
@@ -50,7 +50,7 @@ describe('NavbarComponent', () => {
       mockNotificationService = jasmine.createSpyObj(['show']);
       mockAuthService = jasmine.createSpyObj([''], { currentUser$: of(USER) });
       TestBed.configureTestingModule({
-        imports: [HttpClientTestingModule, NgbModule, AppRoutingModule],
+        imports: [HttpClientTestingModule, NgbModule, RouterTestingModule],
         declarations: [NavbarComponent],
         providers: [
           { provide: CartService, useValue: mockCartService },
@@ -183,7 +183,7 @@ describe('NavbarComponent w/ template', () => {
       });
       mockAuthService = jasmine.createSpyObj([''], { currentUser$: of(USER) });
       TestBed.configureTestingModule({
-        imports: [HttpClientTestingModule, NgbModule, AppRoutingModule],
+        imports: [HttpClientTestingModule, NgbModule, RouterTestingModule],
         declarations: [NavbarComponent],
         providers: [
           { provide: CartService, useValue: mockCartService },
@@ -232,17 +232,36 @@ describe('NavbarComponent w/ template', () => {
     expect(elements[2].nativeElement.textContent).toContain(CARTQUANTITY);
   });
 
-  // it('should set the currentUser$ in the template', () => {
-  //   // Arrange
+  it('should set the routerLink paths in the template', () => {
+    let path: string;
+    mockCartService.getCartItems.and.returnValue(of(true));
+
+    fixture.detectChanges();
+
+    const elements = fixture.debugElement.queryAll(By.css('a'));
+    expect(elements.length).toBe(4);
+    path = elements[0].nativeElement.getAttribute('routerLink');
+    expect(path).toBe('/welcome');
+    path = elements[1].nativeElement.getAttribute('routerLink');
+    expect(path).toBe('/welcome');
+    path = elements[2].nativeElement.getAttribute('routerLink');
+    expect(path).toBe('/products');
+    path = elements[3].nativeElement.getAttribute('routerLink');
+    expect(path).toBe('/user/cart');
+  });
+
+  // fit('should behave...', () => {
   //   mockCartService.getCartItems.and.returnValue(of(true));
 
-  //   // Act
   //   fixture.detectChanges();
+  //   const elements = fixture.debugElement.queryAll(By.css('a'));
 
-  //   // Assert
-  //   const elements = fixture.debugElement.queryAll(By.css('li a'));
-  //   expect(elements[3].nativeElement.textContent).toContain(
-  //     USER.name.firstName.toLocaleLowerCase()
-  //   );
+  //   let routerLink = elements[1]
+  //     .query(By.directive(RouterLinkDirectiveStub))
+  //     .injector.get(RouterLinkDirectiveStub);
+
+  //   elements[2].triggerEventHandler('click', {});
+
+  //   expect(routerLink.navigatedTo).toBe('');
   // });
 });
