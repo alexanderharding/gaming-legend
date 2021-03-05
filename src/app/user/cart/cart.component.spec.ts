@@ -12,7 +12,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CartComponent } from './cart.component';
 import { CartService } from '../../services/cart.service';
 import { Observable, of, throwError } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLinkWithHref } from '@angular/router';
 import { ShippingRateService } from '../../services/shipping-rate.service';
 import { ICartItem } from '../../types/cart-item';
 import { IShipping } from '../../types/shipping';
@@ -28,8 +28,8 @@ import { ShippingRatesResult } from '../../types/shipping-rates-result';
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.component';
 import { NotificationService } from '../../services/notification.service';
 import { formatCurrency } from '@angular/common';
-import { AppRoutingModule } from '../../app-routing.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
 
 function getQuantity(items: ICartItem[]): number {
   return items.reduce((prev, current) => {
@@ -42,17 +42,7 @@ function getQuantity(items: ICartItem[]): number {
 })
 class MockCapitalizePipe implements PipeTransform {
   transform(value: string): string {
-    if (value === undefined || value === null || value.length === 0) {
-      return value;
-    }
-    const words = value.split(' ');
-    const capitalizedWords = [];
-    words.forEach((w) =>
-      capitalizedWords.push(
-        w[0].toUpperCase() + w.slice(1, w.length).toLowerCase()
-      )
-    );
-    return capitalizedWords.join(' ');
+    return value;
   }
 }
 
@@ -288,14 +278,12 @@ describe('CartComponent', () => {
         mockErrorModalRef = new MockErrorNgbModalRef();
 
         TestBed.configureTestingModule({
-          imports: [HttpClientTestingModule, AppRoutingModule, NgbModule],
-
+          imports: [HttpClientTestingModule, RouterTestingModule, NgbModule],
           declarations: [
             CartComponent,
             FakeCartSummaryComponent,
             MockCapitalizePipe,
           ],
-
           providers: [
             { provide: CartService, useValue: mockCartService },
             {
@@ -312,7 +300,6 @@ describe('CartComponent', () => {
             },
             { provide: Title, useValue: mockTitle },
           ],
-          // schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
       })
     );
@@ -989,9 +976,8 @@ describe('CartComponent', () => {
       },
     ];
     const ERRORMESSAGE = 'Error!';
-    const SHIPPINGRATES = null;
     const RESOLVEDDATA: ShippingRatesResult = {
-      shippingRates: SHIPPINGRATES,
+      shippingRates: null,
       error: ERRORMESSAGE,
     };
 
@@ -1289,7 +1275,11 @@ describe('CartComponent w/ template', () => {
           { shippingPriceSelectedAction$: of(SHIPPINGRATES[0].price) }
         );
         TestBed.configureTestingModule({
-          imports: [HttpClientTestingModule, ReactiveFormsModule],
+          imports: [
+            HttpClientTestingModule,
+            ReactiveFormsModule,
+            RouterTestingModule,
+          ],
 
           declarations: [
             CartComponent,
@@ -1359,39 +1349,74 @@ describe('CartComponent w/ template', () => {
     });
 
     it('should set items$ in the template', () => {
+      let items: ICartItem[];
       // run ngOnInit
       fixture.detectChanges();
+      component.items$.subscribe((i) => (items = i));
 
       // item debug elements
       const tabelRowElements = fixture.debugElement.queryAll(
         By.css('tbody tr')
       );
-      expect(tabelRowElements.length).toEqual(ITEMS.length);
+      expect(tabelRowElements.length).toEqual(items.length);
       for (let i = 0; i < tabelRowElements.length; i++) {
         let element: DebugElement;
         const tableCellElements = tabelRowElements[i].queryAll(By.css('td'));
 
         element = tableCellElements[0].query(By.css('img'));
-        expect(element.nativeElement.src).toContain(ITEMS[i].imageUrl);
-        expect(element.nativeElement.title).toBe(ITEMS[i].name);
-        expect(element.classes).toEqual({
-          pointer: true,
-        });
+        expect(element.nativeElement.src).toContain(items[i].imageUrl);
+        expect(element.nativeElement.title).toBe(items[i].name);
 
         element = tableCellElements[1].query(By.css('a'));
-        expect(element.nativeElement.textContent).toBe(ITEMS[i].name);
+        expect(element.nativeElement.textContent).toBe(items[i].name);
 
         element = tableCellElements[2].query(By.css('h4'));
-        expect(+element.nativeElement.textContent).toBe(ITEMS[i].quantity);
-        expect(element.classes).toEqual({
-          'm-0': true,
-        });
+        expect(+element.nativeElement.textContent).toBe(items[i].quantity);
 
         element = tableCellElements[3].query(By.css('span'));
         expect(element.nativeElement.textContent).toBe(
-          formatCurrency(ITEMS[i].price, 'en-US', '$')
+          formatCurrency(items[i].price, 'en-US', '$')
         );
       }
+    });
+
+    it('should set items$ hrefs in the template', () => {
+      let items: ICartItem[];
+      // run ngOnInit
+      fixture.detectChanges();
+      component.items$.subscribe((i) => (items = i));
+
+      // item debug elements
+      const tabelRowElements = fixture.debugElement.queryAll(
+        By.css('tbody tr')
+      );
+      expect(tabelRowElements.length).toEqual(items.length);
+      for (let i = 0; i < tabelRowElements.length; i++) {
+        let href: string;
+        let path: string;
+        const routerLinkWithHrefElements = tabelRowElements[i].queryAll(
+          By.directive(RouterLinkWithHref)
+        );
+
+        path = `/products/${items[i].type}/${items[i].id}?returnLink=%2Fuser%2Fcart`;
+        expect(routerLinkWithHrefElements.length).toBe(2);
+        href = routerLinkWithHrefElements[0].nativeElement.getAttribute('href');
+        expect(href).toBe(path);
+        href = routerLinkWithHrefElements[1].nativeElement.getAttribute('href');
+        expect(href).toBe(path);
+      }
+    });
+
+    it(`should set checkout input button's routerLink path in the
+      template`, () => {
+      fixture.detectChanges();
+
+      const buttonDE = fixture.debugElement.queryAll(By.css('#checkoutBtn'));
+
+      expect(buttonDE.length).toBe(1);
+      expect(buttonDE[0].nativeElement.getAttribute('routerLink')).toBe(
+        '../checkout'
+      );
     });
 
     it('should set CartSummaryComponent in the template', () => {
@@ -1410,53 +1435,59 @@ describe('CartComponent w/ template', () => {
     it(`should call openRemoveAllModal method with correct value when empty
       input button is clicked`, () => {
       // Arrange
+      let items: ICartItem[];
       spyOn(component, 'openRemoveAllModal');
       fixture.detectChanges();
-      const input = fixture.debugElement.queryAll(By.css('#removeAllBtn'));
+      component.items$.subscribe((i) => (items = i as ICartItem[]));
 
       // Act
+      const input = fixture.debugElement.queryAll(By.css('#removeAllBtn'));
       input[0].triggerEventHandler('click', null);
 
       // Assert
       expect(input.length).toBe(1);
-      expect(component.openRemoveAllModal).toHaveBeenCalledOnceWith(ITEMS);
+      expect(component.openRemoveAllModal).toHaveBeenCalledOnceWith(items);
     });
 
     it(`should call saveItem method with correct value when decrease input
       button is clicked`, () => {
       // Arrange
+      let items: ICartItem[];
       const index = 1;
       spyOn(component, 'saveItem');
       fixture.detectChanges();
-      const input = fixture.debugElement.queryAll(By.css('#decreaseBtn'));
+      component.items$.subscribe((i) => (items = i as ICartItem[]));
 
       // Act
+      const input = fixture.debugElement.queryAll(By.css('#decreaseBtn'));
       input[index].triggerEventHandler('click', null);
 
       // Assert
-      expect(input.length).toBe(ITEMS.length);
+      expect(input.length).toBe(items.length);
       expect(component.saveItem).toHaveBeenCalledOnceWith(
-        ITEMS[index],
-        ITEMS[index].quantity - 1
+        items[index],
+        items[index].quantity - 1
       );
     });
 
     it(`should call saveItem method with correct value when increase input
       button is clicked`, () => {
       // Arrange
+      let items: ICartItem[];
       const index = 1;
       spyOn(component, 'saveItem');
       fixture.detectChanges();
-      const input = fixture.debugElement.queryAll(By.css('#increaseBtn'));
+      component.items$.subscribe((i) => (items = i as ICartItem[]));
 
       // Act
+      const input = fixture.debugElement.queryAll(By.css('#increaseBtn'));
       input[index].triggerEventHandler('click', null);
 
       // Assert
-      expect(input.length).toBe(ITEMS.length);
+      expect(input.length).toBe(items.length);
       expect(component.saveItem).toHaveBeenCalledOnceWith(
-        ITEMS[index],
-        ITEMS[index].quantity + 1
+        items[index],
+        items[index].quantity + 1
       );
     });
   });
