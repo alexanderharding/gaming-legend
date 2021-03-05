@@ -605,7 +605,7 @@ describe('PaymentFormComponent w/ template', () => {
     expect(cvvControl.value).toBe(cvv);
   }));
 
-  xit(`should set cardNumber input classes correctly when submitted is
+  it(`should set cardNumber input classes correctly when submitted is
     false`, fakeAsync(() => {
     const cardNumberControl = component.parentForm.get(
       'paymentGroup.cardNumber'
