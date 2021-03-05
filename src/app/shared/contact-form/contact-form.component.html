@@ -1,7 +1,7 @@
 <form [formGroup]="parentForm" novalidate>
   <fieldset formGroupName="contactGroup">
-    <legend class="text-primary text-capitalize">
-      {{ (pageTitle ? pageTitle : defaultPageTitle) | lowercase }}
+    <legend class="text-primary">
+      {{ pageTitle | capitalize }}
     </legend>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
@@ -34,16 +34,12 @@
         placeholder="Email (required)"
         formControlName="email"
         [ngClass]="{
-          'is-invalid':
-            ((emailMessage$ | async) || emailTakenMessage) && submitted,
-          'is-valid': (emailMessage$ | async) === '' && !emailTakenMessage
+          'is-invalid': (emailMessage$ | async) && submitted,
+          'is-valid': (emailMessage$ | async) === ''
         }"
       />
       <div class="invalid-tooltip">
         <span>{{ emailMessage$ | async }}</span>
-        <span *ngIf="(emailMessage$ | async) === ''">{{
-          emailTakenMessage
-        }}</span>
       </div>
     </div>
     <div class="input-group">

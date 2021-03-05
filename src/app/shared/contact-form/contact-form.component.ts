@@ -21,13 +21,10 @@ import { UserContact } from 'src/app/types/user-contact';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContactFormComponent implements OnInit, OnDestroy {
-  readonly defaultPageTitle = 'Contact Information';
+  readonly pageTitle = 'Contact Information';
 
   @Input() parentForm: FormGroup;
   @Input() submitted: boolean;
-  @Input() user: IUser;
-  @Input() pageTitle: string;
-  @Input() emailTakenMessage: string;
 
   @Output() valueChange = new EventEmitter<string>();
 
@@ -71,9 +68,9 @@ export class ContactFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscribeToControls();
-    if (this.user) {
-      this.setUserData(this.user.contact);
-    }
+    // if (this.user) {
+    //   this.setUserData(this.user.contact);
+    // }
   }
 
   private subscribeToControls(): void {
@@ -147,14 +144,14 @@ export class ContactFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  private setUserData(contact: UserContact): void {
-    const contactControl = this.parentForm.get('contactGroup');
-    contactControl.setValue({
-      phone: contact.phone,
-      email: contact.email,
-      confirmEmail: contact.email,
-    });
-  }
+  // private setUserData(contact: UserContact): void {
+  //   const contactControl = this.parentForm.get('contactGroup');
+  //   contactControl.setValue({
+  //     phone: contact.phone,
+  //     email: contact.email,
+  //     confirmEmail: contact.email,
+  //   });
+  // }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach((s) => s.unsubscribe());
