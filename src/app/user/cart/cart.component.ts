@@ -75,8 +75,8 @@ export class CartComponent implements OnInit {
   }
 
   saveItem(item: ICartItem, quantity: number): void {
-    if (quantity <= 0) {
-      this.openRemoveModal(item);
+    if (+quantity === 0) {
+      this.removeItem(item);
       return;
     }
     this.setLoading(true);
