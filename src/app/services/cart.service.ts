@@ -31,6 +31,8 @@ export class CartService {
   private readonly cartItemsSubject = new BehaviorSubject<ICartItem[]>([]);
   readonly cartItems$ = this.cartItemsSubject.asObservable();
 
+  readonly itemMaxQty = 5;
+
   cartQuantity$ = this.cartItems$.pipe(
     map((items) =>
       items.reduce((prev, current) => {

@@ -24,6 +24,7 @@ import { Title } from '@angular/platform-browser';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductDetailsComponent implements OnInit {
+  private itemMaxQty = this.cartService.itemMaxQty;
   private readonly productType = this.route.snapshot.paramMap.get('type');
   private readonly returnLink = this.route.snapshot.queryParamMap.get(
     'returnLink'
@@ -64,9 +65,43 @@ export class ProductDetailsComponent implements OnInit {
 
   saveItem(product: IProduct, items: ICartItem[], navigate?: boolean): void {
     const index = this.getIndex(product, items);
+    if (items[index].quantity === this.itemMaxQty) {
+      if (navigate) {
+        this.show(
+          `Max quantity already in cart !`,
+          'bg-danger text-light',
+          50000
+        );
+        // this.router.navigate(['/user/cart']);
+      } else {
+        this.openModal(
+          `Max Quantity !`,
+          `Max quantity of "${product.name}" already in cart!`,
+          'bg-danger'
+        );
+      }
+      return;
+    }
     const item = this.getUpdatedItem(product, items, index);
+
     this.setLoading(true);
     this.cartService.saveItem(item, index).subscribe({
+      next: (item) => {
+        if (navigate) {
+          this.show(
+            `Added "${product.name}" to cart !`,
+            'bg-success text-light',
+            10000
+          );
+        } else {
+          this.openModal(
+            `Success !`,
+            `"${item.name}" added to cart!`,
+            'bg-success text-light'
+          );
+        }
+        this.getCartItems(navigate);
+      },
       error: () => {
         this.setLoading(false);
         this.show(
@@ -74,13 +109,6 @@ export class ProductDetailsComponent implements OnInit {
           'bg-danger text-light',
           15000
         );
-      },
-      complete: () => {
-        this.show(`${product.name} to cart !`, 'bg-success text-light', 10000);
-        this.getCartItems(navigate);
-        if (!navigate) {
-          this.openModal(product);
-        }
       },
     });
   }
@@ -106,12 +134,12 @@ export class ProductDetailsComponent implements OnInit {
     }
   }
 
-  private openModal(product: IProduct): void {
+  private openModal(title: string, message: string, type: string): void {
     const modalRef = this.modalService.open(ConfirmModalComponent);
     const instance = modalRef.componentInstance;
-    instance.title = `${product.name} Added`;
-    instance.message = `"${product.name}" added to the cart!`;
-    instance.type = 'bg-success';
+    instance.title = title;
+    instance.message = message;
+    instance.type = type;
     instance.closeMessage = 'go to cart';
     instance.dismissMessage = 'keep shopping';
     modalRef.closed.pipe(first()).subscribe({
