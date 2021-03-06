@@ -28,7 +28,7 @@ import { ShippingRatesResult } from '../../types/shipping-rates-result';
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.component';
 import { NotificationService } from '../../services/notification.service';
 import { formatCurrency } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 
 function getQuantity(items: ICartItem[]): number {
@@ -278,7 +278,12 @@ describe('CartComponent', () => {
         mockErrorModalRef = new MockErrorNgbModalRef();
 
         TestBed.configureTestingModule({
-          imports: [HttpClientTestingModule, RouterTestingModule, NgbModule],
+          imports: [
+            HttpClientTestingModule,
+            RouterTestingModule,
+            NgbModule,
+            FormsModule,
+          ],
           declarations: [
             CartComponent,
             FakeCartSummaryComponent,
@@ -441,18 +446,6 @@ describe('CartComponent', () => {
         expect(mockCartService.getCartItems).toHaveBeenCalledTimes(0);
       });
 
-      it(`should not call getCartItems method on CartService when open
-        method on NgbModal returns a mockErrorModalRef`, () => {
-        let quantity: number;
-        mockNgbModal.open.and.returnValue(mockErrorModalRef);
-        fixture.detectChanges();
-
-        quantity = 0;
-        component.saveItem(ITEMS[2], quantity);
-
-        expect(mockCartService.getCartItems).toHaveBeenCalledTimes(0);
-      });
-
       it(`should not call getCartItems method on CartService when removeItem
         method on CartService returns an error`, () => {
         let quantity: number;
@@ -493,12 +486,10 @@ describe('CartComponent', () => {
         expect(mockCartService.removeItem).toHaveBeenCalledTimes(0);
       });
 
-      it(`should call open method on ModalService with correct value and set
-        component instances correctly when quantity is less than or equal to
-        0`, () => {
+      it(`should call removeItem method on CartSevice with correct value when
+        quantity equals 0`, () => {
         const index = 0;
         let quantity: number;
-        mockNgbModal.open.and.returnValue(mockModalRef);
         mockCartService.removeItem.and.returnValue(of(true));
         mockCartService.getCartItems.and.returnValue(of(true));
         fixture.detectChanges();
@@ -506,33 +497,23 @@ describe('CartComponent', () => {
         quantity = 0;
         component.saveItem(ITEMS[index], quantity);
 
-        expect(mockNgbModal.open).toHaveBeenCalledOnceWith(
-          ConfirmModalComponent
+        expect(mockCartService.removeItem).toHaveBeenCalledOnceWith(
+          ITEMS[index]
         );
-        expect(mockModalRef.componentInstance.title).toBe('Remove Item');
-        expect(mockModalRef.componentInstance.message).toBe(
-          `Are you sure you want to remove "${ITEMS[index].name}"?`
-        );
-        expect(mockModalRef.componentInstance.warningMessage).toBe(
-          'This operation can not be undone.'
-        );
-        expect(mockModalRef.componentInstance.infoMessage).toBeUndefined();
-        expect(mockModalRef.componentInstance.type).toBe('bg-danger');
-        expect(mockModalRef.componentInstance.closeMessage).toBe('remove');
-        expect(mockModalRef.componentInstance.dismissMessage).toBeUndefined();
       });
 
-      it(`should not call open method on ModalService when quantity is greater
-        than 0`, () => {
+      it(`should not call removeItem method on CartSevice when quantity is
+        greater than 0`, () => {
+        const index = 2;
         let quantity: number;
         mockCartService.saveItem.and.returnValue(of(true));
         mockCartService.getCartItems.and.returnValue(of(true));
         fixture.detectChanges();
 
         quantity = 1;
-        component.saveItem(ITEMS[2], quantity);
+        component.saveItem(ITEMS[index], quantity);
 
-        expect(mockNgbModal.open).toHaveBeenCalledTimes(0);
+        expect(mockCartService.removeItem).toHaveBeenCalledTimes(0);
       });
 
       it(`should not call show method on NotificationService`, () => {
@@ -607,108 +588,6 @@ describe('CartComponent', () => {
         });
       });
     });
-
-    // describe('openRemoveModal', () => {
-    //   it(`should call open method on ModalService with correct
-    //   value`, () => {
-    //     mockNgbModal.open.and.returnValue(mockModalRef);
-    //     mockCartService.removeItem.and.returnValue(of(true));
-    //     mockCartService.getCartItems.and.returnValue(of(true));
-    //     fixture.detectChanges();
-
-    //     component.openRemoveModal(ITEMS[0]);
-
-    //     expect(mockNgbModal.open).toHaveBeenCalledTimes(1);
-    //     expect(mockNgbModal.open).toHaveBeenCalledWith(ConfirmModalComponent);
-    //   });
-
-    //   it(`should call removeItem method on CartService with correct
-    //   value`, () => {
-    //     mockNgbModal.open.and.returnValue(mockModalRef);
-    //     mockCartService.removeItem.and.returnValue(of(true));
-    //     mockCartService.getCartItems.and.returnValue(of(true));
-    //     fixture.detectChanges();
-
-    //     component.openRemoveModal(ITEMS[0]);
-
-    //     expect(mockCartService.removeItem).toHaveBeenCalledTimes(1);
-    //     expect(mockCartService.removeItem).toHaveBeenCalledWith(ITEMS[0]);
-    //   });
-
-    //   it(`should not call removeItem method on CartService when open method on
-    //   ModalService returns mockErrorModalRef`, () => {
-    //     mockNgbModal.open.and.returnValue(mockErrorModalRef);
-    //     fixture.detectChanges();
-
-    //     component.openRemoveModal(ITEMS[0]);
-
-    //     expect(mockCartService.removeItem).toHaveBeenCalledTimes(0);
-    //   });
-
-    //   it(`should retrieve call getCartItems method on CartService`, () => {
-    //     mockNgbModal.open.and.returnValue(mockModalRef);
-    //     mockCartService.removeItem.and.returnValue(of(true));
-    //     mockCartService.getCartItems.and.returnValue(of(true));
-    //     fixture.detectChanges();
-
-    //     component.openRemoveModal(ITEMS[0]);
-
-    //     expect(mockCartService.getCartItems).toHaveBeenCalledTimes(1);
-    //   });
-
-    //   it(`should not call getCartItems method on CartService when open method on
-    //   ModalService returns mockErrorModalRef`, () => {
-    //     mockNgbModal.open.and.returnValue(mockErrorModalRef);
-    //     fixture.detectChanges();
-
-    //     component.openRemoveModal(ITEMS[0]);
-
-    //     expect(mockCartService.getCartItems).toHaveBeenCalledTimes(0);
-    //   });
-
-    //   it(`should not call show method on NotificationService`, () => {
-    //     mockCartService.removeItem.and.returnValue(of(true));
-    //     mockCartService.getCartItems.and.returnValue(of(true));
-    //     mockNgbModal.open.and.returnValue(mockModalRef);
-    //     fixture.detectChanges();
-
-    //     component.openRemoveModal(ITEMS[2]);
-
-    //     expect(mockNotificationService.show).toHaveBeenCalledTimes(0);
-    //   });
-
-    //   it(`should call show method on NotificationService when removeItem method on
-    //   CartService returns an error`, () => {
-    //     mockCartService.removeItem.and.returnValue(throwError(''));
-    //     mockNgbModal.open.and.returnValue(mockModalRef);
-    //     fixture.detectChanges();
-
-    //     component.openRemoveModal(ITEMS[2]);
-
-    //     expect(mockNotificationService.show).toHaveBeenCalled();
-    //   });
-
-    //   it('should set componentInstance properties on mockModalRef', () => {
-    //     mockNgbModal.open.and.returnValue(mockModalRef);
-    //     mockCartService.removeItem.and.returnValue(of(true));
-    //     mockCartService.getCartItems.and.returnValue(of(true));
-    //     fixture.detectChanges();
-
-    //     component.openRemoveModal(ITEMS[0]);
-
-    //     expect(mockModalRef.componentInstance.title).toBe('Remove Item');
-    //     expect(mockModalRef.componentInstance.message).toBe(
-    //       `Are you sure you want to remove "${ITEMS[0].name}"?`
-    //     );
-    //     expect(mockModalRef.componentInstance.warningMessage).toBe(
-    //       'This operation can not be undone.'
-    //     );
-    //     expect(mockModalRef.componentInstance.infoMessage).toBeUndefined();
-    //     expect(mockModalRef.componentInstance.type).toBe('bg-danger');
-    //     expect(mockModalRef.componentInstance.closeMessage).toBe('remove');
-    //     expect(mockModalRef.componentInstance.dismissMessage).toBeUndefined();
-    //   });
-    // });
 
     describe('openRemoveAllModal', () => {
       it(`should call open method on ModalService with correct
@@ -1225,7 +1104,7 @@ describe('CartComponent w/ template', () => {
         code: 'DDN-32',
         starRating: 5,
         brand: 'iBUYPOWER',
-        quantity: 1,
+        quantity: 2,
       },
       {
         id: 1,
@@ -1278,6 +1157,7 @@ describe('CartComponent w/ template', () => {
           imports: [
             HttpClientTestingModule,
             ReactiveFormsModule,
+            FormsModule,
             RouterTestingModule,
           ],
 
@@ -1370,12 +1250,14 @@ describe('CartComponent w/ template', () => {
         element = tableCellElements[1].query(By.css('a'));
         expect(element.nativeElement.textContent).toBe(items[i].name);
 
-        element = tableCellElements[2].query(By.css('h4'));
-        expect(+element.nativeElement.textContent).toBe(items[i].quantity);
-
-        element = tableCellElements[3].query(By.css('span'));
+        element = tableCellElements[2].query(By.css('span'));
         expect(element.nativeElement.textContent).toBe(
           formatCurrency(items[i].price, 'en-US', '$')
+        );
+
+        element = tableCellElements[3].query(By.css('select'));
+        expect(+element.nativeElement.getAttribute('ng-reflect-model')).toBe(
+          items[i].quantity
         );
       }
     });
@@ -1449,8 +1331,8 @@ describe('CartComponent w/ template', () => {
       expect(component.openRemoveAllModal).toHaveBeenCalledOnceWith(items);
     });
 
-    it(`should call saveItem method with correct value when decrease input
-      button is clicked`, () => {
+    xit(`should call saveItem method with correct value when select value
+      changes`, () => {
       // Arrange
       let items: ICartItem[];
       const index = 1;
@@ -1459,35 +1341,14 @@ describe('CartComponent w/ template', () => {
       component.items$.subscribe((i) => (items = i as ICartItem[]));
 
       // Act
-      const input = fixture.debugElement.queryAll(By.css('#decreaseBtn'));
-      input[index].triggerEventHandler('click', null);
+      const selectDEs = fixture.debugElement.queryAll(By.css(`#option1`));
+      selectDEs[0].triggerEventHandler('click', null);
 
       // Assert
-      expect(input.length).toBe(items.length);
+      expect(selectDEs.length).toBe(items.length);
       expect(component.saveItem).toHaveBeenCalledOnceWith(
         items[index],
         items[index].quantity - 1
-      );
-    });
-
-    it(`should call saveItem method with correct value when increase input
-      button is clicked`, () => {
-      // Arrange
-      let items: ICartItem[];
-      const index = 1;
-      spyOn(component, 'saveItem');
-      fixture.detectChanges();
-      component.items$.subscribe((i) => (items = i as ICartItem[]));
-
-      // Act
-      const input = fixture.debugElement.queryAll(By.css('#increaseBtn'));
-      input[index].triggerEventHandler('click', null);
-
-      // Assert
-      expect(input.length).toBe(items.length);
-      expect(component.saveItem).toHaveBeenCalledOnceWith(
-        items[index],
-        items[index].quantity + 1
       );
     });
   });
