@@ -114,20 +114,6 @@ export class CartComponent implements OnInit {
     });
   }
 
-  private openRemoveModal(item: ICartItem): void {
-    const modalRef = this.modalService.open(ConfirmModalComponent);
-    const instance = modalRef.componentInstance;
-    instance.title = 'Remove Item';
-    instance.message = `Are you sure you want to remove "${item.name}"?`;
-    instance.warningMessage = 'This operation can not be undone.';
-    instance.type = 'bg-danger';
-    instance.closeMessage = 'remove';
-    modalRef.closed.pipe(first()).subscribe({
-      error: () => {},
-      complete: () => this.removeItem(item),
-    });
-  }
-
   private show(
     textOrTpl: string | TemplateRef<any>,
     className: string,
