@@ -427,25 +427,15 @@ export class CheckoutComponent implements OnInit {
       complete: () => {
         this.orderPlaced = true;
         this.show(`Order placed !`, false);
-        this.removeAllItems(items);
-      },
-    });
-  }
-
-  private removeAllItems(items: ICartItem[]): void {
-    this.cartService.removeAllItems(items).subscribe({
-      error: () => this.show(`Error emptying cart !`, true),
-      complete: () => {
-        this.getCartItems();
-        this.setLoading(false);
         this.router.navigate(['/user', 'order-placed']);
+        this.deleteAllItems(items);
       },
     });
   }
 
-  private getCartItems(): void {
-    this.cartService.getCartItems().subscribe({
-      error: () => this.show(`Error retrieving cart !`, true),
+  private deleteAllItems(items: ICartItem[]): void {
+    this.cartService.deleteAllItems(items).subscribe({
+      error: () => this.show(`Error emptying cart !`, true),
       complete: () => this.setLoading(false),
     });
   }
