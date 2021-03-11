@@ -24,9 +24,9 @@
     <span>{{ pageTitle | capitalize }}</span>
   </h2>
   <ng-container *ngIf="shippingRates && items$ | async as items; else error">
-    <div class="row">
-      <div class="col-md mb-3 mb-md-0">
-        <ng-container *ngIf="items.length; else noItems">
+    <ng-container *ngIf="items && items.length; else noItems">
+      <div class="row">
+        <div class="col-md mb-3 mb-md-0">
           <div class="card mb-3">
             <div class="card-body">
               <table class="table mb-0">
@@ -111,79 +111,76 @@
           <input
             id="removeAllBtn"
             type="button"
-            (click)="openRemoveAllModal(items)"
+            (click)="openDeleteAllModal(items)"
             class="btn btn-danger"
             [disabled]="loading$ | async"
             value="Empty"
           />
-        </ng-container>
-        <ng-template #noItems>
-          <ngb-alert
-            class="m-0 text-center"
-            [dismissible]="false"
-            type="warning"
-          >
-            <svg
-              width="1em"
-              height="1em"
-              viewBox="0 0 16 16"
-              class="bi bi-exclamation-circle"
-              fill="currentColor"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
-              />
-              <path
-                d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"
-              />
-            </svg>
-            <span class="ml-1"
-              >No items in your cart! Click
-              <a routerLink="/products">here</a> to see our gaming
-              products.</span
-            >
-          </ngb-alert>
-        </ng-template>
-      </div>
-      <div class="col-md-4">
-        <div class="mb-3">
-          <ctacu-cart-summary
-            [shippingRates]="shippingRates"
-          ></ctacu-cart-summary>
         </div>
-        <input
-          id="checkoutBtn"
-          type="button"
-          value="Checkout"
-          routerLink="../checkout"
-          class="btn btn-lg btn-block btn-success text-capitalize"
-          [disabled]="!items.length || (loading$ | async) === true"
-        />
-        <div *ngIf="!items.length" class="text-center text-danger">
-          <svg
-            width="1em"
-            height="1em"
-            viewBox="0 0 16 16"
-            class="bi bi-exclamation-circle"
-            fill="currentColor"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
-            />
-            <path
-              d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"
-            />
-          </svg>
-          <small class="text-danger font-weight-bold ml-1"
-            >Put at least one item in your cart to checkout</small
-          >
+        <div class="col-md-4">
+          <div class="mb-3">
+            <ctacu-cart-summary
+              [shippingRates]="shippingRates"
+            ></ctacu-cart-summary>
+          </div>
+          <input
+            id="checkoutBtn"
+            type="button"
+            value="Checkout"
+            routerLink="../checkout"
+            class="btn btn-lg btn-block btn-success text-capitalize"
+            [disabled]="loading$ | async"
+          />
         </div>
       </div>
-    </div>
+    </ng-container>
+    <ng-template #noItems>
+      <div class="card text-dark mb-3">
+        <div class="card-body">
+          <div class="row justify-content-center mb-3">
+            <div class="col-auto">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="100"
+                height="100"
+                fill="currentColor"
+                class="bi bi-cart2"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"
+                />
+              </svg>
+            </div>
+          </div>
+          <div class="row justify-content-center">
+            <div class="col-auto">
+              <h5>Your cart is empty</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row justify-content-end">
+        <div class="col-auto d-none d-sm-block">
+          <input
+            routerLink="/products"
+            type="button"
+            class="btn btn-lg btn-primary"
+            [disabled]="loading$ | async"
+            value="Continue shopping"
+          />
+        </div>
+        <div class="col-12 d-sm-none">
+          <input
+            routerLink="/products"
+            type="button"
+            class="btn btn-lg btn-block btn-primary"
+            [disabled]="loading$ | async"
+            value="Continue shopping"
+          />
+        </div>
+      </div>
+    </ng-template>
   </ng-container>
   <!-- <form [formGroup]="cartForm" novalidate>
     <ng-container *ngIf="quantities$ | async as quantities">
@@ -209,8 +206,51 @@
     </ng-container>
   </form> -->
   <ng-template #error>
-    <ngb-alert class="text-center" [dismissible]="false" type="danger">
-      <span class="ml-1">{{ errorMessage }}</span>
-    </ngb-alert>
+    <div class="card text-danger mb-3">
+      <div class="card-body">
+        <div class="row justify-content-center mb-3">
+          <div class="col-auto">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="80"
+              height="80"
+              fill="currentColor"
+              class="bi bi-exclamation-octagon"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353L4.54.146zM5.1 1L1 5.1v5.8L5.1 15h5.8l4.1-4.1V5.1L10.9 1H5.1z"
+              />
+              <path
+                d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"
+              />
+            </svg>
+          </div>
+        </div>
+        <ngb-alert class="text-sm-center" [dismissible]="false" type="danger">
+          <span>{{ errorMessage }}</span>
+        </ngb-alert>
+      </div>
+    </div>
+    <div class="row justify-content-end">
+      <div class="col-auto d-none d-sm-block">
+        <input
+          routerLink="/products"
+          type="button"
+          class="btn btn-lg btn-primary"
+          [disabled]="loading$ | async"
+          value="Continue shopping"
+        />
+      </div>
+      <div class="col-12 d-sm-none">
+        <input
+          routerLink="/products"
+          type="button"
+          class="btn btn-lg btn-block btn-primary"
+          [disabled]="loading$ | async"
+          value="Continue shopping"
+        />
+      </div>
+    </div>
   </ng-template>
 </div>
