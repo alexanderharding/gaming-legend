@@ -6,7 +6,7 @@ export function emailMatcher(
   const emailControl = c.get('email');
   const confirmControl = c.get('confirmEmail');
 
-  if (emailControl.pristine || confirmControl.pristine) {
+  if (!emailControl.value || !confirmControl.value) {
     return null;
   }
 
