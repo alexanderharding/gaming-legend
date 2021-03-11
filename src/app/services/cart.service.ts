@@ -7,7 +7,15 @@ import {
   Observable,
   scheduled,
 } from 'rxjs';
-import { catchError, concatAll, delay, map, retry, tap } from 'rxjs/operators';
+import {
+  catchError,
+  concatAll,
+  delay,
+  first,
+  map,
+  retry,
+  tap,
+} from 'rxjs/operators';
 
 import { ICartItem } from '../types/cart-item';
 import { ErrorService } from './error.service';
@@ -40,7 +48,6 @@ export class CartService {
       }, 0)
     )
   );
-
   subtotal$ = this.cartItems$.pipe(
     map((items) =>
       items.reduce((prev, current) => {
@@ -48,11 +55,9 @@ export class CartService {
       }, 0)
     )
   );
-
   totalTax$ = this.subtotal$.pipe(
     map((subtotal) => +(subtotal * this.tax).toFixed(2))
   );
-
   total$ = combineLatest([
     this.subtotal$,
     this.totalTax$,
@@ -74,31 +79,72 @@ export class CartService {
   }
 
   saveItem(item: ICartItem, index: number): Observable<ICartItem> {
-    return +index < 0 ? this.addItem(item) : this.updateItem(item);
+    return +index >= 0 ? this.updateItem(item, +index) : this.addItem(item);
   }
 
-  removeItem(item: ICartItem): Observable<ICartItem> {
-    return this.http
-      .delete<ICartItem>(`${this.baseUrl}/cart/${item.id}`)
-      .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
+  deleteItem(item: ICartItem): Observable<ICartItem> {
+    return combineLatest([this.delete(item), this.cartItems$]).pipe(
+      first(),
+      map(([deletedItem, cartItems]) => {
+        const items = cartItems.filter(
+          (i) => +i.id !== +item.id
+        ) as ICartItem[];
+        this.setCartItems(items);
+        return deletedItem as ICartItem;
+      })
+    );
   }
 
-  removeAllItems(items: ICartItem[]): Observable<unknown> {
+  deleteAllItems(items: ICartItem[]): Observable<unknown> {
     const array: Observable<ICartItem>[] = [];
-    items.forEach((i) => array.push(this.removeItem(i)));
+    items.forEach((i) => array.push(this.deleteItem(i)));
     return scheduled(array, asyncScheduler).pipe(concatAll());
   }
 
   private addItem(item: ICartItem): Observable<ICartItem> {
+    return combineLatest([this.post(item), this.cartItems$]).pipe(
+      first(),
+      map(([addedItem, cartItems]) => {
+        const items = [...cartItems] as ICartItem[];
+        items.push(addedItem);
+        this.setCartItems(items);
+        return addedItem as ICartItem;
+      })
+    );
+  }
+
+  private updateItem(item: ICartItem, index: number): Observable<ICartItem> {
+    return combineLatest([this.put(item), this.cartItems$]).pipe(
+      first(),
+      map(([updatedItem, cartItems]) => {
+        const items = [...cartItems] as ICartItem[];
+        items.splice(index, 1, updatedItem);
+        this.setCartItems(items);
+        return updatedItem as ICartItem;
+      })
+    );
+  }
+
+  private post(item: ICartItem): Observable<ICartItem> {
     return this.http
       .post<ICartItem>(`${this.baseUrl}/cart`, item)
       .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
   }
 
-  private updateItem(item: ICartItem): Observable<ICartItem> {
+  private put(item: ICartItem): Observable<ICartItem> {
     return this.http
       .put<ICartItem>(`${this.baseUrl}/cart/${+item.id}`, item)
       .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
+  }
+
+  private delete(item: ICartItem): Observable<ICartItem> {
+    return this.http
+      .delete<ICartItem>(`${this.baseUrl}/cart/${item.id}`)
+      .pipe(delay(1000), retry(3), catchError(this.errorService.handleError));
+  }
+
+  private setCartItems(items: ICartItem[]): void {
+    this.cartItemsSubject.next(items);
   }
 
   // private getItems(): ICartItem[] {
