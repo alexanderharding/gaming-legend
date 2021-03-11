@@ -58,26 +58,13 @@
             {{ product.price | currency }}
           </p>
           <p>{{ product.description }}</p>
-          <div class="form-row mb-3">
-            <div class="col-sm">
-              <input
-                type="button"
-                class="btn btn-block btn-success text-uppercase mb-2 mb-sm-0"
-                (click)="saveItem(product, items, true)"
-                value="Buy now"
-                [disabled]="this.loading$ | async"
-              />
-            </div>
-            <div class="col-sm">
-              <input
-                type="button"
-                class="btn btn-block btn-outline-light text-uppercase"
-                (click)="saveItem(product, items)"
-                value="Add to Cart"
-                [disabled]="this.loading$ | async"
-              />
-            </div>
-          </div>
+          <input
+            type="button"
+            class="btn btn-block btn-success text-uppercase mb-3"
+            (click)="saveItem(product, items)"
+            value="Add to Cart"
+            [disabled]="this.loading$ | async"
+          />
           <p>
             <span class="mr-1">
               <strong>Code: </strong
