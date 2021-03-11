@@ -73,12 +73,12 @@ export class ProductDetailsComponent implements OnInit {
       this.router.navigate(['/user/cart']);
       return;
     }
-    const item = {
+    const updatedItem = {
       ...product,
       quantity: index >= 0 ? items[index].quantity + 1 : 1,
     } as ICartItem;
     this.setLoading(true);
-    this.cartService.saveItem(item, index).subscribe({
+    this.cartService.saveItem(updatedItem, index).subscribe({
       next: (item) => {
         this.show(
           `Added "${item.name}" to cart !`,

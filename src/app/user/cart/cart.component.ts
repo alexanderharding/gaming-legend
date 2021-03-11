@@ -155,11 +155,11 @@ export class CartComponent implements OnInit, OnDestroy {
 
   private buildFormArray(form: FormGroup, items: ICartItem[]): void {
     const quantitiesArray = form.get('quantities') as FormArray;
-    items.forEach((i) => {
+    items.forEach((cartItem) => {
       quantitiesArray.push(
         this.fb.group({
-          id: +i.id,
-          quantity: +i.quantity,
+          id: +cartItem.id,
+          quantity: +cartItem.quantity,
         })
       );
       const quantityControl = quantitiesArray.get(
@@ -174,10 +174,10 @@ export class CartComponent implements OnInit, OnDestroy {
               const quantity = +value.quantity;
               return this.items$.pipe(
                 first(),
-                tap((items) => {
-                  const index = items.findIndex((i) => +i.id === +id);
+                tap((cartItems) => {
+                  const index = cartItems.findIndex((i) => +i.id === +id);
                   const item = {
-                    ...items[index],
+                    ...cartItems[index],
                     quantity,
                   } as ICartItem;
                   quantity
