@@ -52,7 +52,6 @@ export class ProductDetailsComponent implements OnInit {
     private readonly cartService: CartService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
-    private readonly modalService: NgbModal,
     private readonly config: NgbModalConfig,
     private readonly notificationService: NotificationService,
     private readonly title: Title
@@ -63,66 +62,42 @@ export class ProductDetailsComponent implements OnInit {
     this.config.backdrop = 'static';
   }
 
-  saveItem(product: IProduct, items: ICartItem[], navigate?: boolean): void {
-    const index = this.getIndex(product, items);
-    if (items[index].quantity === this.itemMaxQty) {
-      if (navigate) {
-        this.show(
-          `Max quantity already in cart !`,
-          'bg-danger text-light',
-          50000
-        );
-        // this.router.navigate(['/user/cart']);
-      } else {
-        this.openModal(
-          `Max Quantity !`,
-          `Max quantity of "${product.name}" already in cart!`,
-          'bg-danger'
-        );
-      }
+  saveItem(product: IProduct, items: ICartItem[]): void {
+    const index = items.findIndex(({ id }) => +id === +product.id);
+    if (items[index]?.quantity === this.itemMaxQty) {
+      this.show(
+        `Max item quantity already in cart !`,
+        'bg-danger text-light',
+        10000
+      );
+      this.router.navigate(['/user/cart']);
       return;
     }
-    const item = this.getUpdatedItem(product, items, index);
-
+    const item = {
+      ...product,
+      quantity: index >= 0 ? items[index].quantity + 1 : 1,
+    } as ICartItem;
     this.setLoading(true);
     this.cartService.saveItem(item, index).subscribe({
       next: (item) => {
-        if (navigate) {
-          this.show(
-            `Added "${product.name}" to cart !`,
-            'bg-success text-light',
-            10000
-          );
-        } else {
-          this.openModal(
-            `Success !`,
-            `"${item.name}" added to cart!`,
-            'bg-success text-light'
-          );
-        }
-        this.getCartItems(navigate);
+        this.show(
+          `Added "${item.name}" to cart !`,
+          'bg-success text-light',
+          10000
+        );
+        this.setLoading(false);
+        this.router.navigate(['/user/cart']);
       },
       error: () => {
         this.setLoading(false);
         this.show(
-          `Error adding "${product.name}" !`,
+          `Error adding "${product.name}" to cart !`,
           'bg-danger text-light',
           15000
         );
       },
     });
   }
-
-  // updateIndex(urls: string[], productUrl: string): void {
-  //   const index = urls.findIndex(
-  //     (url) => url.toLowerCase() === productUrl.toLowerCase()
-  //   );
-  //   console.log(index);
-  //   if (index < 0 || index) {
-  //     return;
-  //   }
-  //   this.imageIndex = +index;
-  // }
 
   onBack(): void {
     if (this.returnLink) {
@@ -132,35 +107,6 @@ export class ProductDetailsComponent implements OnInit {
         queryParamsHandling: 'preserve',
       });
     }
-  }
-
-  private openModal(title: string, message: string, type: string): void {
-    const modalRef = this.modalService.open(ConfirmModalComponent);
-    const instance = modalRef.componentInstance;
-    instance.title = title;
-    instance.message = message;
-    instance.type = type;
-    instance.closeMessage = 'go to cart';
-    instance.dismissMessage = 'keep shopping';
-    modalRef.closed.pipe(first()).subscribe({
-      error: () => {},
-      complete: () => this.router.navigate(['/user', 'cart']),
-    });
-  }
-
-  private getIndex(product: IProduct, items: IProduct[]): number {
-    return +items.findIndex(({ id }) => id === +product.id);
-  }
-
-  private getUpdatedItem(
-    product: IProduct,
-    items: ICartItem[],
-    index: number
-  ): ICartItem {
-    return {
-      ...product,
-      quantity: index >= 0 ? items[index].quantity + 1 : 1,
-    } as ICartItem;
   }
 
   private setLoading(value: boolean): void {
@@ -178,20 +124,5 @@ export class ProductDetailsComponent implements OnInit {
       delay,
     } as INotification;
     this.notificationService.show(notification);
-  }
-
-  private getCartItems(navigate?: boolean): void {
-    this.cartService.getCartItems().subscribe({
-      error: () => {
-        this.show(`Error retrieving cart !`, 'bg-danger text-light', 15000);
-        this.setLoading(false);
-      },
-      complete: () => {
-        this.setLoading(false);
-        if (navigate) {
-          this.router.navigate(['/user', 'cart']);
-        }
-      },
-    });
   }
 }
