@@ -94,7 +94,7 @@ export class CartComponent implements OnInit, OnDestroy {
     this.title.setTitle(`Gaming Legend | ${this.pageTitle}`);
   }
 
-  openRemoveAllModal(items: ICartItem[]): void {
+  openDeleteAllModal(items: ICartItem[]): void {
     const modalRef = this.modalService.open(ConfirmModalComponent);
     const instance = modalRef.componentInstance;
     instance.title = 'Empty Cart';
