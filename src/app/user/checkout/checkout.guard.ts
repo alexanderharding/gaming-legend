@@ -52,13 +52,8 @@ export class CheckoutGuard
         centered: true,
       });
       const instance = modalRef.componentInstance;
-
-      instance.title = 'Cancel';
       instance.message = 'Are you sure you want to cancel the checkout?';
-      instance.warningMessage = 'You may lose some progress!';
-      instance.type = 'bg-danger';
-      instance.closeMessage = 'ok, cancel';
-      instance.dismissMessage = 'Checkout';
+      instance.closeMessage = 'Yes';
 
       return modalRef.closed.pipe(
         map(() => true),
