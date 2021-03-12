@@ -95,7 +95,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   openDeleteModal(item: ICartItem, items: ICartItem[]): void {
-    const index = items.findIndex(({ id }) => id === item.id);
+    const index = items.findIndex(({ id }) => +id === +item.id);
     const modalRef = this.modalService.open(ConfirmModalComponent);
     const instance = modalRef.componentInstance;
     instance.message = `Are you sure you want remove "${item.name}" from the
