@@ -1,15 +1,5 @@
-<section class="text-light bg-dark">
-  <div
-    class="modal-header border-bottom-0 border-0 row justify-content-between align-items-center"
-  >
-    <div class="col-auto">
-      <h2 class="modal-title d-none d-sm-block">
-        {{ title | capitalize }}
-      </h2>
-      <h4 class="modal-title d-sm-none">
-        {{ title | capitalize }}
-      </h4>
-    </div>
+<section class="text-dark bg-white">
+  <div class="modal-header border-bottom-0 row justify-content-end">
     <div class="col-auto">
       <button
         type="button"
@@ -18,42 +8,29 @@
         (click)="dismiss('cross click')"
         ngbAutofocus
       >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 16 16"
-          class="bi bi-x text-light"
-          fill="currentColor"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"
-          />
-        </svg>
+        <span aria-hidden="true">&times;</span>
       </button>
     </div>
   </div>
-  <div class="modal-body">
-    <p class="lead d-none d-sm-block">{{ message }}</p>
-    <p class="d-sm-none">{{ message }}</p>
+  <div class="modal-body pt-0 text-center">
+    <h5 class="mb-3 font-weight-bold">{{ message }}</h5>
   </div>
   <div class="modal-body">
     <div class="form-row">
-      <div class="col">
-        <input
-          type="button"
-          value="{{ closeMessage | capitalize }}"
-          class="btn btn-block btn-outline-light"
-          (click)="close('ok click')"
-        />
-      </div>
       <div *ngIf="dismissMessage" class="col">
         <input
           type="button"
           value="{{ dismissMessage | capitalize }}"
-          class="btn btn-block btn-primary"
+          class="btn btn-lg btn-block btn-outline-primary"
           (click)="dismiss('cancel click')"
+        />
+      </div>
+      <div class="col">
+        <input
+          type="button"
+          value="{{ closeMessage | capitalize }}"
+          class="btn btn-lg btn-block btn-primary"
+          (click)="close('ok click')"
         />
       </div>
     </div>
