@@ -18,7 +18,9 @@ import {
 } from 'rxjs/operators';
 
 import { ICartItem } from '../types/cart-item';
+import { INotification } from '../types/notification';
 import { ErrorService } from './error.service';
+import { NotificationService } from './notification.service';
 import { ShippingRateService } from './shipping-rate.service';
 
 @Injectable({
@@ -28,18 +30,26 @@ export class CartService {
   constructor(
     private readonly http: HttpClient,
     private readonly shippingRateService: ShippingRateService,
-
+    private readonly notificationService: NotificationService,
     private readonly errorService: ErrorService
-  ) {}
+  ) {
+    this.getCartItems().subscribe({
+      error: () => {
+        const notification = {
+          textOrTpl: 'Cart retrieval error !',
+          className: 'bg-danger text-light',
+          delay: 15000,
+        } as INotification;
+        this.notificationService.show(notification);
+      },
+    });
+  }
 
   private readonly baseUrl: string = 'http://localhost:3000';
-
-  tax = 0.0687;
-
   private readonly cartItemsSubject = new BehaviorSubject<ICartItem[]>([]);
   readonly cartItems$ = this.cartItemsSubject.asObservable();
-
   readonly itemMaxQty = 5;
+  tax = 0.0687;
 
   cartQuantity$ = this.cartItems$.pipe(
     map((items) =>
@@ -68,15 +78,6 @@ export class CartService {
         +(subtotal + totalTax + shippingPrice).toFixed(2)
     )
   );
-
-  getCartItems(): Observable<ICartItem[]> {
-    return this.http.get<ICartItem[]>(`${this.baseUrl}/cart`).pipe(
-      delay(1000),
-      retry(3),
-      tap((items) => this.cartItemsSubject.next(items)),
-      catchError(this.errorService.handleError)
-    );
-  }
 
   saveItem(item: ICartItem, index: number): Observable<ICartItem> {
     return +index >= 0 ? this.updateItem(item, +index) : this.addItem(item);
@@ -122,6 +123,15 @@ export class CartService {
         this.setCartItems(items);
         return updatedItem as ICartItem;
       })
+    );
+  }
+
+  private getCartItems(): Observable<ICartItem[]> {
+    return this.http.get<ICartItem[]>(`${this.baseUrl}/cart`).pipe(
+      delay(1000),
+      retry(3),
+      tap((items) => this.cartItemsSubject.next(items)),
+      catchError(this.errorService.handleError)
     );
   }
 
