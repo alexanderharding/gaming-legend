@@ -87,7 +87,7 @@ export class CartService {
       first(),
       map(([deletedItem, cartItems]) => {
         const items = cartItems.filter(
-          (i) => +i.id !== +item.id
+          ({ id }) => +id !== +item.id
         ) as ICartItem[];
         this.setCartItems(items);
         return deletedItem as ICartItem;
