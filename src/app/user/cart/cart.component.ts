@@ -158,7 +158,7 @@ export class CartComponent implements OnInit, OnDestroy {
     items.forEach((cartItem) => {
       quantitiesArray.push(
         this.fb.group({
-          id: +cartItem.id,
+          itemId: +cartItem.id,
           quantity: +cartItem.quantity,
         })
       );
@@ -170,7 +170,7 @@ export class CartComponent implements OnInit, OnDestroy {
           .pipe(
             switchMap((value) => {
               this.setLoading(true);
-              const id = +value.id;
+              const id = +value.itemId;
               const quantity = +value.quantity;
               return this.items$.pipe(
                 first(),
