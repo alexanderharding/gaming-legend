@@ -36,6 +36,7 @@
                       id="imgCell"
                       scope="row"
                       [ngClass]="{ 'border-0': i === 0 }"
+                      class="align-middle"
                     >
                       <a
                         [routerLink]="['/products', item.type, item.id]"
@@ -63,17 +64,10 @@
                         >{{ item.name }}</a
                       >
                     </td>
-                    <td
-                      scope="row"
-                      [ngClass]="{ 'border-0': i === 0 }"
-                      class="d-none d-sm-table-cell"
-                    >
-                      <span>{{ item.price | currency }}</span>
-                    </td>
                     <td scope="row" [ngClass]="{ 'border-0': i === 0 }">
                       <div class="form-row">
                         <div class="col-auto">
-                          <form [formGroup]="cartForm" novalidate>
+                          <form [formGroup]="cartForm" class="mb-2" novalidate>
                             <ng-container
                               *ngIf="quantities$ | async as quantities"
                             >
@@ -100,8 +94,21 @@
                               </div>
                             </ng-container>
                           </form>
+                          <input
+                            type="button"
+                            value="Remove"
+                            class="btn btn-link btn-sm text-secondary p-0"
+                            (click)="openDeleteModal(item, items)"
+                          />
                         </div>
                       </div>
+                    </td>
+                    <td
+                      scope="row"
+                      [ngClass]="{ 'border-0': i === 0 }"
+                      class="d-none d-sm-table-cell"
+                    >
+                      <span>{{ item.price | currency }}</span>
                     </td>
                   </tr>
                 </tbody>

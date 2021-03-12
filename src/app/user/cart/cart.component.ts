@@ -94,14 +94,27 @@ export class CartComponent implements OnInit, OnDestroy {
     this.title.setTitle(`Gaming Legend | ${this.pageTitle}`);
   }
 
+  openDeleteModal(item: ICartItem, items: ICartItem[]): void {
+    const index = items.findIndex(({ id }) => id === item.id);
+    const modalRef = this.modalService.open(ConfirmModalComponent);
+    const instance = modalRef.componentInstance;
+    instance.message = `Are you sure you want remove "${item.name}" from the
+    cart?`;
+    instance.closeMessage = 'Remove';
+    modalRef.closed.pipe(first()).subscribe({
+      error: () => {},
+      complete: () => {
+        this.setLoading(true);
+        this.deleteItem(item, +index);
+      },
+    });
+  }
+
   openDeleteAllModal(items: ICartItem[]): void {
     const modalRef = this.modalService.open(ConfirmModalComponent);
     const instance = modalRef.componentInstance;
-    instance.title = 'Empty Cart';
     instance.message = `Are you sure you want to empty the cart?`;
-    instance.warningMessage = 'This can not be undone.';
-    instance.type = 'bg-danger';
-    instance.closeMessage = 'empty';
+    instance.closeMessage = 'Empty';
     modalRef.closed.pipe(first()).subscribe({
       error: () => {},
       complete: () => {
