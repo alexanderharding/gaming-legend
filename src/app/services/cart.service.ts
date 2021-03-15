@@ -47,9 +47,9 @@ export class CartService {
 
   private readonly baseUrl: string = 'http://localhost:3000';
   private readonly cartItemsSubject = new BehaviorSubject<ICartItem[]>([]);
+  private readonly tax = 0.0687;
   readonly cartItems$ = this.cartItemsSubject.asObservable();
   readonly itemMaxQty = 5;
-  tax = 0.0687;
 
   cartQuantity$ = this.cartItems$.pipe(
     map((items) =>
