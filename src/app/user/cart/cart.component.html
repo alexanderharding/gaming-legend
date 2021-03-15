@@ -64,51 +64,46 @@
                         >{{ item.name }}</a
                       >
                     </td>
-                    <td scope="row" [ngClass]="{ 'border-0': i === 0 }">
-                      <div class="form-row">
-                        <div class="col-auto">
-                          <form [formGroup]="cartForm" class="mb-2" novalidate>
-                            <ng-container
-                              *ngIf="quantities$ | async as quantities"
-                            >
-                              <div formArrayName="quantities">
-                                <div [formGroup]="quantities.controls[i]">
-                                  <p class="text-center d-sm-none mb-2">
-                                    {{ item.price | currency }}
-                                  </p>
-                                  <select
-                                    id="quantity{{ i }}"
-                                    class="custom-select"
-                                    formControlName="quantity"
-                                  >
-                                    <option [value]="0">Remove</option>
-                                    <option [value]="1">1</option>
-                                    <option [value]="2">2</option>
-                                    <option [value]="3">3</option>
-                                    <option [value]="4">4</option>
-                                    <option [value]="5">5</option>
-                                  </select>
-                                </div>
-                              </div>
-                            </ng-container>
-                          </form>
-                          <div class="row justify-content-center">
-                            <input
-                              type="button"
-                              value="Remove"
-                              class="btn btn-link btn-sm text-secondary p-0"
-                              (click)="openDeleteModal(item, items)"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </td>
                     <td
                       scope="row"
                       [ngClass]="{ 'border-0': i === 0 }"
                       class="d-none d-sm-table-cell"
                     >
-                      <span>{{ item.price | currency }}</span>
+                      <span class="font-weight-bold">{{
+                        item.price | currency
+                      }}</span>
+                    </td>
+                    <td scope="row" [ngClass]="{ 'border-0': i === 0 }">
+                      <form [formGroup]="cartForm" class="mb-2" novalidate>
+                        <ng-container *ngIf="quantities$ | async as quantities">
+                          <div formArrayName="quantities">
+                            <div [formGroup]="quantities.controls[i]">
+                              <p class="text-center d-sm-none mb-2">
+                                {{ item.price | currency }}
+                              </p>
+                              <select
+                                id="quantity{{ i }}"
+                                class="custom-select"
+                                formControlName="quantity"
+                              >
+                                <ng-container *ngFor="let o of quantityOptions">
+                                  <option [value]="o">
+                                    {{ o }}
+                                  </option>
+                                </ng-container>
+                              </select>
+                            </div>
+                          </div>
+                        </ng-container>
+                      </form>
+                      <div class="row justify-content-center">
+                        <input
+                          type="button"
+                          value="Remove"
+                          class="btn btn-link btn-sm text-secondary p-0"
+                          (click)="openDeleteModal(item, items)"
+                        />
+                      </div>
                     </td>
                   </tr>
                 </tbody>

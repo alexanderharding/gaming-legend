@@ -53,8 +53,9 @@ export class CartComponent implements OnInit, OnDestroy {
   readonly shippingRates = this.resolvedData.shippingRates as IShipping[];
   readonly errorMessage = this.resolvedData.error as string;
 
-  /* Get items$ from CartService */
+  /* Get data from CartService */
   readonly items$ = this.cartService.cartItems$;
+  readonly quantityOptions = this.cartService.getQuantityOptions();
 
   private readonly quantitiesSubject = new BehaviorSubject<FormArray>(null);
   readonly quantities$ = this.quantitiesSubject.asObservable();
