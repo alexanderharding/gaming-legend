@@ -79,6 +79,14 @@ export class CartService {
     )
   );
 
+  getQuantityOptions(): number[] {
+    const options: number[] = [];
+    for (let i = 0; i <= this.itemMaxQty; i++) {
+      options.push(i);
+    }
+    return options;
+  }
+
   saveItem(item: ICartItem, index: number): Observable<ICartItem> {
     return +index >= 0 ? this.updateItem(item, +index) : this.addItem(item);
   }
