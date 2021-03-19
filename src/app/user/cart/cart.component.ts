@@ -8,11 +8,7 @@ import {
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 
-import {
-  NgbModal,
-  NgbModalConfig,
-  NgbTooltipConfig,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { first, switchMap, tap } from 'rxjs/operators';
 
@@ -38,9 +34,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartComponent implements OnInit, OnDestroy {
-  cartForm: FormGroup;
   private readonly subscriptions: Subscription[] = [];
-  /* Page title */
+  cartForm: FormGroup;
   pageTitle = 'Review Cart';
 
   /* BehaviorSubject for displaying loading spinner */
@@ -67,31 +62,13 @@ export class CartComponent implements OnInit, OnDestroy {
     private readonly notificationService: NotificationService,
     private readonly modalService: NgbModal,
     private readonly ngbModalConfig: NgbModalConfig,
-    private readonly ngbTooltipConfig: NgbTooltipConfig,
     private readonly fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
-    this.cartForm = this.fb.group({
-      quantities: this.fb.array([]),
-    });
-    this.quantitiesSubject.next(this.cartForm.get('quantities') as FormArray);
-    this.items$
-      .pipe(first())
-      .subscribe((items) => this.buildFormArray(this.cartForm, items));
-    /* Config NgbModal settings */
-    this.ngbModalConfig.centered = true;
-    this.ngbModalConfig.backdrop = 'static';
-
-    /* Config NgbTooltip settings */
-    this.ngbTooltipConfig.openDelay = 300;
-    this.ngbTooltipConfig.container = 'body';
-    this.ngbTooltipConfig.placement = 'bottom';
-
-    /* Set index.html title */
-    if (this.errorMessage) {
-      this.pageTitle = 'Retrieval Error';
-    }
+    this.shippingRates
+      ? this.onShippingRatesReceived()
+      : this.onErrorMessageReceived();
     this.title.setTitle(`Gaming Legend | ${this.pageTitle}`);
   }
 
@@ -123,6 +100,29 @@ export class CartComponent implements OnInit, OnDestroy {
         this.deleteAllItems(items);
       },
     });
+  }
+
+  private onShippingRatesReceived(): void {
+    /* Build cartForm FormGroup */
+    this.cartForm = this.fb.group({
+      quantities: this.fb.array([]),
+    });
+
+    /* Set quantitiesSubject value */
+    this.quantitiesSubject.next(this.cartForm.get('quantities') as FormArray);
+
+    /* Build quantities FormArray */
+    this.items$
+      .pipe(first())
+      .subscribe((items) => this.buildFormArray(this.cartForm, items));
+
+    /* Config NgbModal settings */
+    this.ngbModalConfig.centered = true;
+    this.ngbModalConfig.backdrop = 'static';
+  }
+
+  private onErrorMessageReceived(): void {
+    this.pageTitle = 'Retrieval Error';
   }
 
   private saveItem(item: ICartItem, index: number): void {
