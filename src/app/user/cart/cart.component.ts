@@ -9,7 +9,7 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { first, switchMap, tap } from 'rxjs/operators';
 
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.component';
@@ -34,9 +34,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartComponent implements OnInit, OnDestroy {
-  private readonly subscriptions: Subscription[] = [];
-  cartForm: FormGroup;
   pageTitle = 'Review Cart';
+  cartForm: FormGroup;
 
   /* BehaviorSubject for displaying loading spinner */
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
@@ -49,11 +48,15 @@ export class CartComponent implements OnInit, OnDestroy {
   readonly errorMessage = this.resolvedData.error as string;
 
   /* Get data from CartService */
-  readonly items$ = this.cartService.cartItems$;
-  readonly quantityOptions = this.cartService.getQuantityOptions();
+  readonly items$: Observable<ICartItem[]> = this.cartService.cartItems$;
+  readonly quantityOptions: number[] = this.cartService.getQuantityOptions();
 
+  /* BehaviorSubject for displaying quantities FormArray */
   private readonly quantitiesSubject = new BehaviorSubject<FormArray>(null);
   readonly quantities$ = this.quantitiesSubject.asObservable();
+
+  /* For storing and cleaning up subscriptions onDestroy */
+  private readonly subscriptions: Subscription[] = [];
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -68,7 +71,7 @@ export class CartComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.shippingRates
       ? this.onShippingRatesReceived()
-      : this.onErrorMessageReceived();
+      : this.onErrorReceived();
     this.title.setTitle(`Gaming Legend | ${this.pageTitle}`);
   }
 
@@ -121,8 +124,19 @@ export class CartComponent implements OnInit, OnDestroy {
     this.ngbModalConfig.backdrop = 'static';
   }
 
-  private onErrorMessageReceived(): void {
+  private onErrorReceived(): void {
     this.pageTitle = 'Retrieval Error';
+  }
+
+  private editItem(itemId: number, quantity: number, items: ICartItem[]): void {
+    const index = items.findIndex(({ id }) => +id === +itemId);
+    const updatedItem = {
+      ...items[index],
+      quantity,
+    } as ICartItem;
+    +quantity
+      ? this.saveItem(updatedItem, index)
+      : this.deleteItem(updatedItem, index);
   }
 
   private saveItem(item: ICartItem, index: number): void {
@@ -184,20 +198,11 @@ export class CartComponent implements OnInit, OnDestroy {
           .pipe(
             switchMap((value) => {
               this.setLoading(true);
-              const id = +value.itemId;
+              const itemId = +value.itemId;
               const quantity = +value.quantity;
               return this.items$.pipe(
                 first(),
-                tap((cartItems) => {
-                  const index = cartItems.findIndex((i) => +i.id === +id);
-                  const item = {
-                    ...cartItems[index],
-                    quantity,
-                  } as ICartItem;
-                  quantity
-                    ? this.saveItem(item, index)
-                    : this.deleteItem(item, index);
-                })
+                tap((cartItems) => this.editItem(itemId, quantity, cartItems))
               );
             })
           )
@@ -215,10 +220,10 @@ export class CartComponent implements OnInit, OnDestroy {
 
   private setLoading(value: boolean): void {
     this.loadingSubject.next(value);
-    this.toggleDisabled(this.cartForm, value);
+    this.setFormState(this.cartForm, value);
   }
 
-  private toggleDisabled(form: FormGroup, value: boolean): void {
+  private setFormState(form: FormGroup, value: boolean): void {
     value
       ? form.disable({ emitEvent: false })
       : form.enable({ emitEvent: false });
