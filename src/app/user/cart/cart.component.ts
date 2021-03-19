@@ -5,28 +5,42 @@ import {
   OnInit,
   TemplateRef,
 } from '@angular/core';
-import { Title } from '@angular/platform-browser';
+
+/* Router */
 import { ActivatedRoute } from '@angular/router';
 
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+/* Rxjs */
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { first, switchMap, tap } from 'rxjs/operators';
 
+/* Components */
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.component';
 
+/* Services */
 import { CartService } from '../../services/cart.service';
 import { NotificationService } from '../../services/notification.service';
 
-import { ICartItem } from '../../types/cart-item';
-import { INotification } from '../../types/notification';
-import { IShipping } from '../../types/shipping';
-import { ShippingRatesResult } from '../../types/shipping-rates-result';
+/* Title */
+import { Title } from '@angular/platform-browser';
+
+/* NgbModal */
+import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+
+/* Forms */
 import {
   AbstractControl,
   FormArray,
   FormBuilder,
   FormGroup,
 } from '@angular/forms';
+
+/* Interfaces */
+import { ICartItem } from '../../types/cart-item';
+import { INotification } from '../../types/notification';
+import { IShipping } from '../../types/shipping';
+
+/* Classes */
+import { ShippingRatesResult } from '../../types/shipping-rates-result';
 
 @Component({
   templateUrl: './cart.component.html',
