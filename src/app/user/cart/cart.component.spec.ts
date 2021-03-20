@@ -6,7 +6,13 @@ import {
   Pipe,
   PipeTransform,
 } from '@angular/core';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from '@angular/core/testing';
 
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CartComponent } from './cart.component';
@@ -28,8 +34,15 @@ import { ShippingRatesResult } from '../../types/shipping-rates-result';
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.component';
 import { NotificationService } from '../../services/notification.service';
 import { formatCurrency } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
+import { INotification } from 'src/app/types/notification';
 
 function getQuantity(items: ICartItem[]): number {
   return items.reduce((prev, current) => {
@@ -54,30 +67,6 @@ describe('CartComponent', () => {
   class FakeCartSummaryComponent {
     @Input() shippingRates: IShipping[];
   }
-  class MockNgbModalRef {
-    componentInstance = {
-      title: undefined,
-      message: undefined,
-      warningMessage: undefined,
-      infoMessage: undefined,
-      type: undefined,
-      closeMessage: undefined,
-      dismissMessage: undefined,
-    };
-    closed: Observable<any> = of(true);
-  }
-  class MockErrorNgbModalRef {
-    componentInstance = {
-      title: undefined,
-      message: undefined,
-      warningMessage: undefined,
-      infoMessage: undefined,
-      type: undefined,
-      closeMessage: undefined,
-      dismissMessage: undefined,
-    };
-    closed: Observable<never> = throwError('error');
-  }
 
   describe('w/ SHIPPINGRATES', () => {
     let component: CartComponent;
@@ -91,6 +80,31 @@ describe('CartComponent', () => {
     let mockModalRef: MockNgbModalRef;
     let mockErrorModalRef: MockErrorNgbModalRef;
     let mockTitle: Title;
+
+    class MockNgbModalRef {
+      componentInstance = {
+        title: undefined,
+        message: undefined,
+        warningMessage: undefined,
+        infoMessage: undefined,
+        type: undefined,
+        closeMessage: undefined,
+        dismissMessage: undefined,
+      };
+      closed: Observable<any> = of(true);
+    }
+    class MockErrorNgbModalRef {
+      componentInstance = {
+        title: undefined,
+        message: undefined,
+        warningMessage: undefined,
+        infoMessage: undefined,
+        type: undefined,
+        closeMessage: undefined,
+        dismissMessage: undefined,
+      };
+      closed: Observable<never> = throwError('error');
+    }
 
     const SHIPPINGRATES: IShipping[] = [
       {
@@ -248,18 +262,19 @@ describe('CartComponent', () => {
     const RESOLVEDDATA: ShippingRatesResult = {
       shippingRates: SHIPPINGRATES,
     };
+    const QUANTITYOPTIONS: number[] = [0, 1, 2, 3, 4, 5];
 
     beforeEach(
       waitForAsync(() => {
         mockCartService = jasmine.createSpyObj(
-          ['saveItem', 'removeItem', 'removeAllItems', 'getCartItems'],
-          { cartItems$: of(ITEMS), cartQuantity$: of(getQuantity(ITEMS)) }
+          ['saveItem', 'deleteItem', 'deleteAllItems'],
+          {
+            cartItems$: of(ITEMS),
+            cartQuantity$: of(getQuantity(ITEMS)),
+            quantityOptions: QUANTITYOPTIONS,
+          }
         );
-        mockShippingRateService = jasmine.createSpyObj([
-          'setShipping',
-          'getDeliveryDate',
-        ]);
-        mockNgbModal = jasmine.createSpyObj(['']);
+        mockShippingRateService = jasmine.createSpyObj(['getDeliveryDate']);
         mockActivatedRoute = jasmine.createSpyObj([], {
           snapshot: {
             data: {
@@ -282,7 +297,7 @@ describe('CartComponent', () => {
             HttpClientTestingModule,
             RouterTestingModule,
             NgbModule,
-            FormsModule,
+            ReactiveFormsModule,
           ],
           declarations: [
             CartComponent,
@@ -326,6 +341,22 @@ describe('CartComponent', () => {
       expect(component.pageTitle).toBe('Review Cart');
     });
 
+    it('should have set cartForm correctly', () => {
+      let items: ICartItem[];
+      fixture.detectChanges();
+      component.items$.subscribe((i) => (items = i));
+
+      const quantitiesArray = component.cartForm.get('quantities') as FormArray;
+      expect(quantitiesArray.length).toBe(items.length);
+      for (let i = 0; i < quantitiesArray.length; i++) {
+        const control = quantitiesArray.controls[i] as AbstractControl;
+        expect(control.value).toEqual({
+          itemId: +items[i].id,
+          quantity: +items[i].quantity,
+        });
+      }
+    });
+
     it('should have set loading$ correctly', () => {
       let loading: boolean;
       fixture.detectChanges();
@@ -358,6 +389,22 @@ describe('CartComponent', () => {
       expect(items).toBe(ITEMS);
     });
 
+    it('should have set quantityOptions correctly', () => {
+      fixture.detectChanges();
+
+      expect(component.quantityOptions).toEqual(QUANTITYOPTIONS);
+    });
+
+    it('should have set quantities$ correctly', () => {
+      let formArray: FormArray;
+      fixture.detectChanges();
+
+      component.quantities$.subscribe((value) => (formArray = value));
+
+      const quantitiesArray = component.cartForm.get('quantities') as FormArray;
+      expect(formArray).toEqual(quantitiesArray);
+    });
+
     it('should have called setTitle method on Title with correct value', () => {
       // Arrange
 
@@ -365,221 +412,499 @@ describe('CartComponent', () => {
       fixture.detectChanges();
 
       // Assert
-      expect(mockTitle.setTitle).toHaveBeenCalledTimes(1);
-      expect(mockTitle.setTitle).toHaveBeenCalledWith(
+      expect(mockTitle.setTitle).toHaveBeenCalledOnceWith(
         `Gaming Legend | ${component.pageTitle}`
       );
     });
 
-    describe('saveItem', () => {
-      it(`should call saveItem method on CartService with correct value when
-        quantity is greater than 0`, () => {
-        let quantity: number;
-        mockCartService.saveItem.and.returnValue(of(true));
-        mockCartService.getCartItems.and.returnValue(of(true));
+    describe('cartForm', () => {
+      describe('quantities controls', () => {
+        it(`should call saveItem method on CartService with correct value when
+          control value.quantity is greater than 0`, () => {
+          mockCartService.saveItem.and.returnValue(of(true));
+          fixture.detectChanges();
+          const quantitiesArray = component.cartForm.get(
+            'quantities'
+          ) as FormArray;
+
+          for (let i = 0; i < quantitiesArray.controls.length; i++) {
+            const control: AbstractControl = quantitiesArray.controls[i];
+            control.patchValue({
+              quantity: +control.get('quantity').value + 1,
+            });
+            const item = {
+              ...ITEMS[i],
+              quantity: +control.get('quantity').value,
+            } as ICartItem;
+            expect(mockCartService.saveItem).toHaveBeenCalledWith(item, i);
+          }
+
+          expect(mockCartService.saveItem).toHaveBeenCalledTimes(
+            quantitiesArray.length
+          );
+        });
+
+        it(`should set loading$ correctly when control value.quantity is greater
+          than 0`, () => {
+          const loading: boolean[] = [];
+          mockCartService.saveItem.and.returnValue(of(true));
+          fixture.detectChanges();
+          const quantitiesArray = component.cartForm.get(
+            'quantities'
+          ) as FormArray;
+          const control: AbstractControl = quantitiesArray.controls[1];
+
+          component.loading$.subscribe((v) => loading.push(v));
+          control.patchValue({
+            quantity: +control.get('quantity').value + 1,
+          });
+
+          expect(loading.length).toBe(3);
+          for (let i = 0; i < loading.length; i++) {
+            const value = loading[i];
+            if (i % 2 === 0) {
+              expect(value).toBeFalse();
+            } else {
+              expect(value).toBeTrue();
+            }
+          }
+        });
+
+        it(`should call disable method on cartForm with correct value when
+         control value.quantity is greater than 0`, () => {
+          mockCartService.saveItem.and.returnValue(of(true));
+          fixture.detectChanges();
+          const form: FormGroup = component.cartForm;
+          spyOn(form, 'disable');
+          spyOn(form, 'enable');
+          const quantitiesArray = form.get('quantities') as FormArray;
+          const control: AbstractControl = quantitiesArray.controls[1];
+
+          control.patchValue({
+            quantity: +control.get('quantity').value + 1,
+          });
+
+          expect(form.disable).toHaveBeenCalledOnceWith({
+            emitEvent: false,
+          });
+          expect(form.disable).toHaveBeenCalledBefore(form.enable);
+        });
+
+        it(`should call enable method on cartForm with correct value when
+         control value.quantity is greater than 0`, () => {
+          mockCartService.saveItem.and.returnValue(of(true));
+          fixture.detectChanges();
+          const form: FormGroup = component.cartForm;
+          spyOn(form, 'disable');
+          spyOn(form, 'enable');
+          const quantitiesArray = form.get('quantities') as FormArray;
+          const control: AbstractControl = quantitiesArray.controls[1];
+
+          control.patchValue({
+            quantity: +control.get('quantity').value + 1,
+          });
+
+          expect(form.enable).toHaveBeenCalledOnceWith({
+            emitEvent: false,
+          });
+        });
+
+        it(`should call show method on NotificationService with correct value
+          when saveItem method on CartService returns an error`, () => {
+          mockCartService.saveItem.and.returnValue(throwError(''));
+          fixture.detectChanges();
+          const quantitiesArray = component.cartForm.get(
+            'quantities'
+          ) as FormArray;
+          const controls: AbstractControl[] = quantitiesArray.controls;
+
+          for (let i = 0; i < controls.length; i++) {
+            const control: AbstractControl = controls[i];
+            control.patchValue({
+              quantity: +control.get('quantity').value + 1,
+            });
+            const notification: INotification = {
+              textOrTpl: `Error updating ${ITEMS[i].name} !`,
+              className: 'bg-danger text-light',
+              delay: 15000,
+            };
+            expect(mockNotificationService.show).toHaveBeenCalledWith(
+              notification
+            );
+          }
+
+          expect(mockNotificationService.show).toHaveBeenCalledTimes(
+            controls.length
+          );
+        });
+
+        it(`should set loading$ correctly when saveItem method on CartService
+         returns an error`, () => {
+          const loading: boolean[] = [];
+          mockCartService.saveItem.and.returnValue(throwError(''));
+          fixture.detectChanges();
+          const quantitiesArray = component.cartForm.get(
+            'quantities'
+          ) as FormArray;
+          const control: AbstractControl = quantitiesArray.controls[1];
+
+          component.loading$.subscribe((v) => loading.push(v));
+          control.patchValue({
+            quantity: +control.get('quantity').value + 1,
+          });
+
+          expect(loading.length).toBe(3);
+          for (let i = 0; i < loading.length; i++) {
+            const value = loading[i];
+            if (i % 2 === 0) {
+              expect(value).toBeFalse();
+            } else {
+              expect(value).toBeTrue();
+            }
+          }
+        });
+
+        it(`should call disable method on cartForm with correct value when
+          saveItem method on CartService returns an error`, () => {
+          mockCartService.saveItem.and.returnValue(throwError(''));
+          fixture.detectChanges();
+          const form: FormGroup = component.cartForm;
+          spyOn(form, 'disable');
+          spyOn(form, 'enable');
+          const quantitiesArray = form.get('quantities') as FormArray;
+          const control: AbstractControl = quantitiesArray.controls[1];
+
+          control.patchValue({
+            quantity: +control.get('quantity').value + 1,
+          });
+
+          expect(form.disable).toHaveBeenCalledOnceWith({
+            emitEvent: false,
+          });
+          expect(form.disable).toHaveBeenCalledBefore(form.enable);
+        });
+
+        it(`should call enable method on cartForm with correct value when
+          saveItem method on CartService returns an error`, () => {
+          mockCartService.saveItem.and.returnValue(throwError(''));
+          fixture.detectChanges();
+          const form: FormGroup = component.cartForm;
+          spyOn(form, 'disable');
+          spyOn(form, 'enable');
+          const quantitiesArray = form.get('quantities') as FormArray;
+          const control: AbstractControl = quantitiesArray.controls[1];
+
+          control.patchValue({
+            quantity: +control.get('quantity').value + 1,
+          });
+
+          expect(form.enable).toHaveBeenCalledOnceWith({
+            emitEvent: false,
+          });
+        });
+
+        it(`should call show method on NotificationService with correct value
+          when deleteItem method on CartService returns an error`, () => {
+          mockCartService.deleteItem.and.returnValue(throwError(''));
+          fixture.detectChanges();
+          const quantitiesArray = component.cartForm.get(
+            'quantities'
+          ) as FormArray;
+          const controls: AbstractControl[] = quantitiesArray.controls;
+
+          for (let i = 0; i < controls.length; i++) {
+            const control: AbstractControl = controls[i];
+            control.patchValue({
+              quantity: 0,
+            });
+            const notification: INotification = {
+              textOrTpl: `Error removing ${ITEMS[i].name} !`,
+              className: 'bg-danger text-light',
+              delay: 15000,
+            };
+            expect(mockNotificationService.show).toHaveBeenCalledWith(
+              notification
+            );
+          }
+
+          expect(mockNotificationService.show).toHaveBeenCalledTimes(
+            controls.length
+          );
+        });
+
+        it(`should set loading$ correctly when deleteItem method on CartService
+          returns an error`, () => {
+          const loading: boolean[] = [];
+          mockCartService.deleteItem.and.returnValue(throwError(''));
+          fixture.detectChanges();
+          const quantitiesArray = component.cartForm.get(
+            'quantities'
+          ) as FormArray;
+          const control: AbstractControl = quantitiesArray.controls[1];
+
+          component.loading$.subscribe((v) => loading.push(v));
+          control.patchValue({
+            quantity: 0,
+          });
+
+          expect(loading.length).toBe(3);
+          for (let i = 0; i < loading.length; i++) {
+            const value = loading[i];
+            if (i % 2 === 0) {
+              expect(value).toBeFalse();
+            } else {
+              expect(value).toBeTrue();
+            }
+          }
+        });
+
+        it(`should call disable method on cartForm with correct value when
+          deleteItem method on CartService returns an error`, () => {
+          mockCartService.deleteItem.and.returnValue(throwError(''));
+          fixture.detectChanges();
+          const form: FormGroup = component.cartForm;
+          spyOn(form, 'disable');
+          spyOn(form, 'enable');
+          const quantitiesArray = form.get('quantities') as FormArray;
+
+          quantitiesArray.controls[1].patchValue({
+            quantity: 0,
+          });
+
+          expect(form.disable).toHaveBeenCalledOnceWith({
+            emitEvent: false,
+          });
+          expect(form.disable).toHaveBeenCalledBefore(form.enable);
+        });
+
+        it(`should call enable method on cartForm with correct value when
+          deleteItem method on CartService returns an error`, () => {
+          mockCartService.deleteItem.and.returnValue(throwError(''));
+          fixture.detectChanges();
+          const form: FormGroup = component.cartForm;
+          spyOn(form, 'disable');
+          spyOn(form, 'enable');
+          const quantitiesArray = form.get('quantities') as FormArray;
+
+          quantitiesArray.controls[1].patchValue({
+            quantity: 0,
+          });
+
+          expect(form.enable).toHaveBeenCalledOnceWith({
+            emitEvent: false,
+          });
+        });
+
+        it(`should call deleteItem method on CartService with correct value when
+          control value.quantity is less than or equal to 0`, () => {
+          const index = 0;
+          mockCartService.deleteItem.and.returnValue(of(true));
+          fixture.detectChanges();
+          const quantitiesArray = component.cartForm.get(
+            'quantities'
+          ) as FormArray;
+          const control = quantitiesArray.controls[index];
+
+          control.patchValue({
+            quantity: 0,
+          });
+
+          const item = {
+            ...ITEMS[index],
+            quantity: +control.get('quantity').value,
+          } as ICartItem;
+          expect(mockCartService.deleteItem).toHaveBeenCalledOnceWith(item);
+        });
+
+        it(`should set loading$ correctly when control value.quantity is less
+          than or equal to 0`, () => {
+          const loading: boolean[] = [];
+          mockCartService.deleteItem.and.returnValue(of(true));
+          fixture.detectChanges();
+          const quantitiesArray = component.cartForm.get(
+            'quantities'
+          ) as FormArray;
+          const control: AbstractControl = quantitiesArray.controls[1];
+
+          component.loading$.subscribe((v) => loading.push(v));
+          control.patchValue({
+            quantity: 0,
+          });
+
+          expect(loading.length).toBe(3);
+          for (let i = 0; i < loading.length; i++) {
+            const value = loading[i];
+            if (i % 2 === 0) {
+              expect(value).toBeFalse();
+            } else {
+              expect(value).toBeTrue();
+            }
+          }
+        });
+
+        it(`should call disable method on cartForm with correct value when
+          control value.quantity is less than or equal to 0`, () => {
+          mockCartService.deleteItem.and.returnValue(of(true));
+          fixture.detectChanges();
+          const form: FormGroup = component.cartForm;
+          spyOn(form, 'disable');
+          spyOn(form, 'enable');
+          const quantitiesArray = form.get('quantities') as FormArray;
+
+          quantitiesArray.controls[1].patchValue({
+            quantity: 0,
+          });
+
+          expect(form.disable).toHaveBeenCalledOnceWith({
+            emitEvent: false,
+          });
+          expect(form.disable).toHaveBeenCalledBefore(form.enable);
+        });
+
+        it(`should call enable method on cartForm with correct value when
+          control value.quantity is less than or equal to 0`, () => {
+          mockCartService.deleteItem.and.returnValue(of(true));
+          fixture.detectChanges();
+          const form: FormGroup = component.cartForm;
+          spyOn(form, 'disable');
+          spyOn(form, 'enable');
+          const quantitiesArray = form.get('quantities') as FormArray;
+
+          quantitiesArray.controls[1].patchValue({
+            quantity: 0,
+          });
+
+          expect(form.enable).toHaveBeenCalledOnceWith({
+            emitEvent: false,
+          });
+        });
+
+        it(`should not call saveItem method on CartService when control
+          value.quantity less than or equal to 0`, () => {
+          mockCartService.deleteItem.and.returnValue(of(true));
+          fixture.detectChanges();
+          const quantitiesArray = component.cartForm.get(
+            'quantities'
+          ) as FormArray;
+
+          for (let i = 0; i < quantitiesArray.length; i++) {
+            const control: AbstractControl = quantitiesArray.controls[0];
+            control.patchValue({
+              quantity: 0,
+            });
+          }
+
+          expect(mockCartService.saveItem).toHaveBeenCalledTimes(0);
+        });
+
+        it(`should not call show method on NotificationService when control
+          value.quantity is greater than 0`, () => {
+          mockCartService.saveItem.and.returnValue(of(true));
+          fixture.detectChanges();
+          const quantitiesArray = component.cartForm.get(
+            'quantities'
+          ) as FormArray;
+          const controls: AbstractControl[] = quantitiesArray.controls;
+
+          for (let i = 0; i < controls.length; i++) {
+            const control: AbstractControl = controls[i];
+            control.patchValue({
+              quantity: +control.get('quantity').value + 1,
+            });
+          }
+
+          expect(mockNotificationService.show).toHaveBeenCalledTimes(0);
+        });
+      });
+    });
+
+    describe('openDeleteModal', () => {
+      it(`should call open method on ModalService with correct
+       value`, () => {
+        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockCartService.deleteItem.and.returnValue(of(true));
         fixture.detectChanges();
 
-        quantity = 1;
-        component.saveItem(ITEMS[2], quantity);
+        component.openDeleteModal(ITEMS[0], ITEMS);
 
-        const updatedItem = {
-          ...ITEMS[2],
-          quantity,
-        } as ICartItem;
-        expect(mockCartService.saveItem).toHaveBeenCalledOnceWith(
-          updatedItem,
-          0
+        expect(mockNgbModal.open).toHaveBeenCalledOnceWith(
+          ConfirmModalComponent
         );
       });
 
-      it(`should not call saveItem method on CartService when quantity is less
-        than or equal to 0`, () => {
-        let quantity: number;
-        mockCartService.getCartItems.and.returnValue(of(true));
-        mockCartService.removeItem.and.returnValue(of(true));
-        mockNgbModal.open.and.returnValue(mockModalRef);
-        fixture.detectChanges();
-
-        quantity = 0;
-        component.saveItem(ITEMS[2], quantity);
-
-        expect(mockCartService.saveItem).toHaveBeenCalledTimes(0);
-      });
-
-      it(`should retrieve call getCartItems method on CartService when quantity
-        is less than or equal to 0`, () => {
-        let quantity: number;
-        mockCartService.saveItem.and.returnValue(of(true));
-        mockCartService.getCartItems.and.returnValue(of(true));
-        mockCartService.removeItem.and.returnValue(of(true));
-        mockNgbModal.open.and.returnValue(mockModalRef);
-        fixture.detectChanges();
-
-        quantity = 0;
-        component.saveItem(ITEMS[2], quantity);
-
-        expect(mockCartService.getCartItems).toHaveBeenCalledTimes(1);
-      });
-
-      it(`should retrieve call getCartItems method on CartService when quantity
-        is greater than 0`, () => {
-        let quantity: number;
-        mockCartService.saveItem.and.returnValue(of(true));
-        mockCartService.getCartItems.and.returnValue(of(true));
-        fixture.detectChanges();
-
-        quantity = 1;
-        component.saveItem(ITEMS[2], quantity);
-
-        expect(mockCartService.getCartItems).toHaveBeenCalledTimes(1);
-      });
-
-      it(`should not call getCartItems method on CartService when saveItem
-        method on CartService returns an error`, () => {
-        let quantity: number;
-        mockCartService.saveItem.and.returnValue(throwError(''));
-        fixture.detectChanges();
-
-        quantity = 1;
-        component.saveItem(ITEMS[2], quantity);
-
-        expect(mockCartService.getCartItems).toHaveBeenCalledTimes(0);
-      });
-
-      it(`should not call getCartItems method on CartService when removeItem
-        method on CartService returns an error`, () => {
-        let quantity: number;
-        mockCartService.removeItem.and.returnValue(throwError(''));
-        mockNgbModal.open.and.returnValue(mockModalRef);
-        fixture.detectChanges();
-
-        quantity = 0;
-        component.saveItem(ITEMS[2], quantity);
-
-        expect(mockCartService.getCartItems).toHaveBeenCalledTimes(0);
-      });
-
-      it(`should call removeItem method on CartService with correct value when
-        quantity is less than or equal to 0`, () => {
-        let quantity: number;
-        mockNgbModal.open.and.returnValue(mockModalRef);
-        mockCartService.getCartItems.and.returnValue(of(true));
-        mockCartService.removeItem.and.returnValue(of(true));
-        fixture.detectChanges();
-
-        quantity = 0;
-        component.saveItem(ITEMS[2], quantity);
-
-        expect(mockCartService.removeItem).toHaveBeenCalledOnceWith(ITEMS[2]);
-      });
-
-      it(`should not call removeItem method on CartService with correct value
-        when quantity is greater than 0`, () => {
-        let quantity: number;
-        mockCartService.saveItem.and.returnValue(of(true));
-        mockCartService.getCartItems.and.returnValue(of(true));
-        fixture.detectChanges();
-
-        quantity = 1;
-        component.saveItem(ITEMS[2], quantity);
-
-        expect(mockCartService.removeItem).toHaveBeenCalledTimes(0);
-      });
-
-      it(`should call removeItem method on CartSevice with correct value when
-        quantity equals 0`, () => {
+      it(`should call deleteItem method on CartService with correct
+        value`, () => {
         const index = 0;
-        let quantity: number;
-        mockCartService.removeItem.and.returnValue(of(true));
-        mockCartService.getCartItems.and.returnValue(of(true));
+        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockCartService.deleteItem.and.returnValue(of(true));
         fixture.detectChanges();
 
-        quantity = 0;
-        component.saveItem(ITEMS[index], quantity);
+        component.openDeleteModal(ITEMS[index], ITEMS);
 
-        expect(mockCartService.removeItem).toHaveBeenCalledOnceWith(
+        expect(mockCartService.deleteItem).toHaveBeenCalledOnceWith(
           ITEMS[index]
         );
       });
 
-      it(`should not call removeItem method on CartSevice when quantity is
-        greater than 0`, () => {
-        const index = 2;
-        let quantity: number;
-        mockCartService.saveItem.and.returnValue(of(true));
-        mockCartService.getCartItems.and.returnValue(of(true));
-        fixture.detectChanges();
-
-        quantity = 1;
-        component.saveItem(ITEMS[index], quantity);
-
-        expect(mockCartService.removeItem).toHaveBeenCalledTimes(0);
-      });
-
-      it(`should not call show method on NotificationService`, () => {
-        const index = 2;
-        let quantity: number;
-        mockCartService.saveItem.and.returnValue(of(true));
-        mockCartService.getCartItems.and.returnValue(of(true));
-        mockCartService.removeItem.and.returnValue(of(true));
+      it(`should set loading$ correctly`, () => {
+        const loading: boolean[] = [];
         mockNgbModal.open.and.returnValue(mockModalRef);
+        mockCartService.deleteItem.and.returnValue(of(true));
         fixture.detectChanges();
 
-        quantity = 1;
-        component.saveItem(ITEMS[index], quantity);
+        component.loading$.subscribe((v) => loading.push(v));
+        component.openDeleteModal(ITEMS[0], ITEMS);
 
-        expect(mockNotificationService.show).toHaveBeenCalledTimes(0);
-
-        quantity = 0;
-        component.saveItem(ITEMS[index], quantity);
-
-        expect(mockNotificationService.show).toHaveBeenCalledTimes(0);
+        expect(loading.length).toBe(3);
+        for (let i = 0; i < loading.length; i++) {
+          const value = loading[i];
+          if (i % 2 === 0) {
+            expect(value).toBeFalse();
+          } else {
+            expect(value).toBeTrue();
+          }
+        }
       });
 
-      it(`should call show method on NotificationService with correct value when
-        saveItem method on CartService returns an error`, () => {
-        const index = 2;
-        let quantity: number;
-        mockCartService.saveItem.and.returnValue(throwError(''));
+      it(`should call disable method on cartForm with correct value`, () => {
+        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockCartService.deleteItem.and.returnValue(of(true));
         fixture.detectChanges();
+        const form: FormGroup = component.cartForm;
+        spyOn(form, 'disable');
+        spyOn(form, 'enable');
 
-        quantity = 1;
-        component.saveItem(ITEMS[index], quantity);
+        component.openDeleteModal(ITEMS[0], ITEMS);
 
-        expect(mockNotificationService.show).toHaveBeenCalledOnceWith({
-          textOrTpl: `Error updating ${ITEMS[index].name} !`,
-          className: 'bg-danger text-light',
-          delay: 15000,
+        expect(form.disable).toHaveBeenCalledOnceWith({
+          emitEvent: false,
+        });
+        expect(form.disable).toHaveBeenCalledBefore(form.enable);
+      });
+
+      it(`should call enable method on cartForm with correct value`, () => {
+        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockCartService.deleteItem.and.returnValue(of(true));
+        fixture.detectChanges();
+        const form: FormGroup = component.cartForm;
+        spyOn(form, 'disable');
+        spyOn(form, 'enable');
+
+        component.openDeleteModal(ITEMS[0], ITEMS);
+
+        expect(form.enable).toHaveBeenCalledOnceWith({
+          emitEvent: false,
         });
       });
 
       it(`should call show method on NotificationService with correct value when
-        getCartItems method on CartService returns an error`, () => {
-        let quantity: number;
-        mockCartService.saveItem.and.returnValue(of(true));
-        mockCartService.getCartItems.and.returnValue(throwError(''));
-        fixture.detectChanges();
-
-        quantity = 1;
-        component.saveItem(ITEMS[1], quantity);
-
-        expect(mockNotificationService.show).toHaveBeenCalledOnceWith({
-          textOrTpl: 'Error retrieving cart !',
-          className: 'bg-danger text-light',
-          delay: 15000,
-        });
-      });
-
-      it(`should call show method on NotificationService with correct value when
-        removeItem method on CartService returns an error`, () => {
+        deleteItem method on CartService returns an error`, () => {
         const index = 0;
-        let quantity: number;
-        mockCartService.removeItem.and.returnValue(throwError(''));
         mockNgbModal.open.and.returnValue(mockModalRef);
+        mockCartService.deleteItem.and.returnValue(throwError(''));
         fixture.detectChanges();
 
-        quantity = 0;
-        component.saveItem(ITEMS[index], quantity);
+        component.openDeleteModal(ITEMS[index], ITEMS);
 
         expect(mockNotificationService.show).toHaveBeenCalledOnceWith({
           textOrTpl: `Error removing ${ITEMS[index].name} !`,
@@ -587,85 +912,292 @@ describe('CartComponent', () => {
           delay: 15000,
         });
       });
+
+      it(`should set loading$ correctly when deleteItem method on CartService
+        returns an error`, () => {
+        const loading: boolean[] = [];
+        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockCartService.deleteItem.and.returnValue(throwError(''));
+        fixture.detectChanges();
+
+        component.loading$.subscribe((v) => loading.push(v));
+        component.openDeleteModal(ITEMS[0], ITEMS);
+
+        expect(loading.length).toBe(3);
+        for (let i = 0; i < loading.length; i++) {
+          const value = loading[i];
+          if (i % 2 === 0) {
+            expect(value).toBeFalse();
+          } else {
+            expect(value).toBeTrue();
+          }
+        }
+      });
+
+      it(`should call disable method on cartForm with correct value when
+        deleteItem method on CartService  returns an error`, () => {
+        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockCartService.deleteItem.and.returnValue(throwError(''));
+        fixture.detectChanges();
+        const form: FormGroup = component.cartForm;
+        spyOn(form, 'disable');
+        spyOn(form, 'enable');
+
+        component.openDeleteModal(ITEMS[0], ITEMS);
+
+        expect(form.disable).toHaveBeenCalledOnceWith({
+          emitEvent: false,
+        });
+        expect(form.disable).toHaveBeenCalledBefore(form.enable);
+      });
+
+      it(`should call enable method on cartForm with correct value when
+        deleteItem method on CartService  returns an error`, () => {
+        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockCartService.deleteItem.and.returnValue(throwError(''));
+        fixture.detectChanges();
+        const form: FormGroup = component.cartForm;
+        spyOn(form, 'disable');
+        spyOn(form, 'enable');
+
+        component.openDeleteModal(ITEMS[0], ITEMS);
+
+        expect(form.enable).toHaveBeenCalledOnceWith({
+          emitEvent: false,
+        });
+      });
+
+      it('should set componentInstance properties on mockModalRef', () => {
+        const index = 0;
+        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockCartService.deleteItem.and.returnValue(of(true));
+        fixture.detectChanges();
+
+        component.openDeleteModal(ITEMS[index], ITEMS);
+
+        expect(mockModalRef.componentInstance.message).toBe(
+          `Are you sure you want remove "${ITEMS[index].name}" from the
+    cart?`
+        );
+        expect(mockModalRef.componentInstance.closeMessage).toBe('Remove');
+      });
+
+      it(`should not call deleteItem method on CartService when open method
+        on ModalService returns mockErrorModalRef`, () => {
+        mockNgbModal.open.and.returnValue(mockErrorModalRef);
+        fixture.detectChanges();
+
+        component.openDeleteModal(ITEMS[0], ITEMS);
+
+        expect(mockCartService.deleteItem).toHaveBeenCalledTimes(0);
+      });
+
+      it(`should set loading$ correctly when open method on ModalService
+        returns mockErrorModalRef`, () => {
+        const loading: boolean[] = [];
+        mockNgbModal.open.and.returnValue(mockErrorModalRef);
+        fixture.detectChanges();
+
+        component.loading$.subscribe((v) => loading.push(v));
+        component.openDeleteModal(ITEMS[0], ITEMS);
+
+        expect(loading.length).toBe(1);
+        for (let i = 0; i < loading.length; i++) {
+          const value = loading[i];
+          if (i % 2 === 0) {
+            expect(value).toBeFalse();
+          } else {
+            expect(value).toBeTrue();
+          }
+        }
+      });
+
+      it(`should not call disable method on cartForm when open method on
+        ModalService returns mockErrorModalRef`, () => {
+        mockNgbModal.open.and.returnValue(mockErrorModalRef);
+        fixture.detectChanges();
+        const form: FormGroup = component.cartForm;
+        spyOn(form, 'disable');
+        spyOn(form, 'enable');
+
+        component.openDeleteModal(ITEMS[0], ITEMS);
+
+        expect(form.disable).toHaveBeenCalledTimes(0);
+      });
+
+      it(`should not call enable method on cartForm when open method on
+        ModalService returns mockErrorModalRef`, () => {
+        mockNgbModal.open.and.returnValue(mockErrorModalRef);
+        fixture.detectChanges();
+        const form: FormGroup = component.cartForm;
+        spyOn(form, 'disable');
+        spyOn(form, 'enable');
+
+        component.openDeleteModal(ITEMS[0], ITEMS);
+
+        expect(form.enable).toHaveBeenCalledTimes(0);
+      });
+
+      it(`should not call show method on NotificationService`, () => {
+        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockCartService.deleteItem.and.returnValue(of(true));
+        fixture.detectChanges();
+
+        component.openDeleteModal(ITEMS[0], ITEMS);
+
+        expect(mockNotificationService.show).toHaveBeenCalledTimes(0);
+      });
     });
 
-    describe('openRemoveAllModal', () => {
+    describe('openDeleteAllModal', () => {
       it(`should call open method on ModalService with correct
        value`, () => {
         mockNgbModal.open.and.returnValue(mockModalRef);
-        mockCartService.removeAllItems.and.returnValue(of(true));
-        mockCartService.getCartItems.and.returnValue(of(true));
+        mockCartService.deleteAllItems.and.returnValue(of(true));
         fixture.detectChanges();
 
-        component.openRemoveAllModal(ITEMS);
+        component.openDeleteAllModal(ITEMS);
 
         expect(mockNgbModal.open).toHaveBeenCalledOnceWith(
           ConfirmModalComponent
         );
       });
 
-      it(`should call removeAllItems method on CartService with correct
+      it(`should call deleteAllItems method on CartService with correct
         value`, () => {
         mockNgbModal.open.and.returnValue(mockModalRef);
-        mockCartService.removeAllItems.and.returnValue(of(true));
-        mockCartService.getCartItems.and.returnValue(of(true));
+        mockCartService.deleteAllItems.and.returnValue(of(true));
         fixture.detectChanges();
 
-        component.openRemoveAllModal(ITEMS);
+        component.openDeleteAllModal(ITEMS);
 
-        expect(mockCartService.removeAllItems).toHaveBeenCalledOnceWith(ITEMS);
+        expect(mockCartService.deleteAllItems).toHaveBeenCalledOnceWith(ITEMS);
       });
 
-      it(`should not call removeAllItems method on CartService when open method
-        on ModalService returns mockErrorModalRef`, () => {
-        mockNgbModal.open.and.returnValue(mockErrorModalRef);
-        fixture.detectChanges();
-
-        component.openRemoveAllModal(ITEMS);
-
-        expect(mockCartService.removeAllItems).toHaveBeenCalledTimes(0);
-      });
-
-      it(`should retrieve call getCartItems method on CartService`, () => {
+      it(`should set loading$ correctly`, () => {
+        const loading: boolean[] = [];
         mockNgbModal.open.and.returnValue(mockModalRef);
-        mockCartService.removeAllItems.and.returnValue(of(true));
-        mockCartService.getCartItems.and.returnValue(of(true));
+        mockCartService.deleteAllItems.and.returnValue(of(true));
         fixture.detectChanges();
 
-        component.openRemoveAllModal(ITEMS);
+        component.loading$.subscribe((v) => loading.push(v));
+        component.openDeleteAllModal(ITEMS);
 
-        expect(mockCartService.getCartItems).toHaveBeenCalledTimes(1);
+        expect(loading.length).toBe(3);
+        for (let i = 0; i < loading.length; i++) {
+          const value = loading[i];
+          if (i % 2 === 0) {
+            expect(value).toBeFalse();
+          } else {
+            expect(value).toBeTrue();
+          }
+        }
       });
 
-      it(`should not call getCartItems method on CartService when open method
+      it(`should call disable method on cartForm with correct value`, () => {
+        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockCartService.deleteAllItems.and.returnValue(of(true));
+        fixture.detectChanges();
+        const form: FormGroup = component.cartForm;
+        spyOn(form, 'disable');
+        spyOn(form, 'enable');
+
+        component.openDeleteAllModal(ITEMS);
+
+        expect(form.disable).toHaveBeenCalledOnceWith({
+          emitEvent: false,
+        });
+        expect(form.disable).toHaveBeenCalledBefore(form.enable);
+      });
+
+      it(`should call enable method on cartForm with correct value`, () => {
+        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockCartService.deleteAllItems.and.returnValue(of(true));
+        fixture.detectChanges();
+        const form: FormGroup = component.cartForm;
+        spyOn(form, 'disable');
+        spyOn(form, 'enable');
+
+        component.openDeleteAllModal(ITEMS);
+
+        expect(form.enable).toHaveBeenCalledOnceWith({
+          emitEvent: false,
+        });
+      });
+
+      it(`should not call deleteAllItems method on CartService when open method
         on ModalService returns mockErrorModalRef`, () => {
         mockNgbModal.open.and.returnValue(mockErrorModalRef);
         fixture.detectChanges();
 
-        component.openRemoveAllModal(ITEMS);
+        component.openDeleteAllModal(ITEMS);
 
-        expect(mockCartService.getCartItems).toHaveBeenCalledTimes(0);
+        expect(mockCartService.deleteAllItems).toHaveBeenCalledTimes(0);
+      });
+
+      it(`should set loading$ correctly when open method on ModalService
+        returns mockErrorModalRef`, () => {
+        const loading: boolean[] = [];
+        mockNgbModal.open.and.returnValue(mockErrorModalRef);
+        fixture.detectChanges();
+
+        component.loading$.subscribe((v) => loading.push(v));
+        component.openDeleteAllModal(ITEMS);
+
+        expect(loading.length).toBe(1);
+        for (let i = 0; i < loading.length; i++) {
+          const value = loading[i];
+          if (i % 2 === 0) {
+            expect(value).toBeFalse();
+          } else {
+            expect(value).toBeTrue();
+          }
+        }
+      });
+
+      it(`should not call disable method on cartForm when open method on
+        ModalService returns mockErrorModalRef`, () => {
+        mockNgbModal.open.and.returnValue(mockErrorModalRef);
+        fixture.detectChanges();
+        const form: FormGroup = component.cartForm;
+        spyOn(form, 'disable');
+        spyOn(form, 'enable');
+
+        component.openDeleteAllModal(ITEMS);
+
+        expect(form.disable).toHaveBeenCalledTimes(0);
+      });
+
+      it(`should not call enable method on cartForm when open method on
+        ModalService returns mockErrorModalRef`, () => {
+        mockNgbModal.open.and.returnValue(mockErrorModalRef);
+        fixture.detectChanges();
+        const form: FormGroup = component.cartForm;
+        spyOn(form, 'disable');
+        spyOn(form, 'enable');
+
+        component.openDeleteAllModal(ITEMS);
+
+        expect(form.enable).toHaveBeenCalledTimes(0);
       });
 
       it(`should not call show method on NotificationService`, () => {
         mockNgbModal.open.and.returnValue(mockModalRef);
-        mockCartService.removeAllItems.and.returnValue(of(true));
-        mockCartService.getCartItems.and.returnValue(of(true));
+        mockCartService.deleteAllItems.and.returnValue(of(true));
         fixture.detectChanges();
 
-        component.openRemoveAllModal(ITEMS);
+        component.openDeleteAllModal(ITEMS);
 
         expect(mockNotificationService.show).toHaveBeenCalledTimes(0);
       });
 
       it(`should call show method on NotificationService with correct value when
-        removeAllItems method on CartService returns an error`, () => {
+        deleteAllItems method on CartService returns an error`, () => {
         mockNgbModal.open.and.returnValue(mockModalRef);
-        mockCartService.getCartItems.and.returnValue(of(true));
-        mockCartService.removeAllItems.and.returnValue(throwError(''));
+        mockCartService.deleteAllItems.and.returnValue(throwError(''));
         fixture.detectChanges();
 
-        component.openRemoveAllModal(ITEMS);
+        component.openDeleteAllModal(ITEMS);
 
         expect(mockNotificationService.show).toHaveBeenCalledOnceWith({
           textOrTpl: 'Error emptying cart !',
@@ -674,41 +1206,71 @@ describe('CartComponent', () => {
         });
       });
 
-      it(`should call show method on NotificationService with correct value when
-        getCartItems method on CartService returns an error`, () => {
+      it(`should set loading$ correctly when deleteAllItems method on
+        CartService returns an error`, () => {
+        const loading: boolean[] = [];
         mockNgbModal.open.and.returnValue(mockModalRef);
-        mockCartService.removeAllItems.and.returnValue(of(true));
-        mockCartService.getCartItems.and.returnValue(throwError(''));
+        mockCartService.deleteAllItems.and.returnValue(throwError(''));
         fixture.detectChanges();
 
-        component.openRemoveAllModal(ITEMS);
+        component.loading$.subscribe((v) => loading.push(v));
+        component.openDeleteAllModal(ITEMS);
 
-        expect(mockNotificationService.show).toHaveBeenCalledOnceWith({
-          textOrTpl: 'Error retrieving cart !',
-          className: 'bg-danger text-light',
-          delay: 15000,
+        expect(loading.length).toBe(3);
+        for (let i = 0; i < loading.length; i++) {
+          const value = loading[i];
+          if (i % 2 === 0) {
+            expect(value).toBeFalse();
+          } else {
+            expect(value).toBeTrue();
+          }
+        }
+      });
+
+      it(`should call disable method on cartForm with correct value when
+        deleteAllItems method on CartService returns an error`, () => {
+        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockCartService.deleteAllItems.and.returnValue(throwError(''));
+        fixture.detectChanges();
+        const form: FormGroup = component.cartForm;
+        spyOn(form, 'disable');
+        spyOn(form, 'enable');
+
+        component.openDeleteAllModal(ITEMS);
+
+        expect(form.disable).toHaveBeenCalledOnceWith({
+          emitEvent: false,
+        });
+        expect(form.disable).toHaveBeenCalledBefore(form.enable);
+      });
+
+      it(`should call enable method on cartForm with correct value when
+        deleteAllItems method on CartService returns an error`, () => {
+        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockCartService.deleteAllItems.and.returnValue(throwError(''));
+        fixture.detectChanges();
+        const form: FormGroup = component.cartForm;
+        spyOn(form, 'disable');
+        spyOn(form, 'enable');
+
+        component.openDeleteAllModal(ITEMS);
+
+        expect(form.enable).toHaveBeenCalledOnceWith({
+          emitEvent: false,
         });
       });
 
       it('should set componentInstance properties on mockModalRef', () => {
         mockNgbModal.open.and.returnValue(mockModalRef);
-        mockCartService.removeAllItems.and.returnValue(of(true));
-        mockCartService.getCartItems.and.returnValue(of(true));
+        mockCartService.deleteAllItems.and.returnValue(of(true));
         fixture.detectChanges();
 
-        component.openRemoveAllModal(ITEMS);
+        component.openDeleteAllModal(ITEMS);
 
-        expect(mockModalRef.componentInstance.title).toBe('Empty Cart');
         expect(mockModalRef.componentInstance.message).toBe(
           `Are you sure you want to empty the cart?`
         );
-        expect(mockModalRef.componentInstance.warningMessage).toBe(
-          'This operation can not be undone.'
-        );
-        expect(mockModalRef.componentInstance.infoMessage).toBeUndefined();
-        expect(mockModalRef.componentInstance.type).toBe('bg-danger');
-        expect(mockModalRef.componentInstance.closeMessage).toBe('empty');
-        expect(mockModalRef.componentInstance.dismissMessage).toBeUndefined();
+        expect(mockModalRef.componentInstance.closeMessage).toBe('Empty');
       });
     });
   });
@@ -718,6 +1280,9 @@ describe('CartComponent', () => {
     let fixture: ComponentFixture<CartComponent>;
     let mockCartService;
     let mockShippingRateService;
+    let mockNotificationService;
+    let mockNgbModal;
+    let mockNgbModalConfig;
     let mockActivatedRoute;
     let mockTitle: Title;
 
@@ -859,17 +1424,17 @@ describe('CartComponent', () => {
       shippingRates: null,
       error: ERRORMESSAGE,
     };
+    const QUANTITYOPTIONS: number[] = [0, 1, 2, 3, 4, 5];
 
     beforeEach(
       waitForAsync(() => {
         mockCartService = jasmine.createSpyObj([], {
           cartItems$: of(ITEMS),
           cartQuantity$: of(getQuantity(ITEMS)),
+          quantityOptions: QUANTITYOPTIONS,
         });
-        mockShippingRateService = jasmine.createSpyObj([
-          'setShipping',
-          'getDeliveryDate',
-        ]);
+        mockShippingRateService = jasmine.createSpyObj(['getDeliveryDate']);
+        mockNotificationService = jasmine.createSpyObj(['']);
         mockActivatedRoute = jasmine.createSpyObj([], {
           snapshot: {
             data: {
@@ -878,15 +1443,19 @@ describe('CartComponent', () => {
           },
         });
         mockTitle = jasmine.createSpyObj(['setTitle']);
+        mockNgbModal = jasmine.createSpyObj(['']);
+        mockNgbModalConfig = jasmine.createSpyObj([], {
+          centered: false,
+          backdrop: true,
+        });
         TestBed.configureTestingModule({
-          imports: [HttpClientTestingModule, NgbModule],
+          imports: [HttpClientTestingModule, NgbModule, ReactiveFormsModule],
 
           declarations: [
             CartComponent,
             FakeCartSummaryComponent,
             MockCapitalizePipe,
           ],
-
           providers: [
             { provide: CartService, useValue: mockCartService },
             {
@@ -894,6 +1463,12 @@ describe('CartComponent', () => {
               useValue: mockShippingRateService,
             },
             { provide: ActivatedRoute, useValue: mockActivatedRoute },
+            { provide: NgbModal, useValue: mockNgbModal },
+            { provide: NgbModalConfig, useValue: mockNgbModalConfig },
+            {
+              provide: NotificationService,
+              useValue: mockNotificationService,
+            },
             { provide: Title, useValue: mockTitle },
           ],
         }).compileComponents();
@@ -915,6 +1490,12 @@ describe('CartComponent', () => {
       fixture.detectChanges();
 
       expect(component.pageTitle).toBe('Retrieval Error');
+    });
+
+    it('should have set cartForm correctly', () => {
+      fixture.detectChanges();
+
+      expect(component.cartForm).toBeUndefined();
     });
 
     it('should have set loading$ correctly', () => {
@@ -948,6 +1529,21 @@ describe('CartComponent', () => {
       expect(items).toBe(ITEMS);
     });
 
+    it('should have set quantityOptions correctly', () => {
+      fixture.detectChanges();
+
+      expect(component.quantityOptions).toEqual(QUANTITYOPTIONS);
+    });
+
+    it('should have set quantities$ correctly', () => {
+      let formArray: FormArray;
+      fixture.detectChanges();
+
+      component.quantities$.subscribe((value) => (formArray = value));
+
+      expect(formArray).toBeNull();
+    });
+
     it('should have called setTitle method on Title with correct value', () => {
       // Arrange
 
@@ -962,7 +1558,7 @@ describe('CartComponent', () => {
   });
 });
 
-describe('CartComponent w/ template', () => {
+xdescribe('CartComponent w/ template', () => {
   describe('w/ SHIPPINGRATES', () => {
     let component: CartComponent;
     let fixture: ComponentFixture<CartComponent>;
@@ -1133,7 +1729,7 @@ describe('CartComponent w/ template', () => {
     beforeEach(
       waitForAsync(() => {
         mockCartService = jasmine.createSpyObj(
-          ['saveItem', 'removeItem', 'removeAllItems', 'getCartItems'],
+          ['saveItem', 'deleteItem', 'deleteAllItems'],
           { cartItems$: of(ITEMS), cartQuantity$: of(getQuantity(ITEMS)) }
         );
         mockActivatedRoute = jasmine.createSpyObj([], {
@@ -1314,11 +1910,11 @@ describe('CartComponent w/ template', () => {
       );
     });
 
-    it(`should call openRemoveAllModal method with correct value when empty
+    it(`should call openDeleteAllModal method with correct value when empty
       input button is clicked`, () => {
       // Arrange
       let items: ICartItem[];
-      spyOn(component, 'openRemoveAllModal');
+      spyOn(component, 'openDeleteAllModal');
       fixture.detectChanges();
       component.items$.subscribe((i) => (items = i as ICartItem[]));
 
@@ -1328,28 +1924,7 @@ describe('CartComponent w/ template', () => {
 
       // Assert
       expect(input.length).toBe(1);
-      expect(component.openRemoveAllModal).toHaveBeenCalledOnceWith(items);
-    });
-
-    xit(`should call saveItem method with correct value when select value
-      changes`, () => {
-      // Arrange
-      let items: ICartItem[];
-      const index = 1;
-      spyOn(component, 'saveItem');
-      fixture.detectChanges();
-      component.items$.subscribe((i) => (items = i as ICartItem[]));
-
-      // Act
-      const selectDEs = fixture.debugElement.queryAll(By.css(`#option1`));
-      selectDEs[0].triggerEventHandler('click', null);
-
-      // Assert
-      expect(selectDEs.length).toBe(items.length);
-      expect(component.saveItem).toHaveBeenCalledOnceWith(
-        items[index],
-        items[index].quantity - 1
-      );
+      expect(component.openDeleteAllModal).toHaveBeenCalledOnceWith(items);
     });
   });
 
@@ -1501,7 +2076,7 @@ describe('CartComponent w/ template', () => {
     beforeEach(
       waitForAsync(() => {
         mockCartService = jasmine.createSpyObj(
-          ['saveItem', 'removeItem', 'removeAllItems', 'getCartItems'],
+          ['saveItem', 'deleteItem', 'deleteAllItems'],
           { cartItems$: of(ITEMS), cartQuantity$: of(getQuantity(ITEMS)) }
         );
         mockActivatedRoute = jasmine.createSpyObj([], {
