@@ -1,8 +1,18 @@
+import { Pipe, PipeTransform } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { ConfirmModalComponent } from './confirm-modal.component';
+
+@Pipe({
+  name: 'capitalize',
+})
+class MockCapitalizePipe implements PipeTransform {
+  transform(value: string): string {
+    return value;
+  }
+}
 
 describe('ConfirmModalComponent', () => {
   let component: ConfirmModalComponent;
@@ -13,7 +23,7 @@ describe('ConfirmModalComponent', () => {
     waitForAsync(() => {
       mockNgbActiveModal = jasmine.createSpyObj(['dismiss', 'close']);
       TestBed.configureTestingModule({
-        declarations: [ConfirmModalComponent],
+        declarations: [ConfirmModalComponent, MockCapitalizePipe],
         providers: [{ provide: NgbActiveModal, useValue: mockNgbActiveModal }],
       }).compileComponents();
     })
@@ -29,20 +39,21 @@ describe('ConfirmModalComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have no message to start', () => {
+  it('should have set message correctly', () => {
     expect(component.message).toBeFalsy();
   });
 
-  it('should have "ok" as closeMessage message to start', () => {
-    expect(component.closeMessage).toEqual('ok');
+  it('should have set closeMessage correctly', () => {
+    expect(component.closeMessage).toBe('ok');
   });
 
-  it('should have "cancel" as dismissMessage message to start', () => {
-    expect(component.dismissMessage).toEqual('cancel');
+  it('should have set dissmissMessage correctly', () => {
+    expect(component.dismissMessage).toBe('cancel');
   });
 
   describe('dismiss', () => {
-    it('should call dismiss with the correct value', () => {
+    it(`should call dismiss method on NgbActiveModal with the correct
+      value`, () => {
       const reason = 'dismiss';
 
       component.dismiss(reason);
@@ -52,7 +63,8 @@ describe('ConfirmModalComponent', () => {
   });
 
   describe('close', () => {
-    it('should call close with the correct value', () => {
+    it(`should call close method on NgbActiveModal with the correct
+      value`, () => {
       const reason = 'close';
 
       component.close(reason);
@@ -71,7 +83,7 @@ describe('ConfirmModalComponent w/ template', () => {
     waitForAsync(() => {
       mockNgbActiveModal = jasmine.createSpyObj(['']);
       TestBed.configureTestingModule({
-        declarations: [ConfirmModalComponent],
+        declarations: [ConfirmModalComponent, MockCapitalizePipe],
         providers: [{ provide: NgbActiveModal, useValue: mockNgbActiveModal }],
       }).compileComponents();
     })
@@ -90,8 +102,9 @@ describe('ConfirmModalComponent w/ template', () => {
     fixture.detectChanges();
 
     // Assert
-    const elements = fixture.debugElement.queryAll(By.css('p strong'));
-    expect(elements[0].nativeElement.textContent).toContain(component.message);
+    const elements = fixture.debugElement.queryAll(By.css('h5'));
+    expect(elements.length).toBe(1);
+    expect(elements[0].nativeElement.textContent).toBe(component.message);
   });
 
   it('should set the closeMessage in the template', () => {
@@ -102,10 +115,9 @@ describe('ConfirmModalComponent w/ template', () => {
     fixture.detectChanges();
 
     // Assert
-    const elements = fixture.debugElement.queryAll(By.css('button'));
-    expect(elements[1].nativeElement.textContent).toContain(
-      component.closeMessage
-    );
+    const elements = fixture.debugElement.queryAll(By.css('input'));
+    expect(elements.length).toBe(2);
+    expect(elements[1].nativeElement.value).toContain(component.closeMessage);
   });
 
   it('should set the dismissMessage in the template', () => {
@@ -116,43 +128,45 @@ describe('ConfirmModalComponent w/ template', () => {
     fixture.detectChanges();
 
     // Assert
-    const elements = fixture.debugElement.queryAll(By.css('button'));
-    expect(elements[2].nativeElement.textContent).toContain(
-      component.dismissMessage
-    );
+    const elements = fixture.debugElement.queryAll(By.css('input'));
+    expect(elements.length).toBe(2);
+    expect(elements[0].nativeElement.value).toContain(component.dismissMessage);
   });
 
-  it(`should call dismiss method when the ConfirmModal Component's
-    cross button is clicked`, () => {
+  it(`should call dismiss method when cross button is clicked`, () => {
     spyOn(fixture.componentInstance, 'dismiss');
+    fixture.detectChanges();
+    const buttonDEs = fixture.debugElement.queryAll(By.css('button'));
 
-    const button = fixture.debugElement.queryAll(By.css('button'))[0];
-    button.triggerEventHandler('click', {});
+    buttonDEs[0].triggerEventHandler('click', {});
 
+    expect(buttonDEs.length).toBe(1);
     expect(fixture.componentInstance.dismiss).toHaveBeenCalledWith(
       'cross click'
     );
   });
 
-  it(`should call dismiss method when the ConfirmModal Component's cancel
-    button is clicked`, () => {
+  it(`should call dismiss method when cancel input button is clicked`, () => {
     spyOn(fixture.componentInstance, 'dismiss');
+    fixture.detectChanges();
+    const elements = fixture.debugElement.queryAll(By.css('input'));
 
-    const button = fixture.debugElement.queryAll(By.css('button'))[2];
-    button.triggerEventHandler('click', {});
+    elements[0].triggerEventHandler('click', {});
 
+    expect(elements.length).toBe(2);
     expect(fixture.componentInstance.dismiss).toHaveBeenCalledWith(
       'cancel click'
     );
   });
 
-  it(`should call close method when the ConfirmModal Component's ok button is
-    clicked`, () => {
+  it(`should call close method when ok input button is clicked`, () => {
     spyOn(fixture.componentInstance, 'close');
+    fixture.detectChanges();
+    const elements = fixture.debugElement.queryAll(By.css('input'));
 
-    const button = fixture.debugElement.queryAll(By.css('button'))[1];
-    button.triggerEventHandler('click', {});
+    elements[1].triggerEventHandler('click', {});
 
+    expect(elements.length).toBe(2);
     expect(fixture.componentInstance.close).toHaveBeenCalledWith('ok click');
   });
 });
