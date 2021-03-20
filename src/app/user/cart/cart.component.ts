@@ -24,7 +24,11 @@ import { NotificationService } from '../../services/notification.service';
 import { Title } from '@angular/platform-browser';
 
 /* NgbModal */
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbModal,
+  NgbModalConfig,
+  NgbModalRef,
+} from '@ng-bootstrap/ng-bootstrap';
 
 /* Forms */
 import {
@@ -58,12 +62,12 @@ export class CartComponent implements OnInit, OnDestroy {
   /* Get data from resolver */
   private readonly resolvedData = this.route.snapshot.data
     .resolvedData as ShippingRatesResult;
-  readonly shippingRates = this.resolvedData.shippingRates as IShipping[];
-  readonly errorMessage = this.resolvedData.error as string;
+  readonly shippingRates: IShipping[] = this.resolvedData.shippingRates;
+  readonly errorMessage: string = this.resolvedData.error;
 
   /* Get data from CartService */
   readonly items$: Observable<ICartItem[]> = this.cartService.cartItems$;
-  readonly quantityOptions: number[] = this.cartService.getQuantityOptions();
+  readonly quantityOptions: number[] = this.cartService.quantityOptions;
 
   /* BehaviorSubject for displaying quantities FormArray */
   private readonly quantitiesSubject = new BehaviorSubject<FormArray>(null);
@@ -90,9 +94,9 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   openDeleteModal(item: ICartItem, items: ICartItem[]): void {
-    const index = items.findIndex(({ id }) => +id === +item.id);
-    const modalRef = this.modalService.open(ConfirmModalComponent);
-    const instance = modalRef.componentInstance;
+    const index: number = items.findIndex(({ id }) => +id === +item.id);
+    const modalRef: NgbModalRef = this.modalService.open(ConfirmModalComponent);
+    const instance = modalRef.componentInstance as ConfirmModalComponent;
     instance.message = `Are you sure you want remove "${item.name}" from the
     cart?`;
     instance.closeMessage = 'Remove';
@@ -106,8 +110,8 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   openDeleteAllModal(items: ICartItem[]): void {
-    const modalRef = this.modalService.open(ConfirmModalComponent);
-    const instance = modalRef.componentInstance;
+    const modalRef: NgbModalRef = this.modalService.open(ConfirmModalComponent);
+    const instance = modalRef.componentInstance as ConfirmModalComponent;
     instance.message = `Are you sure you want to empty the cart?`;
     instance.closeMessage = 'Empty';
     modalRef.closed.pipe(first()).subscribe({
