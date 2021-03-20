@@ -12,6 +12,7 @@ import { CurrentPasswordFormComponent } from './current-password-form/current-pa
 import { ConvertToSpacesPipe } from '../pipes/convert-to-spaces.pipe';
 import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
 import { CapitalizePipe } from '../pipes/capitalize.pipe';
+import { ErrorReceivedComponent } from './error-received/error-received.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
@@ -23,6 +24,7 @@ import { CapitalizePipe } from '../pipes/capitalize.pipe';
     AddressFormComponent,
     CurrentPasswordFormComponent,
     ConfirmModalComponent,
+    ErrorReceivedComponent,
     CapitalizePipe,
     ConvertToSpacesPipe,
     CommonModule,
@@ -40,6 +42,7 @@ import { CapitalizePipe } from '../pipes/capitalize.pipe';
     ConfirmModalComponent,
     CapitalizePipe,
     ConvertToSpacesPipe,
+    ErrorReceivedComponent,
   ],
   providers: [ConvertToSpacesPipe, CapitalizePipe],
 })
