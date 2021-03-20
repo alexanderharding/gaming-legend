@@ -51,24 +51,24 @@ export class CartService {
   readonly cartItems$ = this.cartItemsSubject.asObservable();
   readonly itemMaxQty = 5;
 
-  cartQuantity$ = this.cartItems$.pipe(
+  readonly cartQuantity$ = this.cartItems$.pipe(
     map((items) =>
       items.reduce((prev, current) => {
         return +prev + +current.quantity;
       }, 0)
     )
   );
-  subtotal$ = this.cartItems$.pipe(
+  readonly subtotal$ = this.cartItems$.pipe(
     map((items) =>
       items.reduce((prev, current) => {
         return +(prev + +current.price * +current.quantity).toFixed(2);
       }, 0)
     )
   );
-  totalTax$ = this.subtotal$.pipe(
+  readonly totalTax$ = this.subtotal$.pipe(
     map((subtotal) => +(subtotal * this.tax).toFixed(2))
   );
-  total$ = combineLatest([
+  readonly total$ = combineLatest([
     this.subtotal$,
     this.totalTax$,
     this.shippingRateService.shippingPriceSelectedAction$,
@@ -79,13 +79,7 @@ export class CartService {
     )
   );
 
-  getQuantityOptions(): number[] {
-    const options: number[] = [];
-    for (let i = 0; i <= this.itemMaxQty; i++) {
-      options.push(i);
-    }
-    return options;
-  }
+  readonly quantityOptions = this.getQuantityOptions();
 
   saveItem(item: ICartItem, index: number): Observable<ICartItem> {
     return +index >= 0 ? this.updateItem(item, +index) : this.addItem(item);
@@ -163,6 +157,14 @@ export class CartService {
 
   private setCartItems(items: ICartItem[]): void {
     this.cartItemsSubject.next(items);
+  }
+
+  private getQuantityOptions(): number[] {
+    const options: number[] = [];
+    for (let i = 0; i <= this.itemMaxQty; i++) {
+      options.push(i);
+    }
+    return options;
   }
 
   // private getItems(): ICartItem[] {
