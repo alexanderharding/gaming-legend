@@ -1729,12 +1729,14 @@ describe('CartComponent w/ template', () => {
     const RESOLVEDDATA: ShippingRatesResult = {
       shippingRates: SHIPPINGRATES,
     };
+    const QUANTITYOPTIONS: number[] = [0, 1, 2, 3, 4, 5];
 
     beforeEach(
       waitForAsync(() => {
-        mockCartService = jasmine.createSpyObj([], {
+        mockCartService = jasmine.createSpyObj(['saveItem'], {
           cartItems$: of(ITEMS),
           cartQuantity$: of(getQuantity(ITEMS)),
+          quantityOptions: QUANTITYOPTIONS,
         });
         mockActivatedRoute = jasmine.createSpyObj([], {
           snapshot: {
@@ -1834,7 +1836,7 @@ describe('CartComponent w/ template', () => {
       expect(ErrorReceivedComponentDEs.length).toBe(0);
     });
 
-    xit('should set items$ in the template', () => {
+    it('should set items$ in the template', () => {
       let items: ICartItem[];
       // run ngOnInit
       fixture.detectChanges();
@@ -1863,19 +1865,16 @@ describe('CartComponent w/ template', () => {
         expect(elements[0].nativeElement.textContent).toBe(
           formatCurrency(items[i].price, 'en-US', '$')
         );
-
-        elements = tableCellElements[3].queryAll(By.css('select'));
-        expect(elements.length).toBe(1);
-        console.log(elements[0]);
-        expect(+elements[0].nativeElement.value).toBe(items[i].quantity);
       }
     });
 
-    xit('should set quantities$ in the template', () => {
+    it('should set quantities$ in the template', () => {
       // run ngOnInit
       let quantities: FormArray;
+      let items: ICartItem[];
       fixture.detectChanges();
       component.quantities$.subscribe((q) => (quantities = q));
+      component.items$.subscribe((i) => (items = i));
 
       // item debug elements
       const tabelRowElements = fixture.debugElement.queryAll(
@@ -1884,12 +1883,11 @@ describe('CartComponent w/ template', () => {
       expect(tabelRowElements.length).toBe(quantities.length);
       for (let i = 0; i < tabelRowElements.length; i++) {
         const tableCellElements = tabelRowElements[i].queryAll(By.css('td'));
-
         const selectDEs: DebugElement[] = tableCellElements[3].queryAll(
           By.css('select')
         );
-        console.log(selectDEs[0].nativeElement.value);
         expect(selectDEs.length).toBe(1);
+        expect(+selectDEs[0].nativeElement.value).toBe(items[i].quantity);
       }
     });
 
@@ -1988,6 +1986,48 @@ describe('CartComponent w/ template', () => {
       // Assert
       expect(input.length).toBe(1);
       expect(component.openDeleteAllModal).toHaveBeenCalledOnceWith(items);
+    });
+
+    it('should update select value when model value has changed', () => {
+      mockCartService.saveItem.and.returnValue(of(true));
+      fixture.detectChanges();
+      const quantitiesArray = component.cartForm.get('quantities') as FormArray;
+      const tabelRowElements = fixture.debugElement.queryAll(
+        By.css('tbody tr')
+      );
+      for (let i = 0; i < quantitiesArray.controls.length; i++) {
+        const control: AbstractControl = quantitiesArray.controls[i];
+        const tableCellElements = tabelRowElements[i].queryAll(By.css('td'));
+        const selectDEs: DebugElement[] = tableCellElements[3].queryAll(
+          By.css('select')
+        );
+        const newValue: number = +control.get('quantity').value + 1;
+        control.patchValue({
+          quantity: newValue,
+        });
+        expect(+selectDEs[0].nativeElement.value).toBe(newValue);
+      }
+    });
+
+    it('should update model value when select value has changed', () => {
+      mockCartService.saveItem.and.returnValue(of(true));
+      fixture.detectChanges();
+      const quantitiesArray = component.cartForm.get('quantities') as FormArray;
+      const tabelRowElements = fixture.debugElement.queryAll(
+        By.css('tbody tr')
+      );
+      for (let i = 0; i < quantitiesArray.controls.length; i++) {
+        const tableCellElements = tabelRowElements[i].queryAll(By.css('td'));
+        const selectDEs: DebugElement[] = tableCellElements[3].queryAll(
+          By.css('select')
+        );
+        const newValue: number = +selectDEs[0].nativeElement.value + 1;
+
+        selectDEs[0].nativeElement.value = newValue;
+        selectDEs[0].nativeElement.dispatchEvent(new Event('change'));
+
+        expect(+quantitiesArray.controls[i].value.quantity).toBe(newValue);
+      }
     });
   });
 
@@ -2110,6 +2150,15 @@ describe('CartComponent w/ template', () => {
       fixture.detectChanges();
 
       // item debug elements
+      const tabelRowElements = fixture.debugElement.queryAll(
+        By.css('tbody tr')
+      );
+      expect(tabelRowElements.length).toBe(0);
+    });
+
+    it('should not set quantities$ in the template', () => {
+      fixture.detectChanges();
+
       const tabelRowElements = fixture.debugElement.queryAll(
         By.css('tbody tr')
       );
