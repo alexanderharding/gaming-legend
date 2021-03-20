@@ -1558,16 +1558,17 @@ describe('CartComponent', () => {
   });
 });
 
-xdescribe('CartComponent w/ template', () => {
+describe('CartComponent w/ template', () => {
   describe('w/ SHIPPINGRATES', () => {
     let component: CartComponent;
     let fixture: ComponentFixture<CartComponent>;
     let mockCartService;
     let mockNgbModal;
     let mockNgbModalConfig;
-    let mockActivatedRoute;
     let mockShippingRateService;
     let mockNotificationService;
+    let mockActivatedRoute;
+    let mockTitle: Title;
 
     const SHIPPINGRATES: IShipping[] = [
       {
@@ -1728,10 +1729,10 @@ xdescribe('CartComponent w/ template', () => {
 
     beforeEach(
       waitForAsync(() => {
-        mockCartService = jasmine.createSpyObj(
-          ['saveItem', 'deleteItem', 'deleteAllItems'],
-          { cartItems$: of(ITEMS), cartQuantity$: of(getQuantity(ITEMS)) }
-        );
+        mockCartService = jasmine.createSpyObj([], {
+          cartItems$: of(ITEMS),
+          cartQuantity$: of(getQuantity(ITEMS)),
+        });
         mockActivatedRoute = jasmine.createSpyObj([], {
           snapshot: {
             data: {
@@ -1739,21 +1740,23 @@ xdescribe('CartComponent w/ template', () => {
             },
           },
         });
-        mockNgbModal = jasmine.createSpyObj(['']);
         mockNotificationService = jasmine.createSpyObj(['']);
+        mockTitle = jasmine.createSpyObj(['setTitle']);
+        mockNgbModal = jasmine.createSpyObj(['']);
         mockNgbModalConfig = jasmine.createSpyObj([], {
           centered: false,
           backdrop: true,
         });
         mockShippingRateService = jasmine.createSpyObj(
           ['setShipping', 'getDeliveryDate'],
-          { shippingPriceSelectedAction$: of(SHIPPINGRATES[0].price) }
+          {
+            shippingPriceSelectedAction$: of(SHIPPINGRATES[0].price),
+          }
         );
         TestBed.configureTestingModule({
           imports: [
             HttpClientTestingModule,
             ReactiveFormsModule,
-            FormsModule,
             RouterTestingModule,
           ],
 
@@ -1765,6 +1768,7 @@ xdescribe('CartComponent w/ template', () => {
 
           providers: [
             { provide: CartService, useValue: mockCartService },
+            { provide: Title, useValue: mockTitle },
             {
               provide: ShippingRateService,
               useValue: mockShippingRateService,
@@ -1824,7 +1828,7 @@ xdescribe('CartComponent w/ template', () => {
       expect(elements.length).toBe(0);
     });
 
-    it('should set items$ in the template', () => {
+    xit('should set items$ in the template', () => {
       let items: ICartItem[];
       // run ngOnInit
       fixture.detectChanges();
@@ -1834,27 +1838,52 @@ xdescribe('CartComponent w/ template', () => {
       const tabelRowElements = fixture.debugElement.queryAll(
         By.css('tbody tr')
       );
-      expect(tabelRowElements.length).toEqual(items.length);
+      expect(tabelRowElements.length).toBe(items.length);
       for (let i = 0; i < tabelRowElements.length; i++) {
-        let element: DebugElement;
+        let elements: DebugElement[];
         const tableCellElements = tabelRowElements[i].queryAll(By.css('td'));
 
-        element = tableCellElements[0].query(By.css('img'));
-        expect(element.nativeElement.src).toContain(items[i].imageUrl);
-        expect(element.nativeElement.title).toBe(items[i].name);
+        elements = tableCellElements[0].queryAll(By.css('img'));
+        expect(elements.length).toBe(1);
+        expect(elements[0].nativeElement.src).toContain(items[i].imageUrl);
+        expect(elements[0].nativeElement.title).toBe(items[i].name);
 
-        element = tableCellElements[1].query(By.css('a'));
-        expect(element.nativeElement.textContent).toBe(items[i].name);
+        elements = tableCellElements[1].queryAll(By.css('a'));
+        expect(elements.length).toBe(1);
+        expect(elements[0].nativeElement.textContent).toBe(items[i].name);
 
-        element = tableCellElements[2].query(By.css('span'));
-        expect(element.nativeElement.textContent).toBe(
+        elements = tableCellElements[2].queryAll(By.css('span'));
+        expect(elements.length).toBe(1);
+        expect(elements[0].nativeElement.textContent).toBe(
           formatCurrency(items[i].price, 'en-US', '$')
         );
 
-        element = tableCellElements[3].query(By.css('select'));
-        expect(+element.nativeElement.getAttribute('ng-reflect-model')).toBe(
-          items[i].quantity
+        elements = tableCellElements[3].queryAll(By.css('select'));
+        expect(elements.length).toBe(1);
+        console.log(elements[0]);
+        expect(+elements[0].nativeElement.value).toBe(items[i].quantity);
+      }
+    });
+
+    xit('should set quantities$ in the template', () => {
+      // run ngOnInit
+      let quantities: FormArray;
+      fixture.detectChanges();
+      component.quantities$.subscribe((q) => (quantities = q));
+
+      // item debug elements
+      const tabelRowElements = fixture.debugElement.queryAll(
+        By.css('tbody tr')
+      );
+      expect(tabelRowElements.length).toBe(quantities.length);
+      for (let i = 0; i < tabelRowElements.length; i++) {
+        const tableCellElements = tabelRowElements[i].queryAll(By.css('td'));
+
+        const selectDEs: DebugElement[] = tableCellElements[3].queryAll(
+          By.css('select')
         );
+        console.log(selectDEs[0].nativeElement.value);
+        expect(selectDEs.length).toBe(1);
       }
     });
 
@@ -1910,6 +1939,34 @@ xdescribe('CartComponent w/ template', () => {
       );
     });
 
+    it(`should call openDeleteModal method with correct value when remove
+      input button is clicked`, () => {
+      let items: ICartItem[];
+      spyOn(component, 'openDeleteModal');
+      fixture.detectChanges();
+      component.items$.subscribe((i) => (items = i as ICartItem[]));
+
+      const tabelRowElements = fixture.debugElement.queryAll(
+        By.css('tbody tr')
+      );
+      expect(tabelRowElements.length).toBe(items.length);
+      for (let i = 0; i < tabelRowElements.length; i++) {
+        const tableCellElements: DebugElement[] = tabelRowElements[i].queryAll(
+          By.css('td')
+        );
+        const elements: DebugElement[] = tableCellElements[3].queryAll(
+          By.css(`input`)
+        );
+        elements[0].triggerEventHandler('click', null);
+
+        expect(elements.length).toBe(1);
+        expect(component.openDeleteModal).toHaveBeenCalledWith(items[i], items);
+      }
+      expect(component.openDeleteModal).toHaveBeenCalledTimes(
+        tabelRowElements.length
+      );
+    });
+
     it(`should call openDeleteAllModal method with correct value when empty
       input button is clicked`, () => {
       // Arrange
@@ -1919,7 +1976,7 @@ xdescribe('CartComponent w/ template', () => {
       component.items$.subscribe((i) => (items = i as ICartItem[]));
 
       // Act
-      const input = fixture.debugElement.queryAll(By.css('#removeAllBtn'));
+      const input = fixture.debugElement.queryAll(By.css('#emptyBtn'));
       input[0].triggerEventHandler('click', null);
 
       // Assert
@@ -1932,7 +1989,12 @@ xdescribe('CartComponent w/ template', () => {
     let component: CartComponent;
     let fixture: ComponentFixture<CartComponent>;
     let mockCartService;
+    let mockNgbModal;
+    let mockNgbModalConfig;
+    let mockShippingRateService;
+    let mockNotificationService;
     let mockActivatedRoute;
+    let mockTitle: Title;
 
     const ITEMS: ICartItem[] = [
       {
@@ -2075,10 +2137,7 @@ xdescribe('CartComponent w/ template', () => {
 
     beforeEach(
       waitForAsync(() => {
-        mockCartService = jasmine.createSpyObj(
-          ['saveItem', 'deleteItem', 'deleteAllItems'],
-          { cartItems$: of(ITEMS), cartQuantity$: of(getQuantity(ITEMS)) }
-        );
+        mockCartService = jasmine.createSpyObj(['']);
         mockActivatedRoute = jasmine.createSpyObj([], {
           snapshot: {
             data: {
@@ -2086,8 +2145,17 @@ xdescribe('CartComponent w/ template', () => {
             },
           },
         });
+        mockNgbModal = jasmine.createSpyObj(['']);
+        mockNotificationService = jasmine.createSpyObj(['']);
+        mockTitle = jasmine.createSpyObj(['setTitle']);
+        mockNgbModal = jasmine.createSpyObj(['']);
+        mockNgbModalConfig = jasmine.createSpyObj([], {
+          centered: false,
+          backdrop: true,
+        });
+        mockShippingRateService = jasmine.createSpyObj(['']);
         TestBed.configureTestingModule({
-          imports: [HttpClientTestingModule],
+          imports: [HttpClientTestingModule, ReactiveFormsModule],
 
           declarations: [
             CartComponent,
@@ -2097,7 +2165,19 @@ xdescribe('CartComponent w/ template', () => {
 
           providers: [
             { provide: CartService, useValue: mockCartService },
+            { provide: Title, useValue: mockTitle },
+            {
+              provide: ShippingRateService,
+              useValue: mockShippingRateService,
+            },
             { provide: ActivatedRoute, useValue: mockActivatedRoute },
+            { provide: NgbModal, useValue: mockNgbModal },
+            { provide: NgbModalConfig, useValue: mockNgbModalConfig },
+
+            {
+              provide: NotificationService,
+              useValue: mockNotificationService,
+            },
           ],
           schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
@@ -2147,7 +2227,7 @@ xdescribe('CartComponent w/ template', () => {
         component.errorMessage
       );
       expect(elements[0].classes).toEqual({
-        'text-center': true,
+        'text-sm-center': true,
       });
     });
 
