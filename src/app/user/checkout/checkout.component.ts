@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -11,10 +16,9 @@ import {
   NgbAccordionConfig,
   NgbProgressbarConfig,
 } from '@ng-bootstrap/ng-bootstrap';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import { first, map } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
+import { debounceTime, first, map } from 'rxjs/operators';
 
-import { emailMatcher } from 'src/app/functions/email-matcher';
 import { CartService } from 'src/app/services/cart.service';
 import { FormService } from 'src/app/services/form.service';
 import { NotificationService } from 'src/app/services/notification.service';
@@ -27,27 +31,6 @@ import { Order, OrderMaker } from 'src/app/types/order';
 import { Payment, PaymentMaker } from 'src/app/types/payment';
 import { IShipping } from 'src/app/types/shipping';
 import { ShippingRatesResult } from 'src/app/types/shipping-rates-result';
-
-// function dateChecker(c: AbstractControl): { [key: string]: boolean } | null {
-//   const monthControl = c.get('expiringMonth');
-//   const yearControl = c.get('expiringYear');
-//   const currentMonth = new Date().getMonth();
-//   const currentYear = new Date().getFullYear();
-
-//   if (monthControl.pristine || yearControl.pristine) {
-//     return null;
-//   }
-
-//   if (+yearControl.value > currentYear) {
-//     return null;
-//   }
-
-//   if (+monthControl.value >= currentMonth) {
-//     return null;
-//   }
-
-//   return { expired: true };
-// }
 
 function cardNumberChecker(
   c: AbstractControl
@@ -99,46 +82,220 @@ function cardNumberChecker(
   providers: [NgbAccordionConfig],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CheckoutComponent implements OnInit {
+export class CheckoutComponent implements OnInit, OnDestroy {
   /* Get data from resolver */
   private readonly resolvedData = this.route.snapshot.data
     .resolvedData as ShippingRatesResult;
   readonly shippingRates = this.resolvedData.shippingRates as IShipping[];
-  errorMessage = this.resolvedData.error as string;
+  readonly errorMessage = this.resolvedData.error as string;
 
-  /* Set pageTitle */
-  readonly pageTitle = this.shippingRates
-    ? ('Checkout' as string)
-    : ('Retrieval Error' as string);
+  private readonly date = new Date();
+  private readonly month = this.date.getMonth();
+  private readonly fullYear = this.date.getFullYear();
+  readonly cardMinExpiration = `${this.fullYear}-0${this.month + 1}`;
+  readonly cardMaxExpiration = `${this.fullYear + 8}-0${this.month + 1}`;
 
-  /* NgbCollapse for showing and hiding the signUpCheck and passwordGroup in
-  the view */
-  // @ViewChild('collapse') private collapse: NgbCollapse;
-  // isCollapsed = false;
+  pageTitle: string;
 
-  // private readonly subscriptions: Subscription[] = [];
-  // user: IUser;
-  // emailTakenMessage: string;
+  private readonly subscriptions: Subscription[] = [];
+
   submitted = false;
   orderPlaced = false;
 
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
   readonly loading$ = this.loadingSubject.asObservable();
 
-  /* Main form group */
+  /* Main FormGroup */
   checkOutForm: FormGroup;
 
   /* Get form control validation rules from FormValidationService*/
-  readonly nameMinLength = +this.formService.nameMinLength;
-  readonly nameMaxLength = +this.formService.nameMaxLength;
-  readonly streetMinLength = +this.formService.streetMinLength;
-  readonly streetMaxLength = +this.formService.streetMaxLength;
-  readonly cityMinLength = +this.formService.cityMinLength;
-  readonly cityMaxLength = +this.formService.cityMaxLength;
+  readonly stateOptions = [
+    'Alabama',
+    'Alaska',
+    'American Samoa',
+    'Arizona',
+    'Arkansas',
+    'California',
+    'Colorado',
+    'Connecticut',
+    'Delaware',
+    'District of Columbia',
+    'Federated States of Micronesia',
+    'Florida',
+    'Georgia',
+    'Guam',
+    'Hawaii',
+    'Idaho',
+    'Illinois',
+    'Indiana',
+    'Iowa',
+    'Kansas',
+    'Kentucky',
+    'Louisiana',
+    'Maine',
+    'Marshall Islands',
+    'Maryland',
+    'Massachusetts',
+    'Michigan',
+    'Minnesota',
+    'Mississippi',
+    'Missouri',
+    'Montana',
+    'Nebraska',
+    'Nevada',
+    'New Hampshire',
+    'New Jersey',
+    'New Mexico',
+    'New York',
+    'North Carolina',
+    'North Dakota',
+    'Northern Mariana Islands',
+    'Ohio',
+    'Oklahoma',
+    'Oregon',
+    'Palau',
+    'Pennsylvania',
+    'Puerto Rico',
+    'Rhode Island',
+    'South Carolina',
+    'South Dakota',
+    'Tennessee',
+    'Texas',
+    'Utah',
+    'Vermont',
+    'Virgin Island',
+    'Virginia',
+    'Washington',
+    'West Virginia',
+    'Wisconsin',
+    'Wyoming',
+  ];
+  private readonly nameMinLength = +this.formService.nameMinLength;
+  private readonly nameMaxLength = +this.formService.nameMaxLength;
+  private readonly streetMinLength = +this.formService.streetMinLength;
+  private readonly streetMaxLength = +this.formService.streetMaxLength;
+  private readonly cityMinLength = +this.formService.cityMinLength;
+  private readonly cityMaxLength = +this.formService.cityMaxLength;
   private readonly zipPattern = this.formService.zipPattern as RegExp;
   private readonly cvvPattern = /^[0-9]{3,4}$/;
   private readonly phonePattern = this.formService.phonePattern as RegExp;
-  // private readonly passwordPattern = this.formService.passwordPattern as RegExp;
+
+  private readonly firstNameValidationMessages = {
+    required: 'Please enter your first name.',
+    minlength: `First name must be longer than ${this.nameMinLength - 1}
+    characters.`,
+    maxlength: `First name cannot be longer than ${this.nameMaxLength}
+    characters.`,
+  };
+  private readonly firstNameMessageSubject = new BehaviorSubject<string>(
+    this.firstNameValidationMessages.required
+  );
+  readonly firstNameMessage$ = this.firstNameMessageSubject.asObservable();
+
+  private readonly lastNameValidationMessages = {
+    required: 'Please enter your last name.',
+    minlength: `Last name must be longer than ${this.nameMinLength - 1}
+    characters.`,
+    maxlength: `Last name cannot be longer than ${this.nameMaxLength}
+    characters.`,
+  };
+  private readonly lastNameMessageSubject = new BehaviorSubject<string>(
+    this.lastNameValidationMessages.required
+  );
+  readonly lastNameMessage$ = this.lastNameMessageSubject.asObservable();
+
+  private readonly streetValidationMessages = {
+    required: 'Please enter your street address.',
+    minlength: `The street must be longer than ${this.streetMinLength - 1}
+    characters.`,
+    maxlength: `The street cannot be longer than ${this.streetMaxLength}
+    characters.`,
+  };
+  private readonly streetMessageSubject = new BehaviorSubject<string>(
+    this.streetValidationMessages.required
+  );
+  readonly streetMessage$ = this.streetMessageSubject.asObservable();
+
+  private readonly cityValidationMessages = {
+    required: 'Please enter your city.',
+    minlength: `The city must be longer than ${this.cityMinLength - 1}
+    characters.`,
+    maxlength: `The city cannot be longer than ${this.cityMaxLength}
+    characters.`,
+  };
+  private readonly cityMessageSubject = new BehaviorSubject<string>(
+    this.cityValidationMessages.required
+  );
+  readonly cityMessage$ = this.cityMessageSubject.asObservable();
+
+  private readonly stateValidationMessages = {
+    required: 'Please select your state.',
+  };
+  private readonly stateMessageSubject = new BehaviorSubject<string>(
+    this.stateValidationMessages.required
+  );
+  readonly stateMessage$ = this.stateMessageSubject.asObservable();
+
+  private readonly zipValidationMessages = {
+    required: 'Please enter your zip code.',
+    pattern: 'Please enter a valid zip code.',
+  };
+  private readonly zipMessageSubject = new BehaviorSubject<string>(
+    this.zipValidationMessages.required
+  );
+  readonly zipMessage$ = this.zipMessageSubject.asObservable();
+
+  private readonly countryValidationMessages = {
+    required: 'Please select your country.',
+  };
+  private readonly countryMessageSubject = new BehaviorSubject<string>(
+    this.countryValidationMessages.required
+  );
+  readonly countryMessage$ = this.countryMessageSubject.asObservable();
+
+  private readonly phoneValidationMessages = {
+    required: 'Please enter your phone number.',
+    pattern: 'Please enter a valid phone number.',
+  };
+  private readonly phoneMessageSubject = new BehaviorSubject<string>(
+    this.phoneValidationMessages.required
+  );
+  readonly phoneMessage$ = this.phoneMessageSubject.asObservable();
+
+  private readonly emailValidationMessages = {
+    required: 'Please enter your email address.',
+    email: 'Please enter a valid email address.',
+  };
+  private readonly emailMessageSubject = new BehaviorSubject<string>(
+    this.emailValidationMessages.required
+  );
+  readonly emailMessage$ = this.emailMessageSubject.asObservable();
+
+  private readonly cardNumberValidationMessages = {
+    required: 'Please enter your card number.',
+    cardNumber: 'Please enter a valid card number.',
+  };
+  private readonly cardNumberMessageSubject = new BehaviorSubject<string>(
+    this.cardNumberValidationMessages.required
+  );
+  readonly cardNumberMessage$ = this.cardNumberMessageSubject.asObservable();
+
+  private readonly expirationValidationMessages = {
+    required: `Please enter your card expiration.`,
+  };
+  private readonly expirationMessageSubject = new BehaviorSubject<string>(
+    this.expirationValidationMessages.required
+  );
+  readonly expirationMessage$ = this.expirationMessageSubject.asObservable();
+
+  private readonly cvvValidationMessages = {
+    required: `Please enter your card CVC.`,
+    pattern: 'Please enter a valid CVC.',
+  };
+  private readonly cvvMessageSubject = new BehaviorSubject<string>(
+    this.cvvValidationMessages.required
+  );
+  readonly cvvMessage$ = this.cvvMessageSubject.asObservable();
 
   constructor(
     private readonly accordionConfig: NgbAccordionConfig,
@@ -160,7 +317,28 @@ export class CheckoutComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.shippingRates
+      ? this.onShippingRatesReceived()
+      : this.onErrorReceived();
     this.title.setTitle(`Gaming Legend | ${this.pageTitle}`);
+  }
+
+  onSubmit(form: FormGroup): void {
+    window.scrollTo(0, 0);
+    if (!this.submitted) {
+      this.submitted = true;
+    }
+    if (form.valid) {
+      this.setLoading(true);
+      this.getOrder(form).subscribe({
+        next: (order) => this.saveOrder(order, order.items),
+        error: () => this.show('Error placing order !', true),
+      });
+    }
+  }
+
+  private onShippingRatesReceived(): void {
+    this.pageTitle = 'Checkout';
     // Build check out form
     this.checkOutForm = this.fb.group({
       nameGroup: this.fb.group({
@@ -181,17 +359,13 @@ export class CheckoutComponent implements OnInit {
           ],
         ],
       }),
-      contactGroup: this.fb.group(
-        {
-          phone: [
-            '',
-            [Validators.required, Validators.pattern(this.phonePattern)],
-          ],
-          email: ['', [Validators.required, Validators.email]],
-          confirmEmail: ['', Validators.required],
-        },
-        { validator: emailMatcher }
-      ),
+      contactGroup: this.fb.group({
+        phone: [
+          '',
+          [Validators.required, Validators.pattern(this.phonePattern)],
+        ],
+        email: ['', [Validators.required, Validators.email]],
+      }),
       addressGroup: this.fb.group({
         street: [
           '',
@@ -201,6 +375,9 @@ export class CheckoutComponent implements OnInit {
             Validators.maxLength(this.streetMaxLength),
           ],
         ],
+        street2: '',
+        zip: ['', [Validators.required, Validators.pattern(this.zipPattern)]],
+        state: ['', [Validators.required]],
         city: [
           '',
           [
@@ -209,115 +386,105 @@ export class CheckoutComponent implements OnInit {
             Validators.maxLength(this.cityMaxLength),
           ],
         ],
-        state: ['', [Validators.required]],
-        zip: ['', [Validators.required, Validators.pattern(this.zipPattern)]],
-        country: ['USA', [Validators.required]],
+        country: ['', [Validators.required]],
       }),
       paymentGroup: this.fb.group({
         cardNumber: [null, [Validators.required, cardNumberChecker]],
-        cvv: [null, [Validators.required, Validators.pattern(this.cvvPattern)]],
         expiration: ['', [Validators.required]],
+        cvv: [null, [Validators.required, Validators.pattern(this.cvvPattern)]],
       }),
-      // signUpCheck: true,
-      // passwordGroup: this.fb.group(
-      //   {
-      //     password: [
-      //       '',
-      //       [Validators.required, Validators.pattern(this.passwordPattern)],
-      //     ],
-      //     confirmPassword: ['', [Validators.required]],
-      //   },
-      //   { validator: passwordMatcher }
-      // ),
     });
-
-    // this.subscribeToValueChanges();
-    // this.authService.currentUser$.pipe(first()).subscribe((user) => {
-    //   if (user) {
-    //     this.user = user as IUser;
-    //     this.checkOutForm.patchValue({
-    //       signUpCheck: false,
-    //     });
-    //   }
-    // });
-    if (this.shippingRates) {
-      this.checkOutForm.patchValue({
-        shippingRate: +this.shippingRates[0].price,
-      });
-    }
+    this.subscribeToControls(this.checkOutForm);
   }
 
-  onSubmit(form: FormGroup): void {
-    if (!this.submitted) {
-      this.submitted = true;
-    }
-    if (form.valid) {
-      this.setLoading(true);
-      this.getOrder(form).subscribe({
-        next: (order) => this.saveOrder(order, order.items),
-        error: () => this.show('Error placing order !', true),
-      });
-      // const signUpCheck = this.checkOutForm.get('signUpCheck').value as boolean;
-      // if (signUpCheck) {
-      //   this.checkForUser(form, items);
-      // } else {
-      //   this.getOrder(form, items);
-      // }
-    }
+  private onErrorReceived(): void {
+    this.pageTitle = 'Retrieval Error';
   }
 
-  // setPasswordValidation(value: boolean): void {
-  //   const passwordGroupControl = this.checkOutForm.get('passwordGroup');
-  //   const passwordControl = this.checkOutForm.get('passwordGroup.password');
-  //   const confirmPasswordControl = this.checkOutForm.get(
-  //     'passwordGroup.confirmPassword'
-  //   );
-  //   if (value) {
-  //     passwordGroupControl.setValidators(passwordMatcher);
-  //     passwordControl.setValidators([
-  //       Validators.required,
-  //       Validators.pattern(this.passwordPattern),
-  //     ]);
-  //     confirmPasswordControl.setValidators([Validators.required]);
-  //   } else {
-  //     passwordGroupControl.clearValidators();
-  //     passwordControl.clearValidators();
-  //     confirmPasswordControl.clearValidators();
-  //   }
-  //   passwordGroupControl.updateValueAndValidity();
-  //   passwordControl.updateValueAndValidity();
-  //   confirmPasswordControl.updateValueAndValidity();
-  // }
-
-  // setEmailTakenMessage(message: string): void {
-  //   this.emailTakenMessage = message;
-  // }
-
-  // getActiveIdsString(user: User): string {
-  //   if (!user) {
-  //     return 'name';
-  //   }
-  //   if (!user.address) {
-  //     return 'shipping';
-  //   }
-  //   return 'finalize';
-  // }
-
-  // private subscribeToValueChanges(): void {
-  //   const signUpCheckControl = this.checkOutForm.get('signUpCheck');
-  //   this.subscriptions.push(
-  //     signUpCheckControl.valueChanges.subscribe((check: boolean) => {
-  //       this.emailTakenMessage = '';
-  //       this.setPasswordValidation(check);
-  //       if (this.collapse) {
-  //         this.collapse.toggle(check);
-  //       }
-  //     })
-  //   );
-  // }
+  private subscribeToControls(form: FormGroup): void {
+    const firstNameControl = form.get('nameGroup.firstName');
+    this.subscriptions.push(
+      firstNameControl.valueChanges
+        .pipe(debounceTime(1000))
+        .subscribe(() => this.setMessage(firstNameControl, 'firstName'))
+    );
+    const lastNameControl = form.get('nameGroup.lastName');
+    this.subscriptions.push(
+      lastNameControl.valueChanges
+        .pipe(debounceTime(1000))
+        .subscribe(() => this.setMessage(lastNameControl, 'lastName'))
+    );
+    const streetControl = form.get('addressGroup.street');
+    this.subscriptions.push(
+      streetControl.valueChanges
+        .pipe(debounceTime(1000))
+        .subscribe(() => this.setMessage(streetControl, 'street'))
+    );
+    const cityControl = form.get('addressGroup.city');
+    this.subscriptions.push(
+      cityControl.valueChanges
+        .pipe(debounceTime(1000))
+        .subscribe(() => this.setMessage(cityControl, 'city'))
+    );
+    const stateControl = form.get('addressGroup.state');
+    this.subscriptions.push(
+      stateControl.valueChanges
+        .pipe(debounceTime(1000))
+        .subscribe(() => this.setMessage(stateControl, 'state'))
+    );
+    const zipControl = form.get('addressGroup.zip');
+    this.subscriptions.push(
+      zipControl.valueChanges
+        .pipe(debounceTime(1000))
+        .subscribe(() => this.setMessage(zipControl, 'zip'))
+    );
+    const countryControl = form.get('addressGroup.country');
+    this.subscriptions.push(
+      countryControl.valueChanges
+        .pipe(debounceTime(1000))
+        .subscribe(() => this.setMessage(countryControl, 'country'))
+    );
+    const phoneControl = form.get('contactGroup.phone');
+    this.subscriptions.push(
+      phoneControl.valueChanges
+        .pipe(debounceTime(1000))
+        .subscribe(() => this.setMessage(phoneControl, 'phone'))
+    );
+    const emailControl = form.get('contactGroup.email');
+    this.subscriptions.push(
+      emailControl.valueChanges
+        .pipe(debounceTime(1000))
+        .subscribe(() => this.setMessage(emailControl, 'email'))
+    );
+    const cardNumberControl = form.get('paymentGroup.cardNumber');
+    this.subscriptions.push(
+      cardNumberControl.valueChanges
+        .pipe(debounceTime(1000))
+        .subscribe(() => this.setMessage(cardNumberControl, 'cardNumber'))
+    );
+    const expirationControl = form.get('paymentGroup.expiration');
+    this.subscriptions.push(
+      expirationControl.valueChanges
+        .pipe(debounceTime(1000))
+        .subscribe(() => this.setMessage(expirationControl, 'expiration'))
+    );
+    const cvvControl = form.get('paymentGroup.cvv');
+    this.subscriptions.push(
+      cvvControl.valueChanges
+        .pipe(debounceTime(1000))
+        .subscribe(() => this.setMessage(cvvControl, 'cvv'))
+    );
+  }
 
   private setLoading(value: boolean): void {
     this.loadingSubject.next(value);
+    this.setFormState(this.checkOutForm, value);
+  }
+
+  private setFormState(form: FormGroup, value: boolean): void {
+    value
+      ? form.disable({ emitEvent: false })
+      : form.enable({ emitEvent: false });
   }
 
   private show(text: string, danger: boolean): void {
@@ -328,54 +495,6 @@ export class CheckoutComponent implements OnInit {
     } as INotification;
     this.notificationService.show(notification);
   }
-
-  // private checkForUser(form: FormGroup, items: ICartItem[]): void {
-  //   const email = this.checkOutForm.get('contactGroup.email').value as string;
-  //   this.authService.checkForUser(email).subscribe(
-  //     (result) => {
-  //       if (result) {
-  //         this.setLoading(false);
-  //         this.emailTakenMessage = `${email} is already registered to an
-  //         account. Please sign in to continue.`;
-  //       } else {
-  //         this.saveUser(form, items);
-  //       }
-  //     },
-  //     (error) => {
-  //       this.setLoading(false);
-  //       this.showDanger(this.saveUserDangerTpl);
-  //     }
-  //   );
-  // }
-
-  // private saveUser(form: FormGroup, items: ICartItem[]): void {
-  //   const user = UserMaker.create({
-  //     name: UserNameMaker.create({
-  //       firstName: form.get('nameGroup.firstName').value as string,
-  //       lastName: form.get('nameGroup.lastName').value as string,
-  //     } as UserName),
-  //     contact: UserContactMaker.create({
-  //       phone: form.get('contactGroup.phone').value as string,
-  //       email: form.get('contactGroup.email').value as string,
-  //     } as UserContact),
-  //     address: UserAddressMaker.create({
-  //       street: form.get('addressGroup.street').value as string,
-  //       city: form.get('addressGroup.city').value as string,
-  //       state: form.get('addressGroup.state').value as string,
-  //       zip: form.get('addressGroup.zip').value as string,
-  //       country: form.get('addressGroup.country').value as string,
-  //     } as UserAddress),
-  //     password: form.get('passwordGroup.password').value as string,
-  //     isAdmin: false,
-  //   }) as User;
-  //   this.authService.saveUser(user).subscribe(
-  //     (result) => this.getOrder(form, items),
-  //     (error) => {
-  //       this.setLoading(false);
-  //       this.showDanger(this.saveUserDangerTpl);
-  //     }
-  //   );
-  // }
 
   private getOrder(form: FormGroup): Observable<Order> {
     return combineLatest([
@@ -393,6 +512,7 @@ export class CheckoutComponent implements OnInit {
           phone: form.get('contactGroup.phone').value as string,
           email: form.get('contactGroup.email').value as string,
           street: form.get('addressGroup.street').value as string,
+          street2: form.get('addressGroup.street2').value as string,
           city: form.get('addressGroup.city').value as string,
           state: form.get('addressGroup.state').value as string,
           zip: form.get('addressGroup.zip').value as string,
@@ -433,10 +553,119 @@ export class CheckoutComponent implements OnInit {
     });
   }
 
+  private setMessage(c: AbstractControl, name: string): void {
+    let message = '';
+    switch (name) {
+      case 'firstName':
+        if (c.errors) {
+          message = Object.keys(c.errors)
+            .map((key) => this.firstNameValidationMessages[key])
+            .join(' ');
+        }
+        this.firstNameMessageSubject.next(message);
+        break;
+      case 'lastName':
+        if (c.errors) {
+          message = Object.keys(c.errors)
+            .map((key) => this.lastNameValidationMessages[key])
+            .join(' ');
+        }
+        this.lastNameMessageSubject.next(message);
+        break;
+      case 'street':
+        if (c.errors) {
+          message = Object.keys(c.errors)
+            .map((key) => this.streetValidationMessages[key])
+            .join(' ');
+        }
+        this.streetMessageSubject.next(message);
+        break;
+      case 'city':
+        if (c.errors) {
+          message = Object.keys(c.errors)
+            .map((key) => this.cityValidationMessages[key])
+            .join(' ');
+        }
+        this.cityMessageSubject.next(message);
+        break;
+      case 'state':
+        if (c.errors) {
+          message = Object.keys(c.errors)
+            .map((key) => this.stateValidationMessages[key])
+            .join(' ');
+        }
+        this.stateMessageSubject.next(message);
+        break;
+      case 'zip':
+        if (c.errors) {
+          message = Object.keys(c.errors)
+            .map((key) => this.zipValidationMessages[key])
+            .join(' ');
+        }
+        this.zipMessageSubject.next(message);
+        break;
+      case 'country':
+        if (c.errors) {
+          message = Object.keys(c.errors)
+            .map((key) => this.countryValidationMessages[key])
+            .join(' ');
+        }
+        this.countryMessageSubject.next(message);
+        break;
+      case 'phone':
+        if (c.errors) {
+          message = Object.keys(c.errors)
+            .map((key) => this.phoneValidationMessages[key])
+            .join(' ');
+        }
+        this.phoneMessageSubject.next(message);
+        break;
+      case 'email':
+        if (c.errors) {
+          message = Object.keys(c.errors)
+            .map((key) => this.emailValidationMessages[key])
+            .join(' ');
+        }
+        this.emailMessageSubject.next(message);
+        break;
+      case 'cardNumber':
+        if (c.errors) {
+          message = Object.keys(c.errors)
+            .map((key) => this.cardNumberValidationMessages[key])
+            .join(' ');
+        }
+        this.cardNumberMessageSubject.next(message);
+        break;
+      case 'expiration':
+        if (c.errors) {
+          message = Object.keys(c.errors)
+            .map((key) => this.expirationValidationMessages[key])
+            .join(' ');
+        }
+        this.expirationMessageSubject.next(message);
+        break;
+      case 'cvv':
+        if (c.errors) {
+          message = Object.keys(c.errors)
+            .map((key) => this.cvvValidationMessages[key])
+            .join(' ');
+        }
+        this.cvvMessageSubject.next(message);
+        break;
+      default:
+        console.error(`${name} did not match any names.`);
+        break;
+    }
+  }
+
   private deleteAllItems(items: ICartItem[]): void {
     this.cartService.deleteAllItems(items).subscribe({
       error: () => this.show(`Error emptying cart !`, true),
       complete: () => this.setLoading(false),
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((s) => s.unsubscribe());
   }
 }
