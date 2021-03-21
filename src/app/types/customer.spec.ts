@@ -6,6 +6,7 @@ describe('Customer', () => {
   const phone = '8011231234';
   const email = 'test@test.com';
   const street = '123 S Bend Ct';
+  const street2 = 'Apt 1b';
   const city = 'Las Vegas';
   const state = 'Nevada';
   const zip = '12345';
@@ -18,6 +19,7 @@ describe('Customer', () => {
         phone,
         email,
         street,
+        street2,
         city,
         state,
         zip,

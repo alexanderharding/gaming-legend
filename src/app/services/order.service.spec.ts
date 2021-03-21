@@ -18,6 +18,7 @@ describe('OrderService', () => {
         phone: '8011231234',
         email: 'test@test.com',
         street: '123 S Bend Ct',
+        street2: '',
         city: 'Las Vegas',
         state: 'Nevada',
         zip: '12345',
