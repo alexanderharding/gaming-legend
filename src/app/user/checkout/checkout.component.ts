@@ -12,10 +12,6 @@ import {
 } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  NgbAccordionConfig,
-  NgbProgressbarConfig,
-} from '@ng-bootstrap/ng-bootstrap';
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { debounceTime, first, map } from 'rxjs/operators';
 
@@ -79,15 +75,14 @@ function cardNumberChecker(
 
 @Component({
   templateUrl: './checkout.component.html',
-  providers: [NgbAccordionConfig],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CheckoutComponent implements OnInit, OnDestroy {
   /* Get data from resolver */
   private readonly resolvedData = this.route.snapshot.data
     .resolvedData as ShippingRatesResult;
-  readonly shippingRates = this.resolvedData.shippingRates as IShipping[];
-  readonly errorMessage = this.resolvedData.error as string;
+  readonly shippingRates: IShipping[] = this.resolvedData.shippingRates;
+  readonly errorMessage: string = this.resolvedData.error;
 
   private readonly date = new Date();
   private readonly month = this.date.getMonth();
@@ -276,23 +271,16 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   readonly cvvMessage$ = this.cvvMessageSubject.asObservable();
 
   constructor(
-    private readonly accordionConfig: NgbAccordionConfig,
-    private readonly progressBarConfig: NgbProgressbarConfig,
     private readonly cartService: CartService,
     private readonly orderService: OrderService,
     private readonly router: Router,
     private readonly fb: FormBuilder,
     private readonly route: ActivatedRoute,
-    // private readonly authService: AuthService,
     private readonly formService: FormService,
     private readonly shippingRateService: ShippingRateService,
     private readonly notificationService: NotificationService,
     private readonly title: Title
-  ) {
-    accordionConfig.closeOthers = true;
-    progressBarConfig.striped = true;
-    progressBarConfig.animated = true;
-  }
+  ) {}
 
   ngOnInit(): void {
     this.shippingRates
@@ -379,7 +367,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     const stateControl = form.get('addressGroup.state');
     this.subscriptions.push(
       stateControl.valueChanges
-        .pipe(debounceTime(1000))
+        .pipe(debounceTime(500))
         .subscribe(() => this.setMessage(stateControl, 'state'))
     );
     const zipControl = form.get('addressGroup.zip');
@@ -391,7 +379,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     const countryControl = form.get('addressGroup.country');
     this.subscriptions.push(
       countryControl.valueChanges
-        .pipe(debounceTime(1000))
+        .pipe(debounceTime(500))
         .subscribe(() => this.setMessage(countryControl, 'country'))
     );
     const phoneControl = form.get('contactGroup.phone');
