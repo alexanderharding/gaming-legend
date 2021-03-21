@@ -38,6 +38,7 @@
                   formControlName="firstName"
                   autocomplete="given-name"
                   placeholder="First Name"
+                  [maxLength]="15"
                   [ngClass]="{
                     'is-invalid': (firstNameMessage$ | async) && submitted,
                     'is-valid': (firstNameMessage$ | async) === ''
@@ -56,6 +57,7 @@
                   autocomplete="family-name"
                   formControlName="lastName"
                   placeholder="Last Name"
+                  [maxLength]="15"
                   [ngClass]="{
                     'is-invalid': (lastNameMessage$ | async) && submitted,
                     'is-valid': (lastNameMessage$ | async) === ''
@@ -78,6 +80,7 @@
                   class="form-control"
                   placeholder="Street"
                   autocomplete="street-address"
+                  [maxLength]="30"
                   [ngClass]="{
                     'is-invalid': (streetMessage$ | async) && submitted,
                     'is-valid': (streetMessage$ | async) === ''
@@ -98,6 +101,7 @@
                       formControlName="street2"
                       autocomplete="address-line2"
                       placeholder="Apt, Suite, Unit, Bldg"
+                      [maxLength]="30"
                       [ngClass]="{
                         'is-valid': checkOutForm.get('addressGroup.street2')
                           .value
@@ -115,6 +119,7 @@
                       formControlName="zip"
                       autocomplete="postal-code"
                       placeholder="Zip"
+                      [maxLength]="10"
                       [ngClass]="{
                         'is-invalid': (zipMessage$ | async) && submitted,
                         'is-valid': (zipMessage$ | async) === ''
@@ -156,6 +161,7 @@
                   formControlName="city"
                   class="form-control"
                   placeholder="City"
+                  [maxLength]="30"
                   [ngClass]="{
                     'is-invalid': (cityMessage$ | async) && submitted,
                     'is-valid': (cityMessage$ | async) === ''
@@ -197,6 +203,7 @@
                   formControlName="phone"
                   placeholder="Phone"
                   autocomplete="tel"
+                  [maxLength]="15"
                   [ngClass]="{
                     'is-invalid': (phoneMessage$ | async) && submitted,
                     'is-valid': (phoneMessage$ | async) === ''
@@ -215,6 +222,7 @@
                   class="form-control"
                   placeholder="Email"
                   autocomplete="email"
+                  [maxLength]="50"
                   [ngClass]="{
                     'is-invalid': (emailMessage$ | async) && submitted,
                     'is-valid': (emailMessage$ | async) === ''
@@ -237,6 +245,7 @@
                   formControlName="cardNumber"
                   placeholder="Card Number"
                   autocomplete="cc-number"
+                  [maxLength]="20"
                   [ngClass]="{
                     'is-invalid': (cardNumberMessage$ | async) && submitted,
                     'is-valid': (cardNumberMessage$ | async) === ''
@@ -274,6 +283,7 @@
                       class="form-control"
                       formControlName="cvv"
                       placeholder="CVC"
+                      [maxLength]="4"
                       [ngClass]="{
                         'is-invalid': (cvvMessage$ | async) && submitted,
                         'is-valid': (cvvMessage$ | async) === ''
