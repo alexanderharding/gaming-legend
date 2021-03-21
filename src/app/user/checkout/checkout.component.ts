@@ -170,22 +170,12 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     'Wisconsin',
     'Wyoming',
   ];
-  private readonly nameMinLength = +this.formService.nameMinLength;
-  private readonly nameMaxLength = +this.formService.nameMaxLength;
-  private readonly streetMinLength = +this.formService.streetMinLength;
-  private readonly streetMaxLength = +this.formService.streetMaxLength;
-  private readonly cityMinLength = +this.formService.cityMinLength;
-  private readonly cityMaxLength = +this.formService.cityMaxLength;
   private readonly zipPattern = this.formService.zipPattern as RegExp;
   private readonly cvvPattern = /^[0-9]{3,4}$/;
   private readonly phonePattern = this.formService.phonePattern as RegExp;
 
   private readonly firstNameValidationMessages = {
     required: 'Please enter your first name.',
-    minlength: `First name must be longer than ${this.nameMinLength - 1}
-    characters.`,
-    maxlength: `First name cannot be longer than ${this.nameMaxLength}
-    characters.`,
   };
   private readonly firstNameMessageSubject = new BehaviorSubject<string>(
     this.firstNameValidationMessages.required
@@ -194,10 +184,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
   private readonly lastNameValidationMessages = {
     required: 'Please enter your last name.',
-    minlength: `Last name must be longer than ${this.nameMinLength - 1}
-    characters.`,
-    maxlength: `Last name cannot be longer than ${this.nameMaxLength}
-    characters.`,
   };
   private readonly lastNameMessageSubject = new BehaviorSubject<string>(
     this.lastNameValidationMessages.required
@@ -205,11 +191,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   readonly lastNameMessage$ = this.lastNameMessageSubject.asObservable();
 
   private readonly streetValidationMessages = {
-    required: 'Please enter your street address.',
-    minlength: `The street must be longer than ${this.streetMinLength - 1}
-    characters.`,
-    maxlength: `The street cannot be longer than ${this.streetMaxLength}
-    characters.`,
+    required: 'Please enter your street.',
   };
   private readonly streetMessageSubject = new BehaviorSubject<string>(
     this.streetValidationMessages.required
@@ -218,10 +200,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
   private readonly cityValidationMessages = {
     required: 'Please enter your city.',
-    minlength: `The city must be longer than ${this.cityMinLength - 1}
-    characters.`,
-    maxlength: `The city cannot be longer than ${this.cityMaxLength}
-    characters.`,
   };
   private readonly cityMessageSubject = new BehaviorSubject<string>(
     this.cityValidationMessages.required
@@ -342,22 +320,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     // Build check out form
     this.checkOutForm = this.fb.group({
       nameGroup: this.fb.group({
-        firstName: [
-          '',
-          [
-            Validators.required,
-            Validators.minLength(this.nameMinLength),
-            Validators.maxLength(this.nameMaxLength),
-          ],
-        ],
-        lastName: [
-          '',
-          [
-            Validators.required,
-            Validators.minLength(this.nameMinLength),
-            Validators.maxLength(this.nameMaxLength),
-          ],
-        ],
+        firstName: ['', [Validators.required]],
+        lastName: ['', [Validators.required]],
       }),
       contactGroup: this.fb.group({
         phone: [
@@ -367,25 +331,11 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         email: ['', [Validators.required, Validators.email]],
       }),
       addressGroup: this.fb.group({
-        street: [
-          '',
-          [
-            Validators.required,
-            Validators.minLength(this.streetMinLength),
-            Validators.maxLength(this.streetMaxLength),
-          ],
-        ],
+        street: ['', [Validators.required]],
         street2: '',
         zip: ['', [Validators.required, Validators.pattern(this.zipPattern)]],
         state: ['', [Validators.required]],
-        city: [
-          '',
-          [
-            Validators.required,
-            Validators.minLength(this.cityMinLength),
-            Validators.maxLength(this.cityMaxLength),
-          ],
-        ],
+        city: ['', [Validators.required]],
         country: ['', [Validators.required]],
       }),
       paymentGroup: this.fb.group({
