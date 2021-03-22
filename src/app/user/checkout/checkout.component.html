@@ -26,16 +26,16 @@
       class="text-light"
     >
       <div class="row">
-        <div class="col-lg-8 mb-3 mb-lg-0">
+        <div class="col-md-8">
           <fieldset formGroupName="nameGroup">
             <div class="form-row">
               <div class="col-sm mb-3">
                 <label for="firstNameControl">First Name</label>
                 <input
-                  type="text"
-                  class="form-control"
                   id="firstNameControl"
+                  type="text"
                   formControlName="firstName"
+                  class="form-control"
                   autocomplete="given-name"
                   placeholder="First Name"
                   [maxLength]="15"
@@ -52,10 +52,10 @@
                 <label for="lastNameControl">Last Name</label>
                 <input
                   id="lastNameControl"
+                  formControlName="lastName"
                   type="text"
                   class="form-control"
                   autocomplete="family-name"
-                  formControlName="lastName"
                   placeholder="Last Name"
                   [maxLength]="15"
                   [ngClass]="{
@@ -71,7 +71,7 @@
           </fieldset>
           <fieldset formGroupName="addressGroup">
             <div class="form-row">
-              <div class="col-sm mb-3">
+              <div class="col-lg mb-3">
                 <label for="streetControl">Street</label>
                 <input
                   id="streetControl"
@@ -90,7 +90,7 @@
                   {{ streetMessage$ | async }}
                 </div>
               </div>
-              <div class="col-12 col-md-8">
+              <div class="col-lg-8">
                 <div class="form-row">
                   <div class="col-sm mb-3">
                     <label for="street2Control">Apt, Suite, Unit, Bldg</label>
@@ -137,8 +137,8 @@
                 <label for="stateControl">State</label>
                 <select
                   id="stateControl"
-                  class="form-control"
                   formControlName="state"
+                  class="form-control"
                   [ngClass]="{
                     'is-invalid': (stateMessage$ | async) && submitted,
                     'is-valid': (stateMessage$ | async) === ''
@@ -175,8 +175,8 @@
                 <label for="country">Country</label>
                 <select
                   id="country"
-                  class="form-control"
                   formControlName="country"
+                  class="form-control"
                   autocomplete="country"
                   [ngClass]="{
                     'is-invalid': (countryMessage$ | async) && submitted,
@@ -199,8 +199,8 @@
                 <input
                   id="phoneControl"
                   type="tel"
-                  class="form-control"
                   formControlName="phone"
+                  class="form-control"
                   placeholder="Phone"
                   autocomplete="tel"
                   [maxLength]="15"
@@ -236,7 +236,7 @@
           </fieldset>
           <fieldset formGroupName="paymentGroup">
             <div class="form-row">
-              <div class="col-md mb-3">
+              <div class="col-lg mb-3">
                 <label for="cardNumberControl">Card Number</label>
                 <input
                   id="cardNumberControl"
@@ -255,9 +255,9 @@
                   {{ cardNumberMessage$ | async }}
                 </div>
               </div>
-              <div class="col-md-8">
+              <div class="col-lg-8">
                 <div class="form-row">
-                  <div class="col-sm-6 mb-3">
+                  <div class="col-sm mb-3">
                     <label for="expirationControl">Expiration</label>
                     <input
                       id="expirationControl"
@@ -297,8 +297,9 @@
               </div>
             </div>
           </fieldset>
+          <hr class="d-md-none border-light mt-0" />
         </div>
-        <div class="col-lg">
+        <div class="col-md">
           <div class="mb-3">
             <ctacu-cart-summary
               [shippingRates]="shippingRates"
