@@ -161,7 +161,7 @@ export class CartComponent implements OnInit, OnDestroy {
     this.cartService.saveItem(item, index).subscribe({
       error: () => {
         this.setLoading(false);
-        this.show(
+        this.showNotification(
           `Error updating ${item.name} !`,
           'bg-danger text-light',
           15000
@@ -174,7 +174,7 @@ export class CartComponent implements OnInit, OnDestroy {
   private deleteItem(item: ICartItem, index: number): void {
     this.cartService.deleteItem(item).subscribe({
       error: () => {
-        this.show(
+        this.showNotification(
           `Error removing ${item.name} !`,
           'bg-danger text-light',
           15000
@@ -192,7 +192,11 @@ export class CartComponent implements OnInit, OnDestroy {
     this.cartService.deleteAllItems(items).subscribe({
       next: () => this.removeControlAtIndex(0),
       error: () => {
-        this.show(`Error emptying cart !`, 'bg-danger text-light', 15000);
+        this.showNotification(
+          `Error emptying cart !`,
+          'bg-danger text-light',
+          15000
+        );
         this.setLoading(false);
       },
       complete: () => this.setLoading(false),
@@ -247,7 +251,7 @@ export class CartComponent implements OnInit, OnDestroy {
       : form.enable({ emitEvent: false });
   }
 
-  private show(
+  private showNotification(
     textOrTpl: string | TemplateRef<any>,
     className: string,
     delay?: number
