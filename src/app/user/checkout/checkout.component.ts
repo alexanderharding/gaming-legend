@@ -367,7 +367,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     const stateControl = form.get('addressGroup.state');
     this.subscriptions.push(
       stateControl.valueChanges
-        .pipe(debounceTime(500))
+        .pipe(debounceTime(1000))
         .subscribe(() => this.setMessage(stateControl, 'state'))
     );
     const zipControl = form.get('addressGroup.zip');
@@ -379,7 +379,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     const countryControl = form.get('addressGroup.country');
     this.subscriptions.push(
       countryControl.valueChanges
-        .pipe(debounceTime(500))
+        .pipe(debounceTime(1000))
         .subscribe(() => this.setMessage(countryControl, 'country'))
     );
     const phoneControl = form.get('contactGroup.phone');
