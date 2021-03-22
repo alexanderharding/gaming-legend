@@ -159,30 +159,16 @@ export class CartComponent implements OnInit, OnDestroy {
 
   private saveItem(item: ICartItem, index: number): void {
     this.cartService.saveItem(item, index).subscribe({
-      error: () => {
-        this.setLoading(false);
-        this.showNotification(
-          `Error updating ${item.name} !`,
-          'bg-danger text-light',
-          15000
-        );
-      },
+      error: () => this.onError(`Error updating ${item.name} !`),
       complete: () => this.setLoading(false),
     });
   }
 
   private deleteItem(item: ICartItem, index: number): void {
     this.cartService.deleteItem(item).subscribe({
-      error: () => {
-        this.showNotification(
-          `Error removing ${item.name} !`,
-          'bg-danger text-light',
-          15000
-        );
-        this.setLoading(false);
-      },
+      error: () => this.onError(`Error removing ${item.name} !`),
       complete: () => {
-        this.removeControlAtIndex(index);
+        this.onItemDeleted(+index);
         this.setLoading(false);
       },
     });
@@ -190,15 +176,8 @@ export class CartComponent implements OnInit, OnDestroy {
 
   private deleteAllItems(items: ICartItem[]): void {
     this.cartService.deleteAllItems(items).subscribe({
-      next: () => this.removeControlAtIndex(0),
-      error: () => {
-        this.showNotification(
-          `Error emptying cart !`,
-          'bg-danger text-light',
-          15000
-        );
-        this.setLoading(false);
-      },
+      next: () => this.onItemDeleted(0),
+      error: () => this.onError(`Error emptying cart !`),
       complete: () => this.setLoading(false),
     });
   }
@@ -233,11 +212,14 @@ export class CartComponent implements OnInit, OnDestroy {
     });
   }
 
-  private removeControlAtIndex(index: number): void {
+  private removeControlAt(index: number): void {
     const quantitiesArray = this.cartForm.get('quantities') as FormArray;
+    quantitiesArray.removeAt(index);
+  }
+
+  private removeSubscriptionAt(index: number): void {
     this.subscriptions[index].unsubscribe();
     this.subscriptions.splice(index, 1);
-    quantitiesArray.removeAt(index);
   }
 
   private setLoading(value: boolean): void {
@@ -249,6 +231,16 @@ export class CartComponent implements OnInit, OnDestroy {
     value
       ? form.disable({ emitEvent: false })
       : form.enable({ emitEvent: false });
+  }
+
+  private onItemDeleted(index: number): void {
+    this.removeSubscriptionAt(index);
+    this.removeControlAt(index);
+  }
+
+  private onError(message: string): void {
+    this.showNotification(message, 'bg-danger text-light', 15000);
+    this.setLoading(false);
   }
 
   private showNotification(
