@@ -16,7 +16,6 @@ import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { debounceTime, first, map } from 'rxjs/operators';
 
 import { CartService } from 'src/app/services/cart.service';
-import { FormService } from 'src/app/services/form.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { OrderService } from 'src/app/services/order.service';
 import { ShippingRateService } from 'src/app/services/shipping-rate.service';
@@ -25,7 +24,6 @@ import { Customer, CustomerMaker } from 'src/app/types/customer';
 import { INotification } from 'src/app/types/notification';
 import { Order, OrderMaker } from 'src/app/types/order';
 import { Payment, PaymentMaker } from 'src/app/types/payment';
-import { IShipping } from 'src/app/types/shipping';
 import { ShippingRatesResult } from 'src/app/types/shipping-rates-result';
 
 function cardNumberChecker(
@@ -81,8 +79,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   /* Get data from resolver */
   private readonly resolvedData = this.route.snapshot.data
     .resolvedData as ShippingRatesResult;
-  readonly shippingRates: IShipping[] = this.resolvedData.shippingRates;
-  readonly errorMessage: string = this.resolvedData.error;
+  readonly shippingRates = this.resolvedData.shippingRates;
+  readonly errorMessage = this.resolvedData.error;
 
   private readonly date = new Date();
   private readonly month = this.date.getMonth();
@@ -90,7 +88,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   readonly cardMinExpiration = `${this.fullYear}-0${this.month + 1}`;
   readonly cardMaxExpiration = `${this.fullYear + 8}-0${this.month + 1}`;
 
-  pageTitle: string;
+  pageTitle = this.shippingRates ? 'Checkout' : 'Retrieval Error';
+  pageTitleTextClass = this.shippingRates ? 'text-light' : 'text-danger';
 
   private readonly subscriptions: Subscription[] = [];
 
@@ -103,7 +102,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   /* Main FormGroup */
   checkOutForm: FormGroup;
 
-  /* Get form control validation rules from FormValidationService*/
   readonly stateOptions = [
     'Alabama',
     'Alaska',
@@ -165,9 +163,9 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     'Wisconsin',
     'Wyoming',
   ];
-  private readonly zipPattern = this.formService.zipPattern as RegExp;
+  private readonly zipPattern = /^[0-9]{5}(?:-[0-9]{4})?$/;
   private readonly cvvPattern = /^[0-9]{3,4}$/;
-  private readonly phonePattern = this.formService.phonePattern as RegExp;
+  private readonly phonePattern = /^(\+?( |-|\.)?\d{1,2}( |-|\.)?)?(\(?\d{3}\)?|\d{3})( |-|\.)?(\d{3}( |-|\.)?\d{4})$/;
 
   private readonly firstNameValidationMessages = {
     required: 'Please enter your first name.',
@@ -276,17 +274,16 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly fb: FormBuilder,
     private readonly route: ActivatedRoute,
-    private readonly formService: FormService,
     private readonly shippingRateService: ShippingRateService,
     private readonly notificationService: NotificationService,
     private readonly title: Title
   ) {}
 
   ngOnInit(): void {
-    this.shippingRates
-      ? this.onShippingRatesReceived()
-      : this.onErrorReceived();
     this.title.setTitle(`Gaming Legend | ${this.pageTitle}`);
+    if (this.shippingRates) {
+      this.onShippingRatesReceived();
+    }
   }
 
   onSubmit(form: FormGroup): void {
@@ -304,7 +301,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   }
 
   private onShippingRatesReceived(): void {
-    this.pageTitle = 'Checkout';
     // Build check out form
     this.checkOutForm = this.fb.group({
       nameGroup: this.fb.group({
@@ -333,10 +329,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       }),
     });
     this.subscribeToControls(this.checkOutForm);
-  }
-
-  private onErrorReceived(): void {
-    this.pageTitle = 'Retrieval Error';
   }
 
   private subscribeToControls(form: FormGroup): void {

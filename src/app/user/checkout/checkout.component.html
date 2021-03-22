@@ -6,16 +6,10 @@
   >
     <span class="sr-only">Loading...</span>
   </div>
-  <h1
-    [ngClass]="{ 'text-danger': errorMessage, 'text-light': !errorMessage }"
-    class="display-4 d-none d-sm-block"
-  >
+  <h1 [ngClass]="pageTitleTextClass" class="display-4 d-none d-sm-block">
     <span>{{ pageTitle | capitalize }}</span>
   </h1>
-  <h2
-    [ngClass]="{ 'text-danger': errorMessage, 'text-light': !errorMessage }"
-    class="d-sm-none"
-  >
+  <h2 [ngClass]="pageTitleTextClass" class="d-sm-none">
     <span>{{ pageTitle | capitalize }}</span>
   </h2>
   <ng-container *ngIf="shippingRates; else error">
