@@ -9,7 +9,7 @@ import { ProductListComponent } from './product-list/product-list.component';
 import { ProductDetailsComponent } from './product-details/product-details.component';
 
 /* Resolvers */
-import { ProductResolverService } from '../router/product-resolver.service';
+import { ProductResolverService } from './product-resolver.service';
 import { ProductListResolverService } from './product-list-resolver.service';
 import { ProductTypesResolverService } from '../router/product-types-resolver.service';
 

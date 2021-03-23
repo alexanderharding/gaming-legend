@@ -1,7 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
-import { ProductService } from '../products/product.service';
+import { ProductService } from './product.service';
 import { IProduct } from '../types/product';
 import { ProductResult } from '../types/product-result';
 
