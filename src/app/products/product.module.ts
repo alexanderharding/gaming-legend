@@ -13,6 +13,11 @@ import { ProductResolverService } from '../router/product-resolver.service';
 import { ProductListResolverService } from '../router/product-list-resolver.service';
 import { ProductTypesResolverService } from '../router/product-types-resolver.service';
 
+/* Services */
+import { ProductService } from '../services/product.service';
+import { ProductTypeService } from '../services/product-type.service';
+import { ProductBrandService } from '../services/product-brand.service';
+
 /* Routes */
 const ROUTES: Routes = [
   {
@@ -42,6 +47,14 @@ const ROUTES: Routes = [
     ProductListComponent,
     ProductDetailsComponent,
     ProductTypesComponent,
+  ],
+  providers: [
+    ProductService,
+    ProductTypeService,
+    ProductTypesResolverService,
+    ProductResolverService,
+    ProductListResolverService,
+    ProductBrandService,
   ],
 })
 export class ProductModule {}
