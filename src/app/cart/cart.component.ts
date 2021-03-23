@@ -197,7 +197,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToValueChanges(controls: AbstractControl[]): void {
-    controls.forEach((c) => this.subscriptions.push(this.buildSubscription(c)));
+    controls.forEach((c) => this.addSubscription(this.createSubscription(c)));
   }
 
   private buildForm(): FormGroup {
@@ -214,11 +214,15 @@ export class CartComponent implements OnInit, OnDestroy {
     return this.fb.group(object);
   }
 
-  private buildSubscription(c: AbstractControl): Subscription {
+  private createSubscription(c: AbstractControl): Subscription {
     return c.valueChanges.subscribe((value: IQuantityControlValue) => {
       this.setLoading(true);
       this.editItem(+value.itemId, +value.quantity);
     });
+  }
+
+  private addSubscription(s: Subscription): void {
+    this.subscriptions.push(s);
   }
 
   private removeControlAt(index: number): void {
