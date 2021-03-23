@@ -76,6 +76,8 @@ function cardNumberChecker(
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CheckoutComponent implements OnInit, OnDestroy {
+  pageTitle = 'Checkout';
+  pageTitleTextClass = 'text-light';
   /* Get data from resolver */
   private readonly resolvedData = this.route.snapshot.data
     .resolvedData as ShippingRatesResult;
@@ -87,9 +89,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   private readonly fullYear = this.date.getFullYear();
   readonly cardMinExpiration = `${this.fullYear}-0${this.month + 1}`;
   readonly cardMaxExpiration = `${this.fullYear + 8}-0${this.month + 1}`;
-
-  pageTitle = this.shippingRates ? 'Checkout' : 'Retrieval Error';
-  pageTitleTextClass = this.shippingRates ? 'text-light' : 'text-danger';
 
   private readonly subscriptions: Subscription[] = [];
 
@@ -280,10 +279,10 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.shippingRates
+      ? this.onShippingRatesReceived()
+      : this.onErrorReceived();
     this.title.setTitle(`Gaming Legend | ${this.pageTitle}`);
-    if (this.shippingRates) {
-      this.onShippingRatesReceived();
-    }
   }
 
   onSubmit(form: FormGroup): void {
@@ -293,16 +292,26 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }
     if (form.valid) {
       this.setLoading(true);
-      this.getOrder(form).subscribe({
+      this.buildOrder(form).subscribe({
         next: (order) => this.saveOrder(order, order.items),
-        error: () => this.show('Error placing order !', true),
+        error: () => this.onError('Error placing order !'),
       });
     }
   }
 
   private onShippingRatesReceived(): void {
     // Build check out form
-    this.checkOutForm = this.fb.group({
+    this.checkOutForm = this.buildForm();
+    this.subscribeToValueChanges(this.checkOutForm);
+  }
+
+  private onErrorReceived(): void {
+    this.pageTitle = 'Retrieval Error';
+    this.pageTitleTextClass = 'text-danger';
+  }
+
+  private buildForm(): FormGroup {
+    return this.fb.group({
       nameGroup: this.fb.group({
         firstName: ['', [Validators.required]],
         lastName: ['', [Validators.required]],
@@ -328,82 +337,44 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         cvv: [null, [Validators.required, Validators.pattern(this.cvvPattern)]],
       }),
     });
-    this.subscribeToControls(this.checkOutForm);
   }
 
-  private subscribeToControls(form: FormGroup): void {
-    const firstNameControl = form.get('nameGroup.firstName');
-    this.subscriptions.push(
-      firstNameControl.valueChanges
-        .pipe(debounceTime(1000))
-        .subscribe(() => this.setMessage(firstNameControl, 'firstName'))
-    );
-    const lastNameControl = form.get('nameGroup.lastName');
-    this.subscriptions.push(
-      lastNameControl.valueChanges
-        .pipe(debounceTime(1000))
-        .subscribe(() => this.setMessage(lastNameControl, 'lastName'))
-    );
-    const streetControl = form.get('addressGroup.street');
-    this.subscriptions.push(
-      streetControl.valueChanges
-        .pipe(debounceTime(1000))
-        .subscribe(() => this.setMessage(streetControl, 'street'))
-    );
-    const cityControl = form.get('addressGroup.city');
-    this.subscriptions.push(
-      cityControl.valueChanges
-        .pipe(debounceTime(1000))
-        .subscribe(() => this.setMessage(cityControl, 'city'))
-    );
-    const stateControl = form.get('addressGroup.state');
-    this.subscriptions.push(
-      stateControl.valueChanges
-        .pipe(debounceTime(1000))
-        .subscribe(() => this.setMessage(stateControl, 'state'))
-    );
-    const zipControl = form.get('addressGroup.zip');
-    this.subscriptions.push(
-      zipControl.valueChanges
-        .pipe(debounceTime(1000))
-        .subscribe(() => this.setMessage(zipControl, 'zip'))
-    );
-    const countryControl = form.get('addressGroup.country');
-    this.subscriptions.push(
-      countryControl.valueChanges
-        .pipe(debounceTime(1000))
-        .subscribe(() => this.setMessage(countryControl, 'country'))
-    );
-    const phoneControl = form.get('contactGroup.phone');
-    this.subscriptions.push(
-      phoneControl.valueChanges
-        .pipe(debounceTime(1000))
-        .subscribe(() => this.setMessage(phoneControl, 'phone'))
-    );
-    const emailControl = form.get('contactGroup.email');
-    this.subscriptions.push(
-      emailControl.valueChanges
-        .pipe(debounceTime(1000))
-        .subscribe(() => this.setMessage(emailControl, 'email'))
-    );
-    const cardNumberControl = form.get('paymentGroup.cardNumber');
-    this.subscriptions.push(
-      cardNumberControl.valueChanges
-        .pipe(debounceTime(1000))
-        .subscribe(() => this.setMessage(cardNumberControl, 'cardNumber'))
-    );
-    const expirationControl = form.get('paymentGroup.expiration');
-    this.subscriptions.push(
-      expirationControl.valueChanges
-        .pipe(debounceTime(1000))
-        .subscribe(() => this.setMessage(expirationControl, 'expiration'))
-    );
-    const cvvControl = form.get('paymentGroup.cvv');
-    this.subscriptions.push(
-      cvvControl.valueChanges
-        .pipe(debounceTime(1000))
-        .subscribe(() => this.setMessage(cvvControl, 'cvv'))
-    );
+  private createSubscription(c: AbstractControl, name: string): Subscription {
+    return c.valueChanges
+      .pipe(debounceTime(1000))
+      .subscribe(() => this.setMessage(c, name));
+  }
+
+  private subscribeToValueChanges(form: FormGroup): void {
+    let control: AbstractControl;
+    control = form.get('nameGroup.firstName');
+    this.addSubscription(this.createSubscription(control, 'firstName'));
+    control = form.get('nameGroup.lastName');
+    this.addSubscription(this.createSubscription(control, 'lastName'));
+    control = form.get('addressGroup.street');
+    this.addSubscription(this.createSubscription(control, 'street'));
+    control = form.get('addressGroup.city');
+    this.addSubscription(this.createSubscription(control, 'city'));
+    control = form.get('addressGroup.state');
+    this.addSubscription(this.createSubscription(control, 'state'));
+    control = form.get('addressGroup.zip');
+    this.addSubscription(this.createSubscription(control, 'zip'));
+    control = form.get('addressGroup.country');
+    this.addSubscription(this.createSubscription(control, 'country'));
+    control = form.get('contactGroup.phone');
+    this.addSubscription(this.createSubscription(control, 'phone'));
+    control = form.get('contactGroup.email');
+    this.addSubscription(this.createSubscription(control, 'email'));
+    control = form.get('paymentGroup.cardNumber');
+    this.addSubscription(this.createSubscription(control, 'cardNumber'));
+    control = form.get('paymentGroup.expiration');
+    this.addSubscription(this.createSubscription(control, 'expiration'));
+    control = form.get('paymentGroup.cvv');
+    this.addSubscription(this.createSubscription(control, 'cvv'));
+  }
+
+  private addSubscription(s: Subscription): void {
+    this.subscriptions.push(s);
   }
 
   private setLoading(value: boolean): void {
@@ -417,69 +388,67 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       : form.enable({ emitEvent: false });
   }
 
-  private show(text: string, danger: boolean): void {
+  private show(textOrTpl: string, className: string, delay?: number): void {
     const notification = {
-      textOrTpl: text,
-      className: danger ? 'bg-danger text-light' : 'bg-success text-light',
-      delay: danger ? 15000 : 10000,
+      textOrTpl,
+      className,
+      delay,
     } as INotification;
     this.notificationService.show(notification);
   }
 
-  private getOrder(form: FormGroup): Observable<Order> {
+  private buildOrder(form: FormGroup): Observable<Order> {
     return combineLatest([
-      this.cartService.subtotal$,
-      this.shippingRateService.shippingPriceSelectedAction$,
-      this.cartService.totalTax$,
       this.cartService.total$,
       this.cartService.cartItems$,
     ]).pipe(
       first(),
-      map(([subtotal, shipping, totalTax, total, items]) => {
-        const customer = CustomerMaker.create({
-          firstName: form.get('nameGroup.firstName').value as string,
-          lastName: form.get('nameGroup.lastName').value as string,
-          phone: form.get('contactGroup.phone').value as string,
-          email: form.get('contactGroup.email').value as string,
-          street: form.get('addressGroup.street').value as string,
-          street2: form.get('addressGroup.street2').value as string,
-          city: form.get('addressGroup.city').value as string,
-          state: form.get('addressGroup.state').value as string,
-          zip: form.get('addressGroup.zip').value as string,
-          country: form.get('addressGroup.country').value as string,
-        }) as Customer;
-        const payment = PaymentMaker.create({
-          cardNumber: +form.get('paymentGroup.cardNumber').value,
-          cvv: +form.get('paymentGroup.cvv').value,
-          expiration: form.get('paymentGroup.expiration').value as string,
-          subtotal,
-          tax: +totalTax,
-          shipping,
-          total,
-        }) as Payment;
-        return OrderMaker.create({
-          customer,
-          items,
-          payment,
-          date: new Date().toString(),
-          status: 'pending',
-        }) as Order;
-      })
+      map(([total, items]) => this.createOrder(form, items, total))
     );
+  }
+
+  private createCustomer(form: FormGroup): Customer {
+    return CustomerMaker.create({
+      firstName: form.get('nameGroup.firstName').value as string,
+      lastName: form.get('nameGroup.lastName').value as string,
+      phone: form.get('contactGroup.phone').value as string,
+      email: form.get('contactGroup.email').value as string,
+      street: form.get('addressGroup.street').value as string,
+      street2: form.get('addressGroup.street2').value as string,
+      city: form.get('addressGroup.city').value as string,
+      state: form.get('addressGroup.state').value as string,
+      zip: form.get('addressGroup.zip').value as string,
+      country: form.get('addressGroup.country').value as string,
+    }) as Customer;
+  }
+
+  private createPayment(form: FormGroup, total: number): Payment {
+    return PaymentMaker.create({
+      cardNumber: +form.get('paymentGroup.cardNumber').value,
+      cvv: +form.get('paymentGroup.cvv').value,
+      expiration: form.get('paymentGroup.expiration').value as string,
+      total,
+    }) as Payment;
+  }
+
+  private createOrder(
+    form: FormGroup,
+    items: ICartItem[],
+    total: number
+  ): Order {
+    return OrderMaker.create({
+      customer: this.createCustomer(form),
+      items,
+      payment: this.createPayment(form, total),
+      date: new Date().toString(),
+      status: 'pending',
+    }) as Order;
   }
 
   private saveOrder(order: Order, items: ICartItem[]): void {
     this.orderService.saveOrder(order).subscribe({
-      error: () => {
-        this.setLoading(false);
-        this.show(`Error placing order !`, true);
-      },
-      complete: () => {
-        this.orderPlaced = true;
-        this.show(`Order placed !`, false);
-        this.router.navigate(['/cart', 'order-placed']);
-        this.deleteAllItems(items);
-      },
+      error: () => this.onError(`Error placing order !`),
+      complete: () => this.onOrderSaved(`Order placed !`, items),
     });
   }
 
@@ -588,11 +557,79 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }
   }
 
+  // private getMessage(c: AbstractControl, name: string): string {
+  //   switch (name) {
+  //     case 'firstName':
+  //       return Object.keys(c.errors)
+  //         .map((key) => this.firstNameValidationMessages[key])
+  //         .join(' ');
+  //     case 'lastName':
+  //       return Object.keys(c.errors)
+  //         .map((key) => this.lastNameValidationMessages[key])
+  //         .join(' ');
+  //     case 'street':
+  //       return Object.keys(c.errors)
+  //         .map((key) => this.streetValidationMessages[key])
+  //         .join(' ');
+  //     case 'city':
+  //       return Object.keys(c.errors)
+  //         .map((key) => this.cityValidationMessages[key])
+  //         .join(' ');
+  //     case 'state':
+  //       return Object.keys(c.errors)
+  //         .map((key) => this.stateValidationMessages[key])
+  //         .join(' ');
+  //     case 'zip':
+  //       return Object.keys(c.errors)
+  //         .map((key) => this.zipValidationMessages[key])
+  //         .join(' ');
+  //     case 'country':
+  //       return Object.keys(c.errors)
+  //         .map((key) => this.countryValidationMessages[key])
+  //         .join(' ');
+  //     case 'phone':
+  //       return Object.keys(c.errors)
+  //         .map((key) => this.phoneValidationMessages[key])
+  //         .join(' ');
+  //     case 'email':
+  //       return Object.keys(c.errors)
+  //         .map((key) => this.emailValidationMessages[key])
+  //         .join(' ');
+  //     case 'cardNumber':
+  //       return Object.keys(c.errors)
+  //         .map((key) => this.cardNumberValidationMessages[key])
+  //         .join(' ');
+  //     case 'expiration':
+  //       return Object.keys(c.errors)
+  //         .map((key) => this.expirationValidationMessages[key])
+  //         .join(' ');
+  //     case 'cvv':
+  //       return Object.keys(c.errors)
+  //         .map((key) => this.cvvValidationMessages[key])
+  //         .join(' ');
+  //     default:
+  //       console.error(`${name} did not match any names.`);
+  //       break;
+  //   }
+  // }
+
   private deleteAllItems(items: ICartItem[]): void {
     this.cartService.deleteAllItems(items).subscribe({
-      error: () => this.show(`Error emptying cart !`, true),
-      complete: () => this.setLoading(false),
+      error: () => this.onError(`Error emptying cart !`),
     });
+  }
+
+  private onOrderSaved(text: string, items: ICartItem[]): void {
+    this.show(text, 'bg-success text-light', 10000);
+    this.orderPlaced = true;
+    this.setLoading(false);
+    this.router.navigate(['/cart', 'order-placed']);
+    this.deleteAllItems(items);
+  }
+
+  private onError(text: string): void {
+    this.show(text, 'bg-danger text-light', 15000);
+    this.setLoading(false);
   }
 
   ngOnDestroy(): void {
