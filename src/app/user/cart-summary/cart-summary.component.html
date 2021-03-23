@@ -1,6 +1,6 @@
-<div class="card text-dark">
-  <ul class="list-group list-group-flush">
-    <li class="list-group-item">
+<div class="card text-dark border-secondary">
+  <ul class="list-group list-group-flush border-secondary">
+    <li class="list-group-item border-secondary">
       <div class="form-row justify-content-between">
         <span class="col-auto">Subtotal:</span>
         <span class="col-auto font-weight-bold">{{
@@ -8,7 +8,7 @@
         }}</span>
       </div>
     </li>
-    <li class="list-group-item">
+    <li class="list-group-item border-secondary">
       <div class="form-row justify-content-between">
         <span class="col-auto">Tax:</span>
         <span class="col-auto font-weight-bold">{{
@@ -16,7 +16,7 @@
         }}</span>
       </div>
     </li>
-    <li class="list-group-item">
+    <li class="list-group-item border-secondary">
       <div class="form-row justify-content-between mb-3">
         <span class="col-auto">Shipping:</span>
         <span class="col-auto font-weight-bold">{{
@@ -52,10 +52,12 @@
       </form>
     </li>
   </ul>
-  <div class="card-footer">
-    <div class="form-row justify-content-between font-weight-bold">
-      <span class="col-auto">Total:</span>
-      <span class="col-auto">{{ total$ | async | currency }}</span>
+  <div class="card-footer text-light bg-secondary">
+    <div class="form-row justify-content-between">
+      <h5 class="col-auto mb-0 font-weight-bold"><span>Total:</span></h5>
+      <h5 class="col-auto mb-0 font-weight-bold">
+        <span>{{ total$ | async | currency }}</span>
+      </h5>
     </div>
   </div>
 </div>

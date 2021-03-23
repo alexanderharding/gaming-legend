@@ -527,7 +527,7 @@ describe('CartSummaryComponent w/ template', () => {
 
     // Assert
     const elements = fixture.debugElement.queryAll(
-      By.css('.card-footer div span')
+      By.css('.card-footer h5 span')
     );
     expect(elements[1].nativeElement.textContent).toBe(
       formatCurrency(total, 'en-US', '$')
