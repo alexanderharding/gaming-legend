@@ -80,31 +80,23 @@ describe('CartComponent', () => {
     let mockShippingRateService;
     let mockNotificationService;
     let mockActivatedRoute;
-    let mockModalRef: MockNgbModalRef;
-    let mockErrorModalRef: MockErrorNgbModalRef;
+    let mockNgbModalRef: MockNgbModalRef;
+    let mockErrorNgbModalRef: MockErrorNgbModalRef;
     let mockTitle: Title;
 
     class MockNgbModalRef {
       componentInstance = {
-        title: undefined,
         message: undefined,
-        warningMessage: undefined,
-        infoMessage: undefined,
-        type: undefined,
         closeMessage: undefined,
-        dismissMessage: undefined,
+        dismissMessage: 'Cancel',
       };
       closed: Observable<any> = of(true);
     }
     class MockErrorNgbModalRef {
       componentInstance = {
-        title: undefined,
         message: undefined,
-        warningMessage: undefined,
-        infoMessage: undefined,
-        type: undefined,
         closeMessage: undefined,
-        dismissMessage: undefined,
+        dismissMessage: 'Cancel',
       };
       closed: Observable<never> = throwError('error');
     }
@@ -292,8 +284,8 @@ describe('CartComponent', () => {
           centered: false,
           backdrop: true,
         });
-        mockModalRef = new MockNgbModalRef();
-        mockErrorModalRef = new MockErrorNgbModalRef();
+        mockNgbModalRef = new MockNgbModalRef();
+        mockErrorNgbModalRef = new MockErrorNgbModalRef();
 
         TestBed.configureTestingModule({
           imports: [
@@ -824,7 +816,7 @@ describe('CartComponent', () => {
     describe('openDeleteModal', () => {
       it(`should call open method on ModalService with correct
        value`, () => {
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteItem.and.returnValue(of(true));
         fixture.detectChanges();
 
@@ -838,7 +830,7 @@ describe('CartComponent', () => {
       it(`should call deleteItem method on CartService with correct
         value`, () => {
         const index = 0;
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteItem.and.returnValue(of(true));
         fixture.detectChanges();
 
@@ -851,7 +843,7 @@ describe('CartComponent', () => {
 
       it(`should set loading$ correctly`, () => {
         const loading: boolean[] = [];
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteItem.and.returnValue(of(true));
         fixture.detectChanges();
 
@@ -870,7 +862,7 @@ describe('CartComponent', () => {
       });
 
       it(`should call disable method on cartForm with correct value`, () => {
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteItem.and.returnValue(of(true));
         fixture.detectChanges();
         const form: FormGroup = component.cartForm;
@@ -886,7 +878,7 @@ describe('CartComponent', () => {
       });
 
       it(`should call enable method on cartForm with correct value`, () => {
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteItem.and.returnValue(of(true));
         fixture.detectChanges();
         const form: FormGroup = component.cartForm;
@@ -903,7 +895,7 @@ describe('CartComponent', () => {
       it(`should call show method on NotificationService with correct value when
         deleteItem method on CartService returns an error`, () => {
         const index = 0;
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteItem.and.returnValue(throwError(''));
         fixture.detectChanges();
 
@@ -919,7 +911,7 @@ describe('CartComponent', () => {
       it(`should set loading$ correctly when deleteItem method on CartService
         returns an error`, () => {
         const loading: boolean[] = [];
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteItem.and.returnValue(throwError(''));
         fixture.detectChanges();
 
@@ -939,7 +931,7 @@ describe('CartComponent', () => {
 
       it(`should call disable method on cartForm with correct value when
         deleteItem method on CartService  returns an error`, () => {
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteItem.and.returnValue(throwError(''));
         fixture.detectChanges();
         const form: FormGroup = component.cartForm;
@@ -956,7 +948,7 @@ describe('CartComponent', () => {
 
       it(`should call enable method on cartForm with correct value when
         deleteItem method on CartService  returns an error`, () => {
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteItem.and.returnValue(throwError(''));
         fixture.detectChanges();
         const form: FormGroup = component.cartForm;
@@ -972,21 +964,22 @@ describe('CartComponent', () => {
 
       it('should set componentInstance properties on mockModalRef', () => {
         const index = 0;
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteItem.and.returnValue(of(true));
         fixture.detectChanges();
 
         component.openDeleteModal(ITEMS[index], ITEMS);
 
-        expect(mockModalRef.componentInstance.message).toBe(
+        expect(mockNgbModalRef.componentInstance.message).toBe(
           `Are you sure you want remove "${ITEMS[index].name}" from the cart?`
         );
-        expect(mockModalRef.componentInstance.closeMessage).toBe('Remove');
+        expect(mockNgbModalRef.componentInstance.closeMessage).toBe('Remove');
+        expect(mockNgbModalRef.componentInstance.dismissMessage).toBe('Cancel');
       });
 
       it(`should not call deleteItem method on CartService when open method
         on ModalService returns mockErrorModalRef`, () => {
-        mockNgbModal.open.and.returnValue(mockErrorModalRef);
+        mockNgbModal.open.and.returnValue(mockErrorNgbModalRef);
         fixture.detectChanges();
 
         component.openDeleteModal(ITEMS[0], ITEMS);
@@ -997,7 +990,7 @@ describe('CartComponent', () => {
       it(`should set loading$ correctly when open method on ModalService
         returns mockErrorModalRef`, () => {
         const loading: boolean[] = [];
-        mockNgbModal.open.and.returnValue(mockErrorModalRef);
+        mockNgbModal.open.and.returnValue(mockErrorNgbModalRef);
         fixture.detectChanges();
 
         component.loading$.subscribe((v) => loading.push(v));
@@ -1016,7 +1009,7 @@ describe('CartComponent', () => {
 
       it(`should not call disable method on cartForm when open method on
         ModalService returns mockErrorModalRef`, () => {
-        mockNgbModal.open.and.returnValue(mockErrorModalRef);
+        mockNgbModal.open.and.returnValue(mockErrorNgbModalRef);
         fixture.detectChanges();
         const form: FormGroup = component.cartForm;
         spyOn(form, 'disable');
@@ -1029,7 +1022,7 @@ describe('CartComponent', () => {
 
       it(`should not call enable method on cartForm when open method on
         ModalService returns mockErrorModalRef`, () => {
-        mockNgbModal.open.and.returnValue(mockErrorModalRef);
+        mockNgbModal.open.and.returnValue(mockErrorNgbModalRef);
         fixture.detectChanges();
         const form: FormGroup = component.cartForm;
         spyOn(form, 'disable');
@@ -1041,7 +1034,7 @@ describe('CartComponent', () => {
       });
 
       it(`should not call show method on NotificationService`, () => {
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteItem.and.returnValue(of(true));
         fixture.detectChanges();
 
@@ -1054,7 +1047,7 @@ describe('CartComponent', () => {
     describe('openDeleteAllModal', () => {
       it(`should call open method on ModalService with correct
        value`, () => {
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteAllItems.and.returnValue(of(true));
         fixture.detectChanges();
 
@@ -1067,7 +1060,7 @@ describe('CartComponent', () => {
 
       it(`should call deleteAllItems method on CartService with correct
         value`, () => {
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteAllItems.and.returnValue(of(true));
         fixture.detectChanges();
 
@@ -1078,7 +1071,7 @@ describe('CartComponent', () => {
 
       it(`should set loading$ correctly`, () => {
         const loading: boolean[] = [];
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteAllItems.and.returnValue(of(true));
         fixture.detectChanges();
 
@@ -1097,7 +1090,7 @@ describe('CartComponent', () => {
       });
 
       it(`should call disable method on cartForm with correct value`, () => {
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteAllItems.and.returnValue(of(true));
         fixture.detectChanges();
         const form: FormGroup = component.cartForm;
@@ -1113,7 +1106,7 @@ describe('CartComponent', () => {
       });
 
       it(`should call enable method on cartForm with correct value`, () => {
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteAllItems.and.returnValue(of(true));
         fixture.detectChanges();
         const form: FormGroup = component.cartForm;
@@ -1129,7 +1122,7 @@ describe('CartComponent', () => {
 
       it(`should not call deleteAllItems method on CartService when open method
         on ModalService returns mockErrorModalRef`, () => {
-        mockNgbModal.open.and.returnValue(mockErrorModalRef);
+        mockNgbModal.open.and.returnValue(mockErrorNgbModalRef);
         fixture.detectChanges();
 
         component.openDeleteAllModal(ITEMS);
@@ -1140,7 +1133,7 @@ describe('CartComponent', () => {
       it(`should set loading$ correctly when open method on ModalService
         returns mockErrorModalRef`, () => {
         const loading: boolean[] = [];
-        mockNgbModal.open.and.returnValue(mockErrorModalRef);
+        mockNgbModal.open.and.returnValue(mockErrorNgbModalRef);
         fixture.detectChanges();
 
         component.loading$.subscribe((v) => loading.push(v));
@@ -1159,7 +1152,7 @@ describe('CartComponent', () => {
 
       it(`should not call disable method on cartForm when open method on
         ModalService returns mockErrorModalRef`, () => {
-        mockNgbModal.open.and.returnValue(mockErrorModalRef);
+        mockNgbModal.open.and.returnValue(mockErrorNgbModalRef);
         fixture.detectChanges();
         const form: FormGroup = component.cartForm;
         spyOn(form, 'disable');
@@ -1172,7 +1165,7 @@ describe('CartComponent', () => {
 
       it(`should not call enable method on cartForm when open method on
         ModalService returns mockErrorModalRef`, () => {
-        mockNgbModal.open.and.returnValue(mockErrorModalRef);
+        mockNgbModal.open.and.returnValue(mockErrorNgbModalRef);
         fixture.detectChanges();
         const form: FormGroup = component.cartForm;
         spyOn(form, 'disable');
@@ -1184,7 +1177,7 @@ describe('CartComponent', () => {
       });
 
       it(`should not call show method on NotificationService`, () => {
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteAllItems.and.returnValue(of(true));
         fixture.detectChanges();
 
@@ -1195,7 +1188,7 @@ describe('CartComponent', () => {
 
       it(`should call show method on NotificationService with correct value when
         deleteAllItems method on CartService returns an error`, () => {
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteAllItems.and.returnValue(throwError(''));
         fixture.detectChanges();
 
@@ -1211,7 +1204,7 @@ describe('CartComponent', () => {
       it(`should set loading$ correctly when deleteAllItems method on
         CartService returns an error`, () => {
         const loading: boolean[] = [];
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteAllItems.and.returnValue(throwError(''));
         fixture.detectChanges();
 
@@ -1231,7 +1224,7 @@ describe('CartComponent', () => {
 
       it(`should call disable method on cartForm with correct value when
         deleteAllItems method on CartService returns an error`, () => {
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteAllItems.and.returnValue(throwError(''));
         fixture.detectChanges();
         const form: FormGroup = component.cartForm;
@@ -1248,7 +1241,7 @@ describe('CartComponent', () => {
 
       it(`should call enable method on cartForm with correct value when
         deleteAllItems method on CartService returns an error`, () => {
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteAllItems.and.returnValue(throwError(''));
         fixture.detectChanges();
         const form: FormGroup = component.cartForm;
@@ -1263,16 +1256,17 @@ describe('CartComponent', () => {
       });
 
       it('should set componentInstance properties on mockModalRef', () => {
-        mockNgbModal.open.and.returnValue(mockModalRef);
+        mockNgbModal.open.and.returnValue(mockNgbModalRef);
         mockCartService.deleteAllItems.and.returnValue(of(true));
         fixture.detectChanges();
 
         component.openDeleteAllModal(ITEMS);
 
-        expect(mockModalRef.componentInstance.message).toBe(
+        expect(mockNgbModalRef.componentInstance.message).toBe(
           `Are you sure you want to empty the cart?`
         );
-        expect(mockModalRef.componentInstance.closeMessage).toBe('Empty');
+        expect(mockNgbModalRef.componentInstance.closeMessage).toBe('Empty');
+        expect(mockNgbModalRef.componentInstance.dismissMessage).toBe('Cancel');
       });
     });
   });
