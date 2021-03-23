@@ -9,7 +9,7 @@ import { PasswordFormComponent } from './password-form/password-form.component';
 import { PaymentFormComponent } from './payment-form/payment-form.component';
 import { AddressFormComponent } from './address-form/address-form.component';
 import { CurrentPasswordFormComponent } from './current-password-form/current-password-form.component';
-import { ConvertToSpacesPipe } from '../pipes/convert-to-spaces.pipe';
+import { ConvertToSpacesPipe } from './convert-to-spaces.pipe';
 import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
 import { CapitalizePipe } from './capitalize.pipe';
 import { ErrorReceivedComponent } from './error-received/error-received.component';
