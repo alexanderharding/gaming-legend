@@ -7,7 +7,7 @@ import {
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { ProductBrandService } from '../services/product-brand.service';
+import { ProductBrandService } from '../products/product-brand.service';
 import { ProductBrandsResult } from '../types/product-brands-result';
 
 @Injectable({

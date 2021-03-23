@@ -16,7 +16,7 @@ import { ProductTypesResolverService } from '../router/product-types-resolver.se
 /* Services */
 import { ProductService } from '../services/product.service';
 import { ProductTypeService } from '../services/product-type.service';
-import { ProductBrandService } from '../services/product-brand.service';
+import { ProductBrandService } from './product-brand.service';
 
 /* Routes */
 const ROUTES: Routes = [

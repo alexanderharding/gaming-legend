@@ -4,7 +4,7 @@ import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
-import { ProductBrandService } from './product-brand.service';
+import { ProductBrandService } from '../products/product-brand.service';
 import { IProductBrand } from '../types/product-brand';
 import { of } from 'rxjs';
 import { IProduct } from '../types/product';

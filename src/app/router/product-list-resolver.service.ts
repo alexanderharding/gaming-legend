@@ -5,7 +5,7 @@ import { ProductService } from '../services/product.service';
 import { ProductListResult } from '../types/products-result';
 import { combineLatest, Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { ProductBrandService } from '../services/product-brand.service';
+import { ProductBrandService } from '../products/product-brand.service';
 import { IProduct } from '../types/product';
 
 @Injectable({
