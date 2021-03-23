@@ -256,15 +256,11 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private onError(message: string): void {
-    this.showNotification(message, 'bg-danger text-light', 15000);
+    this.show(message, 'bg-danger text-light', 15000);
     this.setLoading(false);
   }
 
-  private showNotification(
-    textOrTpl: string | TemplateRef<any>,
-    className: string,
-    delay?: number
-  ): void {
+  private show(textOrTpl: string, className: string, delay?: number): void {
     const notification = {
       textOrTpl,
       className,
