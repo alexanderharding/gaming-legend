@@ -69,35 +69,43 @@
                       }}</span>
                     </td>
                     <td scope="row" [ngClass]="{ 'border-0': i === 0 }">
-                      <form [formGroup]="cartForm" class="mb-2" novalidate>
-                        <ng-container *ngIf="quantities$ | async as quantities">
-                          <div formArrayName="quantities">
-                            <div [formGroup]="quantities.controls[i]">
-                              <p class="text-center d-sm-none mb-2">
-                                {{ item.price | currency }}
-                              </p>
-                              <select
-                                class="custom-select"
-                                formControlName="quantity"
-                              >
-                                <ng-container *ngFor="let o of quantityOptions">
-                                  <option [value]="o">
-                                    {{ o }}
-                                  </option>
-                                </ng-container>
-                              </select>
+                      <ng-container *ngIf="quantities$ | async as quantities">
+                        <ng-container *ngIf="quantities.controls[i] as control">
+                          <form
+                            [formGroup]="cartForm"
+                            (ngSubmit)="openDeleteModal(item, items)"
+                            class="mb-2"
+                            novalidate
+                          >
+                            <div formArrayName="quantities">
+                              <div [formGroup]="control">
+                                <p class="text-center d-sm-none mb-2">
+                                  {{ item.price | currency }}
+                                </p>
+                                <select
+                                  class="custom-select"
+                                  formControlName="quantity"
+                                >
+                                  <ng-container
+                                    *ngFor="let o of quantityOptions"
+                                  >
+                                    <option [value]="o">
+                                      {{ o }}
+                                    </option>
+                                  </ng-container>
+                                </select>
+                              </div>
                             </div>
-                          </div>
+                            <div class="row justify-content-center">
+                              <input
+                                type="submit"
+                                value="Remove"
+                                class="btn btn-link btn-sm text-secondary p-0"
+                              />
+                            </div>
+                          </form>
                         </ng-container>
-                      </form>
-                      <div class="row justify-content-center">
-                        <input
-                          type="button"
-                          value="Remove"
-                          class="btn btn-link btn-sm text-secondary p-0"
-                          (click)="openDeleteModal(item, items)"
-                        />
-                      </div>
+                      </ng-container>
                     </td>
                   </tr>
                 </tbody>
