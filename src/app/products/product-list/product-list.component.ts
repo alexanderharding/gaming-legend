@@ -13,7 +13,7 @@ import { IProduct } from 'src/app/types/product';
 import { IProductBrand } from 'src/app/types/product-brand';
 import { ProductListResult } from 'src/app/types/products-result';
 import { Title } from '@angular/platform-browser';
-import { CapitalizePipe } from 'src/app/pipes/capitalize.pipe';
+import { CapitalizePipe } from 'src/app/shared/capitalize.pipe';
 
 @Component({
   templateUrl: './product-list.component.html',
