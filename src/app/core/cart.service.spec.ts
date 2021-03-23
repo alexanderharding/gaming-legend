@@ -9,7 +9,7 @@ import { ICartItem } from '../types/cart-item';
 import { CartService } from './cart.service';
 import { ErrorService } from './error.service';
 import { NotificationService } from './notification.service';
-import { ShippingRateService } from '../user/shipping-rate.service';
+import { ShippingRateService } from '../cart/shipping-rate.service';
 
 describe('CartService', () => {
   let mockShippingRateService: ShippingRateService;

@@ -71,7 +71,7 @@
         <li class="nav-item">
           <a
             class="nav-link"
-            routerLink="/user/cart"
+            routerLink="/cart"
             routerLinkActive="active"
             [routerLinkActiveOptions]="{ exact: true }"
             (click)="isMenuCollapsed = true"
@@ -82,30 +82,6 @@
             </ng-container>
           </a>
         </li>
-        <!-- <ng-container *ngIf="currentUser$ | async as user; else noUser">
-          <li class="nav-item">
-            <a
-              class="nav-link text-capitalize"
-              routerLink="/account"
-              routerLinkActive="active"
-              [routerLinkActiveOptions]="{ exact: true }"
-              (click)="isMenuCollapsed = true"
-              >{{ user.name.firstName | lowercase }}'s Account</a
-            >
-          </li>
-        </ng-container>
-        <ng-template #noUser>
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              routerLink="/user/sign-in"
-              routerLinkActive="active"
-              [routerLinkActiveOptions]="{ exact: true }"
-              (click)="isMenuCollapsed = true"
-              >Sign In</a
-            >
-          </li>
-        </ng-template> -->
       </ul>
     </div>
   </nav>

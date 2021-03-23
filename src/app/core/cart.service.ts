@@ -21,7 +21,7 @@ import { ICartItem } from '../types/cart-item';
 import { INotification } from '../types/notification';
 import { ErrorService } from './error.service';
 import { NotificationService } from './notification.service';
-import { ShippingRateService } from '../user/shipping-rate.service';
+import { ShippingRateService } from '../cart/shipping-rate.service';
 
 @Injectable({
   providedIn: 'root',

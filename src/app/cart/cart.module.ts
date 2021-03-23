@@ -20,11 +20,11 @@ import { OrderService } from './order.service';
 const ROUTES: Routes = [
   {
     path: '',
-    redirectTo: 'cart',
+    redirectTo: 'summary',
     pathMatch: 'full',
   },
   {
-    path: 'cart',
+    path: 'summary',
     component: CartComponent,
     resolve: {
       resolvedData: ShippingRatesResolverService,
@@ -60,4 +60,4 @@ const ROUTES: Routes = [
     OrderService,
   ],
 })
-export class UserModule {}
+export class CartModule {}

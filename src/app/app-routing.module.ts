@@ -14,8 +14,8 @@ const ROUTES: Routes = [
       import('./products/product.module').then((m) => m.ProductModule),
   },
   {
-    path: 'user',
-    loadChildren: () => import('./user/user.module').then((m) => m.UserModule),
+    path: 'cart',
+    loadChildren: () => import('./cart/cart.module').then((m) => m.CartModule),
   },
   // {
   //   path: 'account',
