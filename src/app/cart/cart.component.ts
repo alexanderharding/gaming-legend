@@ -103,7 +103,7 @@ export class CartComponent implements OnInit, OnDestroy {
       error: () => {},
       complete: () => {
         this.setLoading(true);
-        this.deleteItem(item, this.getIndex(item.id, items));
+        this.deleteItem(item, this.findIndexById(item.id, items));
       },
     });
   }
@@ -158,7 +158,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   private editItem(itemId: number, quantity: number): void {
     this.items$.pipe(first()).subscribe((items) => {
-      const index: number = this.getIndex(itemId, items);
+      const index: number = this.findIndexById(itemId, items);
       const item: ICartItem = {
         ...items[index],
         quantity,
@@ -239,7 +239,7 @@ export class CartComponent implements OnInit, OnDestroy {
       : form.enable({ emitEvent: false });
   }
 
-  private getIndex(itemId: number, items: ICartItem[]): number {
+  private findIndexById(itemId: number, items: ICartItem[]): number {
     return items.findIndex(({ id }) => +id === +itemId);
   }
 
