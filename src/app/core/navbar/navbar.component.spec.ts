@@ -124,7 +124,7 @@ describe('NavbarComponent w/ template', () => {
     path = elements[2].nativeElement.getAttribute('routerLink');
     expect(path).toBe('/products');
     path = elements[3].nativeElement.getAttribute('routerLink');
-    expect(path).toBe('/user/cart');
+    expect(path).toBe('/cart/summary');
   });
 
   // fit('should behave...', () => {

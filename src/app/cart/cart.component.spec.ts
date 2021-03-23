@@ -1951,7 +1951,7 @@ describe('CartComponent w/ template', () => {
           By.directive(RouterLinkWithHref)
         );
 
-        path = `/products/${items[i].type}/${items[i].id}?returnLink=%2Fuser%2Fcart`;
+        path = `/products/${items[i].type}/${items[i].id}?returnLink=%2Fcart%2Fsummary`;
         expect(routerLinkWithHrefElements.length).toBe(2);
         href = routerLinkWithHrefElements[0].nativeElement.getAttribute('href');
         expect(href).toBe(path);
