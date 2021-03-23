@@ -18,7 +18,7 @@ import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.
 
 /* Services */
 import { CartService } from '../../services/cart.service';
-import { NotificationService } from '../../services/notification.service';
+import { NotificationService } from '../../core/notification.service';
 
 /* Title */
 import { Title } from '@angular/platform-browser';

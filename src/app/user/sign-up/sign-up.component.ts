@@ -18,7 +18,7 @@ import { emailMatcher } from 'src/app/functions/email-matcher';
 import { passwordMatcher } from 'src/app/functions/password-matcher';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormService } from 'src/app/services/form.service';
-import { NotificationService } from 'src/app/services/notification.service';
+import { NotificationService } from 'src/app/core/notification.service';
 import { INotification } from 'src/app/types/notification';
 import { User, UserMaker } from 'src/app/types/user';
 import { UserContact, UserContactMaker } from 'src/app/types/user-contact';
@@ -45,8 +45,7 @@ export class SignUpComponent implements OnInit {
   // private readonly phonePattern = this.formService.phonePattern as RegExp;
   // private readonly passwordPattern = this.formService.passwordPattern as RegExp;
 
-  constructor() // private readonly fb: FormBuilder,
-  // private readonly accordionConfig: NgbAccordionConfig,
+  constructor() // private readonly accordionConfig: NgbAccordionConfig, // private readonly fb: FormBuilder,
   // private readonly progressBarConfig: NgbProgressbarConfig,
   // private readonly formService: FormService,
   // private readonly authService: AuthService,

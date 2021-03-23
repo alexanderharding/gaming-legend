@@ -9,6 +9,7 @@ import { FooterComponent } from './footer/footer.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { NotificationsContainerComponent } from './notifications-container/notifications-container.component';
 import { ErrorService } from './error.service';
+import { NotificationService } from './notification.service';
 
 @NgModule({
   imports: [CommonModule, RouterModule, NgbModule],
@@ -26,6 +27,6 @@ import { ErrorService } from './error.service';
     NotFoundComponent,
     NotificationsContainerComponent,
   ],
-  providers: [CartService, ErrorService],
+  providers: [CartService, ErrorService, NotificationService],
 })
 export class CoreModule {}

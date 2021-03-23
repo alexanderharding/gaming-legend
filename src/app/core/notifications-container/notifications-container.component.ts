@@ -5,7 +5,7 @@ import {
   OnInit,
   TemplateRef,
 } from '@angular/core';
-import { NotificationService } from '../../services/notification.service';
+import { NotificationService } from '../notification.service';
 import { INotification } from '../../types/notification';
 
 @Component({

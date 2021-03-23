@@ -13,7 +13,7 @@ import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ICartItem } from 'src/app/types/cart-item';
 import { ConfirmModalComponent } from 'src/app/shared/confirm-modal/confirm-modal.component';
 import { ProductResult } from 'src/app/types/product-result';
-import { NotificationService } from 'src/app/services/notification.service';
+import { NotificationService } from 'src/app/core/notification.service';
 import { INotification } from 'src/app/types/notification';
 import { BehaviorSubject } from 'rxjs';
 import { Title } from '@angular/platform-browser';

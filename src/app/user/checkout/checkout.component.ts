@@ -16,7 +16,7 @@ import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { debounceTime, first, map } from 'rxjs/operators';
 
 import { CartService } from 'src/app/services/cart.service';
-import { NotificationService } from 'src/app/services/notification.service';
+import { NotificationService } from 'src/app/core/notification.service';
 import { OrderService } from 'src/app/services/order.service';
 import { ShippingRateService } from 'src/app/user/shipping-rate.service';
 import { ICartItem } from 'src/app/types/cart-item';

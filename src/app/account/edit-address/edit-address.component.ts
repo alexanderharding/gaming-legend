@@ -19,7 +19,7 @@ import { Subscription } from 'rxjs';
 import { passwordChecker } from 'src/app/functions/password-checker';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormService } from 'src/app/services/form.service';
-import { NotificationService } from 'src/app/services/notification.service';
+import { NotificationService } from 'src/app/core/notification.service';
 import { INotification } from 'src/app/types/notification';
 import { IUser } from 'src/app/types/user';
 
@@ -50,8 +50,7 @@ export class EditAddressComponent implements OnInit, OnDestroy {
   // readonly cityMaxLength = +this.formService.cityMaxLength;
   // private readonly zipPattern = this.formService.zipPattern as RegExp;
 
-  constructor() // private readonly fb: FormBuilder,
-  // private readonly authService: AuthService,
+  constructor() // private readonly authService: AuthService, // private readonly fb: FormBuilder,
   // private readonly formService: FormService,
 
   // private readonly notificationService: NotificationService

@@ -16,7 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, combineLatest, EMPTY, Subscription } from 'rxjs';
 import { catchError, debounceTime, first, map } from 'rxjs/operators';
 // import { AuthService } from '../services/auth.service';
-import { NotificationService } from '../services/notification.service';
+import { NotificationService } from '../core/notification.service';
 import { INotification } from '../types/notification';
 import { IOrder } from '../types/order';
 import { OrdersResult } from '../types/orders-result';
@@ -110,8 +110,7 @@ export class AccountComponent implements OnInit, OnDestroy {
   //   })
   // );
 
-  constructor() // private readonly router: Router, // private readonly authService: AuthService,
-  // private readonly route: ActivatedRoute,
+  constructor() // private readonly route: ActivatedRoute, // private readonly router: Router, // private readonly authService: AuthService,
   // private readonly fb: FormBuilder,
   // private readonly notificationService: NotificationService
   {}

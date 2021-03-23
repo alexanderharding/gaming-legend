@@ -19,7 +19,7 @@ import { Subscription } from 'rxjs';
 import { passwordChecker } from 'src/app/functions/password-checker';
 // import { AuthService } from 'src/app/services/auth.service';
 import { FormService } from 'src/app/services/form.service';
-import { NotificationService } from 'src/app/services/notification.service';
+import { NotificationService } from 'src/app/core/notification.service';
 import { INotification } from 'src/app/types/notification';
 import { IUser, User } from 'src/app/types/user';
 
@@ -47,8 +47,7 @@ export class EditNameComponent implements OnInit, OnDestroy {
   // readonly nameMinLength = +this.formService.nameMinLength;
   // readonly nameMaxLength = +this.formService.nameMaxLength;
 
-  constructor() // private readonly formService: FormService, // private readonly fb: FormBuilder,
-  // private readonly authService: AuthService,
+  constructor() // private readonly authService: AuthService, // private readonly formService: FormService, // private readonly fb: FormBuilder,
   // private readonly notificationService: NotificationService
   {}
 

@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { ICartItem } from '../types/cart-item';
 import { CartService } from './cart.service';
 import { ErrorService } from '../core/error.service';
-import { NotificationService } from './notification.service';
+import { NotificationService } from '../core/notification.service';
 import { ShippingRateService } from '../user/shipping-rate.service';
 
 describe('CartService', () => {

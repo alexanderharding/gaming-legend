@@ -28,7 +28,7 @@ import {
 } from '@ng-bootstrap/ng-bootstrap';
 import { ShippingRatesResult } from '../../types/shipping-rates-result';
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.component';
-import { NotificationService } from '../../services/notification.service';
+import { NotificationService } from '../../core/notification.service';
 import { formatCurrency } from '@angular/common';
 import {
   AbstractControl,
