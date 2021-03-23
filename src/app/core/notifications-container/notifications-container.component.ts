@@ -5,8 +5,8 @@ import {
   OnInit,
   TemplateRef,
 } from '@angular/core';
-import { NotificationService } from '../services/notification.service';
-import { INotification } from '../types/notification';
+import { NotificationService } from '../../services/notification.service';
+import { INotification } from '../../types/notification';
 
 @Component({
   selector: 'ctacu-notifications-container',

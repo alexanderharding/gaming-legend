@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { of } from 'rxjs';
-import { NotificationService } from '../services/notification.service';
-import { INotification } from '../types/notification';
+import { NotificationService } from '../../services/notification.service';
+import { INotification } from '../../types/notification';
 
 import { NotificationsContainerComponent } from './notifications-container.component';
 

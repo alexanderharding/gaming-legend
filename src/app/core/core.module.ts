@@ -7,6 +7,7 @@ import { CartService } from '../services/cart.service';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { FooterComponent } from './footer/footer.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { NotificationsContainerComponent } from './notifications-container/notifications-container.component';
 
 @NgModule({
   imports: [CommonModule, RouterModule, NgbModule],
@@ -15,12 +16,14 @@ import { NotFoundComponent } from './not-found/not-found.component';
     WelcomeComponent,
     FooterComponent,
     NotFoundComponent,
+    NotificationsContainerComponent,
   ],
   declarations: [
     NavbarComponent,
     WelcomeComponent,
     FooterComponent,
     NotFoundComponent,
+    NotificationsContainerComponent,
   ],
   providers: [CartService],
 })
