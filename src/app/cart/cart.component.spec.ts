@@ -2178,9 +2178,9 @@ describe('CartComponent w/ template', () => {
       const ErrorReceivedComponentDEs = fixture.debugElement.queryAll(
         By.directive(ErrorReceivedComponent)
       );
-      const instance = <ErrorReceivedComponent>(
+      const instance = (
         ErrorReceivedComponentDEs[0].componentInstance
-      );
+      ) as ErrorReceivedComponent;
 
       expect(ErrorReceivedComponentDEs.length).toBe(1);
       expect(instance.errorMessage).toBe(component.errorMessage);

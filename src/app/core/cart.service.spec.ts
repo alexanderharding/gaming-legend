@@ -635,7 +635,7 @@ describe('CartService', () => {
 
         // Assert
         expect(service.deleteItem).toHaveBeenCalledTimes(ITEMS.length);
-        for (let item of ITEMS) {
+        for (const item of ITEMS) {
           expect(service.deleteItem).toHaveBeenCalledWith(item);
         }
       })();
