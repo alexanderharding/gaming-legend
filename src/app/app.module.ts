@@ -7,7 +7,6 @@ import { AppRoutingModule } from './app-routing.module';
 
 /* Components */
 import { AppComponent } from './app.component';
-import { NotFoundComponent } from './not-found/not-found.component';
 
 /* Guards */
 import { AuthGuard } from './account/auth.guard';
@@ -24,11 +23,7 @@ import { CoreModule } from './core/core.module';
     CoreModule,
     AppRoutingModule,
   ],
-  declarations: [
-    AppComponent,
-    NotFoundComponent,
-    NotificationsContainerComponent,
-  ],
+  declarations: [AppComponent, NotificationsContainerComponent],
   providers: [AuthGuard, UserGuard],
   bootstrap: [AppComponent],
 })
