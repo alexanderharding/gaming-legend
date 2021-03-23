@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
 import { debounceTime, first } from 'rxjs/operators';
 
 import { CartService } from 'src/app/services/cart.service';
-import { ShippingRateService } from 'src/app/services/shipping-rate.service';
+import { ShippingRateService } from 'src/app/user/shipping-rate.service';
 import { IShipping } from 'src/app/types/shipping';
 
 @Component({

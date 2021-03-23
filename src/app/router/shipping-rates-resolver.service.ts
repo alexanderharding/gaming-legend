@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { ShippingRateService } from '../services/shipping-rate.service';
+import { ShippingRateService } from '../user/shipping-rate.service';
 import { ShippingRatesResult } from '../types/shipping-rates-result';
 
 @Injectable({

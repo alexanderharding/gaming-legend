@@ -18,7 +18,7 @@ import { debounceTime, first, map } from 'rxjs/operators';
 import { CartService } from 'src/app/services/cart.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { OrderService } from 'src/app/services/order.service';
-import { ShippingRateService } from 'src/app/services/shipping-rate.service';
+import { ShippingRateService } from 'src/app/user/shipping-rate.service';
 import { ICartItem } from 'src/app/types/cart-item';
 import { Customer, CustomerMaker } from 'src/app/types/customer';
 import { INotification } from 'src/app/types/notification';

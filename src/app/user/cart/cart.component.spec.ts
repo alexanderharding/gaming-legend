@@ -13,7 +13,7 @@ import { CartComponent } from './cart.component';
 import { CartService } from '../../services/cart.service';
 import { Observable, of, throwError } from 'rxjs';
 import { ActivatedRoute, RouterLinkWithHref } from '@angular/router';
-import { ShippingRateService } from '../../services/shipping-rate.service';
+import { ShippingRateService } from '../shipping-rate.service';
 import { ICartItem } from '../../types/cart-item';
 import { IShipping } from '../../types/shipping';
 
