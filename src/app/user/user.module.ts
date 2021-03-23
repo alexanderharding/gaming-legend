@@ -3,7 +3,6 @@ import { SharedModule } from '../shared/shared.module';
 import { RouterModule, Routes } from '@angular/router';
 
 /* Components */
-import { SignInComponent } from './sign-in/sign-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { CartComponent } from './cart/cart.component';
 import { CartSummaryComponent } from './cart-summary/cart-summary.component';
@@ -60,7 +59,6 @@ const ROUTES: Routes = [
 
 @NgModule({
   declarations: [
-    SignInComponent,
     SignUpComponent,
     CartComponent,
     CartSummaryComponent,
