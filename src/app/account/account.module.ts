@@ -8,14 +8,14 @@ import { EditNameComponent } from './edit-name/edit-name.component';
 import { EditContactComponent } from './edit-contact/edit-contact.component';
 import { EditAddressComponent } from './edit-address/edit-address.component';
 import { EditPasswordComponent } from './edit-password/edit-password.component';
-import { OrdersResolverService } from '../router/orders-resolver.service';
+// import { OrdersResolverService } from '../router/orders-resolver.service';
 
 /* Routes */
 const ROUTES: Routes = [
   {
     path: '',
     component: AccountComponent,
-    resolve: { resolvedData: OrdersResolverService },
+    // resolve: { resolvedData: OrdersResolverService },
   },
   {
     path: 'edit',
@@ -45,6 +45,6 @@ const ROUTES: Routes = [
     EditAddressComponent,
     EditPasswordComponent,
   ],
-  providers: [OrdersResolverService],
+  // providers: [OrdersResolverService],
 })
 export class AccountModule {}
