@@ -7,7 +7,6 @@ import { AppRoutingModule } from './app-routing.module';
 
 /* Components */
 import { AppComponent } from './app.component';
-import { FooterComponent } from './footer/footer.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 
 /* Guards */
@@ -27,7 +26,6 @@ import { CoreModule } from './core/core.module';
   ],
   declarations: [
     AppComponent,
-    FooterComponent,
     NotFoundComponent,
     NotificationsContainerComponent,
   ],
