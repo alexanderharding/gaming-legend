@@ -5,7 +5,7 @@ import { catchError, delay, map, retry, shareReplay } from 'rxjs/operators';
 
 import { IProduct } from '../types/product';
 import { ProductBrandService } from './product-brand.service';
-import { ErrorService } from './error.service';
+import { ErrorService } from '../core/error.service';
 
 @Injectable({
   providedIn: 'root',

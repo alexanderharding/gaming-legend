@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, retry, shareReplay } from 'rxjs/operators';
 import { IProductBrand } from '../types/product-brand';
-import { ErrorService } from './error.service';
+import { ErrorService } from '../core/error.service';
 
 @Injectable({
   providedIn: 'root',

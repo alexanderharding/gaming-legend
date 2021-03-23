@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { catchError, delay, retry } from 'rxjs/operators';
 import { IShipping } from '../types/shipping';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ErrorService } from './error.service';
+import { ErrorService } from '../core/error.service';
 
 @Injectable({
   providedIn: 'root',

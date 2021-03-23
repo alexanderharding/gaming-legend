@@ -11,7 +11,7 @@ import {
   tap,
 } from 'rxjs/operators';
 import { IProductType } from '../types/product-type';
-import { ErrorService } from './error.service';
+import { ErrorService } from '../core/error.service';
 
 @Injectable({
   providedIn: 'root',

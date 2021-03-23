@@ -19,7 +19,7 @@ import {
 
 import { ICartItem } from '../types/cart-item';
 import { INotification } from '../types/notification';
-import { ErrorService } from './error.service';
+import { ErrorService } from '../core/error.service';
 import { NotificationService } from './notification.service';
 import { ShippingRateService } from './shipping-rate.service';
 

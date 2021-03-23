@@ -13,7 +13,7 @@ import {
 } from 'rxjs/operators';
 import { IOrder, Order } from '../types/order';
 import { AuthService } from './auth.service';
-import { ErrorService } from './error.service';
+import { ErrorService } from '../core/error.service';
 
 @Injectable({
   providedIn: 'root',
