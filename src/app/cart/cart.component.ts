@@ -14,11 +14,11 @@ import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 
 /* Components */
-import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.component';
+import { ConfirmModalComponent } from '../shared/confirm-modal/confirm-modal.component';
 
 /* Services */
-import { CartService } from '../../core/cart.service';
-import { NotificationService } from '../../core/notification.service';
+import { CartService } from '../core/cart.service';
+import { NotificationService } from '../core/notification.service';
 
 /* Title */
 import { Title } from '@angular/platform-browser';
@@ -39,13 +39,13 @@ import {
 } from '@angular/forms';
 
 /* Interfaces */
-import { ICartItem } from '../../types/cart-item';
-import { INotification } from '../../types/notification';
-import { IShipping } from '../../types/shipping';
+import { ICartItem } from '../types/cart-item';
+import { INotification } from '../types/notification';
+import { IShipping } from '../types/shipping';
 import { IQuantityControlValue } from 'src/app/types/quantity-control-value';
 
 /* Classes */
-import { ShippingRatesResult } from '../../types/shipping-rates-result';
+import { ShippingRatesResult } from '../types/shipping-rates-result';
 
 @Component({
   templateUrl: './cart.component.html',

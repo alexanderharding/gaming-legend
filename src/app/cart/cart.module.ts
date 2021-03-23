@@ -3,7 +3,7 @@ import { SharedModule } from '../shared/shared.module';
 import { RouterModule, Routes } from '@angular/router';
 
 /* Components */
-import { CartComponent } from './cart/cart.component';
+import { CartComponent } from './cart.component';
 import { CartSummaryComponent } from './cart-summary/cart-summary.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { OrderPlacedComponent } from './order-placed/order-placed.component';

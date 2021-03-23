@@ -10,25 +10,25 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CartComponent } from './cart.component';
-import { CartService } from '../../core/cart.service';
+import { CartService } from '../core/cart.service';
 import { Observable, of, throwError } from 'rxjs';
 import { ActivatedRoute, RouterLinkWithHref } from '@angular/router';
-import { ShippingRateService } from '../shipping-rate.service';
-import { ICartItem } from '../../types/cart-item';
-import { IShipping } from '../../types/shipping';
+import { ShippingRateService } from './shipping-rate.service';
+import { ICartItem } from '../types/cart-item';
+import { IShipping } from '../types/shipping';
 
 import { By, Title } from '@angular/platform-browser';
-import { CartSummaryComponent } from '../cart-summary/cart-summary.component';
-import { ErrorReceivedComponent } from '../../shared/error-received/error-received.component';
+import { CartSummaryComponent } from './cart-summary/cart-summary.component';
+import { ErrorReceivedComponent } from '../shared/error-received/error-received.component';
 
 import {
   NgbModal,
   NgbModalConfig,
   NgbModule,
 } from '@ng-bootstrap/ng-bootstrap';
-import { ShippingRatesResult } from '../../types/shipping-rates-result';
-import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.component';
-import { NotificationService } from '../../core/notification.service';
+import { ShippingRatesResult } from '../types/shipping-rates-result';
+import { ConfirmModalComponent } from '../shared/confirm-modal/confirm-modal.component';
+import { NotificationService } from '../core/notification.service';
 import { formatCurrency } from '@angular/common';
 import {
   AbstractControl,
