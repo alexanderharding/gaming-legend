@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { ProductTypeService } from '../services/product-type.service';
+import { ProductTypeService } from '../products/product-type.service';
 import { ProductTypesResult } from '../types/product-types-result';
 
 @Injectable({
