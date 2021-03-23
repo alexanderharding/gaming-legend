@@ -15,7 +15,7 @@ import { ShippingRateService } from 'src/app/services/shipping-rate.service';
 import { IShipping } from 'src/app/types/shipping';
 
 @Component({
-  selector: 'ctacu-cart-summary',
+  selector: 'user-cart-summary',
   templateUrl: './cart-summary.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

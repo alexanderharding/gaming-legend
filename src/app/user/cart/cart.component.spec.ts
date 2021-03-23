@@ -56,7 +56,7 @@ class MockCapitalizePipe implements PipeTransform {
 
 describe('CartComponent', () => {
   @Component({
-    selector: 'ctacu-cart-summary',
+    selector: 'user-cart-summary',
     template: '<div></div>',
   })
   class FakeCartSummaryComponent {
