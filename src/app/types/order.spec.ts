@@ -148,9 +148,6 @@ describe('Order', () => {
     cardNumber: 4123147523147547,
     cvv: 123,
     expiration: '2023-05',
-    subtotal: 3805.65,
-    tax: 261.45,
-    shipping: 6.99,
     total: 4074.09,
   };
   const DATE = new Date().toString();
