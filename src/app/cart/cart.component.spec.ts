@@ -1501,12 +1501,9 @@ describe('CartComponent', () => {
     });
 
     it('should have set loading$ correctly', () => {
-      let loading: boolean;
       fixture.detectChanges();
 
-      component.loading$.subscribe((l) => (loading = l));
-
-      expect(loading).toBeFalse();
+      expect(component.loading$).toBeUndefined();
     });
 
     it('should have set shippingRates correctly', () => {
@@ -1522,28 +1519,21 @@ describe('CartComponent', () => {
     });
 
     it('should have set items$ correctly', () => {
-      let items: ICartItem[];
       fixture.detectChanges();
 
-      component.items$.subscribe((i) => (items = i));
-
-      expect(items.length).toBe(ITEMS.length);
-      expect(items).toBe(ITEMS);
+      expect(component.items$).toBeUndefined();
     });
 
     it('should have set quantityOptions correctly', () => {
       fixture.detectChanges();
 
-      expect(component.quantityOptions).toEqual(QUANTITYOPTIONS);
+      expect(component.quantityOptions).toBeUndefined();
     });
 
     it('should have set quantities$ correctly', () => {
-      let formArray: FormArray;
       fixture.detectChanges();
 
-      component.quantities$.subscribe((value) => (formArray = value));
-
-      expect(formArray).toBeNull();
+      expect(component.quantities$).toBeUndefined();
     });
 
     it('should have called setTitle method on Title with correct value', () => {
@@ -2178,9 +2168,8 @@ describe('CartComponent w/ template', () => {
       const ErrorReceivedComponentDEs = fixture.debugElement.queryAll(
         By.directive(ErrorReceivedComponent)
       );
-      const instance = (
-        ErrorReceivedComponentDEs[0].componentInstance
-      ) as ErrorReceivedComponent;
+      const instance = ErrorReceivedComponentDEs[0]
+        .componentInstance as ErrorReceivedComponent;
 
       expect(ErrorReceivedComponentDEs.length).toBe(1);
       expect(instance.errorMessage).toBe(component.errorMessage);

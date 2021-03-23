@@ -3,7 +3,6 @@ import {
   Component,
   OnDestroy,
   OnInit,
-  TemplateRef,
 } from '@angular/core';
 
 /* Router */
@@ -55,26 +54,24 @@ import { ShippingRatesResult } from '../types/shipping-rates-result';
 export class CartComponent implements OnInit, OnDestroy {
   pageTitle = 'Review Cart';
   cartForm: FormGroup;
+  loading$: Observable<boolean>;
+  shippingRates: IShipping[];
+  errorMessage: string;
+  items$: Observable<ICartItem[]>;
+  quantityOptions: number[];
+  quantities$: Observable<FormArray>;
+
+  /* Get snapshot data from ActivatedRoute */
+  private readonly resolvedData = this.route.snapshot.data
+    .resolvedData as ShippingRatesResult;
 
   /* BehaviorSubject for displaying loading spinner */
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
-  readonly loading$ = this.loadingSubject.asObservable();
-
-  /* Get data from resolver */
-  private readonly resolvedData = this.route.snapshot.data
-    .resolvedData as ShippingRatesResult;
-  readonly shippingRates: IShipping[] = this.resolvedData.shippingRates;
-  readonly errorMessage: string = this.resolvedData.error;
-
-  /* Get data from CartService */
-  readonly items$: Observable<ICartItem[]> = this.cartService.cartItems$;
-  readonly quantityOptions: number[] = this.cartService.quantityOptions;
 
   /* BehaviorSubject for displaying quantities FormArray */
   private readonly quantitiesSubject = new BehaviorSubject<FormArray>(null);
-  readonly quantities$ = this.quantitiesSubject.asObservable();
 
-  /* For storing and cleaning up subscriptions onDestroy */
+  /* Subscriptions array for storing and cleaning up subscriptions onDestroy */
   private readonly subscriptions: Subscription[] = [];
 
   constructor(
@@ -88,6 +85,8 @@ export class CartComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.shippingRates = this.resolvedData.shippingRates;
+    this.errorMessage = this.resolvedData.error;
     this.shippingRates
       ? this.onShippingRatesReceived()
       : this.onErrorReceived();
@@ -123,18 +122,20 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private onShippingRatesReceived(): void {
-    /* Build cartForm FormGroup */
+    /* Set Observable for displaying loading spinner */
+    this.loading$ = this.loadingSubject.asObservable();
+
+    /* Set items$ and quantityOptions from CartService */
+    this.items$ = this.cartService.cartItems$;
+    this.quantityOptions = this.cartService.quantityOptions;
+
+    /* Set Observable for displaying quantities FormArray */
+    this.quantities$ = this.quantitiesSubject.asObservable();
+
+    /* Set cartForm and configure quantities FormArray */
     this.cartForm = this.buildForm();
-
     const quantitiesArray = this.cartForm.get('quantities') as FormArray;
-
-    /* Set quantities FormArray */
-    this.items$
-      .pipe(first())
-      .subscribe((items) => this.setFormArray(quantitiesArray, items));
-
-    /* Subscribe to valueChanges of quantities FormArray control's */
-    this.subscribeToValueChanges(quantitiesArray.controls);
+    this.configFormArray(quantitiesArray);
 
     /* Set quantitiesSubject value */
     this.quantitiesSubject.next(quantitiesArray);
@@ -145,6 +146,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private onErrorReceived(): void {
+    /* Set pageTitle */
     this.pageTitle = 'Retrieval Error';
   }
 
@@ -196,11 +198,18 @@ export class CartComponent implements OnInit, OnDestroy {
     } as ICartItem;
   }
 
+  private configFormArray(formArray: FormArray): void {
+    this.items$
+      .pipe(first())
+      .subscribe((items) => this.setFormArray(formArray, items));
+    this.setSubscriptions(formArray.controls);
+  }
+
   private setFormArray(formArray: FormArray, items: ICartItem[]): void {
     items.forEach((item) => formArray.push(this.buildQuantity(item)));
   }
 
-  private subscribeToValueChanges(controls: AbstractControl[]): void {
+  private setSubscriptions(controls: AbstractControl[]): void {
     controls.forEach((c) =>
       this.subscriptions.push(this.createSubscription(c))
     );
@@ -259,11 +268,11 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private show(textOrTpl: string, className: string, delay?: number): void {
-    const notification = {
+    const notification: INotification = {
       textOrTpl,
       className,
       delay,
-    } as INotification;
+    };
     this.notificationService.show(notification);
   }
 
