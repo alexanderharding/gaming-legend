@@ -23,7 +23,7 @@ describe('CheckoutComponent', () => {
     selector: 'cart-cart-summary',
     template: '<div></div>',
   })
-  class FakeSummaryComponent {
+  class FakeCartSummaryComponent {
     @Input() shippingRates: IShipping[];
   }
 
@@ -82,7 +82,7 @@ describe('CheckoutComponent', () => {
           declarations: [
             CheckoutComponent,
             MockCapitalizePipe,
-            FakeSummaryComponent,
+            FakeCartSummaryComponent,
           ],
           providers: [
             { provide: ActivatedRoute, useValue: mockActivatedRoute },
