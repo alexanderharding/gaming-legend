@@ -71,7 +71,7 @@ describe('CartComponent', () => {
     @Input() errorMessage: string;
   }
 
-  describe('w/ SHIPPINGRATES', () => {
+  describe('onShippingRatesReceived', () => {
     let component: CartComponent;
     let fixture: ComponentFixture<CartComponent>;
     let mockCartService;
@@ -1277,7 +1277,7 @@ describe('CartComponent', () => {
     });
   });
 
-  describe('w/o SHIPPINGRATES', () => {
+  describe('onErrorReceived', () => {
     let component: CartComponent;
     let fixture: ComponentFixture<CartComponent>;
     let mockCartService;
@@ -1551,7 +1551,7 @@ describe('CartComponent', () => {
 });
 
 describe('CartComponent w/ template', () => {
-  describe('w/ SHIPPINGRATES', () => {
+  describe('onShippingRatesReceived', () => {
     let component: CartComponent;
     let fixture: ComponentFixture<CartComponent>;
     let mockCartService;
@@ -2062,7 +2062,7 @@ describe('CartComponent w/ template', () => {
     });
   });
 
-  describe('w/o SHIPPINGRATES', () => {
+  describe('onErrorReceived', () => {
     let component: CartComponent;
     let fixture: ComponentFixture<CartComponent>;
     let mockCartService;
