@@ -273,7 +273,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly fb: FormBuilder,
     private readonly route: ActivatedRoute,
-    private readonly shippingRateService: ShippingRateService,
     private readonly notificationService: NotificationService,
     private readonly title: Title
   ) {}
@@ -292,10 +291,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }
     if (form.valid) {
       this.setLoading(true);
-      this.buildOrder(form).subscribe({
-        next: (order) => this.saveOrder(order, order.items),
-        error: () => this.onError('Error placing order !'),
-      });
+      this.buildOrder(form);
     }
   }
 
@@ -397,52 +393,11 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     this.notificationService.show(notification);
   }
 
-  private buildOrder(form: FormGroup): Observable<Order> {
-    return combineLatest([
-      this.cartService.total$,
-      this.cartService.cartItems$,
-    ]).pipe(
-      first(),
-      map(([total, items]) => this.createOrder(form, items, total))
-    );
-  }
-
-  private createCustomer(form: FormGroup): Customer {
-    return CustomerMaker.create({
-      firstName: form.get('nameGroup.firstName').value as string,
-      lastName: form.get('nameGroup.lastName').value as string,
-      phone: form.get('contactGroup.phone').value as string,
-      email: form.get('contactGroup.email').value as string,
-      street: form.get('addressGroup.street').value as string,
-      street2: form.get('addressGroup.street2').value as string,
-      city: form.get('addressGroup.city').value as string,
-      state: form.get('addressGroup.state').value as string,
-      zip: form.get('addressGroup.zip').value as string,
-      country: form.get('addressGroup.country').value as string,
-    }) as Customer;
-  }
-
-  private createPayment(form: FormGroup, total: number): Payment {
-    return PaymentMaker.create({
-      cardNumber: +form.get('paymentGroup.cardNumber').value,
-      cvv: +form.get('paymentGroup.cvv').value,
-      expiration: form.get('paymentGroup.expiration').value as string,
-      total,
-    }) as Payment;
-  }
-
-  private createOrder(
-    form: FormGroup,
-    items: ICartItem[],
-    total: number
-  ): Order {
-    return OrderMaker.create({
-      customer: this.createCustomer(form),
-      items,
-      payment: this.createPayment(form, total),
-      date: new Date().toString(),
-      status: 'pending',
-    }) as Order;
+  private buildOrder(form: FormGroup): void {
+    this.orderService.buildOrder(form).subscribe({
+      next: (order) => this.saveOrder(order, order.items),
+      error: () => this.onError('Error placing order !'),
+    });
   }
 
   private saveOrder(order: Order, items: ICartItem[]): void {
@@ -556,62 +511,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         break;
     }
   }
-
-  // private getMessage(c: AbstractControl, name: string): string {
-  //   switch (name) {
-  //     case 'firstName':
-  //       return Object.keys(c.errors)
-  //         .map((key) => this.firstNameValidationMessages[key])
-  //         .join(' ');
-  //     case 'lastName':
-  //       return Object.keys(c.errors)
-  //         .map((key) => this.lastNameValidationMessages[key])
-  //         .join(' ');
-  //     case 'street':
-  //       return Object.keys(c.errors)
-  //         .map((key) => this.streetValidationMessages[key])
-  //         .join(' ');
-  //     case 'city':
-  //       return Object.keys(c.errors)
-  //         .map((key) => this.cityValidationMessages[key])
-  //         .join(' ');
-  //     case 'state':
-  //       return Object.keys(c.errors)
-  //         .map((key) => this.stateValidationMessages[key])
-  //         .join(' ');
-  //     case 'zip':
-  //       return Object.keys(c.errors)
-  //         .map((key) => this.zipValidationMessages[key])
-  //         .join(' ');
-  //     case 'country':
-  //       return Object.keys(c.errors)
-  //         .map((key) => this.countryValidationMessages[key])
-  //         .join(' ');
-  //     case 'phone':
-  //       return Object.keys(c.errors)
-  //         .map((key) => this.phoneValidationMessages[key])
-  //         .join(' ');
-  //     case 'email':
-  //       return Object.keys(c.errors)
-  //         .map((key) => this.emailValidationMessages[key])
-  //         .join(' ');
-  //     case 'cardNumber':
-  //       return Object.keys(c.errors)
-  //         .map((key) => this.cardNumberValidationMessages[key])
-  //         .join(' ');
-  //     case 'expiration':
-  //       return Object.keys(c.errors)
-  //         .map((key) => this.expirationValidationMessages[key])
-  //         .join(' ');
-  //     case 'cvv':
-  //       return Object.keys(c.errors)
-  //         .map((key) => this.cvvValidationMessages[key])
-  //         .join(' ');
-  //     default:
-  //       console.error(`${name} did not match any names.`);
-  //       break;
-  //   }
-  // }
 
   private deleteAllItems(items: ICartItem[]): void {
     this.cartService.deleteAllItems(items).subscribe({
