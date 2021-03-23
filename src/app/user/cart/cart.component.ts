@@ -11,7 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 
 /* Rxjs */
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
-import { first, switchMap, tap } from 'rxjs/operators';
+import { first } from 'rxjs/operators';
 
 /* Components */
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.component';
@@ -42,6 +42,7 @@ import {
 import { ICartItem } from '../../types/cart-item';
 import { INotification } from '../../types/notification';
 import { IShipping } from '../../types/shipping';
+import { IQuantityControlValue } from 'src/app/types/quantity-control-value';
 
 /* Classes */
 import { ShippingRatesResult } from '../../types/shipping-rates-result';
@@ -94,26 +95,24 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   openDeleteModal(item: ICartItem, items: ICartItem[]): void {
-    const index: number = items.findIndex(({ id }) => +id === +item.id);
-    const modalRef: NgbModalRef = this.modalService.open(ConfirmModalComponent);
-    const instance = modalRef.componentInstance as ConfirmModalComponent;
-    instance.message = `Are you sure you want remove "${item.name}" from the
-    cart?`;
-    instance.closeMessage = 'Remove';
+    const modalRef: NgbModalRef = this.openModal(
+      `Are you sure you want remove "${item.name}" from the cart?`,
+      'Remove'
+    );
     modalRef.closed.pipe(first()).subscribe({
       error: () => {},
       complete: () => {
         this.setLoading(true);
-        this.deleteItem(item, +index);
+        this.deleteItem(item, this.getIndex(item.id, items));
       },
     });
   }
 
   openDeleteAllModal(items: ICartItem[]): void {
-    const modalRef: NgbModalRef = this.modalService.open(ConfirmModalComponent);
-    const instance = modalRef.componentInstance as ConfirmModalComponent;
-    instance.message = `Are you sure you want to empty the cart?`;
-    instance.closeMessage = 'Empty';
+    const modalRef: NgbModalRef = this.openModal(
+      `Are you sure you want to empty the cart?`,
+      'Empty'
+    );
     modalRef.closed.pipe(first()).subscribe({
       error: () => {},
       complete: () => {
@@ -125,17 +124,20 @@ export class CartComponent implements OnInit, OnDestroy {
 
   private onShippingRatesReceived(): void {
     /* Build cartForm FormGroup */
-    this.cartForm = this.fb.group({
-      quantities: this.fb.array([]),
-    });
+    this.cartForm = this.buildForm();
 
-    /* Set quantitiesSubject value */
-    this.quantitiesSubject.next(this.cartForm.get('quantities') as FormArray);
+    const quantitiesArray = this.cartForm.get('quantities') as FormArray;
 
-    /* Build quantities FormArray */
+    /* Set quantities FormArray */
     this.items$
       .pipe(first())
-      .subscribe((items) => this.buildFormArray(this.cartForm, items));
+      .subscribe((items) => this.setFormArray(quantitiesArray, items));
+
+    /* Subscribe to valueChanges of quantities FormArray control's */
+    this.subscribeToValueChanges(quantitiesArray.controls);
+
+    /* Set quantitiesSubject value */
+    this.quantitiesSubject.next(quantitiesArray);
 
     /* Config NgbModal settings */
     this.ngbModalConfig.centered = true;
@@ -146,15 +148,23 @@ export class CartComponent implements OnInit, OnDestroy {
     this.pageTitle = 'Retrieval Error';
   }
 
-  private editItem(itemId: number, quantity: number, items: ICartItem[]): void {
-    const index = items.findIndex(({ id }) => +id === +itemId);
-    const updatedItem = {
-      ...items[index],
-      quantity,
-    } as ICartItem;
-    +quantity
-      ? this.saveItem(updatedItem, index)
-      : this.deleteItem(updatedItem, index);
+  private openModal(message: string, closeMessage: string): NgbModalRef {
+    const modalRef: NgbModalRef = this.modalService.open(ConfirmModalComponent);
+    const instance = modalRef.componentInstance as ConfirmModalComponent;
+    instance.message = message;
+    instance.closeMessage = closeMessage;
+    return modalRef;
+  }
+
+  private editItem(itemId: number, quantity: number): void {
+    this.items$.pipe(first()).subscribe((items) => {
+      const index: number = this.getIndex(itemId, items);
+      const item: ICartItem = {
+        ...items[index],
+        quantity,
+      };
+      +quantity ? this.saveItem(item, +index) : this.deleteItem(item, +index);
+    });
   }
 
   private saveItem(item: ICartItem, index: number): void {
@@ -182,33 +192,32 @@ export class CartComponent implements OnInit, OnDestroy {
     });
   }
 
-  private buildFormArray(form: FormGroup, items: ICartItem[]): void {
-    const quantitiesArray = form.get('quantities') as FormArray;
-    items.forEach((cartItem) => {
-      quantitiesArray.push(
-        this.fb.group({
-          itemId: +cartItem.id,
-          quantity: +cartItem.quantity,
-        })
-      );
-      const quantityControl = quantitiesArray.get(
-        `${quantitiesArray.length - 1}`
-      ) as AbstractControl;
-      this.subscriptions.push(
-        quantityControl.valueChanges
-          .pipe(
-            switchMap((value) => {
-              this.setLoading(true);
-              const itemId = +value.itemId;
-              const quantity = +value.quantity;
-              return this.items$.pipe(
-                first(),
-                tap((cartItems) => this.editItem(itemId, quantity, cartItems))
-              );
-            })
-          )
-          .subscribe()
-      );
+  private setFormArray(formArray: FormArray, items: ICartItem[]): void {
+    items.forEach((item) => formArray.push(this.buildQuantity(item)));
+  }
+
+  private subscribeToValueChanges(controls: AbstractControl[]): void {
+    controls.forEach((c) => this.subscriptions.push(this.buildSubscription(c)));
+  }
+
+  private buildForm(): FormGroup {
+    return this.fb.group({
+      quantities: this.fb.array([]),
+    });
+  }
+
+  private buildQuantity(item: ICartItem): FormGroup {
+    const object: IQuantityControlValue = {
+      itemId: +item.id,
+      quantity: +item.quantity,
+    };
+    return this.fb.group(object);
+  }
+
+  private buildSubscription(c: AbstractControl): Subscription {
+    return c.valueChanges.subscribe((value: IQuantityControlValue) => {
+      this.setLoading(true);
+      this.editItem(+value.itemId, +value.quantity);
     });
   }
 
@@ -231,6 +240,10 @@ export class CartComponent implements OnInit, OnDestroy {
     value
       ? form.disable({ emitEvent: false })
       : form.enable({ emitEvent: false });
+  }
+
+  private getIndex(itemId: number, items: ICartItem[]): number {
+    return items.findIndex(({ id }) => +id === +itemId);
   }
 
   private onItemDeleted(index: number): void {
