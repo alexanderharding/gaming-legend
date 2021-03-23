@@ -12,7 +12,7 @@ import {
   take,
 } from 'rxjs/operators';
 import { IOrder, Order } from '../types/order';
-import { AuthService } from './auth.service';
+import { AuthService } from '../services/auth.service';
 import { ErrorService } from '../core/error.service';
 
 @Injectable({

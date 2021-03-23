@@ -17,6 +17,7 @@ import { CheckoutGuard } from './checkout/checkout.guard';
 /* Services */
 import { ShippingRatesResolverService } from '../router/shipping-rates-resolver.service';
 import { ShippingRateService } from './shipping-rate.service';
+import { OrderService } from './order.service';
 
 /* Routes */
 const ROUTES: Routes = [
@@ -67,6 +68,11 @@ const ROUTES: Routes = [
     OrderPlacedComponent,
   ],
   imports: [SharedModule, RouterModule.forChild(ROUTES)],
-  providers: [CheckoutGuard, ShippingRatesResolverService, ShippingRateService],
+  providers: [
+    CheckoutGuard,
+    ShippingRatesResolverService,
+    ShippingRateService,
+    OrderService,
+  ],
 })
 export class UserModule {}
