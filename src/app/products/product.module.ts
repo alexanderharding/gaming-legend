@@ -10,7 +10,7 @@ import { ProductDetailsComponent } from './product-details/product-details.compo
 
 /* Resolvers */
 import { ProductResolverService } from '../router/product-resolver.service';
-import { ProductListResolverService } from '../router/product-list-resolver.service';
+import { ProductListResolverService } from './product-list-resolver.service';
 import { ProductTypesResolverService } from '../router/product-types-resolver.service';
 
 /* Services */
