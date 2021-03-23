@@ -29,7 +29,7 @@ export class CheckoutGuard
     return this.cartService.cartItems$.pipe(
       map((items) => {
         if (!items.length) {
-          this.router.navigate(['/cart', 'summary']);
+          this.router.navigate(['/cart']);
           return false;
         }
         return true;

@@ -1941,7 +1941,7 @@ describe('CartComponent w/ template', () => {
           By.directive(RouterLinkWithHref)
         );
 
-        path = `/products/${items[i].type}/${items[i].id}?returnLink=%2Fcart%2Fsummary`;
+        path = `/products/${items[i].type}/${items[i].id}?returnLink=%2Fcart`;
         expect(routerLinkWithHrefElements.length).toBe(2);
         href = routerLinkWithHrefElements[0].nativeElement.getAttribute('href');
         expect(href).toBe(path);
@@ -1958,7 +1958,7 @@ describe('CartComponent w/ template', () => {
 
       expect(buttonDE.length).toBe(1);
       expect(buttonDE[0].nativeElement.getAttribute('routerLink')).toBe(
-        '../checkout'
+        'checkout'
       );
     });
 

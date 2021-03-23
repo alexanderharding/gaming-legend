@@ -70,7 +70,7 @@ export class ProductDetailsComponent implements OnInit {
         'bg-danger text-light',
         10000
       );
-      this.router.navigate(['/cart/summary']);
+      this.router.navigate(['/cart']);
       return;
     }
     const updatedItem = {
@@ -86,7 +86,7 @@ export class ProductDetailsComponent implements OnInit {
           10000
         );
         this.setLoading(false);
-        this.router.navigate(['/cart/summary']);
+        this.router.navigate(['/cart']);
       },
       error: () => {
         this.setLoading(false);

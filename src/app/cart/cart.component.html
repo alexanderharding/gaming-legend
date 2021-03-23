@@ -36,7 +36,7 @@
                       <a
                         [routerLink]="['/products', item.type, item.id]"
                         [queryParams]="{
-                          returnLink: '/cart/summary'
+                          returnLink: '/cart'
                         }"
                       >
                         <img
@@ -54,7 +54,7 @@
                       <a
                         [routerLink]="['/products', item.type, item.id]"
                         [queryParams]="{
-                          returnLink: '/cart/summary'
+                          returnLink: '/cart'
                         }"
                         >{{ item.name }}</a
                       >
@@ -128,13 +128,15 @@
         </div>
         <div class="col-md-4">
           <div class="mb-3">
-            <cart-cart-summary [shippingRates]="shippingRates"></cart-cart-summary>
+            <cart-cart-summary
+              [shippingRates]="shippingRates"
+            ></cart-cart-summary>
           </div>
           <input
             id="checkoutBtn"
             type="button"
             value="Checkout"
-            routerLink="../checkout"
+            routerLink="checkout"
             class="btn btn-lg btn-block btn-success text-capitalize"
             [disabled]="loading$ | async"
           />

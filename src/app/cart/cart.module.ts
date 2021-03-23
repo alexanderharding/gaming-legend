@@ -20,11 +20,6 @@ import { OrderService } from './order.service';
 const ROUTES: Routes = [
   {
     path: '',
-    redirectTo: 'summary',
-    pathMatch: 'full',
-  },
-  {
-    path: 'summary',
     component: CartComponent,
     resolve: {
       resolvedData: ShippingRatesResolverService,
