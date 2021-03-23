@@ -979,8 +979,7 @@ describe('CartComponent', () => {
         component.openDeleteModal(ITEMS[index], ITEMS);
 
         expect(mockModalRef.componentInstance.message).toBe(
-          `Are you sure you want remove "${ITEMS[index].name}" from the
-    cart?`
+          `Are you sure you want remove "${ITEMS[index].name}" from the cart?`
         );
         expect(mockModalRef.componentInstance.closeMessage).toBe('Remove');
       });
@@ -1826,6 +1825,26 @@ describe('CartComponent w/ template', () => {
       expect(elements[0].nativeElement.textContent).toBe(component.pageTitle);
     });
 
+    it('should set cartForm in the template', () => {
+      let items: ICartItem[];
+      fixture.detectChanges();
+      component.items$.subscribe((i) => (items = i));
+
+      const tabelRowElements = fixture.debugElement.queryAll(
+        By.css('tbody tr')
+      );
+      expect(tabelRowElements.length).toBe(items.length);
+      for (let i = 0; i < tabelRowElements.length; i++) {
+        const tableCellElements: DebugElement[] = tabelRowElements[i].queryAll(
+          By.css('td')
+        );
+        const formElements: DebugElement[] = tableCellElements[3].queryAll(
+          By.css(`form`)
+        );
+        expect(formElements.length).toBe(1);
+      }
+    });
+
     it('should not set ErrorReceivedComponent in the template', () => {
       // run ngOnInit
       fixture.detectChanges();
@@ -1865,6 +1884,29 @@ describe('CartComponent w/ template', () => {
         expect(elements[0].nativeElement.textContent).toBe(
           formatCurrency(items[i].price, 'en-US', '$')
         );
+      }
+    });
+
+    it('should set quantityOptions in the template', () => {
+      // run ngOnInit
+      fixture.detectChanges();
+
+      // item debug elements
+      const tabelRowElements = fixture.debugElement.queryAll(
+        By.css('tbody tr')
+      );
+      for (let i = 0; i < tabelRowElements.length; i++) {
+        const tableCellElements = tabelRowElements[i].queryAll(By.css('td'));
+        const selectElements: DebugElement[] = tableCellElements[3].queryAll(
+          By.css('select')
+        );
+        const quantityOptions: number[] = component.quantityOptions;
+        for (let i = 0; i < quantityOptions.length; i++) {
+          expect(+selectElements[0].nativeElement.options[i].value).toBe(
+            quantityOptions[i]
+          );
+        }
+        expect(selectElements.length).toBe(1);
       }
     });
 
@@ -1943,8 +1985,8 @@ describe('CartComponent w/ template', () => {
       );
     });
 
-    it(`should call openDeleteModal method with correct value when remove
-      input button is clicked`, () => {
+    it(`should call openDeleteModal method with correct value when cartForm is
+      submitted`, () => {
       let items: ICartItem[];
       spyOn(component, 'openDeleteModal');
       fixture.detectChanges();
@@ -1958,13 +2000,12 @@ describe('CartComponent w/ template', () => {
         const tableCellElements: DebugElement[] = tabelRowElements[i].queryAll(
           By.css('td')
         );
-        const elements: DebugElement[] = tableCellElements[3].queryAll(
-          By.css(`input`)
+        const formElements: DebugElement[] = tableCellElements[3].queryAll(
+          By.css(`form`)
         );
-        elements[0].triggerEventHandler('click', null);
-
-        expect(elements.length).toBe(1);
-        expect(component.openDeleteModal).toHaveBeenCalledWith(items[i], items);
+        formElements[0].triggerEventHandler('ngSubmit', null);
+        expect(tableCellElements.length).toBe(4);
+        expect(formElements.length).toBe(1);
       }
       expect(component.openDeleteModal).toHaveBeenCalledTimes(
         tabelRowElements.length
