@@ -15,7 +15,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { debounceTime, first, map } from 'rxjs/operators';
 
-import { CartService } from 'src/app/services/cart.service';
+import { CartService } from 'src/app/core/cart.service';
 import { NotificationService } from 'src/app/core/notification.service';
 import { OrderService } from 'src/app/services/order.service';
 import { ShippingRateService } from 'src/app/user/shipping-rate.service';

@@ -10,7 +10,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CartComponent } from './cart.component';
-import { CartService } from '../../services/cart.service';
+import { CartService } from '../../core/cart.service';
 import { Observable, of, throwError } from 'rxjs';
 import { ActivatedRoute, RouterLinkWithHref } from '@angular/router';
 import { ShippingRateService } from '../shipping-rate.service';

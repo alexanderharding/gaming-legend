@@ -1,7 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { CartService } from 'src/app/services/cart.service';
+import { CartService } from 'src/app/core/cart.service';
 import { ShippingRateService } from '../shipping-rate.service';
 
 import { ICartItem } from 'src/app/types/cart-item';

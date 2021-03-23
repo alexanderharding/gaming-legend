@@ -6,7 +6,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CartService } from '../../services/cart.service';
+import { CartService } from '../../core/cart.service';
 import { first, map } from 'rxjs/operators';
 import { IProduct } from 'src/app/types/product';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';

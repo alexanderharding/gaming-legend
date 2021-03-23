@@ -4,7 +4,7 @@ import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { of } from 'rxjs';
-import { CartService } from '../../services/cart.service';
+import { CartService } from '../cart.service';
 
 import { NavbarComponent } from './navbar.component';
 

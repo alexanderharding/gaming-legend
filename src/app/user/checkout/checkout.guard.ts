@@ -11,7 +11,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { ConfirmModalComponent } from 'src/app/shared/confirm-modal/confirm-modal.component';
-import { CartService } from 'src/app/services/cart.service';
+import { CartService } from 'src/app/core/cart.service';
 import { CheckoutComponent } from './checkout.component';
 
 @Injectable({

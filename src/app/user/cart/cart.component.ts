@@ -17,7 +17,7 @@ import { first } from 'rxjs/operators';
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal.component';
 
 /* Services */
-import { CartService } from '../../services/cart.service';
+import { CartService } from '../../core/cart.service';
 import { NotificationService } from '../../core/notification.service';
 
 /* Title */

@@ -10,7 +10,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime, first } from 'rxjs/operators';
 
-import { CartService } from 'src/app/services/cart.service';
+import { CartService } from 'src/app/core/cart.service';
 import { ShippingRateService } from 'src/app/user/shipping-rate.service';
 import { IShipping } from 'src/app/types/shipping';
 
