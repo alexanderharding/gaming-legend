@@ -159,16 +159,13 @@ export class CartComponent implements OnInit, OnDestroy {
   private editItem(itemId: number, quantity: number): void {
     this.items$.pipe(first()).subscribe((items) => {
       const index: number = this.findIndexById(itemId, items);
-      const item: ICartItem = {
-        ...items[index],
-        quantity,
-      };
+      const item: ICartItem = this.createUpdatedItem(items[+index], +quantity);
       +quantity ? this.saveItem(item, +index) : this.deleteItem(item, +index);
     });
   }
 
   private saveItem(item: ICartItem, index: number): void {
-    this.cartService.saveItem(item, index).subscribe({
+    this.cartService.saveItem(item, +index).subscribe({
       error: () => this.onError(`Error updating ${item.name} !`),
       complete: () => this.setLoading(false),
     });
@@ -190,6 +187,13 @@ export class CartComponent implements OnInit, OnDestroy {
       error: () => this.onError(`Error emptying cart !`),
       complete: () => this.setLoading(false),
     });
+  }
+
+  private createUpdatedItem(item: ICartItem, quantity: number): ICartItem {
+    return {
+      ...item,
+      quantity,
+    } as ICartItem;
   }
 
   private setFormArray(formArray: FormArray, items: ICartItem[]): void {
