@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
 
-import { ProductService } from '../services/product.service';
+import { ProductService } from '../products/product.service';
 import { ProductListResult } from '../types/products-result';
 import { combineLatest, Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
