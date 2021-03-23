@@ -15,7 +15,7 @@ import { ShippingRateService } from 'src/app/cart/shipping-rate.service';
 import { IShipping } from 'src/app/types/shipping';
 
 @Component({
-  selector: 'user-cart-summary',
+  selector: 'cart-cart-summary',
   templateUrl: './cart-summary.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -20,10 +20,10 @@ class MockCapitalizePipe implements PipeTransform {
 
 describe('CheckoutComponent', () => {
   @Component({
-    selector: 'user-cart-summary',
+    selector: 'cart-cart-summary',
     template: '<div></div>',
   })
-  class FakeCartSummaryComponent {
+  class FakeSummaryComponent {
     @Input() shippingRates: IShipping[];
   }
 
@@ -82,7 +82,7 @@ describe('CheckoutComponent', () => {
           declarations: [
             CheckoutComponent,
             MockCapitalizePipe,
-            FakeCartSummaryComponent,
+            FakeSummaryComponent,
           ],
           providers: [
             { provide: ActivatedRoute, useValue: mockActivatedRoute },
