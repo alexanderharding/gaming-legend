@@ -15,7 +15,7 @@ import { CheckoutGuard } from './checkout/checkout.guard';
 // import { SignInGuard } from './sign-in/sign-in.guard';
 
 /* Services */
-import { ShippingRatesResolverService } from '../router/shipping-rates-resolver.service';
+import { ShippingRatesResolverService } from './shipping-rates-resolver.service';
 import { ShippingRateService } from './shipping-rate.service';
 import { OrderService } from './order.service';
 
