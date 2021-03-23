@@ -197,7 +197,9 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToValueChanges(controls: AbstractControl[]): void {
-    controls.forEach((c) => this.addSubscription(this.createSubscription(c)));
+    controls.forEach((c) =>
+      this.subscriptions.push(this.createSubscription(c))
+    );
   }
 
   private buildForm(): FormGroup {
@@ -221,15 +223,6 @@ export class CartComponent implements OnInit, OnDestroy {
     });
   }
 
-  private addSubscription(s: Subscription): void {
-    this.subscriptions.push(s);
-  }
-
-  private removeControlAt(index: number): void {
-    const quantitiesArray = this.cartForm.get('quantities') as FormArray;
-    quantitiesArray.removeAt(index);
-  }
-
   private removeSubscriptionAt(index: number): void {
     this.subscriptions[index].unsubscribe();
     this.subscriptions.splice(index, 1);
@@ -251,8 +244,9 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private onItemDeleted(index: number): void {
-    this.removeSubscriptionAt(index);
-    this.removeControlAt(index);
+    const quantitiesArray = this.cartForm.get('quantities') as FormArray;
+    this.removeSubscriptionAt(+index);
+    quantitiesArray.removeAt(+index);
   }
 
   private onError(message: string): void {
