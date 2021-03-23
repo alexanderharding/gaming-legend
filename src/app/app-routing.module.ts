@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 
-import { WelcomeComponent } from './welcome/welcome.component';
+import { WelcomeComponent } from './core/welcome/welcome.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 // import { AuthGuard } from './account/auth.guard';
 

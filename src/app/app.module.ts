@@ -7,8 +7,6 @@ import { AppRoutingModule } from './app-routing.module';
 
 /* Components */
 import { AppComponent } from './app.component';
-import { WelcomeComponent } from './welcome/welcome.component';
-import { NavbarComponent } from './navbar/navbar.component';
 import { FooterComponent } from './footer/footer.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 
@@ -16,20 +14,20 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { AuthGuard } from './account/auth.guard';
 import { UserGuard } from './user/user.guard';
 import { NotificationsContainerComponent } from './notifications-container/notifications-container.component';
+import { CoreModule } from './core/core.module';
 
 @NgModule({
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    NgbModule,
     HttpClientModule,
+    NgbModule,
+    CoreModule,
     AppRoutingModule,
   ],
   declarations: [
     AppComponent,
-    NavbarComponent,
     FooterComponent,
-    WelcomeComponent,
     NotFoundComponent,
     NotificationsContainerComponent,
   ],
